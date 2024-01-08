@@ -29,12 +29,40 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            Route::middleware('api')
+            Route::middleware(['api', 'setlocale'])
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
+            // Rutas modulares
+            $this->loadApiRoutes();
+
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
-        });
+        });    
     }
+
+    /**
+        * Cargar rutas de API modulares.
+    */
+
+    protected function loadApiRoutes(): void
+    {
+        Route::middleware('api')
+             ->group(function () {
+                 $this->loadModuleRoutes('api_hotel.php');
+                 // Aquí puedes añadir más archivos de módulos según sea necesario
+             });
+    }
+
+    /**
+        * Cargar un archivo de rutas de módulo específico.
+    *
+        * @param string $routeFile Nombre del archivo de rutas.
+    */
+    protected function loadModuleRoutes(string $routeFile): void
+    {
+        Route::prefix('api')
+             ->group(base_path('routes/' . $routeFile));
+    }
+
 }

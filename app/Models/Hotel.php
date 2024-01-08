@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Cashier\Billable;
+
+class hotel extends Model
+{
+    use HasFactory;
+    // use Billable;
+    /**
+     * Lista de atributos que pueden ser asignados masivamente
+     *
+     * @var array $fillable
+     */
+    protected $fillable = [
+        'name',
+        'name_origin',
+        'type',
+        'address',
+        'zone',
+        'image',
+        'category',
+        'phone',
+        'email',
+        'latitude',
+        'longitude',
+        'checkin',
+        'checkout',
+        'description',
+        'instagram_url',
+        'facebook_url',
+        'pinterest_url',
+        'subscription_active',
+        'slug',
+        'name_short',
+        'logo',
+        'user_ratings_total',
+        'url_google',
+        'website_google',
+        'google_maps_place_id',
+        'historical_runs',
+        'scraper_run',
+        'last_date_historical',
+        'subdomain',
+        'show_experiences',
+    ];
+
+    public function user()
+    {
+        return $this->belongsToMany(User::class)->withPivot('manager');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ImagesHotels::class);
+    }
+
+    public function translate()
+    {
+        
+        return $this->hasOne(HotelTranslate::class)->where('language', localeCurrent());
+    }    
+
+// AUXILIARIES
+
+
+}
