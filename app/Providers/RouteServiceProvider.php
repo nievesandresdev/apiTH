@@ -50,6 +50,7 @@ class RouteServiceProvider extends ServiceProvider
         Route::middleware('api')
              ->group(function () {
                  $this->loadModuleRoutes('api_hotel.php');
+                 $this->loadModuleRoutes('api_hotel_ota.php');
                  // Aquí puedes añadir más archivos de módulos según sea necesario
              });
     }

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FacilityResource extends JsonResource
+class HotelOtaResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +16,8 @@ class FacilityResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'image' => $this->images->first(),
-            'title' => $this?->title,
-            'translate' => $this->translate,
+            'enum_ota' => $this->enum_ota,
+            'url' => $this->url
         ];
     }
 }
