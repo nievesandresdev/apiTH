@@ -7,31 +7,32 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
-use App\Models\Products;
+use App\Models\Places;
 use App\Models\Facility;
 use App\Models\FacilityHoster;
 use App\Models\User;
 
 use App\Http\Resources\FacilityResource;
 
-class ExperienceService {
+class PlaceService {
 
     function __construct()
     {
 
     }
 
-    public function getCrosselling ($modelHotel) {
+    public function getCrosselling ($typePlaceName, $modelHotel) {
         try {
-            $lengthAExpFeatured = 12;
+            $lengthPlaceFeatured = 12;
             $hotelId = $modelHotel->id;
             $cityName = $modelHotel->zone;
 
-            $modelExperiencesFeatured = Products::activeToShow()
+            $modelExperiencesFeatured = Places::activeToShow()
                                     ->whereCity($cityName)
+                                    ->whereTypePlaceByName($typePlaceName)
                                     ->whereVisibleByHoster($hotelId)
                                     ->orderByFeatured($hotelId)
-                                    ->limit($lengthAExpFeatured)
+                                    ->limit($lengthPlaceFeatured)
                                     ->get();
                             
             return $modelExperiencesFeatured;

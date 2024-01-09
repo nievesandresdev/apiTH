@@ -29,7 +29,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            Route::middleware(['api', 'setlocale'])
+            Route::middleware(['api', 'setlocale', 'loadHotel'])
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
             // Rutas modulares

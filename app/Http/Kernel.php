@@ -22,6 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\SetLocale::class,
+        \App\Http\Middleware\LoadHotel::class,
     ];
 
     /**
@@ -66,5 +67,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'setlocale' => \App\Http\Middleware\SetLocale::class,
+        'setlocale' => \App\Http\Middleware\SetLocale::class,
+        'loadHotel' => \App\Http\Middleware\LoadHotel::class,
     ];
 }

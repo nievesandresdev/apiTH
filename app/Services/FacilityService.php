@@ -20,17 +20,10 @@ class FacilityService {
 
     }
 
-    public function getCrosselling ($hotel) {
+    public function getCrosselling ($modelHotel) {
         try {
-            $facilities = FacilityHoster::with('images', 'translate')->where('hotel_id',$hotel->id)->where('select',1)->limit(12)->get();
 
-            $facilities = $facilities->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'images' => $item->images,
-                    'title' => $item?->title,
-                ];
-            })->values();
+            $facilities = FacilityHoster::with('images', 'translate')->where('hotel_id',$modelHotel->id)->where('select',1)->limit(12)->get();
 
             return $facilities;
 
