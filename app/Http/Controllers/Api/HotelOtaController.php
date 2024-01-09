@@ -32,7 +32,7 @@ class HotelOtaController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findByParams');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
         }
     }
 
