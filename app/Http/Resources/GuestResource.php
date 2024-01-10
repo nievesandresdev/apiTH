@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class StayResource extends JsonResource
+class GuestResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,8 +17,10 @@ class StayResource extends JsonResource
 
         return [
             "id"=> $this->id,
-            "check_out"=> $this->check_out,
-            "check_in"=> $this->check_in,
+            "name"=> $this->name,
+            "lang_web"=> $this->lang_web,
+            "email"=> $this->email,
+            "phone"=> $this->phone,
         ];
     }
 }

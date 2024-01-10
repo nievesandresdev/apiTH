@@ -6,50 +6,22 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
-
-use App\Models\Hotel;
-use App\Models\User;
-
-use App\Http\Resources\HotelResource;
+use App\Models\Stay;
 
 class StayService {
 
-    function __construct()
+    public function findAndValidAccess($stay_id,$hotel)
     {
-
-    }
-
-    public function findByParams ($request) {
         try {
-            $subdomain = $request->subdomain ?? null;
+            $stay = Stay::where('id',$stay_id)->where('hotel_id',$hotel->id)->first();
+            $checkoutDate = $stay ? Carbon::parse($stay->check_out) : null;
+            // Verifica si han pasado más de 10 días desde el checkout
 
-            $query = Hotel::where(function($query) use($subdomain){
-                if ($subdomain) {
-                    $query->where('subdomain', $subdomain);
-                }
-            });
-
-            if (!$subdomain) {
-                return null;
+            if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
+                //si no han pasado retorna la estancia
+                return $stay;
             }
-
-            $model = $query->first();
-
-            $data = new HotelResource($model);
-
-            return $model;
-
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-
-    public function findById ($id) {
-        try {
-
-            $model = Hotel::find($id);
-
-            return $model;
+            return null;
 
         } catch (\Exception $e) {
             return $e;
