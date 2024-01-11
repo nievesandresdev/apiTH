@@ -37,6 +37,24 @@ class StayController extends Controller
         }
     }
 
+    public function store (Request $request) {
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->store($hotel,$request);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            $data = new StayResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.store');
+        }
+    }
+
    
 
 }

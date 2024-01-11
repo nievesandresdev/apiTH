@@ -16,4 +16,8 @@ class Guest extends Model
         'lang_web'
     ];
 
+    public function stays()
+    {
+        return $this->belongsToMany(Stay::class);
+    }
 }
