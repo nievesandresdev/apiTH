@@ -37,10 +37,11 @@ class StayController extends Controller
         }
     }
 
-    public function store (Request $request) {
+    public function createAndInviteGuest (Request $request) {
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->store($hotel,$request);
+            $model = $this->service->createAndInviteGuest($hotel,$request);
+            return response()->json($model);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

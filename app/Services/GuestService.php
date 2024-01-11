@@ -23,7 +23,7 @@ class GuestService {
     public function saveOrUpdate($data)
     {
         try {
-            $email = $data->email;
+            return $email = $data->email;
             $name = $data->name;
             $lang = $data->language;
 
