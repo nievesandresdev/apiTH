@@ -22,7 +22,8 @@ class StayController extends Controller
     public function findAndValidAccess (Request $request) {
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->findAndValidAccess($request->stayId,$hotel);
+            $model = $this->service->findAndValidAccess($request->stayId,$hotel,$request->guestId);
+            
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

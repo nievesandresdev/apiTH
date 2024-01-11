@@ -10,7 +10,15 @@ use Carbon\Carbon;
 
 
 class GuestService {
+    public $stayAccessService;
 
+    function __construct(
+        StayAccessService $__StayAccessService
+    )
+    {
+        $this->stayAccessService = $__StayAccessService;
+    }
+    
     public function findById($id)
     {
         try {
@@ -23,7 +31,7 @@ class GuestService {
     public function saveOrUpdate($data)
     {
         try {
-            return $email = $data->email;
+            $email = $data->email;
             $name = $data->name;
             $lang = $data->language;
 
@@ -58,6 +66,7 @@ class GuestService {
 
                 if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
                     //si no han pasado retorna la estancia
+                    $this->stayAccessService->save($last_stay,$guest->id);
                     return $last_stay;
                 }
             }

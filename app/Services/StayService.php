@@ -17,15 +17,18 @@ use Illuminate\Support\Facades\Mail;
 class StayService {
     
     public $guestService;
+    public $stayAccessService;
 
     function __construct(
-        GuestService $_GuestService
+        GuestService $_GuestService,
+        StayAccessService $__StayAccessService
     )
     {
         $this->guestService = $_GuestService;
+        $this->stayAccessService = $__StayAccessService;
     }
 
-    public function findAndValidAccess($stay_id,$hotel)
+    public function findAndValidAccess($stay_id,$hotel,$guestId)
     {
         try {
             $stay = Stay::where('id',$stay_id)->where('hotel_id',$hotel->id)->first();
@@ -33,7 +36,8 @@ class StayService {
             // Verifica si han pasado más de 10 días desde el checkout
 
             if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
-                //si no han pasado retorna la estancia
+                //si no han pasado retorna la estancia y guarda el acceso en caso de no existir
+                $this->stayAccessService->save($stay,$guestId);
                 return $stay;
             }
             return null;
@@ -66,8 +70,8 @@ class StayService {
             ]);
             
             $guest->stays()->syncWithoutDetaching([$stay->id]);
-            
-            
+            //guardar acceso
+            $this->stayAccessService->save($stay,$guestId);
             //enviar mensaje al creador de la estancia
             $user = $hotel->user()->first();
             $user_id = $user->id;
@@ -94,30 +98,27 @@ class StayService {
             
             //adjutar huespedes y enviar correos
             $list_guest = $request->listGuest;
-            
-            // foreach($list_guest as $g){
+            foreach($list_guest as $g){
                 
-            //     if($g['email']){
-            //         $data = collect([
-            //             "name" => null,
-            //             "email" => $g['email'],
-            //             "language" => $request->language
-            //         ]);
+                if($g['email']){
+                    $dataGuest = new \stdClass();
+                    $dataGuest->name = null;
+                    $dataGuest->email = $g['email'];
+                    $dataGuest->language = $request->language;
+                    $guest = $this->guestService->saveOrUpdate($dataGuest);
                     
-            //         $guest = $this->guestService->saveOrUpdate($data);
-                    
-            //         $guest->stays()->syncWithoutDetaching([$stay->id]);
-            //         if($settings->guestinvite_check_email){
-            //             $data['guest_id'] = $guest->id;
-            //             $data['guest_name'] = $guest->name;
-            //             $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
-            //             $msg = prepareMessage($data,$hotel,'&subject=invited');
-            //             // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
-            //         }
-            //     }
-            // }
+                    $guest->stays()->syncWithoutDetaching([$stay->id]);
+                    if($settings->guestinvite_check_email){
+                        $data['guest_id'] = $guest->id;
+                        $data['guest_name'] = $guest->name;
+                        $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
+                        $msg = prepareMessage($data,$hotel,'&subject=invited');
+                        // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                    }
+                }
+            }
             
-            // sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
+            sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
             DB::commit();
             return $stay;
             

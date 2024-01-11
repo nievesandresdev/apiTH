@@ -3,6 +3,7 @@
 use App\Utils\Enums\EnumResponse;
 use App\Utils\Enums\InventoryError;
 use Illuminate\Http\Request;
+use Pusher\Pusher;
 
 if (!function_exists('bodyResponseRequest')) {
     /**
@@ -398,12 +399,12 @@ if (! function_exists('includeSubdomainInUrlHuesped')) {
 
 if (! function_exists('sendEventPusher')) {
     function sendEventPusher($channel,$event,$data){
-        // $pusher = new Pusher(
-        //     config('services.pusher.key'),
-        //     config('services.pusher.secret'),
-        //     config('services.pusher.id'),
-        //     ['cluster' => config('services.pusher.cluster')]
-        // );
-        // $pusher->trigger($channel, $event, $data);
+        $pusher = new Pusher(
+            config('services.pusher.key'),
+            config('services.pusher.secret'),
+            config('services.pusher.id'),
+            ['cluster' => config('services.pusher.cluster')]
+        );
+        $pusher->trigger($channel, $event, $data);
     }
 }
