@@ -121,7 +121,6 @@ class ExperienceController extends Controller
         try {
             $shortId = $request->shortId ?? null;
             $experience = $this->service->findInVIatorByShortId($shortId);
-
             if(!$experience){
                 $data = [
                     'message' => __('response.bad_request_long')
