@@ -37,7 +37,7 @@ class StaySurveyService {
                     'steps' => json_encode($request->steps)
                 ]);
             }
-            return true;
+            return $survey;
         } catch (\Exception $e) {
             $e;
         }

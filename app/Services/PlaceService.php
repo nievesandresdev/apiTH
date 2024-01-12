@@ -42,4 +42,38 @@ class PlaceService {
         }
     }
 
+    public function getPlacesBySearch($modelHotel, $search, $totalLength) {
+        try {
+            $hotelId = $modelHotel->id;
+            $cityName = $modelHotel->zone;
+            $places = Places::activeToShow()
+                ->whereVisibleByHoster($hotelId)
+                ->whereCity($cityName)
+                ->whereHas('translatePlace', function($query)use($search){
+                    if ($search) {
+                        $query->where('title','like',  ['%'.$search.'%'])
+                        ->orWhere('description','like',  ['%'.$search.'%']);
+                    }
+                })
+                ->orderByFeatured($hotelId)
+                ->limit($totalLength)->get();
+                
+            $places = $places->map(function($item){
+                $image = $item->images()->first();
+                return [
+                    'id' => $item->id,
+                    'type' => 'place',
+                    'title' => $item->translatePlace->title,
+                    'price' => 0,
+                    'slug' => null,
+                    'city' => $item->city_places,
+                    'image' => $image,
+                ];
+            })->values()->collect();
+            return $places;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
 }

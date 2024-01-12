@@ -47,6 +47,10 @@ class Products extends Model
     {
         return $this->hasOne(Activity::class)->where('language', localeCurrent());
     }
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
 
     public function toggleableHotels(){
         return $this->belongsToMany(hotel::class, 'toggle_products', 'products_id', 'hotel_id')->withPivot('order');;
@@ -120,6 +124,27 @@ class Products extends Model
                     WHEN service_featured.product_id IS NOT NULL THEN 2
                     ELSE 3
                 END');
+        }
+    }
+
+    public function scopeSearch ($query, $search)
+    {
+        if ($search) {
+            $query->whereHas('translate', function($query)use($search){
+                if ($search) {
+                    $query->where('title','like',  ['%'.$search.'%'])
+                    ->orWhere('description','like',  ['%'.$search.'%']);
+                }
+            });
+        }
+    }
+
+    public function scopeOrderByWeighing($query, $hotelId)
+    {
+        if ($hotelId) {
+            $query->join('toggle_products', 'products.id', '=', 'toggle_products.products_id')
+                ->where('toggle_products.hotel_id', $hotelId)
+                ->orderBy('toggle_products.order', 'desc');
         }
     }
 

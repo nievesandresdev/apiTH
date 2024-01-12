@@ -27,7 +27,7 @@ class StaySurveyController extends Controller
 
             $modelHotel = $request->attributes->get('hotel');
             $responseService = $this->service->store($request, $modelHotel);
-            return bodyResponseRequest(EnumResponse::ACCEPTED, true);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $responseService);
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.store');

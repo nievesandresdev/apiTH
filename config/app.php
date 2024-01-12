@@ -126,6 +126,10 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    //API VIATOR
+    'key_viator' => env('KEY_VIATOR', ''),
+    'viator' => env('API_VIATOR', 'https://api.sandbox.viator.com/partner'),
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
