@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ChatSetting;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,7 +15,9 @@ class HotelResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
+        $defaultChatSettingsArray  = defaultChatSettings();
+        $chatSettings = ChatSetting::where('hotel_id',$this->id)->first() ?? $defaultChatSettingsArray;
+        
         return [
             "id"=> $this->id,
             "name"=> $this->name,
@@ -48,6 +51,7 @@ class HotelResource extends JsonResource
             "images" => $this->imagesHotels,
             "user" => new UserResource($this->user()->first()),
             "translate" => $this->translate,
+            "chatSettings" => new ChatSettingResource($chatSettings), 
         ];
     }
 }
