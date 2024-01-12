@@ -69,7 +69,26 @@ class hotel extends Model
         return $this->hasMany(HotelOta::class);
     }
 
-// AUXILIARIES
+    public function chatSettings() {
+        return $this->hasOne(ChatSetting::class);
+    }
+    // AUXILIARIES
+
+    public function toArray()
+    {
+        $fakeChatSettings = new \stdClass();
+        $fakeChatSettings->show_guest = true;
+        $fakeChatSettings->hotel_id = $this->id;
+        $array = parent::toArray(); // Obtener todas las propiedades y relaciones
+
+        // Modificar o agregar propiedades específicas
+        $array['chat_settings'] = $this->chatSettings ?? (object)[
+            'show_guest' => $fakeChatSettings->show_guest,
+            'hotel_id' => $fakeChatSettings->hotel_id
+        ];
+
+        return $array;
+    }
 
 
 }

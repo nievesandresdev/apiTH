@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Language;
 use App\Utils\Enums\EnumResponse;
 use App\Utils\Enums\InventoryError;
 use Illuminate\Http\Request;
@@ -406,5 +407,43 @@ if (! function_exists('sendEventPusher')) {
             ['cluster' => config('services.pusher.cluster')]
         );
         $pusher->trigger($channel, $event, $data);
+    }
+}
+
+if (!function_exists('defaultChatSettings')) {
+    function defaultChatSettings() {
+        $chat_settings = new stdClass();
+        $chat_settings->name = 'Chat';
+        $chat_settings->show_guest = true;
+        $chat_settings->languages = [
+            Language::where('abbreviation', 'es')->first(),
+            Language::where('abbreviation', 'en')->first(),
+        ];
+        $chat_settings->first_available_msg = [
+            "es" => "Hola. Un miembro del personal atenderá tu consulta lo antes posible.",
+            "en" => "Hello. A member of staff will attend to your query as soon as possible.",
+            "fr" => "Salut. Un membre du personnel répondra à votre demande dans les plus brefs délais.",
+        ];
+        $chat_settings->first_available_show = true;
+        $chat_settings->not_available_msg = [
+            "es" => "Ahora mismo no contamos con personal disponible. Puedes consultar nuestro horario de disponibilidad en la barra del chat.",
+            "en" => "Right now we do not have staff available. You can check our availability hours in the chat bar.",
+            "fr" => "Pour le moment, nous n'avons pas de personnel disponible. Vous pouvez vérifier nos heures de disponibilité dans la barre de discussion.",
+        ];
+        $chat_settings->not_available_show = true;
+        $chat_settings->second_available_msg = [
+            "es" => "Perdona la tardanza, nuestro personal está ocupado ahora mismo. Intentaremos atender tu consulta cuando haya personal libre.",
+            "en" => "Sorry for the delay, our staff is busy right now. We will try to answer your question when there are free staff.",
+            "fr" => "Désolé pour le retard, notre personnel est occupé en ce moment. Nous essaierons de répondre à votre question lorsqu'il y aura du personnel libre.",
+        ];
+        $chat_settings->second_available_show = true;
+        $chat_settings->three_available_msg = [
+            "es" => "Parece que está tardando más de lo esperado, disculpa las molestias. Podrías dejarnos lo que necesitas y te responderemos lo antes posible. También te avisaremos de la respuesta por mail.",
+            "en" => "Seems to be taking longer than expected, sorry for the inconvenience. You could leave us what you need and we will reply to you as soon as possible. We will also notify you of the response by email.",
+            "fr" => "Cela semble prendre plus de temps que prévu, désolé pour le désagrément. Vous pouvez nous laisser ce dont vous avez besoin et nous vous répondrons dans les plus brefs délais. Nous vous informerons également de la réponse par e-mail.",
+        ];
+        $chat_settings->three_available_show = true;
+
+        return $chat_settings;
     }
 }
