@@ -123,6 +123,7 @@ class StayService {
             return $stay;
             
         } catch (\Exception $e) {
+            DB::rollback();
             return $e;
         }
     }
