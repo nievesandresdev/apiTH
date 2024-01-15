@@ -20,3 +20,11 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('create-stay.{id}', function ($hotel, $id) {
     return (int) $hotel->id === (int) $id;
 });
+
+Broadcast::channel('update-chat.{id}', function ($stay, $id) {
+    return (int) $stay->id === (int) $id;
+});
+
+Broadcast::channel('noti-hotel.{id}', function ($hotel, $id) {
+    return (int) $hotel->id === (int) $id;
+});

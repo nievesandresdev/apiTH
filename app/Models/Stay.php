@@ -31,4 +31,9 @@ class Stay extends Model
         return $this->belongsTo(hotel::class);
     }
 
+    public function chat()
+    {
+        return $this->morphOne(Chat::class, 'chatable');
+    }
+
 }
