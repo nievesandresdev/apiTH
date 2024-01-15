@@ -50,7 +50,7 @@ class hotel extends Model
 
     public function user()
     {
-        return $this->belongsToMany(User::class)->withPivot('manager');
+        return $this->belongsToMany(User::class);
     }
 
     public function images()

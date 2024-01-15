@@ -19,7 +19,7 @@ class ExperienceResource extends JsonResource
         
         return [
             'id' => $this->id,
-            'images' => $this->images->take(1),
+            'image' => $this->images->first(),
             'status' => $this->status,
             'destacado' => $this->destacado,
             'slug' => $this->slug,
