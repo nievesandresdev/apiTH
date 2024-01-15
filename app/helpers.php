@@ -447,3 +447,18 @@ if (!function_exists('defaultChatSettings')) {
         return $chat_settings;
     }
 }
+
+if (! function_exists('defaultChatHours')) {
+    function defaultChatHours(){
+        $chat_hours =[
+            ['day' => 'Lunes', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Martes', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Miércoles', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Jueves', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Viernes', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Sábado', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Domingo', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+        ];
+        return $chat_hours;
+    }
+}

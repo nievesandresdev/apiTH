@@ -29,6 +29,11 @@ class ChatSetting extends Model
         'second_available_msg' => 'array',
         'three_available_msg' => 'array',
     ];
+    //relations 
+    public function languages()
+    {
+        return $this->belongsToMany(Language::class);
+    }
     //attrs
     public function getShowGuestAttribute($value)
     {
