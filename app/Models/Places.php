@@ -61,6 +61,10 @@ class Places extends Model
         return $this->belongsTo(CategoriPlaces::class);
     }
 
+    public function translatePlaces()
+    {
+        return $this->hasMany('App\Models\PlaceTranslate');
+    }
     public function translatePlace()
     {
         return $this->hasOne('App\Models\PlaceTranslate')->where('language', localeCurrent());
@@ -141,6 +145,23 @@ class Places extends Model
         if ($typeQuery == 0 && !empty($typePlaceName)) {
             $query->whereDoesntHave('TypePlaces', function($query)use($typePlaceName){
                 $query->where('name', 'like', ['%' . $typePlaceName . '%']);
+            });
+        }
+    }
+
+    public function scopeOrderByWeighing($query, $hotelId)
+    {
+        if ($hotelId) {
+            $query->join('toggle_places', 'places.id', '=', 'toggle_places.places_id')
+                ->where('toggle_places.hotel_id', $hotelId)
+                ->orderBy('toggle_places.order', 'desc');
+        }
+    }
+    
+    public function scopeWhereFeaturedByHotel($query, $hotelId){
+        if ($hotelId) {
+            $query->whereHas('placeFeatured', function($query)use($hotel){
+                $query->where('hotel_id', $hotelId);
             });
         }
     }
