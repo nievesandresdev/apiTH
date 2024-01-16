@@ -19,6 +19,9 @@ class StayResource extends JsonResource
             "id"=> $this->id,
             "check_out"=> $this->check_out,
             "check_in"=> $this->check_in,
+            "room" => $this->room,
+            "hour_checkin" => $this->hour_checkin,
+            "hour_checkout" => $this->hour_checkout,
         ];
     }
 }

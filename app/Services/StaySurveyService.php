@@ -11,6 +11,7 @@ use App\Models\Facility;
 use App\Models\FacilityHoster;
 use App\Models\User;
 use App\Models\Stay;
+use App\Models\StaySurvey;
 
 use App\Http\Resources\FacilityResource;
 
@@ -18,6 +19,19 @@ class StaySurveyService {
 
     function __construct()
     {
+
+    }
+
+    public function findByParams ($request) {
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $stayId = $request->stay_id ?? null;
+            $guestId = $request->guest_id ?? null;
+            $survey = StaySurvey::where(['guest_id' => $guestId, 'stay_id' => $stayId])->first();
+            return $survey;
+        } catch (\Exception $e) {
+            $e;
+        }
 
     }
 
