@@ -13,7 +13,7 @@ use App\Models\FacilityHoster;
 use App\Models\User;
 use App\Models\CategoriPlaces;
 use App\Models\TypePlaces;
-
+use Illuminate\Support\Str;
 use App\Http\Resources\FacilityResource;
 
 class PlaceService {
@@ -78,6 +78,7 @@ class PlaceService {
                     "id" => $q->id,
                     "name" => $q->name,
                     "count_places" => $numbersPlaces,
+                    "slug" => Str::slug($q->name),
                 ];
             })->collect();
 
@@ -107,7 +108,11 @@ class PlaceService {
                 $query->where('active', 1)->where('show', 1)->orderBy('order');
             }])
             ->get();
-
+            
+            foreach($typePLacesCollection as $type){
+                $slug = Str::slug($type->name);
+                $type['slug'] = $slug;
+            }
             return $typePLacesCollection;
 
         } catch (\Exception $e) {
