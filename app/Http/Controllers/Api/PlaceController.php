@@ -64,17 +64,19 @@ class PlaceController extends Controller
             $cityName = $request->city ?? $modelHotel->zone;       
             $featured = $request->featured && $request->featured != 'false' && $request->featured != '0'; 
             $points = $request->points ?? [];
+            $all = $request->all ?? null;
 
             $typeplace = $request->typeplace ?? null;
             $categoriplace = $request->categoriplace ?? null;
 
             $dataFilter = [
                 'city' => $cityName,
+                'typeplace' => $typeplace,
+                'categoriplace' => $categoriplace,
+                'all' => $all,
                 'search' => $search,
                 'points' => $points,
                 'featured' => $featured,
-                'typeplace' => $typeplace,
-                'categoriplace' => $categoriplace
             ];
 
             $categoriesCollection = $this->service->getCategoriesByType($request, $dataFilter, $modelHotel);

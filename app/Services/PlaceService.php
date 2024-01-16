@@ -61,16 +61,22 @@ class PlaceService {
             //     $categoriplace = CategoriPlaces::where(['show' => 1, 'active' => 1])->first()->id;
             // }
 
-            $categoriplaces = CategoriPlaces::where(['show' => 1, 'active' => 1])->where('type_places_id', $typeplace)->get();
+            $categoriplaces = CategoriPlaces::where(['show' => 1, 'active' => 1]);
+            if (!$dataFilter['all']) {
+                $categoriplaces->where('type_places_id', $typeplace);
+            }
+            $categoriplaces = $categoriplaces->get();
             
             $categoriplaces = $categoriplaces->map(function($q)use($dataFilter, $modelHotel){
-                $typeplaces = TypePlaces::find($q->type_places_id);
                 $params = [
                     'city' => $dataFilter['city'],
                     'typeplace' => $q->type_places_id,
                     'categoriplace' => $q->id,
+                    'search'=>null,
+                    'points'=>[],
+                    'featured'=>false
                 ];
-                $numbersPlaces = $this->filter($dataFilter, $modelHotel)->count();
+                $numbersPlaces = $this->filter($params, $modelHotel)->count();
                 return [
                     "categori_places_id" => $q->id,
                     "city_places" => $dataFilter['city'],
