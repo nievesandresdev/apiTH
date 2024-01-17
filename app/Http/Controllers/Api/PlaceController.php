@@ -111,4 +111,16 @@ class PlaceController extends Controller
 
     }
 
+    public function getRatingCountsPlaces (Request $request) {
+
+        try {
+            $modelHotel = $request->attributes->get('hotel');
+            $data = $this->service->getRatingCountsPlaces($request, $modelHotel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getTypePlaces');
+        }
+
+    }
+
 }

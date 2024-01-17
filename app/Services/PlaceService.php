@@ -220,4 +220,29 @@ class PlaceService {
         }
     }
 
+
+    public function getRatingCountsPlaces ($request, $modelHotel) {
+        try {
+            
+            $counts = [];
+            $params = [
+                'city' => $request->city,
+                'typeplace' => $request->typeplace,
+                'categoriplace' => $request->categoriplace,
+                'search'=>null,
+                'points'=> [],
+                'featured'=>false
+            ];
+            for ($i=1; $i < 6 ; $i++) { 
+                $params['points'] = [];
+                $params['points'] = [$i];
+                $queryPlace = $this->filter($params, $modelHotel);
+                $counts[$i] = $queryPlace->count();
+            }
+            
+            return $counts;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }
