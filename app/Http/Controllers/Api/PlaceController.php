@@ -140,4 +140,13 @@ class PlaceController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getDataReviews');
         }   
     }
+
+    public function getReviewsByRating(Request $request){
+        try {
+            $data = $this->service->getReviewsByRating($request);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getReviewsByRating');
+        }   
+    }
 }

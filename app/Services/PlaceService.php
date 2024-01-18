@@ -303,4 +303,43 @@ class PlaceService {
         }
 
     }
+
+    public function getReviewsByRating($request){
+        try {
+            $place = Places::find($request->id);
+            
+            $reviews = [];
+            $fileName = str_replace('.csv', '', $place->name_file);
+            // return $place->name_file;
+            if (Storage::disk('public')->exists('reviews_places/'.$fileName.'_reviews.json')) {
+                $jsonData = Storage::disk('public')->get('reviews_places/'.$fileName.'_reviews.json');
+                $allReviews = json_decode($jsonData);
+            
+                // Filtrar las reseñas donde 'url_id' es igual a $place->url
+                $filteredReviews = [];
+                foreach ($allReviews as $review) {
+                    $rating = intval($review->general_rating);
+                    $search = intval($request->search);
+                    if(
+                        $search < 6 && $rating >= $search && $rating >= $search && $rating < ($search+1) &&
+                        isset($review->url_id) && $review->url_id == $place->url
+                    ){
+                        $filteredReviews[] = $review;
+                    }
+                    if ($search >= 6 && isset($review->url_id) && $review->url_id == $place->url) {
+                        $filteredReviews[] = $review;
+                    }
+                }
+                $reviews = $filteredReviews;
+                
+            }
+
+            return $reviews;
+        } catch (\Exception $e) {
+            // Aquí manejas la excepción
+            return response()->json([
+                'error' => 'Ocurrió un error al obtener las reseñas por rating: ' . $e->getMessage()
+            ], 500); // Puedes cambiar el código de estado HTTP según corresponda
+        }
+    }
 }
