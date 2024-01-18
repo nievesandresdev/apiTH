@@ -12,4 +12,6 @@ Route::group(['prefix' => 'place'], function () {
     Route::get('/getCategoriesByType', [PlaceController::class, 'getCategoriesByType']);
     Route::get('/getTypePlaces', [PlaceController::class, 'getTypePlaces']);
     Route::get('/getRatingCountsPlaces', [PlaceController::class, 'getRatingCountsPlaces']);
+    Route::get('/findById', [PlaceController::class, 'findById']);
+    Route::get('/getDataReviews', [PlaceController::class, 'getDataReviews']);
 });

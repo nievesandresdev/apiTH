@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\PlaceService;
 
 use App\Http\Resources\PlacePaginateResource;
-
+use App\Http\Resources\PlaceResource;
 use App\Utils\Enums\EnumResponse;
 
 class PlaceController extends Controller
@@ -111,6 +110,17 @@ class PlaceController extends Controller
 
     }
 
+    public function findById (Request $request) {
+
+        try {
+            $data = $this->service->findById($request);
+            $model = new PlaceResource($data);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findById');
+        }
+    }
+
     public function getRatingCountsPlaces (Request $request) {
 
         try {
@@ -118,9 +128,16 @@ class PlaceController extends Controller
             $data = $this->service->getRatingCountsPlaces($request, $modelHotel);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getTypePlaces');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getRatingCountsPlaces');
         }
-
     }
 
+    public function getDataReviews(Request $request){
+        try {
+            $data = $this->service->getDataReviews($request->id);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getDataReviews');
+        }   
+    }
 }

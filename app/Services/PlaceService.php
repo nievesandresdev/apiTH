@@ -13,6 +13,7 @@ use App\Models\FacilityHoster;
 use App\Models\User;
 use App\Models\CategoriPlaces;
 use App\Models\TypePlaces;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Resources\FacilityResource;
 
@@ -163,8 +164,6 @@ class PlaceService {
         return $queryPlace;
     }
 
-
-
     public function getCrosselling ($typePlaceName, $modelHotel) {
         try {
             $lengthPlaceFeatured = 12;
@@ -244,5 +243,64 @@ class PlaceService {
         } catch (\Exception $e) {
             return $e;
         }
+    }
+
+    public function findById ($request) {
+        try {
+            return Places::findOrFail($request->id);
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function getDataReviews($id){
+        $data = [
+            "ammountTotal" => 0,
+            "ammount" => [0,0,0,0,0,0],  
+            "percentaje" => [0,0,0,0,0,0],
+            "reviews" => []
+        ];
+        $reviews = [];
+        
+        try {
+            ini_set('memory_limit', '1024M');
+            $place = Places::find($id);
+            $fileName = str_replace('.csv', '', $place->name_file);
+            // return $place->name_file;
+            if (Storage::disk('public')->exists('reviews_places/'.$fileName.'_reviews.json')) {
+                $jsonData = Storage::disk('public')->get('reviews_places/'.$fileName.'_reviews.json');
+                $allReviews = json_decode($jsonData);
+            
+                // Filtrar las reseñas donde 'url_id' es igual a $place->url
+                $filteredReviews = [];
+                foreach ($allReviews as $review) {
+                    if (isset($review->url_id) && $review->url_id == $place->url) {
+                        $filteredReviews[] = $review;
+                        intval($review->general_rating) >= 1 && intval($review->general_rating) < 2 ? $data['ammount'][1]++ : '';
+                        intval($review->general_rating) >= 2 && intval($review->general_rating) < 3 ? $data['ammount'][2]++ : '';
+                        intval($review->general_rating) >= 3 && intval($review->general_rating) < 4 ? $data['ammount'][3]++ : '';
+                        intval($review->general_rating) >= 4 && intval($review->general_rating) < 5 ? $data['ammount'][4]++ : '';
+                        intval($review->general_rating) == 5 ? $data['ammount'][5]++ : '';
+                    }
+                }
+                $reviews = $filteredReviews;
+                // Calcular el puntaje de las reseñas
+                $ammount_reviews = count($filteredReviews);
+                $data['percentaje'][1] = round(floatval($data['ammount'][1] / $ammount_reviews), 2);
+                $data['percentaje'][2] = round(floatval($data['ammount'][2] / $ammount_reviews), 2);
+                $data['percentaje'][3] = round(floatval($data['ammount'][3] / $ammount_reviews), 2);
+                $data['percentaje'][4] = round(floatval($data['ammount'][4] / $ammount_reviews), 2);
+                $data['percentaje'][5] = round(floatval($data['ammount'][5] / $ammount_reviews), 2);
+            }
+            $data['ammountTotal'] = $ammount_reviews;
+            $data['reviews'] = $reviews;
+            return $data;
+        } catch (\Exception $e) {
+            // Aquí manejas la excepción
+            return response()->json([
+                'error' => 'Ocurrió un error al obtener las reseñas: ' . $e->getMessage()
+            ], 500); // Puedes cambiar el código de estado HTTP según corresponda
+        }
+
     }
 }
