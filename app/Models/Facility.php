@@ -14,4 +14,9 @@ class Facility extends Model
     ];
 
     use HasFactory;
+
+    public function translate()
+    {
+        return $this->hasOne(FacilityHosterLanguage::class)->where('language', localeCurrent());
+    }
 }
