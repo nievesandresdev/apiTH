@@ -31,13 +31,13 @@ class UtilityController extends Controller
     public function getExpAndPlace (Request $request) {
         try {
             $modelHotel = $request->attributes->get('hotel');
-            $routeName = $request->routeName;
+            $typeSearch = $request->typeSearch;
             $search = $request->search ?? null;
             $city = $modelHotel->zone;
 
             $data = collect([]);
             $totalLength = 8;
-            if($routeName == 'places.list' || $routeName == 'places.show'){
+            if($typeSearch == 'place'){
                 $responseService = $this->placeService->getPlacesBySearch ($modelHotel, $search, $totalLength);
             }else{
                 $responseService = $this->experienceService->getExperiencesBySearch($modelHotel, $search, $totalLength);
