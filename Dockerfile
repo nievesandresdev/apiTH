@@ -40,6 +40,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copy existing application directory
 COPY . /var/www/html
 
+RUN composer install
+RUN php artisan storage:link
 # Install PHP and JS dependencies
 USER root
 
