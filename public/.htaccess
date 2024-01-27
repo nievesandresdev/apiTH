@@ -3,6 +3,13 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+        Header set Access-Control-Allow-Headers "Content-Type, X-Requested-With, Authorization"
+        Header set Access-Control-Allow-Credentials "true"
+    </IfModule>
+
     RewriteEngine On
 
     # Handle Authorization Header
