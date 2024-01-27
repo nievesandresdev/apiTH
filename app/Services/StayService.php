@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\Models\Stay;
 use App\Models\StayNotificationSetting;
 use App\Services\GuestService;
+use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\Mail;
 
 class StayService {
@@ -98,22 +99,24 @@ class StayService {
             
             //adjutar huespedes y enviar correos
             $list_guest = $request->listGuest;
-            foreach($list_guest as $g){
-                
-                if($g['email']){
-                    $dataGuest = new \stdClass();
-                    $dataGuest->name = null;
-                    $dataGuest->email = $g['email'];
-                    $dataGuest->language = $request->language;
-                    $guest = $this->guestService->saveOrUpdate($dataGuest);
+            if($list_guest){
+                foreach($list_guest as $g){
                     
-                    $guest->stays()->syncWithoutDetaching([$stay->id]);
-                    if($settings->guestinvite_check_email){
-                        $data['guest_id'] = $guest->id;
-                        $data['guest_name'] = $guest->name;
-                        $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
-                        $msg = prepareMessage($data,$hotel,'&subject=invited');
-                        // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                    if($g['email']){
+                        $dataGuest = new \stdClass();
+                        $dataGuest->name = null;
+                        $dataGuest->email = $g['email'];
+                        $dataGuest->language = $request->language;
+                        $guest = $this->guestService->saveOrUpdate($dataGuest);
+                        
+                        $guest->stays()->syncWithoutDetaching([$stay->id]);
+                        if($settings->guestinvite_check_email){
+                            $data['guest_id'] = $guest->id;
+                            $data['guest_name'] = $guest->name;
+                            $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
+                            $msg = prepareMessage($data,$hotel,'&subject=invited');
+                            // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                        }
                     }
                 }
             }
@@ -125,6 +128,46 @@ class StayService {
         } catch (\Exception $e) {
             DB::rollback();
             return $e;
+        }
+    }
+
+    public function existingStayThenMatch($currentStayId,$currentGuest,$invitedEmail,$hotel){
+
+        if (!$currentStayId || !$currentGuest || !$invitedEmail || !$hotel) return;
+        try {
+            $invited = Guest::where('email',$invitedEmail)->first();
+            $invitedStay = $this->guestService->findAndValidLastStay($invited->id,$hotel);
+            $currentStayData = Stay::with('guests')->find($currentStayId);
+            if($invitedStay && $invitedStay->id !== $currentStayId){
+                DB::beginTransaction();
+                //suma de accesos entre las dos estancias
+                $currentStayAccesses = $currentStayData->uniqueAccesses()->count();
+                $invitedStayAccesses = $invitedStay->uniqueAccesses()->count();
+                $accessesSum = $currentStayAccesses + $invitedStayAccesses;
+                //tomo el numero maximo de huespedes añadido entre las dos estancias para actulizar la actual
+                //si los accesos son mayores al numero de huespedes guardado se iguala a n de accesos y se actualiza
+                $currentNumberGuest = $currentStayData->number_guests ?? 1;
+                $invitedNumberGuest = $invitedStay->number_guests ?? 1;
+                $maxNumberGuests = max($currentNumberGuest, $invitedNumberGuest);
+                if($maxNumberGuests < $accessesSum){
+                    $maxNumberGuests = $accessesSum;
+                }
+                $invitedStay->number_guests = $maxNumberGuests;
+                $invitedStay->save();
+                //relacionar huespedes actuales a la estancia del invitado
+                $currentStayData->guests()->update(['stay_id'=> $invitedStay->id]);
+                //relacionar accesos actuales a la estancia del invitado
+                $currentStayData->accesses()->update(['stay_id'=> $invitedStay->id]);
+                //eliminar estancia
+                $currentStayData->delete();
+                //retorna la estancia del invitado como nueva estancia para la sesion actual
+                DB::commit();
+                return $invitedStay;
+            }
+            return $currentStayData;
+        } catch (\Exception $e) {
+            DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingStayThenMatchSTAYSERVICES');
         }
     }
 
