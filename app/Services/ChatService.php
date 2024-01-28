@@ -16,6 +16,7 @@ use App\Models\Stay;
 use App\Http\Resources\StayResource;
 use App\Models\Chat;
 use App\Models\ChatSetting;
+use App\Models\hotel;
 
 class ChatService {
 
@@ -42,7 +43,6 @@ class ChatService {
             ]);
             $msg = $guest->chatMessages()->save($chatMessage);
             $msg->load('messageable');
-            
             if($msg){
                 $hotel = $request->attributes->get('hotel');
                 $defaultChatSettingsArray  = defaultChatSettings();
@@ -78,6 +78,21 @@ class ChatService {
                 //se envia el mensaje si el hoster no responde en 10 min
                 if($request->isAvailable && $settings->three_available_show){
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(10));//10
+                }
+
+                //se envia el mensaje si no hay agente disponible
+                if(!$request->isAvailable && $settings->not_available_show){
+                    $chatMessage = new ChatMessage([
+                        'chat_id' => $chat->id,
+                        'text' => $settings->not_available_msg[$langPage],
+                        'status' => 'Entregado',
+                        'by' => 'Hoster',
+                        'automatic' => true
+                    ]);
+
+                    $msg = $guest->chatMessages()->save($chatMessage);
+                    $msg->load('messageable');
+                    sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
                 }
             }
             DB::commit();
