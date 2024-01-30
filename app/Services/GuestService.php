@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Mail\Guest\MsgStay;
 use App\Models\Guest;
 use App\Models\StayNotificationSetting;
+use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -55,7 +56,7 @@ class GuestService {
         }
     }
 
-    public function findLastStay($id,$hotel){
+    public function findLastStayAndAccess($id,$hotel){
         
         try {
             $guest = Guest::find($id);
@@ -122,5 +123,22 @@ class GuestService {
             $msg = prepareMessage($data,$hotel);
             Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
         }
+    }
+
+    public function updateById($data){
+        if(!$data->id) return;
+
+        try{
+            $guest = Guest::find($data->id);
+            $guest->name = $data->name ?? $guest->name;
+            $guest->email = $data->email ?? $guest->email;
+            $guest->phone = $data->phone ?? $guest->phone;
+            $guest->lang_web = $data->lang_web ?? $guest->lang_web;
+            $guest->save();
+            return $guest; 
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateById');
+        }
+
     }
 }

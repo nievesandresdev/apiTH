@@ -14,6 +14,7 @@ use App\Services\PlaceService;
 // use App\Http\Resources\AutocompleteResource;
 
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\Storage;
 
 class UtilityController extends Controller
 {
@@ -47,5 +48,21 @@ class UtilityController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getExpAndPlace');
         }
     }
+
+
+    public function getPhoneCodesApi(Request $request)
+    {
+        
+        $data = json_decode(Storage::disk('local')->get('phone-codes.json'), true);
+        if($data){
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        }
+        $data = [
+            'message' => __('response.bad_request_long')
+        ];
+        return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+        
+    }
+
 
 }

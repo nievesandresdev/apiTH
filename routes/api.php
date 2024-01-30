@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'utility'], function () {
     Route::get('/getExpAndPlaceBySaearch', [UtilityController::class, 'getExpAndPlace']);
+    Route::get('/getPhoneCodesApi', [UtilityController::class, 'getPhoneCodesApi']);
 });
 
 Route::post('/send-message-to-thehoster', [ContactController::class, 'send_message_to_thehoster']);

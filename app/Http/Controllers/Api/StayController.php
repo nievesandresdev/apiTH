@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\GuestResource;
 use App\Http\Resources\StayResource;
 use App\Models\Guest;
 use App\Models\Stay;
@@ -64,7 +65,6 @@ class StayController extends Controller
     public function existingStayThenMatchAndInvite(Request $request){
         
         try {
-            return $data = new StayResource(Stay::find(76));
             $currentStay = $request->currentStay;  
             $currentGuest = $request->currentGuest;  
             $invitedEmail = $request->invitedEmail;  
@@ -86,5 +86,51 @@ class StayController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingStayThenMatchOrInvite');
         }
     }
+
+    public function getGuestsAndSortByCurrentguestId($stayId, $guestId)
+    {
+        try {
+            $data = ['message' => __('response.bad_request_long')];
+            if(!$stayId && !$guestId) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            $guests = $this->service->getGuests($stayId);
+
+            // Separa la colección en dos: uno con el guestId y otro con los restantes.
+            list($selectedGuest, $otherGuests) = $guests->partition(function ($guest) use ($guestId) {
+                return $guest->id == $guestId;
+            });
+
+            // Combina el invitado seleccionado con el frente de los otros invitados.
+            $sortedGuests = $selectedGuest->concat($otherGuests)->values();
+
+            $data = GuestResource::collection($sortedGuests);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getGuestsAndSortByCurrentguestId');
+        }
+    }
+
+    public function updateStayAndGuests(Request $request){
+        try {
+            $updateStay = $this->service->updateStayData($request);
+            $data = ['message' => __('response.bad_request_long')];
+            if(!$updateStay) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            foreach($request->listGuest as $g){
+                $data = (object) $g;
+                $updateGuest = $this->guestService->updateById($data);
+                $data = ['message' => __('response.bad_request_long')];
+                if(!$updateGuest) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, true);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateStayAndGuests');
+        }
+
+    }
+
+    
+    
+
+
+    
 
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Models\Stay;
+use App\Models\StayAccess;
 use App\Models\StayNotificationSetting;
 use App\Services\GuestService;
 use App\Utils\Enums\EnumResponse;
@@ -171,7 +172,31 @@ class StayService {
         }
     }
 
-    
+    public function getGuests($stayId){
+        
+        try{
+            $stay = Stay::find($stayId);
+            $guests = $stay->guests()->get();
+            return $guests;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getGuests');
+        }
+    }
 
+    public function updateStayData($request){
+        
+        try{
+            $stay = Stay::find($request->stayId);
+            $stay->room = $request->room;
+            $stay->number_guests = $request->numberGuests;
+            $stay->check_in = $request->checkDate['start'];
+            $stay->check_out = $request->checkDate['end'];
+            $stay->save();
+            return $stay;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateStayData');
+        }
+
+    }
     
 }
