@@ -54,7 +54,6 @@ class StayService {
         try {
             DB::beginTransaction();
             $guestId = $request->guestId;
-            
             $guest = Guest::find($guestId);
             
             $langs = [
@@ -70,10 +69,10 @@ class StayService {
                 'check_in' => $request->checkDate['start'],
                 'check_out' => $request->checkDate['end']
             ]);
-            
             $guest->stays()->syncWithoutDetaching([$stay->id]);
             //guardar acceso
             $this->stayAccessService->save($stay,$guestId);
+            
             //enviar mensaje al creador de la estancia
             $user = $hotel->user()->first();
             $user_id = $user->id;
@@ -92,38 +91,35 @@ class StayService {
                 'hotel_name' => $hotel->name,
                 'hotel_id' => $hotel->id,
             ];
-            
             if($settings->guestcreate_check_email){
                 $msg = prepareMessage($data,$hotel);
                 // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
             }
-            
+            DB::commit();
             //adjutar huespedes y enviar correos
-            $list_guest = $request->listGuest;
-            if($list_guest){
-                foreach($list_guest as $g){
+            $list_guest = $request->listGuest ?? [];
+            foreach($list_guest as $g){
+                
+                if($g['email']){
+                    $dataGuest = new \stdClass();
+                    $dataGuest->name = null;
+                    $dataGuest->email = $g['email'];
+                    $dataGuest->language = $request->language;
+                    $guest = $this->guestService->saveOrUpdate($dataGuest);
                     
-                    if($g['email']){
-                        $dataGuest = new \stdClass();
-                        $dataGuest->name = null;
-                        $dataGuest->email = $g['email'];
-                        $dataGuest->language = $request->language;
-                        $guest = $this->guestService->saveOrUpdate($dataGuest);
-                        
-                        $guest->stays()->syncWithoutDetaching([$stay->id]);
-                        if($settings->guestinvite_check_email){
-                            $data['guest_id'] = $guest->id;
-                            $data['guest_name'] = $guest->name;
-                            $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
-                            $msg = prepareMessage($data,$hotel,'&subject=invited');
-                            // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
-                        }
+                    $guest->stays()->syncWithoutDetaching([$stay->id]);
+                    if($settings->guestinvite_check_email){
+                        $stay = $this->existingStayThenMatch($stay->id,$guestId,$g['email'],$hotel);
+                        $data['stay_id'] = $stay->id;
+                        $data['guest_id'] = $guest->id;
+                        $data['guest_name'] = $guest->name;
+                        $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
+                        $msg = prepareMessage($data,$hotel,'&subject=invited');
+                        // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
                     }
                 }
             }
-            
             sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
-            DB::commit();
             return $stay;
             
         } catch (\Exception $e) {
@@ -138,12 +134,17 @@ class StayService {
         try {
             $invited = Guest::where('email',$invitedEmail)->first();
             $invitedStay = $this->guestService->findAndValidLastStay($invited->id,$hotel);
-            $currentStayData = Stay::with('guests')->find($currentStayId);
+            $currentStayData = Stay::find($currentStayId);
             if($invitedStay && $invitedStay->id !== $currentStayId){
                 DB::beginTransaction();
                 //suma de accesos entre las dos estancias
-                $currentStayAccesses = $currentStayData->uniqueAccesses()->count();
-                $invitedStayAccesses = $invitedStay->uniqueAccesses()->count();
+                $currentStayData;
+                $currentStayAccesses = StayAccess::where('stay_id', $currentStayData->id)
+                    ->distinct('guest_id')
+                    ->count(['guest_id']);
+                $invitedStayAccesses = StayAccess::where('stay_id', $invitedStay->id)
+                    ->distinct('guest_id')
+                    ->count(['guest_id']);
                 $accessesSum = $currentStayAccesses + $invitedStayAccesses;
                 //tomo el numero maximo de huespedes añadido entre las dos estancias para actulizar la actual
                 //si los accesos son mayores al numero de huespedes guardado se iguala a n de accesos y se actualiza
@@ -168,7 +169,7 @@ class StayService {
             return $currentStayData;
         } catch (\Exception $e) {
             DB::rollback();
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingStayThenMatchSTAYSERVICES');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingStayThenMatch');
         }
     }
 
@@ -197,6 +198,28 @@ class StayService {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateStayData');
         }
 
+    }
+
+    public function deleteGuestOfStay($stayId,$guestId){
+        try{
+            $stay = Stay::find($stayId);
+            if($guestId && $stay){
+                DB::beginTransaction();
+                //eliminar relacion a estancia
+                $stay->guests()->detach($guestId);
+                //elimniar accesos
+                StayAccess::where('stay_id',$stayId)->where('guest_id',$guestId)->delete();
+                //disminuir n huespdes
+                $stay->number_guests = (intval($stay->number_guests)-1);
+                $stay->save();
+                DB::commit();
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) {
+            DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteGuestOfStay');
+        }
     }
     
 }

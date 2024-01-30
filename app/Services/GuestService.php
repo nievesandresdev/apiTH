@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\Guest\MsgStay;
 use App\Models\Guest;
+use App\Models\hotel;
 use App\Models\StayNotificationSetting;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
@@ -121,7 +122,7 @@ class GuestService {
                 'hotel_id' => $hotel->id,
             ];
             $msg = prepareMessage($data,$hotel);
-            Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+            // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
         }
     }
 
@@ -139,6 +140,35 @@ class GuestService {
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateById');
         }
+    }
 
+    public function sendEmail($stayId,$guestId,$guestEmail,$hotelId,$concept = null){
+
+        try{
+            $hotel = hotel::find($hotelId);
+            $user_id = $hotel->user[0]->id;
+            $settings =  StayNotificationSetting::where('user_id',$user_id)->first();
+            if(!$settings){
+                $settingsArray = settingsNotyStayDefault();
+                $settings = (object)$settingsArray;
+            }
+            $guest = Guest::find($guestId);
+            $msg_text = $settings->guestinvite_msg_email[$guest->lang_web];
+            $data = [
+                'stay_id' => $stayId,
+                'guest_id' => $guest->id,
+                'stay_lang' => $guest->lang_web,
+                'msg_text' => $msg_text,
+                'guest_name' => $guest->name,
+                'hotel_name' => $hotel->name,
+                'hotel_id' => $hotel->id,
+            ];
+            
+            $msg = prepareMessage($data,$hotel);
+            // Mail::to($guestEmail)->send(new MsgStay($msg,$hotel));
+            return  true;   
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.sendEmail');
+        }
     }
 }

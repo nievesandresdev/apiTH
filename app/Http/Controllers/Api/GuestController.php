@@ -14,10 +14,10 @@ class GuestController extends Controller
     public $service;
 
     function __construct(
-        GuestService $_StayService
+        GuestService $_GuestService
     )
     {
-        $this->service = $_StayService;
+        $this->service = $_GuestService;
     }
 
     public function findById ($id) {
@@ -57,7 +57,7 @@ class GuestController extends Controller
     public function findLastStay($id,Request $request) {
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->findLastStay($id,$hotel);
+            $model = $this->service->findLastStayAndAccess($id,$hotel);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -70,6 +70,19 @@ class GuestController extends Controller
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findLastStay');
         }
+    }
+
+    public function sendMailTo(Request $request){
+        $stayId = $request->stayId;
+        $guestId = $request->guestId;
+        $guestEmail = $request->guestEmail;
+        $hotelId = $request->attributes->get('hotel')->id;
+
+        $data = ['message' => __('response.bad_request_long')];
+        if(!$stayId || !$guestId || !$guestEmail) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+        
+        $sent = $this->service->sendEmail($stayId,$guestId,$guestEmail,$hotelId);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $sent);
     }
 
 }

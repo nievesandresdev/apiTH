@@ -8,6 +8,7 @@ use App\Http\Resources\StayResource;
 use App\Models\Guest;
 use App\Models\Stay;
 use App\Services\GuestService;
+use App\Services\StayAccessService;
 use Illuminate\Http\Request;
 
 use App\Utils\Enums\EnumResponse;
@@ -16,13 +17,16 @@ class StayController extends Controller
 {
     public $service;
     public $guestService; 
+    public $stayAccessService; 
     function __construct(
         StayService $_StayService,
-        GuestService $_GuestService
+        GuestService $_GuestService,
+        StayAccessService $_stayAccessService
     )
     {
         $this->service = $_StayService;
         $this->guestService =  $_GuestService;
+        $this->stayAccessService = $_stayAccessService;
     }
 
     public function findAndValidAccess (Request $request) {
@@ -47,7 +51,7 @@ class StayController extends Controller
     public function createAndInviteGuest (Request $request) {
         try {
             $hotel = $request->attributes->get('hotel');
-            return $model = $this->service->createAndInviteGuest($hotel,$request);
+            $model = $this->service->createAndInviteGuest($hotel,$request);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -58,7 +62,7 @@ class StayController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.store');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.createAndInviteGuest');
         }
     }
 
@@ -69,11 +73,13 @@ class StayController extends Controller
             $currentGuest = $request->currentGuest;  
             $invitedEmail = $request->invitedEmail;  
             $hotel = $request->attributes->get('hotel');
-            $newCurrentStay = $this->service->existingStayThenMatch($currentStay, $currentGuest, $invitedEmail,$hotel);
-            //envia invitacion
             // Intenta encontrar un huésped con el correo proporcionado, o lo crea si no existe
-            $guest = Guest::firstOrCreate(['email' => $invitedEmail], []);
-            $this->guestService->inviteToStayByEmail($guest,$newCurrentStay->id,$hotel);
+            $invited = Guest::firstOrCreate(['email' => $invitedEmail], []);
+            $newCurrentStay = $this->service->existingStayThenMatch($currentStay, $currentGuest, $invitedEmail,$hotel);
+            //agregar acceso del invitado
+            $this->stayAccessService->save($newCurrentStay,$invited->id);
+            //envia invitacion
+            $this->guestService->inviteToStayByEmail($invited,$newCurrentStay->id,$hotel);
             if(!$newCurrentStay){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -83,7 +89,7 @@ class StayController extends Controller
             $data = new StayResource($newCurrentStay);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingStayThenMatchOrInvite');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingStayThenMatchAndInvite');
         }
     }
 
@@ -128,9 +134,16 @@ class StayController extends Controller
     }
 
     
-    
-
-
+    public function deleteGuestOfStay($stayId, $guestId){
+        try{
+            $delete = $this->service->deleteGuestOfStay($stayId, $guestId);
+            $data = ['message' => __('response.bad_request_long')];
+            if(!$delete) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, true);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteGuestOfStay');
+        }
+    }
     
 
 }

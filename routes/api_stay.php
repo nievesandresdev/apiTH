@@ -10,4 +10,5 @@ Route::group(['prefix' => 'stay'], function () {
     Route::post('/existingStayThenMatchAndInvite', [StayController::class, 'existingStayThenMatchAndInvite']);
     Route::get('/getGuestsAndSortByCurrentguestIdApi/{stayId}/{guestId}', [StayController::class, 'getGuestsAndSortByCurrentguestId']);
     Route::post('/updateStayAndGuests', [StayController::class, 'updateStayAndGuests']);
+    Route::post('/deleteGuestOfStay/{stayId}/{guestId}', [StayController::class, 'deleteGuestOfStay']);
 });
