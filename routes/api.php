@@ -29,3 +29,9 @@ Route::group(['prefix' => 'utility'], function () {
 
 Route::post('/send-message-to-thehoster', [ContactController::class, 'send_message_to_thehoster']);
 Route::post('/create-dns-record', [SubdomainController::class, 'createDNSRecord']);
+
+
+//test
+Route::group(['prefix' => 'utility'], function () {
+    Route::get('/test', [UtilityController::class, 'test']);
+});

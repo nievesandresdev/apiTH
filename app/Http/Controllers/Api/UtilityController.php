@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\hotel;
 use Illuminate\Http\Request;
 
 use App\Models\TypePlaces;
@@ -62,6 +63,13 @@ class UtilityController extends Controller
         ];
         return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
         
+    }
+
+    public function test()
+    {
+        $hotel = hotel::find(191);
+        $url = url('webapp?e=77&g=9&lang=es');
+        return includeSubdomainInUrlHuesped($url,$hotel);
     }
 
 

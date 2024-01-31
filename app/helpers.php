@@ -385,16 +385,15 @@ if (! function_exists('includeSubdomainInUrlHuesped')) {
         if (!$url || !$hotel) return;
         $production  = config('app.production');
         $url_base_huesped = $url;
-        if ($production) {
-            $host_parts =  explode('//', $url);
-            $url_base_huesped = $host_parts[0].'//'.$hotel['subdomain'].'.'.$host_parts[1];
-            return $url_base_huesped;
+        if ($production) {   
+            $resultURL = str_replace('api', $hotel['subdomain'], $url_base_huesped);
+            return $resultURL;
         }
-        if (!$production) {
-            $request = Request::create($url_base_huesped);
-            $updated_url = $request->fullUrlWithQuery(['subdomain' => $hotel['subdomain']]);
-            return $updated_url;
-        }
+        $guest_path  = config('app.guest_path');
+        $request = Request::create($url_base_huesped);
+        $updated_url = $request->fullUrlWithQuery(['subdomain' => $hotel['subdomain']]);
+        $resultURL = str_replace(url(''), $guest_path, $updated_url);
+        return $resultURL;
     }
 }
 
