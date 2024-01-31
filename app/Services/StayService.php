@@ -109,7 +109,7 @@ class StayService {
                     
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
                     if($settings->guestinvite_check_email){
-                        $stay = $this->existingStayThenMatch($stay->id,$guestId,$g['email'],$hotel);
+                        // $stay = $this->existingStayThenMatch($stay->id,$guestId,$g['email'],$hotel);
                         $data['stay_id'] = $stay->id;
                         $data['guest_id'] = $guest->id;
                         $data['guest_name'] = $guest->name;
@@ -138,7 +138,6 @@ class StayService {
             if($invitedStay && $invitedStay->id !== $currentStayId){
                 DB::beginTransaction();
                 //suma de accesos entre las dos estancias
-                $currentStayData;
                 $currentStayAccesses = StayAccess::where('stay_id', $currentStayData->id)
                     ->distinct('guest_id')
                     ->count(['guest_id']);
