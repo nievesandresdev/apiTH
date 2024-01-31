@@ -3,19 +3,19 @@
         Options -MultiViews -Indexes
     </IfModule>
 
-    <IfModule mod_headers.c>
-        Header always set Access-Control-Allow-Origin "*"
-        Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT, PATCH"
-        Header always set Access-Control-Allow-Headers "*"
-        Header always set Access-Control-Allow-Credentials "true"
-        Header always set Access-Control-Expose-Headers "*"
-        Header always set Access-Control-Max-Age "1000"
+    #<IfModule mod_headers.c>
+     #   Header always set Access-Control-Allow-Origin "*"
+      #  Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT, PATCH"
+      #  Header always set Access-Control-Allow-Headers "*"
+      #  Header always set Access-Control-Allow-Credentials "true"
+      #  Header always set Access-Control-Expose-Headers "*"
+      #  Header always set Access-Control-Max-Age "1000"
 
         # Manejar las solicitudes OPTIONS directamente en Apache sin pasar al backend
-        RewriteEngine On
-        RewriteCond %{REQUEST_METHOD} OPTIONS
-        RewriteRule ^ - [R=204,L,E=nolog:1]
-    </IfModule>
+       # RewriteEngine On
+       # RewriteCond %{REQUEST_METHOD} OPTIONS
+       # RewriteRule ^ - [R=204,L,E=nolog:1]
+    #</IfModule>
 
     RewriteEngine On
 
