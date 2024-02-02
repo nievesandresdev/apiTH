@@ -93,7 +93,7 @@ class StayService {
             ];
             if($settings->guestcreate_check_email){
                 $msg = prepareMessage($data,$hotel);
-                Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
             }
             DB::commit();
             //adjutar huespedes y enviar correos
@@ -115,7 +115,7 @@ class StayService {
                         $data['guest_name'] = $guest->name;
                         $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
-                        Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                        // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
                     }
                 }
             }
