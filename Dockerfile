@@ -62,8 +62,6 @@ COPY 000-default.conf /etc/apache2/sites-available/
 # Enable site
 RUN a2ensite 000-default.conf
 
-#RUN php artisan migrate
-
 #RUN php artisan passport:install
 
 #RUN php artisan storage:link
