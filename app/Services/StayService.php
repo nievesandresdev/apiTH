@@ -129,7 +129,7 @@ class StayService {
     }
 
     public function existingStayThenMatch($currentStayId,$currentGuest,$invitedEmail,$hotel){
-
+        
         if (!$currentStayId || !$currentGuest || !$invitedEmail || !$hotel) return;
         try {
             $invited = Guest::where('email',$invitedEmail)->first();
@@ -164,6 +164,11 @@ class StayService {
                 //retorna la estancia del invitado como nueva estancia para la sesion actual
                 DB::commit();
                 return $invitedStay;
+            }else{
+                //agregar acceso del invitado
+                $this->stayAccessService->save($currentStayData,$invited->id);
+                //agregar relacion a estancia
+                $invited->stays()->syncWithoutDetaching([$currentStayData->id]);
             }
             return $currentStayData;
         } catch (\Exception $e) {

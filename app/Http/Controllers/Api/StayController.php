@@ -76,8 +76,6 @@ class StayController extends Controller
             // Intenta encontrar un huésped con el correo proporcionado, o lo crea si no existe
             $invited = Guest::firstOrCreate(['email' => $invitedEmail], []);
             $newCurrentStay = $this->service->existingStayThenMatch($currentStay, $currentGuest, $invitedEmail,$hotel);
-            //agregar acceso del invitado
-            $this->stayAccessService->save($newCurrentStay,$invited->id);
             //envia invitacion
             $this->guestService->inviteToStayByEmail($invited,$newCurrentStay->id,$hotel);
             if(!$newCurrentStay){
