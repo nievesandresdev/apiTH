@@ -46,6 +46,8 @@ USER root
 # Set ownership of storage directory
 RUN chown -R www-data:www-data storage
 
+RUN php artisan migrate
+
 # Configure php.ini
 RUN echo "upload_max_filesize = 500M" >> /usr/local/etc/php/php.ini
 RUN echo "post_max_size = 500M" >> /usr/local/etc/php/php.ini
