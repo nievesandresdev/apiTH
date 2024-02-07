@@ -29,12 +29,50 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            Route::middleware('api')
+            Route::middleware(['api', 'setlocale', 'loadHotel'])
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
+            // Rutas modulares
+            $this->loadApiRoutes();
+
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
-        });
+        });    
     }
+
+    /**
+        * Cargar rutas de API modulares.
+    */
+
+    protected function loadApiRoutes(): void
+    {
+        Route::middleware('api')
+             ->group(function () {
+                 $this->loadModuleRoutes('api_hotel.php');
+                 $this->loadModuleRoutes('api_hotel_ota.php');
+                 $this->loadModuleRoutes('api_stay.php');
+                 $this->loadModuleRoutes('api_guest.php');
+                 $this->loadModuleRoutes('api_stay_survey.php');
+                 $this->loadModuleRoutes('api_city.php');
+                 $this->loadModuleRoutes('api_experience.php');
+                 $this->loadModuleRoutes('api_place.php');
+                 $this->loadModuleRoutes('api_chat.php');
+                 $this->loadModuleRoutes('api_utils.php');
+                 $this->loadModuleRoutes('api_facility.php');
+                 // Aquí puedes añadir más archivos de módulos según sea necesario
+             });
+    }
+
+    /**
+        * Cargar un archivo de rutas de módulo específico.
+    *
+        * @param string $routeFile Nombre del archivo de rutas.
+    */
+    protected function loadModuleRoutes(string $routeFile): void
+    {
+        Route::prefix('api')
+             ->group(base_path('routes/' . $routeFile));
+    }
+
 }

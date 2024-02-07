@@ -56,6 +56,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'guest_path' => env('LOCAL_GUEST_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 
@@ -125,6 +126,10 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
+
+    //API VIATOR
+    'key_viator' => env('KEY_VIATOR', ''),
+    'viator' => env('API_VIATOR', 'https://api.sandbox.viator.com/partner'),
 
     /*
     |--------------------------------------------------------------------------
