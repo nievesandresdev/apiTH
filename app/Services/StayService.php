@@ -93,32 +93,44 @@ class StayService {
             ];
             if($settings->guestcreate_check_email){
                 $msg = prepareMessage($data,$hotel);
-                // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
             }
             DB::commit();
             //adjutar huespedes y enviar correos
             $list_guest = $request->listGuest ?? [];
             foreach($list_guest as $g){
-                
+                DB::beginTransaction();
                 if($g['email']){
                     $dataGuest = new \stdClass();
                     $dataGuest->name = null;
                     $dataGuest->email = $g['email'];
                     $dataGuest->language = $request->language;
                     $guest = $this->guestService->saveOrUpdate($dataGuest);
-                    
-                    $guest->stays()->syncWithoutDetaching([$stay->id]);
+
                     if($settings->guestinvite_check_email){
-                        // $stay = $this->existingStayThenMatch($stay->id,$guestId,$g['email'],$hotel);
+                        $stay = $this->existingStayThenMatch($stay->id,$g['email'],$hotel);
                         $data['stay_id'] = $stay->id;
                         $data['guest_id'] = $guest->id;
                         $data['guest_name'] = $guest->name;
                         $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
-                        // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                        Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
                     }
+                    $guest->stays()->syncWithoutDetaching([$stay->id]);
+                    $this->stayAccessService->save($stay,$guestId);
                 }
+                DB::commit();
             }
+            //actualizar accesos
+            $currentStayAccesses = StayAccess::where('stay_id', $stay->id)
+                    ->distinct('guest_id')
+                    ->count(['guest_id']);
+            $stay = Stay::find($stay->id);
+            if($currentStayAccesses > intval($stay->number_guests)){
+                $stay->number_guests = $currentStayAccesses;
+                $stay->save();
+            }
+            
             sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
             return $stay;
             
@@ -128,9 +140,9 @@ class StayService {
         }
     }
 
-    public function existingStayThenMatch($currentStayId,$currentGuest,$invitedEmail,$hotel){
+    public function existingStayThenMatch($currentStayId,$invitedEmail,$hotel){
         
-        if (!$currentStayId || !$currentGuest || !$invitedEmail || !$hotel) return;
+        if (!$currentStayId || !$invitedEmail || !$hotel) return;
         try {
             $invited = Guest::where('email',$invitedEmail)->first();
             $invitedStay = $this->guestService->findAndValidLastStay($invited->id,$hotel);
