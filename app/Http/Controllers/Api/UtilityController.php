@@ -69,6 +69,7 @@ class UtilityController extends Controller
     {
         $hotel = hotel::find(191);
         $url = url('webapp?e=77&g=9&lang=es');
+        echo config('app.env')."<br>";
         return includeSubdomainInUrlHuesped($url,$hotel);
     }
 

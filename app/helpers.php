@@ -383,9 +383,9 @@ if (! function_exists('prepareMessage')) {
 if (! function_exists('includeSubdomainInUrlHuesped')) {
     function includeSubdomainInUrlHuesped($url, $hotel){
         if (!$url || !$hotel) return;
-        $production  = config('app.production');
+        $production  = config('app.env');
         $url_base_huesped = $url;
-        if ($production) {   
+        if ($production == 'test' || $production == 'pro') {   
             $resultURL = str_replace('api', $hotel['subdomain'], $url_base_huesped);
             return $resultURL;
         }
