@@ -209,6 +209,7 @@ class StayService {
             $stay->check_in = $request->checkDate['start'];
             $stay->check_out = $request->checkDate['end'];
             $stay->save();
+            
             return $stay;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateStayData');

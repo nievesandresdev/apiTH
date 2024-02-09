@@ -111,12 +111,12 @@ class GuestService {
             $settingsArray = settingsNotyStayDefault();
             $settings = (object)$settingsArray;
         }
-        if($settings->guestcreate_check_email){
+        if($settings->guestinvite_check_email){
             $data = [
                 'stay_id' => $stayId,
                 'guest_id' => $guest->id,
                 'stay_lang' => $guest->lang_web,
-                'msg_text' => $settings->guestcreate_msg_email[$guest->lang_web],
+                'msg_text' => $settings->guestinvite_msg_email[$guest->lang_web],
                 'guest_name' => $guest->name,
                 'hotel_name' => $hotel->name,
                 'hotel_id' => $hotel->id,
