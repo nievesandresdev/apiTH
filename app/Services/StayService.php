@@ -93,7 +93,7 @@ class StayService {
             ];
             if($settings->guestcreate_check_email){
                 $msg = prepareMessage($data,$hotel);
-                Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
             }
             DB::commit();
             //adjutar huespedes y enviar correos
@@ -114,7 +114,7 @@ class StayService {
                         $data['guest_name'] = $guest->name;
                         $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
-                        Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                        // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
                     $this->stayAccessService->save($stay,$guestId);
@@ -227,8 +227,8 @@ class StayService {
                 //elimniar accesos
                 StayAccess::where('stay_id',$stayId)->where('guest_id',$guestId)->delete();
                 //disminuir n huespdes
-                $stay->number_guests = (intval($stay->number_guests)-1);
-                $stay->save();
+                // $stay->number_guests = (intval($stay->number_guests)-1);
+                // $stay->save();
                 DB::commit();
                 return true;
             }

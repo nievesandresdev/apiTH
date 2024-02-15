@@ -14,7 +14,7 @@ class SubdomainController extends Controller
 
         if ($environment == "pro" || $environment == "pre" || $environment == "test") {
             $result = $this->createCloudflareDNSRecord($subdomain, $environment);
-            return $result;
+            
             if ($result == "success") {
                 return response()->json(['message' => 'Subdominio creado.']);
             } else {
@@ -32,7 +32,7 @@ class SubdomainController extends Controller
         $api_key = env('API_KEY_CLOUDFLARE');
         $zone_id = env('ZONE_ID_CLOUDFLARE');
         $ip_address = env('IP_ADDRESS');
-        return $email." ".$api_key." ".$zone_id." ".$ip_address." ".
+        
         // Construye el nombre completo del subdominio
         $full_domain = $subdomain . ($environment == "pro" ? '' : '.' . $environment) . '.thehoster.io';
 
