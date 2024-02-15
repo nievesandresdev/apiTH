@@ -32,7 +32,7 @@ class SubdomainController extends Controller
         $api_key = env('API_KEY_CLOUDFLARE');
         $zone_id = env('ZONE_ID_CLOUDFLARE');
         $ip_address = env('IP_ADDRESS');
-        return $email." ".$api_key." ".$zone_id." ".$ip_address." ".
+        
         // Construye el nombre completo del subdominio
         $full_domain = $subdomain . ($environment == "pro" ? '' : '.' . $environment) . '.thehoster.io';
 
