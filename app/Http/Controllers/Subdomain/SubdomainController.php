@@ -14,7 +14,7 @@ class SubdomainController extends Controller
 
         if ($environment == "pro" || $environment == "pre" || $environment == "test") {
             $result = $this->createCloudflareDNSRecord($subdomain, $environment);
-            return $result;
+            
             if ($result == "success") {
                 return response()->json(['message' => 'Subdominio creado.']);
             } else {
