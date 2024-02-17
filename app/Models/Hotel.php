@@ -72,6 +72,11 @@ class hotel extends Model
     public function chatSettings() {
         return $this->hasOne(ChatSetting::class);
     }
+
+    public function chatMessages()
+    {
+        return $this->morphMany(ChatMessage::class, 'messageable');
+    }
     // AUXILIARIES
 
     public function toArray()
