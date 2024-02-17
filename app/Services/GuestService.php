@@ -166,6 +166,7 @@ class GuestService {
             
             $msg = prepareMessage($data,$hotel);
             // Mail::to($guestEmail)->send(new MsgStay($msg,$hotel));
+            //
             return  true;   
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.sendEmail');
