@@ -185,7 +185,7 @@ class PlaceService {
         }
     }
 
-    public function getPlacesBySearch($modelHotel, $search, $totalLength) {
+    public function getPlacesBySearch($modelHotel, $search, $totalLength, $typePlace, $categoryPlace) {
         try {
             $hotelId = $modelHotel->id;
             $cityName = $modelHotel->zone;
@@ -198,6 +198,12 @@ class PlaceService {
                         ->orWhere('description','like',  ['%'.$search.'%']);
                     }
                 })
+                ->when($typePlace, function ($query) use ($typePlace) {
+                    return $query->where('type_places_id', $typePlace);
+                })
+                ->when($categoryPlace, function ($query) use ($categoryPlace) {
+                    return $query->where('categori_places_id', $categoryPlace);
+                })
                 ->orderByFeatured($hotelId)
                 ->limit($totalLength)->get();
                 
@@ -206,6 +212,8 @@ class PlaceService {
                 return [
                     'id' => $item->id,
                     'type' => 'place',
+                    'type_places_id' => $item->type_places_id,
+                    'categori_places_id' => $item->categori_places_id,
                     'title' => $item->translatePlace->title,
                     'price' => 0,
                     'slug' => null,

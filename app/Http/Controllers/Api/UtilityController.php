@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ChatMessage;
 use App\Models\hotel;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,7 @@ use App\Services\PlaceService;
 // use App\Http\Resources\AutocompleteResource;
 
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class UtilityController extends Controller
@@ -34,13 +36,15 @@ class UtilityController extends Controller
         try {
             $modelHotel = $request->attributes->get('hotel');
             $typeSearch = $request->typeSearch;
+            $typePlace = $request->typePlace;
+            $categoryPlace = $request->categoryPlace;
             $search = $request->search ?? null;
             $city = $modelHotel->zone;
 
             $data = collect([]);
             $totalLength = 8;
             if($typeSearch == 'place'){
-                $responseService = $this->placeService->getPlacesBySearch ($modelHotel, $search, $totalLength);
+                $responseService = $this->placeService->getPlacesBySearch ($modelHotel, $search, $totalLength, $typePlace, $categoryPlace);
             }else{
                 $responseService = $this->experienceService->getExperiencesBySearch($modelHotel, $search, $totalLength);
             };
@@ -67,10 +71,22 @@ class UtilityController extends Controller
 
     public function test()
     {
-        $hotel = hotel::find(191);
-        $url = url('webapp?e=77&g=9&lang=es');
-        echo config('app.env')."<br>";
-        return includeSubdomainInUrlHuesped($url,$hotel);
+        return $message = ChatMessage::with('chat')->find(68);
+        Log::info('Automatic MSG '.$message->chat->pending);
+        if($message->chat->pending){
+            $chatMessage = new ChatMessage([
+                'chat_id' => null,
+                'text' => null,
+                'status' => 'Entregado',
+                'by' => 'Hoster',
+                'automatic' => true
+            ]);
+
+            // $hotel = hotel::find(191);
+            // $msg = $hotel->chatMessages()->save($chatMessage);
+            // $msg->load('messageable');
+            // sendEventPusher('private-update-chat.' . $this->stay_id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
+        }
     }
 
 
