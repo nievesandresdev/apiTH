@@ -122,7 +122,7 @@ class GuestService {
                 'hotel_id' => $hotel->id,
             ];
             $msg = prepareMessage($data,$hotel);
-            // Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+            Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
         }
     }
 
@@ -165,7 +165,7 @@ class GuestService {
             ];
             
             $msg = prepareMessage($data,$hotel);
-            // Mail::to($guestEmail)->send(new MsgStay($msg,$hotel));
+            Mail::to($guestEmail)->send(new MsgStay($msg,$hotel));
             //
             return  true;   
         } catch (\Exception $e) {
