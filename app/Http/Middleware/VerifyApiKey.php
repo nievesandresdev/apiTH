@@ -12,7 +12,7 @@ class VerifyApiKey
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $apiKey = $request->header('X-API-KEY');
+        $apiKey = $request->header('x-key-api');
         $envApiKey = config('app.x_key_api');
 
         if (!$apiKey || !$envApiKey || ($apiKey !== $envApiKey)) {
