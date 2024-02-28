@@ -130,7 +130,9 @@ return [
     'key_viator' => env('KEY_VIATOR', ''),
     'viator' => env('API_VIATOR', 'https://api.sandbox.viator.com/partner'),
 
-    /*
+    'x_key_api' => env('X_KEY_API', null),
+
+    /*n
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
     |--------------------------------------------------------------------------
