@@ -13,6 +13,7 @@ use App\Models\FacilityHoster;
 use App\Models\User;
 use App\Models\CategoriPlaces;
 use App\Models\TypePlaces;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Resources\FacilityResource;
 
@@ -163,8 +164,6 @@ class PlaceService {
         return $queryPlace;
     }
 
-
-
     public function getCrosselling ($typePlaceName, $modelHotel) {
         try {
             $lengthPlaceFeatured = 12;
@@ -186,7 +185,7 @@ class PlaceService {
         }
     }
 
-    public function getPlacesBySearch($modelHotel, $search, $totalLength) {
+    public function getPlacesBySearch($modelHotel, $search, $totalLength, $typePlace, $categoryPlace) {
         try {
             $hotelId = $modelHotel->id;
             $cityName = $modelHotel->zone;
@@ -199,6 +198,12 @@ class PlaceService {
                         ->orWhere('description','like',  ['%'.$search.'%']);
                     }
                 })
+                ->when($typePlace, function ($query) use ($typePlace) {
+                    return $query->where('type_places_id', $typePlace);
+                })
+                ->when($categoryPlace, function ($query) use ($categoryPlace) {
+                    return $query->where('categori_places_id', $categoryPlace);
+                })
                 ->orderByFeatured($hotelId)
                 ->limit($totalLength)->get();
                 
@@ -207,6 +212,8 @@ class PlaceService {
                 return [
                     'id' => $item->id,
                     'type' => 'place',
+                    'type_places_id' => $item->type_places_id,
+                    'categori_places_id' => $item->categori_places_id,
                     'title' => $item->translatePlace->title,
                     'price' => 0,
                     'slug' => null,
@@ -220,4 +227,127 @@ class PlaceService {
         }
     }
 
+
+    public function getRatingCountsPlaces ($request, $modelHotel) {
+        try {
+            
+            $counts = [];
+            $params = [
+                'city' => $request->city,
+                'typeplace' => $request->typeplace,
+                'categoriplace' => $request->categoriplace,
+                'search'=>null,
+                'points'=> [],
+                'featured'=>false
+            ];
+            for ($i=1; $i < 6 ; $i++) { 
+                $params['points'] = [];
+                $params['points'] = [$i];
+                $queryPlace = $this->filter($params, $modelHotel);
+                $counts[$i] = $queryPlace->count();
+            }
+            
+            return $counts;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function findById ($request) {
+        try {
+            return Places::findOrFail($request->id);
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function getDataReviews($id){
+        $data = [
+            "ammountTotal" => 0,
+            "ammount" => [0,0,0,0,0,0],  
+            "percentaje" => [0,0,0,0,0,0],
+            "reviews" => []
+        ];
+        $reviews = [];
+        
+        try {
+            ini_set('memory_limit', '1024M');
+            $place = Places::find($id);
+            $fileName = str_replace('.csv', '', $place->name_file);
+            // return $place->name_file;
+            if (Storage::disk('public')->exists('reviews_places/'.$fileName.'_reviews.json')) {
+                $jsonData = Storage::disk('public')->get('reviews_places/'.$fileName.'_reviews.json');
+                $allReviews = json_decode($jsonData);
+            
+                // Filtrar las reseñas donde 'url_id' es igual a $place->url
+                $filteredReviews = [];
+                foreach ($allReviews as $review) {
+                    if (isset($review->url_id) && $review->url_id == $place->url) {
+                        $filteredReviews[] = $review;
+                        intval($review->general_rating) >= 1 && intval($review->general_rating) < 2 ? $data['ammount'][1]++ : '';
+                        intval($review->general_rating) >= 2 && intval($review->general_rating) < 3 ? $data['ammount'][2]++ : '';
+                        intval($review->general_rating) >= 3 && intval($review->general_rating) < 4 ? $data['ammount'][3]++ : '';
+                        intval($review->general_rating) >= 4 && intval($review->general_rating) < 5 ? $data['ammount'][4]++ : '';
+                        intval($review->general_rating) == 5 ? $data['ammount'][5]++ : '';
+                    }
+                }
+                $reviews = $filteredReviews;
+                // Calcular el puntaje de las reseñas
+                $ammount_reviews = count($filteredReviews);
+                $data['percentaje'][1] = round(floatval($data['ammount'][1] / $ammount_reviews), 2);
+                $data['percentaje'][2] = round(floatval($data['ammount'][2] / $ammount_reviews), 2);
+                $data['percentaje'][3] = round(floatval($data['ammount'][3] / $ammount_reviews), 2);
+                $data['percentaje'][4] = round(floatval($data['ammount'][4] / $ammount_reviews), 2);
+                $data['percentaje'][5] = round(floatval($data['ammount'][5] / $ammount_reviews), 2);
+            }
+            $data['ammountTotal'] = $ammount_reviews;
+            $data['reviews'] = $reviews;
+            return $data;
+        } catch (\Exception $e) {
+            // Aquí manejas la excepción
+            return response()->json([
+                'error' => 'Ocurrió un error al obtener las reseñas: ' . $e->getMessage()
+            ], 500); // Puedes cambiar el código de estado HTTP según corresponda
+        }
+
+    }
+
+    public function getReviewsByRating($request){
+        try {
+            $place = Places::find($request->id);
+            
+            $reviews = [];
+            $fileName = str_replace('.csv', '', $place->name_file);
+            // return $place->name_file;
+            if (Storage::disk('public')->exists('reviews_places/'.$fileName.'_reviews.json')) {
+                $jsonData = Storage::disk('public')->get('reviews_places/'.$fileName.'_reviews.json');
+                $allReviews = json_decode($jsonData);
+            
+                // Filtrar las reseñas donde 'url_id' es igual a $place->url
+                $filteredReviews = [];
+                foreach ($allReviews as $review) {
+                    $rating = intval($review->general_rating);
+                    $search = intval($request->search);
+                    if(
+                        $search < 6 && $rating >= $search && $rating >= $search && $rating < ($search+1) &&
+                        isset($review->url_id) && $review->url_id == $place->url
+                    ){
+                        $filteredReviews[] = $review;
+                    }
+                    if ($search >= 6 && isset($review->url_id) && $review->url_id == $place->url) {
+                        $filteredReviews[] = $review;
+                    }
+                }
+                $reviews = $filteredReviews;
+                
+            }
+
+            return $reviews;
+        } catch (\Exception $e) {
+            // Aquí manejas la excepción
+            return response()->json([
+                'error' => 'Ocurrió un error al obtener las reseñas por rating: ' . $e->getMessage()
+            ], 500); // Puedes cambiar el código de estado HTTP según corresponda
+        }
+    }
 }

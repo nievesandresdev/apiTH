@@ -383,18 +383,17 @@ if (! function_exists('prepareMessage')) {
 if (! function_exists('includeSubdomainInUrlHuesped')) {
     function includeSubdomainInUrlHuesped($url, $hotel){
         if (!$url || !$hotel) return;
-        $production  = config('app.production');
+        $production  = config('app.env');
         $url_base_huesped = $url;
-        if ($production) {
-            $host_parts =  explode('//', $url);
-            $url_base_huesped = $host_parts[0].'//'.$hotel['subdomain'].'.'.$host_parts[1];
-            return $url_base_huesped;
+        if ($production == 'test' || $production == 'pro') {   
+            $resultURL = str_replace('api', $hotel['subdomain'], $url_base_huesped);
+            return $resultURL;
         }
-        if (!$production) {
-            $request = Request::create($url_base_huesped);
-            $updated_url = $request->fullUrlWithQuery(['subdomain' => $hotel['subdomain']]);
-            return $updated_url;
-        }
+        $guest_path  = config('app.guest_path');
+        $request = Request::create($url_base_huesped);
+        $updated_url = $request->fullUrlWithQuery(['subdomain' => $hotel['subdomain']]);
+        $resultURL = str_replace(url(''), $guest_path, $updated_url);
+        return $resultURL;
     }
 }
 
@@ -445,5 +444,20 @@ if (!function_exists('defaultChatSettings')) {
         $chat_settings->three_available_show = true;
 
         return $chat_settings;
+    }
+}
+
+if (! function_exists('defaultChatHours')) {
+    function defaultChatHours(){
+        $chat_hours =[
+            ['day' => 'Lunes', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Martes', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Miércoles', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Jueves', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Viernes', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Sábado', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+            ['day' => 'Domingo', 'active' => true, 'horary' => [['start'=>'00:00','end'=>'23:59']]],
+        ];
+        return $chat_hours;
     }
 }

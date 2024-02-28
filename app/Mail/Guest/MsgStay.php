@@ -32,7 +32,7 @@ class MsgStay extends Mailable
     public function build()
     {
         return $this->from("info@".$this->hotel->subdomain.".com", $this->hotel->name)
-                    ->subject($this->hotel->name)->view('Mails.hoster.guest.msgStay');
+                    ->subject($this->hotel->name)->view('Mails.guest.msgStay');
         
     }
 }

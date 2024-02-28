@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\CategoriPlaces;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,13 +19,26 @@ class PlaceResource extends JsonResource
 
         $modelHotel = $request->attributes->get('hotel');
 
+        $firstCategoryPlace = CategoriPlaces::where('type_places_id',$this->typePlaces->id)->first();
+        $firstCategoryPlace = $firstCategoryPlace->id ?? null;
         return [
             'id' => $this->id,
             'title' => $this->translatePlace->title ?? '',
             'description' => $this->translatePlace->description ?? '',
             'datos_interes' => $this->translatePlace->datos_interes ?? '',
-            'place_images' => $this->images->take(1),
+            'address' => $this->address,
+            'metting_point_latitude' => $this->metting_point_latitude,
+            'metting_point_longitude' => $this->metting_point_longitude,
+            'place_images' => $this->images,
             'type_place' => $this->typePlaces,
+            'range_prices' => $this->range_prices,
+            'type_cuisine' => $this->type_cuisine,
+            'url_menu' => $this->url_menu,
+            'web_link' => $this->web_link,
+            'phone_wheretoeat' => $this->phone_wheretoeat,
+            'email_wheretoeat' => $this->email_wheretoeat,
+            'range_numeric_prices' => $this->range_numeric_prices,
+            'diet_specifications' => $this->diet_specifications,
             'city' => \Str::slug($this->city_places),
             'recommendation_admin' => $this->recommendation_admin,
             'categori_places_id' => $this->categori_places_id,
@@ -33,6 +47,7 @@ class PlaceResource extends JsonResource
             'featured' => $this->featured,
             'selection_admin' => $this->selection_admin,
             'category' => $this->categoriPlaces()->first()->name ?? null,
+            'first_category_place' => $firstCategoryPlace,
             'place_featured' => $this->placeFeatured()->where('hotel_id', $modelHotel->id)->first(),
             'recommended' => $this->recomendations()->where('hotel_id', $modelHotel->id)->first(),
             'recomendations' => $this->recomendations()->where('hotel_id', $modelHotel->id)->first(),

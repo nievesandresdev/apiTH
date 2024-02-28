@@ -17,8 +17,10 @@ class FacilityResource extends JsonResource
         return [
             'id' => $this->id,
             'image' => $this->images->first(),
-            'title' => $this?->title,
-            'translate' => $this->translate,
+            'images' => $this->images,
+            'title' => $this->translate->title,
+            'description' => $this->translate->description,
+            'schedule' => $this->translate->schedule,
         ];
     }
 }

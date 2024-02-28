@@ -36,4 +36,14 @@ class Stay extends Model
         return $this->morphOne(Chat::class, 'chatable');
     }
 
+    public function accesses()
+    {
+        return $this->hasMany(StayAccess::class);
+    }
+
+    public function guests()
+    {
+        return $this->belongsToMany(Guest::class);
+    }
+
 }

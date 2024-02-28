@@ -31,4 +31,32 @@ class FacilityService {
             return $e;
         }
     }
+
+    public function getAll ($modelHotel) {
+        try {
+            $facilities = FacilityHoster::with('images')
+                ->where('hotel_id',$modelHotel->id)
+                ->where(['status' => 1, 'select' => 1])
+                ->get();
+                
+            return $facilities;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function findById ($id, $modelHotel) {
+        try {
+            $facility = FacilityHoster::with('images')
+                ->where('id',$id)
+                ->where('hotel_id',$modelHotel->id)
+                ->where(['status' => 1, 'select' => 1])
+                ->first();
+                
+            return $facility;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    
 }

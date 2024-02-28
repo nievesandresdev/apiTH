@@ -24,6 +24,11 @@ class ChatMessage extends Model
         return $this->morphTo();
     }
 
+    public function chat()
+    {
+        return $this->belongsTo(Chat::class);
+    }
+
     //attributes
     public function getAutomaticAttribute($value)
     {

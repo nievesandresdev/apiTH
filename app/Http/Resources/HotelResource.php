@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ChatHour;
 use App\Models\ChatSetting;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,7 +17,11 @@ class HotelResource extends JsonResource
     public function toArray(Request $request): array
     {
         $defaultChatSettingsArray  = defaultChatSettings();
-        $chatSettings = ChatSetting::where('hotel_id',$this->id)->first() ?? $defaultChatSettingsArray;
+        $chatSettings = ChatSetting::with('languages')->where('hotel_id',$this->id)->first() ?? $defaultChatSettingsArray;
+
+        $defaultChatHours = defaultChatHours();
+        $chatHours = ChatHour::where('hotel_id',$this->id)->get() ?? $defaultChatHours;
+        
         
         return [
             "id"=> $this->id,
@@ -26,6 +31,7 @@ class HotelResource extends JsonResource
             "zone"=> $this->zone,
             "category"=> $this->category,
             "image"=> $this->image,
+            "images" => $this->images,
             "phone"=> $this->phone,
             "email"=> $this->email,
             "latitude"=> $this->latitude,
@@ -48,10 +54,10 @@ class HotelResource extends JsonResource
             "favicon" => $this->favicon,
             "show_experiences" => $this->show_experiences,
             "subdomain" => $this->subdomain,
-            "images" => $this->imagesHotels,
             "user" => new UserResource($this->user()->first()),
             "translate" => $this->translate,
             "chatSettings" => new ChatSettingResource($chatSettings), 
+            "chatHours" => $chatHours, 
         ];
     }
 }
