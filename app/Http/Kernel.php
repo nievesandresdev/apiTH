@@ -23,6 +23,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\SetLocale::class,
         \App\Http\Middleware\LoadHotel::class,
+        \App\Http\Middleware\VerifyApiKey::class,
     ];
 
     /**
@@ -70,5 +71,6 @@ class Kernel extends HttpKernel
         'setlocale' => \App\Http\Middleware\SetLocale::class,
         'setlocale' => \App\Http\Middleware\SetLocale::class,
         'loadHotel' => \App\Http\Middleware\LoadHotel::class,
+        'verifyApiKey' => \App\Http\Middleware\VerifyApiKey::class,
     ];
 }

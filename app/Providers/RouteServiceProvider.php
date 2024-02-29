@@ -10,18 +10,6 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * The path to your application's "home" route.
-     *
-     * Typically, users are redirected here after authentication.
-     *
-     * @var string
-     */
-    public const HOME = '/home';
-
-    /**
-     * Define your route model bindings, pattern filters, and other route configuration.
-     */
     public function boot(): void
     {
         RateLimiter::for('api', function (Request $request) {
@@ -29,7 +17,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            Route::middleware(['api', 'setlocale', 'loadHotel'])
+            Route::middleware(['api', 'setlocale', 'loadHotel', 'authStatic'])
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
             // Rutas modulares
@@ -40,10 +28,6 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
         });    
     }
-
-    /**
-        * Cargar rutas de API modulares.
-    */
 
     protected function loadApiRoutes(): void
     {
@@ -65,11 +49,6 @@ class RouteServiceProvider extends ServiceProvider
              });
     }
 
-    /**
-        * Cargar un archivo de rutas de módulo específico.
-    *
-        * @param string $routeFile Nombre del archivo de rutas.
-    */
     protected function loadModuleRoutes(string $routeFile): void
     {
         Route::prefix('api')

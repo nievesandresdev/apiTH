@@ -12,11 +12,6 @@ use App\Http\Resources\HotelResource;
 
 class LoadHotel
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
         $hotelSubdomain = $request->header('Hotel-SUBDOMAIN');
