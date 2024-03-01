@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Query;
 use App\Models\QuerySetting;
 use App\Models\Stay;
+use App\Http\Resources\QueryResource;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +16,32 @@ class QueryServices {
     function __construct()
     {
 
+    }
+
+    public function findByParams ($request) {
+        try {
+            $stayId = $request->stayId ?? null;
+            $guestId = $request->guestId ?? null;
+
+            if (!$stayId || !$guestId) return null;
+
+            $query = Query::where(function($query) use($stayId, $guestId){
+                if ($stayId) {
+                    $query->where('stay_id', $stayId);
+                }
+                if ($guestId) {
+                    $query->where('guest_id', $guestId);
+                }
+            });
+            $model = $query->first();
+
+            $data = new QueryResource($model);
+
+            return $model;
+
+        } catch (\Exception $e) {
+            return $e;
+        }
     }
 
     //obtener periodo actual para la consulta
@@ -39,7 +66,6 @@ class QueryServices {
             
             //fecha actual
             $now = Carbon::now();
-            
             if ($now->lessThan($checkinDateTime)) {
                 return 'pre-stay';
             }
@@ -49,9 +75,6 @@ class QueryServices {
             if ($now->greaterThanOrEqualTo($postStayStart) && $now->lessThanOrEqualTo($postStayEnd)) {
                 return 'post-stay';
             }
-
-            // Si se pasa el período de post-stay visible
-            return 'hide';
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCurrentPeriod');
         }

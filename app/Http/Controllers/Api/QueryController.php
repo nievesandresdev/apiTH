@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Query;
 use App\Services\QueryServices;
 use App\Services\QuerySettingsServices;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ class QueryController extends Controller
         $this->settingsService = $settingsService;
     }
 
+    
 
     public function getCurrentPeriod(Request $request){
         
@@ -47,9 +49,16 @@ class QueryController extends Controller
     public function firstOrCreate(Request $request){
         
         try {
+            $hotel = $request->attributes->get('hotel');
+            $settings = $this->settingsService->getAll($hotel->id);
+            $period = $request->period;
+            
+            if($period !== 'post-stay'){
+                $periodKey = str_replace("-", "_", $period).'_activate';
+                if(!$settings->$periodKey) return;
+            }
             $stayId = $request->stayId;
             $guestId = $request->guestId;
-            $period = $request->period;
             $model = $this->service->firstOrCreate($stayId, $guestId, $period);
             if(!$model){
                 $data = [
@@ -69,16 +78,16 @@ class QueryController extends Controller
         try {
             $stayId = $request->stayId;
             $guestId = $request->guestId;
-            $period = $request->period;
-            $collection = $this->service->getResponses($stayId, $guestId, $period);
+            $collection = $this->service->getResponses($stayId, $guestId);
             
-            if(!$collection){
+            if(!count($collection)){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }else{
                 $collection = $collection->sortByDesc('created_at');
+                $collection = $collection->values();
             }
             
             return bodyResponseRequest(EnumResponse::ACCEPTED, $collection);
@@ -106,6 +115,31 @@ class QueryController extends Controller
         }
     }
 
-    
+    public function existingPendingQuery(Request $request){
+
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $settings = $this->settingsService->getAll($hotel->id);
+
+            
+            $stayId = $request->stayId;
+            $currenPeriod = $this->service->getCurrentPeriod($hotel,$stayId);
+            if(!$currenPeriod) return;
+            if($currenPeriod !== 'post-stay'){
+                $periodKey = str_replace("-", "_", $currenPeriod).'_activate';
+                if(!$settings->$periodKey) return;
+            }
+            
+            $query = $this->service->findByParams($request);
+            $response = false;
+            if(!$query) $response = true;
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $response);
+            
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingPendigQuery');
+        }
+
+        return $currenPeriod;
+    }
 
 }

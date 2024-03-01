@@ -81,7 +81,10 @@ class ChatController extends Controller
         try {
             $model = $this->service->unreadMsgs($request);
             if(!$model){
-                return false;
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
