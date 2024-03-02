@@ -512,7 +512,7 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "fr" => "Nous sommes heureux que vous ayez apprécié votre séjour dans notre hôtel ! Nous apprécions sincèrement vos commentaires et espérons que vous apprécierez à nouveau un séjour parmi nous bientôt.",
         ];
         $queriesTextDefault->post_stay_thanks_normal = [
-            "es" => "Lamentamos que tu estancia no haya sido perfecta. Nos ayudaría conocer tu opinión para entender la situación, es muy importante para nosotros",
+            "es" => "Lamentamos que tu estancia no haya sido perfecta. Nos ayudaría conocer tu opinión para entender la situación, es muy importante para nosotros.",
             "en" => "We are sorry that your stay was not perfect. It would help us to know your opinion to understand the situation, it is very important for us",
             "fr" => "Nous sommes désolés que votre séjour n'ait pas été parfait. Cela nous aiderait à connaître votre avis pour comprendre la situation, c'est très important pour nous",
         ];
