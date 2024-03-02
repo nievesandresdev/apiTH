@@ -124,13 +124,14 @@ class QueryController extends Controller
             
             $stayId = $request->stayId;
             $currenPeriod = $this->service->getCurrentPeriod($hotel,$stayId);
-            if(!$currenPeriod) return;
+            if(!$currenPeriod) return bodyResponseRequest(EnumResponse::ACCEPTED, false);
             if($currenPeriod !== 'post-stay'){
                 $periodKey = str_replace("-", "_", $currenPeriod).'_activate';
-                if(!$settings->$periodKey) return;
+                if(!$settings->$periodKey)  return bodyResponseRequest(EnumResponse::ACCEPTED, false);
             }
-            
+            $request->merge(['period' => $currenPeriod]);
             $query = $this->service->findByParams($request);
+            
             $response = false;
             if(!$query) $response = true;
             return bodyResponseRequest(EnumResponse::ACCEPTED, $response);

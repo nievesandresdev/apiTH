@@ -22,15 +22,17 @@ class QueryServices {
         try {
             $stayId = $request->stayId ?? null;
             $guestId = $request->guestId ?? null;
+            $period = $request->period ?? null;
 
-            if (!$stayId || !$guestId) return null;
-
-            $query = Query::where(function($query) use($stayId, $guestId){
+            $query = Query::where(function($query) use($stayId, $guestId, $period){
                 if ($stayId) {
                     $query->where('stay_id', $stayId);
                 }
                 if ($guestId) {
                     $query->where('guest_id', $guestId);
+                }
+                if ($period) {
+                    $query->where('period', $period);
                 }
             });
             $model = $query->first();
