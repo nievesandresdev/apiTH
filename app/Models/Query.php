@@ -16,8 +16,13 @@ class Query extends Model
         'answered',
         'qualification',
         'comment',
+        'attended',
+        'visited'
     ];
     
+    protected $casts = [
+        'comment' => 'array',
+    ];
 
     //attrs
     public function getSeenAttribute($value)

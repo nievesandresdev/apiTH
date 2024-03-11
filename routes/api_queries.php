@@ -15,4 +15,5 @@ Route::group(['prefix' => 'query'], function () {
     Route::get('/getRecentlySortedResponses', [QueryController::class, 'getRecentlySortedResponses']);
     Route::post('/saveResponse', [QueryController::class, 'saveResponse']);
     Route::get('/existingPendingQuery', [QueryController::class, 'existingPendingQuery']);
+    Route::post('/visited', [QueryController::class, 'visited']);
 });

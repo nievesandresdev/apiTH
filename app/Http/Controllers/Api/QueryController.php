@@ -130,10 +130,11 @@ class QueryController extends Controller
                 if(!$settings->$periodKey)  return bodyResponseRequest(EnumResponse::ACCEPTED, false);
             }
             $request->merge(['period' => $currenPeriod]);
+            $request->merge(['visited' => false]);
             $query = $this->service->findByParams($request);
             
             $response = false;
-            if(!$query) $response = true;
+            if($query) $response = true;
             return bodyResponseRequest(EnumResponse::ACCEPTED, $response);
             
         } catch (\Exception $e) {
@@ -142,5 +143,28 @@ class QueryController extends Controller
 
         return $currenPeriod;
     }
+
+    public function visited(Request $request){
+
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $stayId = $request->stayId;
+            $guestId = $request->guestId;
+            $period = $this->service->getCurrentPeriod($hotel,$stayId);
+            if(!$period) return bodyResponseRequest(EnumResponse::ACCEPTED, false);
+
+            $request->merge(['period' => $period]);
+            $query = $this->service->findByParams($request);
+            if(!$query) return bodyResponseRequest(EnumResponse::ACCEPTED, false);
+            $queryId = $query->id;
+
+            $query = $this->service->updateParams( $queryId, [ 'visited' => true ] );
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $query);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingPendigQuery');
+        }
+    }
+
+    
 
 }

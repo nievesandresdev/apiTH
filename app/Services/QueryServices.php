@@ -10,12 +10,16 @@ use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Services\ChatGPTService;
+
 
 class QueryServices {
 
-    function __construct()
-    {
+    protected $chatGPTService;
 
+    public function __construct(ChatGPTService $chatGPTService)
+    {
+        $this->chatGPTService = $chatGPTService;
     }
 
     public function findByParams ($request) {
@@ -23,8 +27,9 @@ class QueryServices {
             $stayId = $request->stayId ?? null;
             $guestId = $request->guestId ?? null;
             $period = $request->period ?? null;
+            $visited = $request->visited ?? 'null';
 
-            $query = Query::where(function($query) use($stayId, $guestId, $period){
+            $query = Query::where(function($query) use($stayId, $guestId, $period, $visited){
                 if ($stayId) {
                     $query->where('stay_id', $stayId);
                 }
@@ -34,6 +39,13 @@ class QueryServices {
                 if ($period) {
                     $query->where('period', $period);
                 }
+                if ($period) {
+                    $query->where('period', $period);
+                }
+                if ($visited !== 'null') {
+                    $query->where('visited', $visited);
+                }
+                
             });
             $model = $query->first();
 
@@ -43,6 +55,17 @@ class QueryServices {
 
         } catch (\Exception $e) {
             return $e;
+        }
+    }
+
+    public function updateParams($id, array $params)
+    {
+        try {
+            $query = Query::findOrFail($id);
+            $query->update($params);
+            return $query; 
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateParams');
         }
     }
 
@@ -107,10 +130,12 @@ class QueryServices {
 
     public function saveResponse ($id,$request) {
         try{
+            $comment = $this->chatGPTService->translateQueryMessage($request->comment);
+            
             $query = Query::find($id);
             $query->answered = true;
             $query->qualification = $request->qualification;
-            $query->comment = $request->comment;
+            $query->comment = $comment;
             $query->save();
             return $query; 
         } catch (\Exception $e) {

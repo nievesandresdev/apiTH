@@ -69,25 +69,7 @@ class UtilityController extends Controller
         
     }
 
-    public function test()
-    {
-        return $message = ChatMessage::with('chat')->find(68);
-        Log::info('Automatic MSG '.$message->chat->pending);
-        if($message->chat->pending){
-            $chatMessage = new ChatMessage([
-                'chat_id' => null,
-                'text' => null,
-                'status' => 'Entregado',
-                'by' => 'Hoster',
-                'automatic' => true
-            ]);
-
-            // $hotel = hotel::find(191);
-            // $msg = $hotel->chatMessages()->save($chatMessage);
-            // $msg->load('messageable');
-            // sendEventPusher('private-update-chat.' . $this->stay_id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
-        }
-    }
+    
 
 
 }

@@ -1,0 +1,22 @@
+{
+    "name": "consideration_translation",
+    "description": "This function automates the translation process for messages received at a hotel, performing three key tasks:\n1. Detect the language of the message, using the ISO 639-1 language code.\n2. Translate the message into Spanish.\n3. Translate the message into English.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "detectedLanguage": {
+                "type": "string",
+                "description": "Detected ISO 639-1 code language goes here"
+            },
+            "spanishTranslation": {
+                "type": "string",
+                "description": "Translation into Spanish goes here"
+            },
+            "englishTranslation": {
+                "type": "string",
+                "description": "Translation into English goes here"
+            }
+        },
+        "required": ["detectedLanguage", "spanishTranslation", "englishTranslation"]
+    }
+}
