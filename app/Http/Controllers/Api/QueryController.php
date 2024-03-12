@@ -99,9 +99,9 @@ class QueryController extends Controller
 
     public function saveResponse(Request $request){
         try {
-            
+            $hotel = $request->attributes->get('hotel');
             $queryId = $request->queryId;
-            $save = $this->service->saveResponse($queryId,$request);
+            $save = $this->service->saveResponse( $queryId, $request, $hotel->id);
             
             if(!$save){
                 $data = [

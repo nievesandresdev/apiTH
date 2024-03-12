@@ -128,7 +128,7 @@ class QueryServices {
         }
     }
 
-    public function saveResponse ($id,$request) {
+    public function saveResponse ($id,$request,$hotelId) {
         try{
             $comment = $this->chatGPTService->translateQueryMessage($request->comment);
             
@@ -138,6 +138,8 @@ class QueryServices {
             $query->comment = $comment;
             $query->save();
             return $query; 
+            sendEventPusher('notify-send-query.' . $hotelId, 'App\Events\NotifySendQueryEvent', []);
+            return 'list';
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveAnswer');
         }

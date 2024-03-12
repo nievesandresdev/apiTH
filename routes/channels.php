@@ -28,3 +28,7 @@ Broadcast::channel('update-chat.{id}', function ($stay, $id) {
 Broadcast::channel('noti-hotel.{id}', function ($hotel, $id) {
     return (int) $hotel->id === (int) $id;
 });
+
+Broadcast::channel('notify-send-query.{id}', function ($hotel, $id) {
+    return (int) $hotel->id === (int) $id;
+});
