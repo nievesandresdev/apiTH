@@ -105,14 +105,16 @@ class QueryServices {
         }
     }
 
-    public function saveResponse ($id,$request) {
+    public function saveResponse ($id,$request,$hotelId) {
         try{
-            $query = Query::find($id);
-            $query->answered = true;
-            $query->qualification = $request->qualification;
-            $query->comment = $request->comment;
-            $query->save();
-            return $query; 
+            // $query = Query::find($id);
+            // $query->answered = true;
+            // $query->qualification = $request->qualification;
+            // $query->comment = $request->comment;
+            // $query->save();
+            // return $query; 
+            sendEventPusher('notify-send-query.' . $hotelId, 'App\Events\NotifySendQueryEvent', []);
+            return 'list';
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveAnswer');
         }
