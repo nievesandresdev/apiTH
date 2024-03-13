@@ -66,7 +66,10 @@ class ChatGPTService
                 }
         
                 // Retorna el JSON de las traducciones
-                return $translations;
+                return [
+                   "translations" => $translations,
+                   "responseLang" => $detectedLanguage,
+                ];
             } else {
                 // Manejo de error
                 return response()->json(['error' => 'Could not decode arguments'], 422);

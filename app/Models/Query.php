@@ -17,7 +17,9 @@ class Query extends Model
         'qualification',
         'comment',
         'attended',
-        'visited'
+        'visited',
+        'response_lang',
+        'responded_at'
     ];
     
     protected $casts = [

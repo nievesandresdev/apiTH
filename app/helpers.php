@@ -525,19 +525,34 @@ if (! function_exists('postStayqueriesTextDefault')) {
     }
 }
 
+if (! function_exists('queryNotifyDefault')) {
+    function queryNotifyDefault(){        
+        $queriesNotifyDefault = new stdClass();
+        $queriesNotifyDefault->notify_to_hoster = [
+            "notify_when_guest_send_via_platform" => true,
+            "notify_when_guest_send_via_email" => false,
+            "notify_later_when_guest_send_via_platform" => true,
+            "notify_later_when_guest_send_via_email" => false,
+        ];
+        return $queriesNotifyDefault;
+    }
+}
+
 if (! function_exists('queriesTextDefault')) {
     function queriesTextDefault(){  
         $queriesTexts1 = preStayqueriesTextDefault();
         $queriesTexts2 = inStayqueriesTextDefault();
         $queriesTexts3 = postStayqueriesTextDefault();
+        $queriesSettingsNotify = queryNotifyDefault();
 
         // Convertimos los objetos a arrays
         $array1 = get_object_vars($queriesTexts1);
         $array2 = get_object_vars($queriesTexts2);
         $array3 = get_object_vars($queriesTexts3);
+        $array4 = get_object_vars($queriesSettingsNotify);
 
         // Fusionamos los arrays
-        $mergedArray = array_merge($array1, $array2, $array3);
+        $mergedArray = array_merge($array1, $array2, $array3,$array4);
 
         // Convertimos el array resultante de nuevo a un objeto
         return (object)$mergedArray;

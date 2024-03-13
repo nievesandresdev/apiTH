@@ -6,20 +6,29 @@ use App\Models\Query;
 use App\Models\QuerySetting;
 use App\Models\Stay;
 use App\Http\Resources\QueryResource;
+use App\Jobs\Queries\NotifyPendingQuery;
+use App\Mail\Queries\NewFeedback;
+use App\Models\hotel;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Services\ChatGPTService;
+use Illuminate\Support\Facades\Mail;
 
 
 class QueryServices {
 
     protected $chatGPTService;
+    public $settings;
 
-    public function __construct(ChatGPTService $chatGPTService)
+    public function __construct(
+        ChatGPTService $chatGPTService,
+        QuerySettingsServices $_QuerySettingsServices
+    )
     {
         $this->chatGPTService = $chatGPTService;
+        $this->settings = $_QuerySettingsServices;
     }
 
     public function findByParams ($request) {
@@ -128,18 +137,54 @@ class QueryServices {
         }
     }
 
-    public function saveResponse ($id,$request,$hotelId) {
+    public function saveResponse ($id, $request, $hotel) {
         try{
-            $comment = $this->chatGPTService->translateQueryMessage($request->comment);
             
+            $response = $this->chatGPTService->translateQueryMessage($request->comment);
+            $comment = $response["translations"];
+            $responseLang = $response["responseLang"];
             $query = Query::find($id);
             $query->answered = true;
             $query->qualification = $request->qualification;
+            $query->response_lang = $responseLang;
+            $query->responded_at= now();
             $query->comment = $comment;
             $query->save();
+            
+            $settings = $this->settings->notifications($hotel->id);
+            
+            $periodUrl = $query->period;
+            if($periodUrl == 'in-stay') $periodUrl = 'stay';
+            $stay = Stay::find($request->stayId);
+            $stay->pending_queries_seen = true;
+            $stay->save();
+
+            $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id;
+            
+            if($settings->notify_to_hoster['notify_when_guest_send_via_platform']){
+                sendEventPusher('notify-send-query.' . $hotel->id, 'App\Events\NotifySendQueryEvent', 
+                [
+                    "urlQuery" => $urlQuery,
+                    "title" => "Nuevo feedback",
+                    "text" => "Tienes un nuevo feedback",
+                ]
+                );   
+            }
+            
+            if($settings->notify_to_hoster['notify_when_guest_send_via_email']){
+                $checkinFormat = Carbon::createFromFormat('Y-m-d', $stay->check_in)->format('d/m/Y');
+                $checkoutFormat = Carbon::createFromFormat('Y-m-d', $stay->check_out)->format('d/m/Y');
+                $dates = "$checkinFormat - $checkoutFormat";
+                Mail::to("andresdreamerf@gmail.com")->send(new NewFeedback($dates, $urlQuery, $hotel , 'new'));    
+            }
+
+            $via_platform = $settings->notify_to_hoster['notify_later_when_guest_send_via_platform'];
+            $via_email = $settings->notify_to_hoster['notify_later_when_guest_send_via_email'];
+            if($via_platform || $via_email){
+                NotifyPendingQuery::dispatch($hotel->id, $stay->id, $via_platform, $via_email)->delay(now()->addMinutes(10));
+            }
+
             return $query; 
-            sendEventPusher('notify-send-query.' . $hotelId, 'App\Events\NotifySendQueryEvent', []);
-            return 'list';
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveAnswer');
         }

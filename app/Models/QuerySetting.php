@@ -21,6 +21,7 @@ class QuerySetting extends Model
         'post_stay_thanks_good',
         'post_stay_thanks_normal',
         'post_stay_comment',
+        'notify_to_hoster'
     ];
 
     protected $casts = [
@@ -32,6 +33,7 @@ class QuerySetting extends Model
         'post_stay_thanks_good' => 'array',
         'post_stay_thanks_normal' => 'array',
         'post_stay_comment' => 'array',
+        'notify_to_hoster' => 'array',
     ];
 
 

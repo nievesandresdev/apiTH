@@ -25,4 +25,17 @@ class QuerySettingsServices {
             return $e;
         }
     }
+
+    public function notifications ($hotelId) {
+        try {
+            $default = QuerySetting::select('notify_to_hoster')
+                        ->where('hotel_id',$hotelId)->first();
+            if(!$default){
+                $default = queryNotifyDefault();
+            }
+            return $default;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }

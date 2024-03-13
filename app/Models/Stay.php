@@ -18,7 +18,8 @@ class Stay extends Model
         'check_in',
         'check_out',
         'hour_checkin',
-        'hour_checkout'
+        'hour_checkout',
+        'pending_queries_seen'
     ];
 
     public function staySurvey()
