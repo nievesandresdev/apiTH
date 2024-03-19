@@ -23,9 +23,14 @@ class HotelService {
         try {
             $subdomain = $request->subdomain ?? null;
 
-            $query = Hotel::where(function($query) use($subdomain){
+            // $query = Hotel::where(function($query) use($subdomain){
+            //     if ($subdomain) {
+            //         $query->where('subdomain', $subdomain);
+            //     }
+            // });
+            $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
                 if ($subdomain) {
-                    $query->where('subdomain', $subdomain);
+                    $query->where('name', $subdomain);
                 }
             });
 

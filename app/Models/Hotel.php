@@ -44,13 +44,22 @@ class hotel extends Model
         'historical_runs',
         'scraper_run',
         'last_date_historical',
-        'subdomain',
         'show_experiences',
+        // customization
+        'subdomain',
+        'language_default_webapp',
+        'sender_for_sending_sms',
+        'sender_for_sending_email',
     ];
 
     public function user()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function subdomains()
+    {
+        return $this->hasMany(HotelSubdomain::class);
     }
 
     public function images()
