@@ -23,7 +23,11 @@ class FacilityService {
     public function getCrosselling ($modelHotel) {
         try {
 
-            $facilities = FacilityHoster::with('images', 'translate')->where('hotel_id',$modelHotel->id)->where('select',1)->limit(12)->get();
+            $facilities = FacilityHoster::with('images', 'translate')
+                            ->where('hotel_id',$modelHotel->id)
+                            ->where('visible',1)
+                            ->where('select',1)->limit(12)
+                            ->get();
 
             return $facilities;
 
@@ -36,7 +40,7 @@ class FacilityService {
         try {
             $facilities = FacilityHoster::with('images')
                 ->where('hotel_id',$modelHotel->id)
-                ->where(['status' => 1, 'select' => 1])
+                ->where(['status' => 1, 'select' => 1])->where('visible',1)
                 ->get();
                 
             return $facilities;
@@ -50,7 +54,7 @@ class FacilityService {
             $facility = FacilityHoster::with('images')
                 ->where('id',$id)
                 ->where('hotel_id',$modelHotel->id)
-                ->where(['status' => 1, 'select' => 1])
+                ->where(['status' => 1, 'select' => 1])->where('visible',1)
                 ->first();
                 
             return $facility;
