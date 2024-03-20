@@ -39,7 +39,7 @@ class NewFeedback extends Mailable
         if($this->type == 'pending'){
             $typeTitle = "Feedback pendiente";
         }
-        return $this->from("info@".$this->hotel->subdomain.".com", $this->hotel->name)
+        return $this->from("no-reply@thehoster.es", $this->hotel['sender_for_sending_email'])
                     ->subject($typeTitle)->view('Mails.queries.NewFeedback');
         
     }
