@@ -40,6 +40,7 @@ class PlaceResource extends JsonResource
             'range_numeric_prices' => $this->range_numeric_prices,
             'diet_specifications' => $this->diet_specifications,
             'city' => \Str::slug($this->city_places),
+            'cityName' => $this->city_places,
             'recommendation_admin' => $this->recommendation_admin,
             'categori_places_id' => $this->categori_places_id,
             'num_reviews' => $this->num_reviews,

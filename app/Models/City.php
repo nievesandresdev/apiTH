@@ -15,6 +15,10 @@ class City extends Model
         'id',
     ];
 
+    protected $casts = [
+        'near' => 'array',
+    ];
+
     public function products()
     {
         return $this->hasMany(Products::class);

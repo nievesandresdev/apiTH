@@ -15,9 +15,11 @@ use App\Utils\Enums\EnumResponse;
 
 class CityController extends Controller
 {
+    public $service;
+
     function __construct(
         CityService $_CityService
-)
+    )
     {
         $this->service = $_CityService;
     }
@@ -33,6 +35,17 @@ class CityController extends Controller
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
+        }
+    }
+
+    public function getNearCitiesData (Request $request) {
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $response = $this->service->getNearCitiesData($hotel->zone,$hotel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $response);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getNearCitiesData');
         }
     }
 

@@ -37,12 +37,15 @@ class PlaceService {
             
             $queryPlace = $this->filter($dataFilter, $modelHotel);
 
+            $placesCountOtherCities = clone $queryPlace;
+            $countOtherCities = $placesCountOtherCities->where('city_places', '!=', $modelHotel->zone)->count();
+
             $collectionPlaces = $queryPlace->orderByFeatured($modelHotel->id)
                 ->orderByWeighing($modelHotel->id)
                 ->paginate(20)
                 ->appends(request()->except('page'));
-                            
-            return $collectionPlaces;
+                
+            return ['places' => $collectionPlaces, 'countOtherCities' => $countOtherCities];
 
         } catch (\Exception $e) {
             return $e;
@@ -124,9 +127,14 @@ class PlaceService {
 
     private function filter($dataFilter, $modelHotel){
 
-        $queryPlace = Places::activeToShow()
-        ->whereCity($dataFilter['city'])
-        ->whereVisibleByHoster($modelHotel->id);
+        $queryPlace = Places::activeToShow();
+        
+        $queryPlace->whereVisibleByHoster($modelHotel->id);
+        if(isset($dataFilter['cities'])){
+            $queryPlace->whereIn('city_places', $dataFilter['cities']);
+        }else{
+            $queryPlace->whereCity($dataFilter['city']);    
+        }
 
         // !empty($data_filter['typecuisine']) ? $data->whereRaw("type_cuisine regexp '$typecuisine'") : '';
 
@@ -140,7 +148,10 @@ class PlaceService {
             });
         }
 
-
+        if(isset($dataFilter['cities'])){
+            $ordered_names = "'" . implode("','", $dataFilter['cities']) . "'";
+            $queryPlace->orderByRaw("FIELD(city_places, {$ordered_names})");
+        }
         
         $rangeScore =  [['i'=>1,'f'=>1.99],['i'=>2,'f'=>2.99],['i'=>3,'f'=>3.99],['i'=>4,'f'=> 4.99],['i'=>5,'f'=> 6]];
 

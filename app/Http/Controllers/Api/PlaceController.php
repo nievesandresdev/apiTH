@@ -8,15 +8,21 @@ use App\Services\PlaceService;
 
 use App\Http\Resources\PlacePaginateResource;
 use App\Http\Resources\PlaceResource;
+use App\Services\CityService;
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Str;
 
 class PlaceController extends Controller
 {
+    public $service;
+    public $cityService;
     function __construct(
-        PlaceService $_PlaceService
+        PlaceService $_PlaceService,
+        CityService $_CityService
     )
     {
         $this->service = $_PlaceService;
+        $this->cityService = $_CityService;
     }
 
     public function getAll (Request $request) {
@@ -33,8 +39,19 @@ class PlaceController extends Controller
             $typeplace = $request->typeplace ?? null;
             $categoriplace = $request->categoriplace ?? null;
 
+            
+            //crear array de ciudades para la consulta
+            $citySlug = Str::slug($modelHotel->zone);
+            $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+            $cities = [];
+            $cities[] = $cityData->name;
+            foreach ($cityData->near as $city) {
+                $cities[] = $city['name'];
+            }
+
             $dataFilter = [
                 'city' => $cityName,
+                'cities' => $cities,
                 'search' => $search,
                 'points' => $points,
                 'featured' => $featured,
@@ -42,10 +59,13 @@ class PlaceController extends Controller
                 'categoriplace' => $categoriplace
             ];
 
-            $placesCollection = $this->service->getAll($request, $dataFilter, $modelHotel);
-            $data = new PlacePaginateResource($placesCollection);
-            
-
+            $response = $this->service->getAll($request, $dataFilter, $modelHotel);
+            $placesCollection = $response['places'];
+            $countOtherCities = $response['countOtherCities'];
+            $data = [
+                'places' => new PlacePaginateResource($placesCollection),
+                'countOtherCities' => $countOtherCities
+            ];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
