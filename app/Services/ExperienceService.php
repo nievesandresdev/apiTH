@@ -28,12 +28,16 @@ class ExperienceService {
             
             $queryExperience = $this->filter($request, $modelHotel, $dataFilter);
 
+            $productsCountOtherCities = clone $queryExperience;
+            $productsCountOtherCities->get();
+            $countOtherCities = $productsCountOtherCities->whereDiffLocaleCity($modelHotel->zone)->count();
+
             $collectionExperiences = $queryExperience->orderByFeatured($modelHotel->id)
                 ->orderByWeighing($modelHotel->id)
                 ->paginate(20)
                 ->appends(request()->except('page'));
-                            
-            return $collectionExperiences;
+
+            return ['experiences' => $collectionExperiences, 'countOtherCities' => $countOtherCities];
 
         } catch (\Exception $e) {
             return $e;
@@ -64,9 +68,14 @@ class ExperienceService {
 
         $user = $modelHotel['user'][0];
 
-        $queryExperience = Products::activeToShow()
-                ->whereCity($dataFilter['city'])
-                ->whereVisibleByHoster($modelHotel->id);
+        $queryExperience = Products::activeToShow();
+        $queryExperience->whereVisibleByHoster($modelHotel->id);
+        if(isset($dataFilter['cities'])){
+            $queryExperience->whereCities($dataFilter['cities']);
+        }else{
+            $queryExperience->whereCity($dataFilter['city']);
+        }
+        
         
         if($dataFilter['search']){
             $queryExperience->whereHas('activities', function($query) use($dataFilter){
@@ -92,6 +101,20 @@ class ExperienceService {
                         $query->orWhereBetween('duration', [$interval['i'], $interval['f']]);
                 }
             });
+        }
+
+        if(isset($dataFilter['cities'])) {
+            $ordered_names = implode(",", array_map(function($city) {
+                return "'".$city."'"; // Asegúrate de que los nombres de las ciudades estén entre comillas.
+            }, $dataFilter['cities']));
+        
+            // Asumiendo que la consulta de $datap es tu QueryBuilder principal:
+            $queryExperience->orderByRaw("
+                FIELD((SELECT activities.city_experince
+                       FROM activities
+                       WHERE activities.products_id = products.id
+                       LIMIT 1), {$ordered_names})
+            ");
         }
 
         if ($dataFilter['featured']) {

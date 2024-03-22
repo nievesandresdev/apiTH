@@ -12,16 +12,22 @@ use App\Services\ExperienceService;
 use App\Http\Resources\ExperienceResource;
 use App\Http\Resources\ExperienceDetailResource;
 use App\Http\Resources\ExperiencePaginateResource;
-
+use Illuminate\Support\Str;
 use App\Utils\Enums\EnumResponse;
+use App\Services\CityService;
 
 class ExperienceController extends Controller
 {
+    public $service;
+    public $cityService;
+
     function __construct(
-        ExperienceService $_ExperienceService
+        ExperienceService $_ExperienceService,
+        CityService $_CityService
     )
     {
         $this->service = $_ExperienceService;
+        $this->cityService = $_CityService;
     }
 
     public function getAll (Request $request) {
@@ -41,8 +47,17 @@ class ExperienceController extends Controller
                 $duration = gettype($request->duration) == 'string' ? json_decode($request->duration, true) : $request->duration;
             }
 
+            //crear array de ciudades para la consulta
+            $citySlug = Str::slug($modelHotel->zone);
+            $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+            $cities = [];
+            $cities[] = $cityData->name;
+            foreach ($cityData->near as $city) {
+                $cities[] = $city['name'];
+            }
             $dataFilter = [
                 'city' => $cityName,
+                'cities' => $cities,
                 'search' => $search,
                 'price_min' => $priceMin,
                 'price_max' => $priceMax,
@@ -50,9 +65,13 @@ class ExperienceController extends Controller
                 'featured' => $featured,
             ];
 
-            $experiencesCollection = $this->service->getAll($request, $modelHotel, $dataFilter);
-            $data = new ExperiencePaginateResource($experiencesCollection);
-            
+            $response = $this->service->getAll($request, $modelHotel, $dataFilter);
+            $expsCollection = $response['experiences'];
+            $countOtherCities = $response['countOtherCities'];
+            $data = [
+                'experiences' => new ExperiencePaginateResource($expsCollection),
+                'countOtherCities' => $countOtherCities
+            ];
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 

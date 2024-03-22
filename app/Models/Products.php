@@ -90,6 +90,28 @@ class Products extends Model
         });
     }
 
+    public function scopeWhereDiffLocaleCity($query, $city = null)
+    {
+        if (!$city) return;
+
+        $modelActivityLanguage = "activities".ucfirst(localeCurrent());
+
+        $query->whereHas('translate', function($query) use($city){
+            $query->where('city_experince','!=', $city);
+        });
+    }
+
+    public function scopeWhereCities($query, $cities = null)
+    {
+        if (!$cities) return;
+
+        $modelActivityLanguage = "activities".ucfirst(localeCurrent());
+
+        $query->whereHas('translate', function($query) use($cities){
+            $query->whereIn('city_experince',$cities);
+        });
+    }
+
     public function scopeWhereVisibleByHoster($query, $hotelId = null){
         if ($hotelId) {
             $query->where(function($query)use($hotelId){

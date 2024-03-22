@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-
+use Illuminate\Support\Str;
 use App\Http\Resources\ActivityDetailResource;
 
 class ExperienceResource extends JsonResource
@@ -35,6 +35,7 @@ class ExperienceResource extends JsonResource
             'hours_reservation' => $this['translate']['hours_reservation'],
             'language_experince' => $this['translate']['language_experince'],
             'city_experince' => $this['translate']['city_experince'],
+            'slug_city' => Str::slug($this['translate']['city_experince']),
             'duration' => $this['translate']['duration'],
         ];
     }
