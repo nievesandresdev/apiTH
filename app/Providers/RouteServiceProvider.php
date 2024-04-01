@@ -10,18 +10,6 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * The path to your application's "home" route.
-     *
-     * Typically, users are redirected here after authentication.
-     *
-     * @var string
-     */
-    public const HOME = '/home';
-
-    /**
-     * Define your route model bindings, pattern filters, and other route configuration.
-     */
     public function boot(): void
     {
         RateLimiter::for('api', function (Request $request) {
@@ -29,12 +17,42 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            Route::middleware('api')
+            Route::middleware(['api', 'setlocale', 'loadHotel', 'authStatic'])
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
+            // Rutas modulares
+            $this->loadApiRoutes();
+
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
-        });
+        });    
     }
+
+    protected function loadApiRoutes(): void
+    {
+        Route::middleware('api')
+             ->group(function () {
+                 $this->loadModuleRoutes('api_hotel.php');
+                 $this->loadModuleRoutes('api_hotel_ota.php');
+                 $this->loadModuleRoutes('api_stay.php');
+                 $this->loadModuleRoutes('api_guest.php');
+                 $this->loadModuleRoutes('api_stay_survey.php');
+                 $this->loadModuleRoutes('api_city.php');
+                 $this->loadModuleRoutes('api_experience.php');
+                 $this->loadModuleRoutes('api_place.php');
+                 $this->loadModuleRoutes('api_chat.php');
+                 $this->loadModuleRoutes('api_utils.php');
+                 $this->loadModuleRoutes('api_facility.php');
+                 $this->loadModuleRoutes('api_queries.php');
+                 // Aquí puedes añadir más archivos de módulos según sea necesario
+             });
+    }
+
+    protected function loadModuleRoutes(string $routeFile): void
+    {
+        Route::prefix('api')
+             ->group(base_path('routes/' . $routeFile));
+    }
+
 }

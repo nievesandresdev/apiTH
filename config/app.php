@@ -56,8 +56,11 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-
+    'guest_path' => env('LOCAL_GUEST_URL', 'http://localhost'),
     'asset_url' => env('ASSET_URL'),
+    'hoster_url' => env('HOSTER_URL','http://localhost'),
+    //OPENAI
+    'openia_key' => env('OPENAI_API_KEY', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -126,7 +129,13 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    /*
+    //API VIATOR
+    'key_viator' => env('KEY_VIATOR', ''),
+    'viator' => env('API_VIATOR', 'https://api.sandbox.viator.com/partner'),
+
+    'x_key_api' => env('X_KEY_API', null),
+
+    /*n
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
     |--------------------------------------------------------------------------
