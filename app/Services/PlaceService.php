@@ -149,7 +149,13 @@ class PlaceService {
         }
 
         if(isset($dataFilter['cities'])){
-            $ordered_names = "'" . implode("','", $dataFilter['cities']) . "'";
+
+            $near_cities = $dataFilter['cities'] ?? [];
+            $ordered_names = implode(",", array_map(function($city) {
+                $city = str_replace("'", "\\'", $city); //Escapa apóstrofos
+                return "'{$city}'";            
+            }, $near_cities));
+
             $queryPlace->orderByRaw("FIELD(city_places, {$ordered_names})");
         }
         
