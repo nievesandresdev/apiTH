@@ -27,7 +27,6 @@ class ExperienceService {
         try {
             
             $queryExperience = $this->filter($request, $modelHotel, $dataFilter);
-
             $productsCountOtherCities = clone $queryExperience;
             $productsCountOtherCities->get();
             $countOtherCities = $productsCountOtherCities->whereDiffLocaleCity($modelHotel->zone)->count();
@@ -36,7 +35,6 @@ class ExperienceService {
                 ->orderByWeighing($modelHotel->id)
                 ->paginate(20)
                 ->appends(request()->except('page'));
-
             return ['experiences' => $collectionExperiences, 'countOtherCities' => $countOtherCities];
 
         } catch (\Exception $e) {
@@ -69,14 +67,16 @@ class ExperienceService {
         $user = $modelHotel['user'][0];
 
         $queryExperience = Products::activeToShow();
+        
         $queryExperience->whereVisibleByHoster($modelHotel->id);
+        
         if(isset($dataFilter['cities'])){
             $queryExperience->whereCities($dataFilter['cities']);
         }else{
             $queryExperience->whereCity($dataFilter['city']);
         }
         
-        
+
         if($dataFilter['search']){
             $queryExperience->whereHas('activities', function($query) use($dataFilter){
                 $query->where('title','like',  ['%'.$dataFilter['search'].'%']);
@@ -104,10 +104,11 @@ class ExperienceService {
         }
 
         if(isset($dataFilter['cities'])) {
+            $near_cities = $dataFilter['cities'] ?? [];
             $ordered_names = implode(",", array_map(function($city) {
-                return "'".$city."'"; // Asegúrate de que los nombres de las ciudades estén entre comillas.
-            }, $dataFilter['cities']));
-        
+                $city = str_replace("'", "\\'", $city); //Escapa apóstrofos
+                return "'{$city}'";            
+            }, $near_cities));
             // Asumiendo que la consulta de $datap es tu QueryBuilder principal:
             $queryExperience->orderByRaw("
                 FIELD((SELECT activities.city_experince
@@ -120,7 +121,6 @@ class ExperienceService {
         if ($dataFilter['featured']) {
             $queryExperience->whereFeaturedHotel($modelHotel->id);
         }
-
         return $queryExperience;
     }
 
