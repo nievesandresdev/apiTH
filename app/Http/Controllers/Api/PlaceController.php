@@ -84,6 +84,7 @@ class PlaceController extends Controller
             $featured = $request->featured && $request->featured != 'false' && $request->featured != '0'; 
             $points = $request->points ?? [];
             $all = $request->all ?? null;
+            $withNumbersPlaces = $request->withNumbersPlaces ?? false;
 
             $typeplace = $request->typeplace ?? null;
             $categoriplace = $request->categoriplace ?? null;
@@ -96,6 +97,7 @@ class PlaceController extends Controller
                 'search' => $search,
                 'points' => $points,
                 'featured' => $featured,
+                'withNumbersPlaces' => $withNumbersPlaces,
             ];
 
             $categoriesCollection = $this->service->getCategoriesByType($request, $dataFilter, $modelHotel);

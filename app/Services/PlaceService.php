@@ -56,6 +56,7 @@ class PlaceService {
         try {
 
             $typeplace = $dataFilter['typeplace'];
+            $withNumbersPlaces = $dataFilter['withNumbersPlaces'];  
             if (!$typeplace) {
                 $typeplace = TypePlaces::where(['show' => 1, 'active' => 1])->first()->id;
             }
@@ -80,13 +81,14 @@ class PlaceService {
                     'points'=>[],
                     'featured'=>false
                 ];
-                $numbersPlaces = $this->filter($params, $modelHotel)->count();
+                $numbersPlaces = $dataFilter['withNumbersPlaces'] ? $this->filter($params, $modelHotel)->count() : 0;
                 return [
                     "categori_places_id" => $q->id,
                     "city_places" => $dataFilter['city'],
                     "type_places_id" => $q->type_places_id,
                     "id" => $q->id,
                     "name" => $q->name,
+                    "name_type_place" => $q->TypePlaces->name,
                     "count_places" => $numbersPlaces,
                 ];
             })->collect();
