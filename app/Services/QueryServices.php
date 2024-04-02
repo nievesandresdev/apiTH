@@ -142,7 +142,7 @@ class QueryServices {
             $comment = $request->comment;
             $responseLang = 'es';
             if($comment){
-                $response = $this->chatGPTService->translateQueryMessage($comment);
+                $response = $this->chatGPTService->translateQueryMessage($comment, $id);
                 $comment = $response["translations"];
                 $responseLang = $response["responseLang"];
             }
@@ -190,7 +190,7 @@ class QueryServices {
 
             return $query; 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveAnswer');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveResponse');
         }
     }
 

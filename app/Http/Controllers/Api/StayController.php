@@ -90,6 +90,27 @@ class StayController extends Controller
         }
     }
 
+    public function existingThenMatchOrSave(Request $request){
+        
+        try {
+            $stayId = $request->stayId;  
+            $guestEmail = $request->guestEmail;  
+            $hotel = $request->attributes->get('hotel');
+            // Intenta encontrar un huésped con el correo proporcionado, o lo crea si no existe
+            $newCurrentStay = $this->service->existingStayThenMatch($stayId, $guestEmail, $hotel);
+            if(!$newCurrentStay){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            $data = new StayResource($newCurrentStay);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingThenMatchOrSave');
+        }
+    }
+
     public function getGuestsAndSortByCurrentguestId($stayId, $guestId)
     {
         try {
