@@ -70,7 +70,7 @@ class GuestService {
 
                 if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
                     //si no han pasado retorna la estancia
-                    $this->stayAccessService->save($last_stay,$guest->id);
+                    $this->stayAccessService->save($last_stay->id,$guest->id);
                     return $last_stay;
                 }
             }

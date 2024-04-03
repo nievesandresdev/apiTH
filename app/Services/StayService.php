@@ -39,7 +39,7 @@ class StayService {
 
             if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
                 //si no han pasado retorna la estancia y guarda el acceso en caso de no existir
-                $this->stayAccessService->save($stay,$guestId);
+                $this->stayAccessService->save($stay->id,$guestId);
                 return $stay;
             }
             return null;
@@ -71,7 +71,7 @@ class StayService {
             ]);
             $guest->stays()->syncWithoutDetaching([$stay->id]);
             //guardar acceso
-            $this->stayAccessService->save($stay,$guestId);
+            $this->stayAccessService->save($stay->id,$guestId);
             
             //enviar mensaje al creador de la estancia
             $user = $hotel->user()->first();
@@ -117,7 +117,7 @@ class StayService {
                         Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
-                    $this->stayAccessService->save($stay,$guestId);
+                    $this->stayAccessService->save($stay->id,$guestId);
                 }
                 DB::commit();
             }
@@ -178,7 +178,7 @@ class StayService {
                 return $invitedStay;
             }else{
                 //agregar acceso del invitado
-                $this->stayAccessService->save($currentStayData,$invited->id);
+                $this->stayAccessService->save($currentStayData->id,$invited->id);
                 //agregar relacion a estancia
                 $invited->stays()->syncWithoutDetaching([$currentStayData->id]);
             }

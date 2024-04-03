@@ -4,11 +4,13 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\Log;
 
 class ChatGPTService
 {
-    public function translateQueryMessage($originalMessage)
+    public function translateQueryMessage($originalMessage, $queryId)
     {
+        Log::info('Iniciando traducción de ChatGPT. queryId='.$queryId);
         try {
             // Mensaje de sistema según los requerimientos
             $systemMessage = "Given the following message from a guest at our hostel, perform the following tasks and report the results in JSON format:\n1. Detect the language of the message, using the ISO 639-1 language code.\n2. Translate the message into Spanish.\n3. Translate the message into English.\n\n---\n\nInstructions for the AI:\n\n- First, analyze the linguistic features of the message to detect the language, reporting the detected language using the ISO 639-1 code. \n- Then, translate the message into Spanish and English, based on the detected language.\n- Format your response as a JSON object with the fields \"detectedLanguage\", \"spanishTranslation\", and \"englishTranslation\", providing the respective information for each.\n\nExample JSON response format:\n```json\n{\n  \"detectedLanguage\": \"Detected ISO 639-1 code language goes here\",\n  \"spanishTranslation\": \"Translation into Spanish goes here\",\n  \"englishTranslation\": \"Translation into English goes here\"\n}\n```\n\nEnsure that the translations are clear and accurate, tailored so that both the hostel staff and the guest can understand them without ambiguities.\n";
@@ -35,21 +37,37 @@ class ChatGPTService
                 'functions' => [$translationFunction], 
                 'function_call' => ['name' => 'consideration_translation'],
             ];
+
+            $apiKey = config('app.openia_key');
+            if (!$apiKey) {
+                Log::error('ChatGPT: La clave de la API de OpenAI falta o está vacía.');
+                // throw new \Exception('API key missing.');
+            }
             
+            
+            // Log::debug("ChatGPT: Enviando solicitud a OpenAI: ", $data);
+
             // Llave de API debe ser pasada como 'Authorization' en el header
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . config('app.openia_key'),
+                'Authorization' => 'Bearer ' . $apiKey,
                 'Content-Type' => 'application/json',
             ])->timeout(120)
             ->post('https://api.openai.com/v1/chat/completions', $data);
+    
+            //registrar error
+            if ($response->failed()) {
+                Log::error("Respuesta fallida de ChatGPT: ", $response->json());
+            }else{
+                Log::info('Respuesta recibida con éxito de ChatGPT.');
+            }
             
             $responseArray = $response->json(); 
-            $argumentsJson = $responseArray['choices'][0]['message']['function_call']['arguments'];
-        
-            $arguments = json_decode($argumentsJson, true);
+            $argumentsJson = $responseArray['choices'][0]['message']['function_call']['arguments'] ?? null;
+            
             $translations = [];
         
-            if ($arguments) {
+            if ($argumentsJson) {
+                $arguments = json_decode($argumentsJson, true);
                 $detectedLanguage = $arguments['detectedLanguage'];
                 $spanishTranslation = $arguments['spanishTranslation'];
                 $englishTranslation = $arguments['englishTranslation'];
@@ -64,18 +82,25 @@ class ChatGPTService
                 if ($detectedLanguage !== 'es') {
                     $translations['es'] = $spanishTranslation;
                 }
-        
-                // Retorna el JSON de las traducciones
-                return [
-                   "translations" => $translations,
-                   "responseLang" => $detectedLanguage,
-                ];
+
             } else {
-                // Manejo de error
-                return response()->json(['error' => 'Could not decode arguments'], 422);
+                Log::error("ChatGPT: Could not decode arguments");
+                $translations['SinTraduccion'] = $originalMessage;
+                $detectedLanguage = "SinTraduccion";
             }
+            return [
+                "translations" => $translations,
+                "responseLang" => $detectedLanguage,
+             ];
+        } catch (\RequestException $e) {
+            // Registra detalles específicos de la excepción de la solicitud
+            Log::error("Error en la solicitud de ChatGPT: {$e->getMessage()}", ['stack' => $e->getTraceAsString()]);
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.translateQueryMessage');
         } catch (\Exception $e) {
+            // Registra excepciones generales
+            Log::error("ChatGPT Excepción general: {$e->getMessage()}", ['stack' => $e->getTraceAsString()]);
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.translateQueryMessage');
         }
+        
     }
 }
