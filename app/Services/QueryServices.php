@@ -80,8 +80,11 @@ class QueryServices {
 
     //obtener periodo actual para la consulta
     public function getCurrentPeriod ($hotel, $stayId) {
+        if(!$stayId) return;
         try {
+            Log::info('getCurrentPeriod stayId:'.$stayId);
             $stay =  Stay::find($stayId);
+            Log::info('getCurrentPeriod stay-result'.$stay);
             $dayCheckin = $stay->check_in;
             $dayCheckout = $stay->check_out;
             $hourCheckin = $hotel->checkin;
