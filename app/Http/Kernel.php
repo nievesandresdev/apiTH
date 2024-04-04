@@ -69,8 +69,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'setlocale' => \App\Http\Middleware\SetLocale::class,
-        'setlocale' => \App\Http\Middleware\SetLocale::class,
         'loadHotel' => \App\Http\Middleware\LoadHotel::class,
-        'verifyApiKey' => \App\Http\Middleware\VerifyApiKey::class,
+        'authStatic' => \App\Http\Middleware\VerifyApiKey::class,
     ];
 }
