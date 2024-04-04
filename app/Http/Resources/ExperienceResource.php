@@ -16,12 +16,16 @@ class ExperienceResource extends JsonResource
         $lang = ucfirst(localeCurrent());
 
         $modelHotel = $request->attributes->get('hotel');
-        
+        $distance = null;
+        if($this->distance){
+            $distance = round($this->distance / 1000, 2);
+        }
         return [
             'id' => $this->id,
             'image' => $this->images->first(),
             'status' => $this->status,
             'destacado' => $this->destacado,
+            'distance' => $distance,
             'slug' => $this->slug,
             'recomend' => $this->recomend,
             'select' => $this->select,
