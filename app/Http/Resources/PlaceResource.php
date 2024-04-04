@@ -19,6 +19,11 @@ class PlaceResource extends JsonResource
 
         $modelHotel = $request->attributes->get('hotel');
 
+        $distance = null;
+        if($this->distance){
+            $distance = round($this->distance / 1000, 2);
+        }
+
         $firstCategoryPlace = CategoriPlaces::where('type_places_id',$this->typePlaces->id)->first();
         $firstCategoryPlace = $firstCategoryPlace->id ?? null;
         return [
@@ -30,6 +35,7 @@ class PlaceResource extends JsonResource
             'metting_point_latitude' => $this->metting_point_latitude,
             'metting_point_longitude' => $this->metting_point_longitude,
             'place_images' => $this->images,
+            'distance' => $distance,
             'type_place' => $this->typePlaces,
             'range_prices' => $this->range_prices,
             'type_cuisine' => $this->type_cuisine,
