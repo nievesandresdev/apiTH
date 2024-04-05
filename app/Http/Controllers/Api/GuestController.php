@@ -54,6 +54,17 @@ class GuestController extends Controller
         }
     }
 
+    public function updateLanguage (Request $request) {
+        try {
+            $model = $this->service->updateLanguage($request);
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveOrUpdate');
+        }
+    }
+
     public function findLastStay($id,Request $request) {
         try {
             $hotel = $request->attributes->get('hotel');
