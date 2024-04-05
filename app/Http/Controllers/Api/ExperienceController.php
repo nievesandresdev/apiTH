@@ -50,14 +50,10 @@ class ExperienceController extends Controller
             //crear array de ciudades para la consulta
             $citySlug = Str::slug($modelHotel->zone);
             $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
-            $cities = [];
-            $cities[] = $cityData->name;
-            foreach ($cityData->near as $city) {
-                $cities[] = $city['name'];
-            }
+            
             $dataFilter = [
                 'city' => $cityName,
-                'cities' => $cities,
+                'cityData' => $cityData,
                 'search' => $search,
                 'price_min' => $priceMin,
                 'price_max' => $priceMax,

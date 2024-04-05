@@ -42,6 +42,7 @@ class PlaceService {
 
             $collectionPlaces = $queryPlace->orderByFeatured($modelHotel->id)
                 ->orderByWeighing($modelHotel->id)
+                ->orderBy('distance', 'asc')
                 ->paginate(20)
                 ->appends(request()->except('page'));
                 
@@ -131,12 +132,18 @@ class PlaceService {
 
         $queryPlace = Places::activeToShow();
         
-        $queryPlace->whereVisibleByHoster($modelHotel->id);
-        if(isset($dataFilter['cities'])){
-            $queryPlace->whereIn('city_places', $dataFilter['cities']);
-        }else{
-            $queryPlace->whereCity($dataFilter['city']);    
+        if(isset($dataFilter['cityData'])){
+            $queryPlace->select(
+                'places.*',
+                \DB::raw("ST_Distance_Sphere(
+                    point(places.metting_point_longitude, places.metting_point_latitude),
+                    point(".$dataFilter['cityData']->long.", ".$dataFilter['cityData']->lat.")
+                ) AS distance")
+            );
         }
+        
+        
+        $queryPlace->whereVisibleByHoster($modelHotel->id);
 
         // !empty($data_filter['typecuisine']) ? $data->whereRaw("type_cuisine regexp '$typecuisine'") : '';
 
@@ -150,16 +157,16 @@ class PlaceService {
             });
         }
 
-        if(isset($dataFilter['cities'])){
+        // if(isset($dataFilter['cities'])){
 
-            $near_cities = $dataFilter['cities'] ?? [];
-            $ordered_names = implode(",", array_map(function($city) {
-                $city = str_replace("'", "\\'", $city); //Escapa apóstrofos
-                return "'{$city}'";            
-            }, $near_cities));
+        //     $near_cities = $dataFilter['cities'] ?? [];
+        //     $ordered_names = implode(",", array_map(function($city) {
+        //         $city = str_replace("'", "\\'", $city); //Escapa apóstrofos
+        //         return "'{$city}'";            
+        //     }, $near_cities));
 
-            $queryPlace->orderByRaw("FIELD(city_places, {$ordered_names})");
-        }
+        //     $queryPlace->orderByRaw("FIELD(city_places, {$ordered_names})");
+        // }
         
         $rangeScore =  [['i'=>1,'f'=>1.99],['i'=>2,'f'=>2.99],['i'=>3,'f'=>3.99],['i'=>4,'f'=> 4.99],['i'=>5,'f'=> 6]];
 

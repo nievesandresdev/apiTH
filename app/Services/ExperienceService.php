@@ -33,6 +33,7 @@ class ExperienceService {
 
             $collectionExperiences = $queryExperience->orderByFeatured($modelHotel->id)
                 ->orderByWeighing($modelHotel->id)
+                ->orderBy('distance', 'asc')
                 ->paginate(20)
                 ->appends(request()->except('page'));
             return ['experiences' => $collectionExperiences, 'countOtherCities' => $countOtherCities];
@@ -66,15 +67,35 @@ class ExperienceService {
 
         $user = $modelHotel['user'][0];
 
-        $queryExperience = Products::activeToShow();
+        $queryExperience = Products::activeToShow()
+        ->select(
+            'products.id',
+            'products.status',
+            'products.destacado',
+            'products.slug',
+            'products.recomend',
+            'products.select',
+            'products.from_price',
+            'products.reviews',
+            \DB::raw("(
+                SELECT ST_Distance_Sphere(
+                    point(a.metting_point_longitude, a.metting_point_latitude),
+                    point(".$dataFilter['cityData']->long.", ".$dataFilter['cityData']->lat.")
+                )
+                FROM activities a
+                WHERE a.products_id = products.id
+                ORDER BY a.id ASC
+                LIMIT 1
+            ) AS distance"),
+        );
         
         $queryExperience->whereVisibleByHoster($modelHotel->id);
         
-        if(isset($dataFilter['cities'])){
-            $queryExperience->whereCities($dataFilter['cities']);
-        }else{
-            $queryExperience->whereCity($dataFilter['city']);
-        }
+        // if(isset($dataFilter['cities'])){
+        //     $queryExperience->whereCities($dataFilter['cities']);
+        // }else{
+        //     $queryExperience->whereCity($dataFilter['city']);
+        // }
         
 
         if($dataFilter['search']){
@@ -101,21 +122,6 @@ class ExperienceService {
                         $query->orWhereBetween('duration', [$interval['i'], $interval['f']]);
                 }
             });
-        }
-
-        if(isset($dataFilter['cities'])) {
-            $near_cities = $dataFilter['cities'] ?? [];
-            $ordered_names = implode(",", array_map(function($city) {
-                $city = str_replace("'", "\\'", $city); //Escapa apóstrofos
-                return "'{$city}'";            
-            }, $near_cities));
-            // Asumiendo que la consulta de $datap es tu QueryBuilder principal:
-            $queryExperience->orderByRaw("
-                FIELD((SELECT activities.city_experince
-                       FROM activities
-                       WHERE activities.products_id = products.id
-                       LIMIT 1), {$ordered_names})
-            ");
         }
 
         if ($dataFilter['featured']) {

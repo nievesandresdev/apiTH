@@ -80,8 +80,11 @@ class QueryServices {
 
     //obtener periodo actual para la consulta
     public function getCurrentPeriod ($hotel, $stayId) {
+        if(!$stayId) return;
         try {
+            Log::info('getCurrentPeriod stayId:'.$stayId);
             $stay =  Stay::find($stayId);
+            Log::info('getCurrentPeriod stay-result'.$stay);
             $dayCheckin = $stay->check_in;
             $dayCheckout = $stay->check_out;
             $hourCheckin = $hotel->checkin;
@@ -142,7 +145,7 @@ class QueryServices {
             $comment = $request->comment;
             $responseLang = 'es';
             if($comment){
-                $response = $this->chatGPTService->translateQueryMessage($comment);
+                $response = $this->chatGPTService->translateQueryMessage($comment, $id);
                 $comment = $response["translations"];
                 $responseLang = $response["responseLang"];
             }
@@ -190,7 +193,7 @@ class QueryServices {
 
             return $query; 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveAnswer');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveResponse');
         }
     }
 

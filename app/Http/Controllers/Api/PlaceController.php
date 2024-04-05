@@ -43,15 +43,10 @@ class PlaceController extends Controller
             //crear array de ciudades para la consulta
             $citySlug = Str::slug($modelHotel->zone);
             $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
-            $cities = [];
-            $cities[] = $cityData->name;
-            foreach ($cityData->near as $city) {
-                $cities[] = $city['name'];
-            }
 
             $dataFilter = [
                 'city' => $cityName,
-                'cities' => $cities,
+                'cityData' => $cityData,
                 'search' => $search,
                 'points' => $points,
                 'featured' => $featured,
@@ -62,6 +57,7 @@ class PlaceController extends Controller
             $response = $this->service->getAll($request, $dataFilter, $modelHotel);
             $placesCollection = $response['places'];
             $countOtherCities = $response['countOtherCities'];
+            // return count($placesCollection);
             $data = [
                 'places' => new PlacePaginateResource($placesCollection),
                 'countOtherCities' => $countOtherCities
@@ -86,11 +82,15 @@ class PlaceController extends Controller
             $all = $request->all ?? null;
             $withNumbersPlaces = $request->withNumbersPlaces ?? false;
 
+            $citySlug = Str::slug($modelHotel->zone);
+            $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+
             $typeplace = $request->typeplace ?? null;
             $categoriplace = $request->categoriplace ?? null;
 
             $dataFilter = [
                 'city' => $cityName,
+                'cityData' => $cityData,
                 'typeplace' => $typeplace,
                 'categoriplace' => $categoriplace,
                 'all' => $all,

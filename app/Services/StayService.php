@@ -39,7 +39,7 @@ class StayService {
 
             if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
                 //si no han pasado retorna la estancia y guarda el acceso en caso de no existir
-                $this->stayAccessService->save($stay,$guestId);
+                $this->stayAccessService->save($stay->id,$guestId);
                 return $stay;
             }
             return null;
@@ -71,7 +71,7 @@ class StayService {
             ]);
             $guest->stays()->syncWithoutDetaching([$stay->id]);
             //guardar acceso
-            $this->stayAccessService->save($stay,$guestId);
+            $this->stayAccessService->save($stay->id,$guestId);
             
             //enviar mensaje al creador de la estancia
             $user = $hotel->user()->first();
@@ -117,7 +117,7 @@ class StayService {
                         Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
-                    $this->stayAccessService->save($stay,$guestId);
+                    $this->stayAccessService->save($stay->id,$guestId);
                 }
                 DB::commit();
             }
@@ -141,13 +141,17 @@ class StayService {
     }
 
     public function existingStayThenMatch($currentStayId,$invitedEmail,$hotel){
-        
+        Log::info("existingStayThenMatch");
         if (!$currentStayId || !$invitedEmail || !$hotel) return;
         try {
             $invited = Guest::where('email',$invitedEmail)->first();
+            Log::info("invited:".$invited);
             $invitedStay = $this->guestService->findAndValidLastStay($invited->id,$hotel);
             $currentStayData = Stay::find($currentStayId);
-            if($invitedStay && $invitedStay->id !== $currentStayId){
+            Log::info("currentStayId:".$currentStayId);
+            Log::info("invitedStay:".$invitedStay);
+            if($invitedStay && (intval($invitedStay->id) !== intval($currentStayId))){
+                Log::info("matcheo de estancia");
                 DB::beginTransaction();
                 //suma de accesos entre las dos estancias
                 $currentStayAccesses = StayAccess::where('stay_id', $currentStayData->id)
@@ -177,11 +181,13 @@ class StayService {
                 DB::commit();
                 return $invitedStay;
             }else{
+                Log::info("creacion de acccesos para estancia");
                 //agregar acceso del invitado
-                $this->stayAccessService->save($currentStayData,$invited->id);
+                $this->stayAccessService->save($currentStayData->id,$invited->id);
                 //agregar relacion a estancia
                 $invited->stays()->syncWithoutDetaching([$currentStayData->id]);
             }
+            Log::info("currentStayData:".$currentStayData);
             return $currentStayData;
         } catch (\Exception $e) {
             DB::rollback();
