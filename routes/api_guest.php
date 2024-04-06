@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\GuestController;
 Route::group(['prefix' => 'guest'], function () {
     Route::get('/findByIdApi/{id}', [GuestController::class, 'findById']);
     Route::post('/saveOrUpdateApi', [GuestController::class, 'saveOrUpdate']);
+    Route::post('/updateLanguageApi', [GuestController::class, 'updateLanguage']);
     Route::get('/findLastStayApi/{id}', [GuestController::class, 'findLastStay']);
     Route::post('/sendMailTo', [GuestController::class, 'sendMailTo']);
 });

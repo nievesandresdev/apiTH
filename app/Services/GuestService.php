@@ -57,6 +57,21 @@ class GuestService {
         }
     }
 
+    public function updateLanguage ($data)
+    {
+        try {
+            $guest_id = $data->guest_id;
+            $language = $data->language;
+            $guest = Guest::find($guest_id);
+            $guest->lang_web = $language;
+            $guest->save();
+
+            return $guest;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
     public function findLastStayAndAccess($id,$hotel){
         
         try {
