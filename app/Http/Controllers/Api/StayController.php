@@ -52,7 +52,6 @@ class StayController extends Controller
         try {
             
             $hotel = $request->attributes->get('hotel');
-            return $hotel;
             $model = $this->service->createAndInviteGuest($hotel,$request);
             return $model;
 
