@@ -15,7 +15,10 @@ class LoadHotel
     public function handle(Request $request, Closure $next): Response
     {
         $hotelSubdomain = $request->header('Hotel-SUBDOMAIN');
-        $modelHotel = Hotel::where('subdomain', $hotelSubdomain)->first();
+        // $modelHotel = Hotel::where('subdomain', $hotelSubdomain)->first();
+        $modelHotel = Hotel::whereHas('subdomains', function($query) use($hotelSubdomain){
+            $query->where('name', $hotelSubdomain);
+        })->first();
 
         $data = new HotelResource($modelHotel);
     
