@@ -82,12 +82,12 @@ class QueryServices {
     public function getCurrentPeriod ($hotel, $stayId) {
         if(!$stayId) return;
         try {
-            Log::info('getCurrentPeriod stayId:'.$stayId);
+            // Log::info('getCurrentPeriod stayId:'.$stayId);
             $stay =  Stay::find($stayId);
-            Log::info('getCurrentPeriod stay-result'.$stay);
+            // Log::info('getCurrentPeriod stay-result'.$stay);
             $dayCheckin = $stay->check_in;
             $dayCheckout = $stay->check_out;
-            $hourCheckin = $hotel->checkin;
+            $hourCheckin = $hotel->checkin ?? '16:00';
 
             // Crear objeto Carbon para check-in
             $checkinDateTimeString = $dayCheckin . ' ' . $hourCheckin;
