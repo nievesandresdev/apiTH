@@ -52,12 +52,7 @@ class StayController extends Controller
         try {
             $hotel = $request->attributes->get('hotel');
             $model = $this->service->createAndInviteGuest($hotel,$request);
-            if(!$model){
-                $data = [
-                    'message' => __('response.bad_request_long')
-                ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
-            }
+            return $model;
             $data = new StayResource($model);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
