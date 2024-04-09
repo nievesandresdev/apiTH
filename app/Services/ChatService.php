@@ -137,7 +137,7 @@ class ChatService {
             if($chat){
                 return $countUnreadMsgs = $chat->messages()->where([['by', '=', $request->rol],['status', '=', 'Entregado']])->count();
             }
-         return false;
+         return 0;
         } catch (\Exception $e) {
             return $e;
         }   

@@ -126,7 +126,9 @@ class GuestService {
             $settingsArray = settingsNotyStayDefault();
             $settings = (object)$settingsArray;
         }
+        Log::info("inviteToStayByEmail settings".$settings);
         if($settings->guestinvite_check_email){
+            Log::info("inviteToStayByEmail entro en envio");
             $data = [
                 'stay_id' => $stayId,
                 'guest_id' => $guest->id,
@@ -137,6 +139,8 @@ class GuestService {
                 'hotel_id' => $hotel->id,
             ];
             $msg = prepareMessage($data,$hotel);
+            Log::info("inviteToStayByEmail prepareMessage".$msg);
+            Log::info("inviteToStayByEmail hotel".$hotel);
             Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
         }
     }
