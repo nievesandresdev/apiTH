@@ -98,4 +98,23 @@ class HotelController extends Controller
         }
     }
 
+    public function getChatHours (Request $request) {
+        try {
+
+            $hotel = $request->attributes->get('hotel');
+            $hotelId = $hotel->id;
+            $model = $this->service->getChatHours($hotelId);
+
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getChatHours');
+        }
+    }
 }

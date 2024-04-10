@@ -11,6 +11,7 @@ use App\Models\Hotel;
 use App\Models\User;
 
 use App\Http\Resources\HotelResource;
+use App\Models\ChatHour;
 
 class HotelService {
 
@@ -56,6 +57,16 @@ class HotelService {
 
             return $model;
 
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function getChatHours ($hotelId) {
+        try {
+            $defaultChatHours = defaultChatHours();
+            $chatHours = ChatHour::where('hotel_id',$hotelId)->where('active',1)->get() ?? $defaultChatHours;
+            return $chatHours;
         } catch (\Exception $e) {
             return $e;
         }

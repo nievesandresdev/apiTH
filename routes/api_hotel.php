@@ -9,4 +9,5 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/findByParams', [HotelController::class, 'findByParams']);
     Route::get('/getAllCrossellings', [HotelController::class, 'getAllCrossellings']);
     Route::get('/create/subdomain', [SubdomainController::class, 'createDNSRecord']);
+    Route::get('/getChatHours', [HotelController::class, 'getChatHours']);
 });

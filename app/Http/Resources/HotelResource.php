@@ -19,8 +19,8 @@ class HotelResource extends JsonResource
         $defaultChatSettingsArray  = defaultChatSettings();
         $chatSettings = ChatSetting::with('languages')->where('hotel_id',$this->id)->first() ?? $defaultChatSettingsArray;
 
-        $defaultChatHours = defaultChatHours();
-        $chatHours = ChatHour::where('hotel_id',$this->id)->get() ?? $defaultChatHours;
+        // $defaultChatHours = defaultChatHours();
+        // $chatHours = ChatHour::where('hotel_id',$this->id)->get() ?? $defaultChatHours;
         
         
         return [
@@ -57,7 +57,7 @@ class HotelResource extends JsonResource
             "user" => new UserResource($this->user()->first()),
             "translate" => $this->translate,
             "chatSettings" => new ChatSettingResource($chatSettings), 
-            "chatHours" => $chatHours,
+            // "chatHours" => $chatHours,
             "language_default_webapp"=> $this->language_default_webapp,
             "sender_for_sending_sms"=> $this->sender_for_sending_sms,
             "sender_for_sending_email"=> $this->sender_for_sending_email
