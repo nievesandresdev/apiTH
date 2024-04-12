@@ -48,6 +48,25 @@ class StayController extends Controller
         }
     }
 
+    public function existsAndValidate (Request $request) {
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->existsAndValidate($request->stayId,$hotel);
+            
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            $data = new StayResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existsAndValidate');
+        }
+    }
+
     public function createAndInviteGuest (Request $request) {
         try {
             $hotel = $request->attributes->get('hotel');
@@ -150,7 +169,8 @@ class StayController extends Controller
             foreach ($deleteList as $g) {
                 $this->service->deleteGuestOfStay($request->stayId,$g);
             }
-            return bodyResponseRequest(EnumResponse::ACCEPTED, true);
+            $response = new StayResource($updateStay);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $response);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateStayAndGuests');
         }

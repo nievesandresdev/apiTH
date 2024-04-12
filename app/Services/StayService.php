@@ -49,6 +49,22 @@ class StayService {
         }
     }
 
+    public function existsAndValidate($stay_id,$hotel)
+    {
+        try {
+            $stay = Stay::where('id',$stay_id)->where('hotel_id',$hotel->id)->first();
+            $checkoutDate = $stay ? Carbon::parse($stay->check_out) : null;
+            // Verifica si han pasado más de 10 días desde el checkout
+            if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
+                return $stay;
+            }
+            return null;
+
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
     public function createAndInviteGuest($hotel,$request)
     {
         try {
@@ -148,6 +164,13 @@ class StayService {
             // Log::info("invited:".$invited);
             $invitedStay = $this->guestService->findAndValidLastStay($invited->id,$hotel);
             $currentStayData = Stay::find($currentStayId);
+
+            $invitedStayCheckout =  $invitedStay ? $invitedStay->check_out : null;
+            $currentStayCheckout =  $currentStayData ? $currentStayData->check_out : null;
+            $invitedStayValid = $this->validateCheckoutOfStay($invitedStayCheckout);
+            $currentStayValid = $this->validateCheckoutOfStay($currentStayCheckout);
+            if(!$invitedStayValid)  $invitedStay = null;
+            if(!$currentStayValid)  $currentStayData = null;
             // Log::info("currentStayId:".$currentStayId);
             // Log::info("invitedStay:".$invitedStay);
             if($invitedStay && (intval($invitedStay->id) !== intval($currentStayId))){
@@ -183,9 +206,11 @@ class StayService {
             }else{
                 // Log::info("creacion de acccesos para estancia");
                 //agregar acceso del invitado
-                $this->stayAccessService->save($currentStayData->id,$invited->id);
-                //agregar relacion a estancia
-                $invited->stays()->syncWithoutDetaching([$currentStayData->id]);
+                if($currentStayData){
+                    $this->stayAccessService->save($currentStayData->id,$invited->id);
+                    //agregar relacion a estancia
+                    $invited->stays()->syncWithoutDetaching([$currentStayData->id]);
+                }
             }
             // Log::info("currentStayData:".$currentStayData);
             return $currentStayData;
@@ -242,6 +267,22 @@ class StayService {
         } catch (\Exception $e) {
             DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteGuestOfStay');
+        }
+    }
+
+    public function validateCheckoutOfStay($check_out){
+        try {
+            if(!$check_out) return false;
+            $checkoutDate = Carbon::parse($check_out);
+            // Verifica si han pasado más de 10 días desde el checkout
+            if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
+                //si no han pasado retorna la estancia y guarda el acceso en caso de no existir
+                return true;
+            }
+            return false;
+
+        } catch (\Exception $e) {
+            return $e;
         }
     }
     
