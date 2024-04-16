@@ -22,7 +22,7 @@ class ExperienceResource extends JsonResource
         }
         return [
             'id' => $this->id,
-            'image' => $this->images->first(),
+            'image' => $this->images()->orderBy('id','ASC')->first(),
             'status' => $this->status,
             'destacado' => $this->destacado,
             'distance' => $distance,

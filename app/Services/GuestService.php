@@ -40,7 +40,7 @@ class GuestService {
         try {
             $email = $data->email;
             $name = $data->name;
-            $lang = $data->language;
+            $lang = $data->language ?? 'es';
 
             $guest = Guest::where('email',$email)->first();
             if(!$guest){
