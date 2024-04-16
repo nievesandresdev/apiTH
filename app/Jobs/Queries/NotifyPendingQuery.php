@@ -78,7 +78,7 @@ class NotifyPendingQuery implements ShouldQueue
             $checkoutFormat = Carbon::createFromFormat('Y-m-d', $stay->check_out)->format('d/m/Y');
             Log::info('JOB entro '.$checkoutFormat);
             $dates = "$checkinFormat - $checkoutFormat";
-            Mail::to("andresdreamerf@gmail.com")->send(new NewFeedback($dates, $urlQuery, $hotel, 'pending'));  
+            Mail::to("andresdreamerf@gmail.com")->send(new NewFeedback($dates, $urlQuery, $hotel, 'pending'));
         }
 
         

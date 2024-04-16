@@ -12,22 +12,23 @@ use Carbon\Carbon;
 use App\Models\Stay;
 use App\Models\StayAccess;
 use App\Models\StayNotificationSetting;
-use App\Services\GuestService;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\Mail;
 
+use App\Services\GuestService;
+use App\Services\MailService;
+
 class StayService {
-    
-    public $guestService;
-    public $stayAccessService;
 
     function __construct(
+        MailService $_MailService,
         GuestService $_GuestService,
-        StayAccessService $__StayAccessService
+        StayAccessService $_StayAccessService
     )
     {
+        $this->mailService = $_MailService;
         $this->guestService = $_GuestService;
-        $this->stayAccessService = $__StayAccessService;
+        $this->stayAccessService = $_StayAccessService;
     }
 
     public function findAndValidAccess($stay_id,$hotel,$guestId)
@@ -93,7 +94,8 @@ class StayService {
             ];
             if($settings->guestcreate_check_email){
                 $msg = prepareMessage($data,$hotel);
-                Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
+                $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);     
             }
             DB::commit();
             //adjutar huespedes y enviar correos
@@ -114,7 +116,8 @@ class StayService {
                         $data['guest_name'] = $guest->name;
                         $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
-                        Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+                        // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
+                        $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);    
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
                     $this->stayAccessService->save($stay->id,$guestId);

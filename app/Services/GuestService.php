@@ -13,14 +13,17 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
+use App\Services\MailService;
+
 class GuestService {
-    public $stayAccessService;
 
     function __construct(
-        StayAccessService $__StayAccessService
+        StayAccessService $_StayAccessService,
+        MailService $_MailService
     )
     {
-        $this->stayAccessService = $__StayAccessService;
+        $this->stayAccessService = $_StayAccessService;
+        $this->mailService = $_MailService;
     }
     
     public function findById($id)
@@ -141,7 +144,8 @@ class GuestService {
             $msg = prepareMessage($data,$hotel);
             Log::info("inviteToStayByEmail prepareMessage".$msg);
             Log::info("inviteToStayByEmail hotel".json_encode($hotel));
-            Mail::to($guest->email)->send(new MsgStay($msg,$hotel));    
+            // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));  
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);  
         }
     }
 
@@ -184,7 +188,8 @@ class GuestService {
             ];
             
             $msg = prepareMessage($data,$hotel);
-            Mail::to($guestEmail)->send(new MsgStay($msg,$hotel));
+            // Maiil::to($guestEmail)->send(new MsgStay($msg,$hotel));
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guestEmail);
             //
             return  true;   
         } catch (\Exception $e) {
