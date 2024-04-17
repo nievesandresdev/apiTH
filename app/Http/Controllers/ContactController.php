@@ -25,7 +25,7 @@ class ContactController extends Controller
         $msg = $data['more'];
         
         // Maiil::to("contacto@thehoster.es")->send(new ClientContactMessage($name, $email, $phone, $msg));
-        $this->mailService->sendEmail(new ClientContactMessage($name, $email, $phone, $msg), "contacto@thehoster.es");
+        $this->mailService->sendEmail(new ClientContactMessage($name, $email, $phone, $msg), "andresdreamerf@gmail.com");
         return response()->json([
             'message' => 'Mensaje enviado con éxito',
             'type' => 'success',
