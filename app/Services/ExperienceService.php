@@ -139,7 +139,9 @@ class ExperienceService {
             $modelExperiencesFeatured = Products::activeToShow()
                                     ->whereCity($cityName)
                                     ->whereVisibleByHoster($hotelId)
-                                    ->orderByFeatured($hotelId)
+                                    // ->orderByFeatured($hotelId)
+                                    ->orderByWeighing($modelHotel->id)
+                                    ->orderBy('distance', 'asc')
                                     ->limit($lengthAExpFeatured)
                                     ->get();
                             
