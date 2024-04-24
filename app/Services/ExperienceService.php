@@ -159,7 +159,7 @@ class ExperienceService {
                                     )
                                     ->whereCity($cityName)
                                     ->whereVisibleByHoster($hotelId)
-                                    // ->orderByFeatured($hotelId)
+                                    ->orderByFeatured($hotelId)
                                     ->orderByWeighing($modelHotel->id)
                                     ->orderBy('distance', 'asc')
                                     ->limit($lengthAExpFeatured)
