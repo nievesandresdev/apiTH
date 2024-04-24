@@ -28,7 +28,7 @@ class ExperienceDetailResource extends JsonResource
 
         $location = $this['location'] ?? null;
 
-        $location_metting = $location[0] ?? null;
+        /*$location_metting = $location[0] ?? null;
         if ($location_metting) {
             $location_provider_metting = $location[0]['provider'] ?? null;
             if ($location_provider_metting == 'GOOGLE') {
@@ -54,7 +54,12 @@ class ExperienceDetailResource extends JsonResource
                 $metting_point_latitude = $center['latitude'] ?? mull;
                 $metting_point_longitude = $center['longitude'] ?? null;
             }        
-        }
+        }*/
+
+        // $end_point_latitude = $this['translate']['end_point_latitude'] ?? null;
+        // $end_point_longitude = $this['translate']['end_point_longitude'] ?? null;
+        // $metting_point_latitude = $this['translate']['metting_point_latitude'] ?? null;
+        // $metting_point_longitude = $this['translate']['metting_point_longitude'] ?? null;
 
         return [
             'id' => $this->id,
@@ -76,14 +81,14 @@ class ExperienceDetailResource extends JsonResource
             'product_featured' => $hotel ? $this->productFeatured()->where('hotel_id', $hotel->id)->with('hotel')->first() : null,
             'title' => $this['translate']['title'],
             'description' => $this['translate']['description'],
-            'metting_point_latitude' => $metting_point_latitude,
-            'metting_point_longitude' => $metting_point_longitude,
-            'end_point_latitude' => $end_point_latitude,
-            'end_point_longitude' => $end_point_longitude,
-            // 'metting_point_latitude' => $this['translate']['metting_point_latitude'],
-            // 'end_point_latitude' => $this['translate']['end_point_latitude'],
-            // 'metting_point_longitude' => $this['translate']['metting_point_longitude'],
-            // 'end_point_longitude' => $this['translate']['end_point_longitude'],
+            // 'metting_point_latitude' => $metting_point_latitude,
+            // 'metting_point_longitude' => $metting_point_longitude,
+            // 'end_point_latitude' => $end_point_latitude,
+            // 'end_point_longitude' => $end_point_longitude,
+            'metting_point_latitude' => $this['translate']['metting_point_latitude'],
+            'end_point_latitude' => $this['translate']['end_point_latitude'],
+            'metting_point_longitude' => $this['translate']['metting_point_longitude'],
+            'end_point_longitude' => $this['translate']['end_point_longitude'],
             'metting_point_reference' => $this['translate']['metting_point_reference'],
             'end_point_reference' => $this['translate']['end_point_reference'],
             'location' => $this['location'],
