@@ -43,7 +43,7 @@ class HotelController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
             $data = new HotelResource($model);
@@ -64,7 +64,7 @@ class HotelController extends Controller
             $leisureId = $modelTypePlaces->where('name','Ocio')->first()->id;
             $whereeatId = $modelTypePlaces->where('name','Dónde comer')->first()->id;
             $whatvisitId = $modelTypePlaces->where('name','Qué visitar')->first()->id;
-            
+
             $facilities = $this->serviceFacility->getCrosselling($modelHotel);
             $crossellingFacilities = FacilityResource::collection($facilities);
 
@@ -73,13 +73,13 @@ class HotelController extends Controller
 
             $placesLeisure = $this->servicePlace->getCrosselling('Ocio', $modelHotel);
             $crossellingPlacesLeisure = PlaceResource::collection($placesLeisure)->toArray(request());
-            
+
             $placesWhereeat = $this->servicePlace->getCrosselling('Dónde comer', $modelHotel);
             $crossellingPlacesWhereeat = PlaceResource::collection($placesWhereeat)->toArray(request());
-            
+
             $placesWhatvisit = $this->servicePlace->getCrosselling('Qué visitar', $modelHotel);
             $crossellingPlacesWhatvisit = PlaceResource::collection($placesWhatvisit)->toArray(request());
-            
+
             $data = [
                 'crosselling_facilities' => $crossellingFacilities,
                 'crosselling_experiences' => $crossellingExperiences,
@@ -109,7 +109,7 @@ class HotelController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 

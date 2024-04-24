@@ -48,10 +48,10 @@ if (!function_exists('bodyResponseRequest')) {
 
             // Status 201
             case EnumResponse::CREATE_SUCCESS:
-            
+
                 return response()->json([
                     'ok' => true,
-                    'status' => \Illuminate\Http\Response::HTTP_CREATED,  
+                    'status' => \Illuminate\Http\Response::HTTP_CREATED,
                     'title' =>  __('response.create_success'),
                     'message' =>  $customMessage ?? __('response.create_success_long'),
                     'data' => $data
@@ -61,7 +61,7 @@ if (!function_exists('bodyResponseRequest')) {
 
             // Status 202
             case EnumResponse::ACCEPTED:
-            
+
                 return response()->json([
                     'ok' => true,
                     'status' => \Illuminate\Http\Response::HTTP_ACCEPTED ,
@@ -74,7 +74,7 @@ if (!function_exists('bodyResponseRequest')) {
 
             // Status 204
             case EnumResponse::NO_CONTENT:
-            
+
                 return response()->json([
                     'ok' => false,
                     'status' => \Illuminate\Http\Response::HTTP_NO_CONTENT ,
@@ -231,8 +231,8 @@ if (!function_exists('bodyResponseRequest')) {
 */
 if (!function_exists('responseRequest')) {
     /**
-     * This function a implement custom response request JSON in My Community 
-     * 
+     * This function a implement custom response request JSON in My Community
+     *
      * @param string $codeResp
      * @param array|null  $data
      * @param string|null  $code_error
@@ -255,7 +255,7 @@ if (!function_exists('responseRequest')) {
                 break;
 
             case EnumResponse::POST_SUCCESS:
-            
+
                 return response()->json([
                     'status' => \Illuminate\Http\Response::HTTP_OK,
                     'title' => __('response.response_post_success'),
@@ -267,7 +267,7 @@ if (!function_exists('responseRequest')) {
             case EnumResponse::FAILED:
 
                 return response()->json(
-                    InventoryError::getErrorStatus($code_error), 
+                    InventoryError::getErrorStatus($code_error),
                     \Illuminate\Http\Response::HTTP_OK
                 );
 
@@ -349,7 +349,7 @@ if (! function_exists('settingsNotyStayDefault')) {
             'arrival_msg_email' => '', //NO USANDO
             'arrival_lang_email' => 'es', //NO USANDO
             'arrival_check_sms' => false, //NO USANDO
-            'arrival_msg_sms' => '', //NO USANDO 
+            'arrival_msg_sms' => '', //NO USANDO
             'arrival_lang_sms' => 'es', //NO USANDO
             'preout_check_email' => true, //NO USANDO
             'preout_msg_email' => '', //NO USANDO
@@ -385,7 +385,7 @@ if (! function_exists('includeSubdomainInUrlHuesped')) {
         if (!$url || !$hotel) return;
         $production  = config('app.env');
         $url_base_huesped = $url;
-        if ($production == 'test' || $production == 'pro') {   
+        if ($production == 'test' || $production == 'pro') {
             $resultURL = str_replace('api', $hotel['subdomain'], $url_base_huesped);
             return $resultURL;
         }
@@ -463,7 +463,7 @@ if (! function_exists('defaultChatHours')) {
 }
 
 if (! function_exists('preStayqueriesTextDefault')) {
-    function preStayqueriesTextDefault(){        
+    function preStayqueriesTextDefault(){
         $queriesTextDefault = new stdClass();
         $queriesTextDefault->pre_stay_activate = true;
         $queriesTextDefault->pre_stay_thanks = [
@@ -481,7 +481,7 @@ if (! function_exists('preStayqueriesTextDefault')) {
 }
 
 if (! function_exists('inStayqueriesTextDefault')) {
-    function inStayqueriesTextDefault(){        
+    function inStayqueriesTextDefault(){
         $queriesTextDefault = new stdClass();
         $queriesTextDefault->in_stay_activate = true;
         $queriesTextDefault->in_stay_thanks_good = [
@@ -504,7 +504,7 @@ if (! function_exists('inStayqueriesTextDefault')) {
 }
 
 if (! function_exists('postStayqueriesTextDefault')) {
-    function postStayqueriesTextDefault(){        
+    function postStayqueriesTextDefault(){
         $queriesTextDefault = new stdClass();
         $queriesTextDefault->post_stay_thanks_good = [
             "es" => "¡Nos alegra que hayas disfrutado en nuestro hotel! Agradecemos sinceramente tu feedback y esperamos que vuelvas a disfrutar pronto una estancia con nosotros.",
@@ -526,7 +526,7 @@ if (! function_exists('postStayqueriesTextDefault')) {
 }
 
 if (! function_exists('queryNotifyDefault')) {
-    function queryNotifyDefault(){        
+    function queryNotifyDefault(){
         $queriesNotifyDefault = new stdClass();
         $queriesNotifyDefault->notify_to_hoster = [
             "notify_when_guest_send_via_platform" => true,
@@ -539,7 +539,7 @@ if (! function_exists('queryNotifyDefault')) {
 }
 
 if (! function_exists('queriesTextDefault')) {
-    function queriesTextDefault(){  
+    function queriesTextDefault(){
         $queriesTexts1 = preStayqueriesTextDefault();
         $queriesTexts2 = inStayqueriesTextDefault();
         $queriesTexts3 = postStayqueriesTextDefault();
@@ -556,5 +556,5 @@ if (! function_exists('queriesTextDefault')) {
 
         // Convertimos el array resultante de nuevo a un objeto
         return (object)$mergedArray;
-    }      
+    }
 }
