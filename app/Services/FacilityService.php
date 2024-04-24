@@ -26,7 +26,9 @@ class FacilityService {
             $facilities = FacilityHoster::with('images', 'translate')
                             ->where('hotel_id',$modelHotel->id)
                             ->where('visible',1)
-                            ->where('select',1)->limit(12)
+                            ->where('select',1)
+                            ->orderBy('updated_at', 'desc')
+                            ->limit(12)
                             ->get();
 
             return $facilities;
