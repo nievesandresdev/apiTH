@@ -11,6 +11,7 @@ use App\Services\HotelService;
 use App\Services\FacilityService;
 use App\Services\ExperienceService;
 use App\Services\PlaceService;
+use App\Services\CityService;
 
 use App\Http\Resources\HotelResource;
 use App\Http\Resources\FacilityResource;
@@ -25,13 +26,15 @@ class HotelController extends Controller
         HotelService $_HotelService,
         FacilityService $_FacilityService,
         ExperienceService $_ExperienceService,
-        PlaceService $_PlaceService
+        PlaceService $_PlaceService,
+        CityService $_CityService
     )
     {
         $this->service = $_HotelService;
         $this->serviceFacility = $_FacilityService;
         $this->serviceExperience = $_ExperienceService;
         $this->servicePlace = $_PlaceService;
+        $this->cityService = $_CityService;
     }
 
     public function findByParams (Request $request) {
@@ -61,14 +64,19 @@ class HotelController extends Controller
 
             $modelTypePlaces = TypePlaces::all();
 
+            //crear array de ciudades para la consulta
+            $citySlug = \Str::slug($modelHotel->zone);
+            $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+
             $leisureId = $modelTypePlaces->where('name','Ocio')->first()->id;
             $whereeatId = $modelTypePlaces->where('name','Dónde comer')->first()->id;
             $whatvisitId = $modelTypePlaces->where('name','Qué visitar')->first()->id;
+            
 
             $facilities = $this->serviceFacility->getCrosselling($modelHotel);
             $crossellingFacilities = FacilityResource::collection($facilities);
-
-            $experiences = $this->serviceExperience->getCrosselling($modelHotel);
+            
+            $experiences = $this->serviceExperience->getCrosselling($modelHotel, $cityData);
             $crossellingExperiences = ExperienceResource::collection($experiences);
 
             $placesLeisure = $this->servicePlace->getCrosselling('Ocio', $modelHotel);
