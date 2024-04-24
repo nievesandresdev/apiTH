@@ -19,6 +19,11 @@ class ChatMessage extends Model
         'automatic'
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+    ];
+
     public function messageable()
     {
         return $this->morphTo();
