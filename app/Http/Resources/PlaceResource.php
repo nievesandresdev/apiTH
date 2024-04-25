@@ -26,7 +26,7 @@ class PlaceResource extends JsonResource
 
         $firstCategoryPlace = CategoriPlaces::where('type_places_id',$this->typePlaces->id)->first();
         $firstCategoryPlace = $firstCategoryPlace->id ?? null;
-        $recomendation = $modelHotel ? $this->recomendations()->where('hotel_id', $hotel->id)->with('hotel')->first() : null;
+        $recomendation = $modelHotel ? $this->recomendations()->where('hotel_id', $modelHotel->id)->with('hotel')->first() : null;
         return [
             'id' => $this->id,
             'title' => $this->translatePlace->title ?? '',
