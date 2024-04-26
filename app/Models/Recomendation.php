@@ -16,9 +16,14 @@ class Recomendation extends Model
         'recommendable_id',
         'recommendable_type',
         'message',
+        'translate',
         'language',
         'order',
         'hotel_id',
+    ];
+
+    protected $casts = [
+        'translate' => 'array',
     ];
 
     public function recommendable() : MorphTo{
@@ -42,5 +47,12 @@ class Recomendation extends Model
     public function product()
     {
         return $this->belongsTo(Products::class, 'recommendable_id');
+    }
+    public function translationLanguageCurrent()
+    {
+        if ($this->translate) {
+            return $this->translate[localeCurrent()] ?? null;
+        }
+        return;
     }
 }

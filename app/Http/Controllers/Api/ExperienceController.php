@@ -77,7 +77,7 @@ class ExperienceController extends Controller
     }
 
     public function findBySlug (Request $request) {
-        try {
+        // try {
 
             $experienceModel = $this->service->findBySlug($request);
 
@@ -91,9 +91,9 @@ class ExperienceController extends Controller
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
-        } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findBySlug');
-        }
+        // } catch (\Exception $e) {
+        //     return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findBySlug');
+        // }
     }
     
     public function getNumbersByFilters (Request $request) {
