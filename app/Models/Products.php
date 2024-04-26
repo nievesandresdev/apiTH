@@ -193,23 +193,20 @@ class Products extends Model
         $query->leftJoin('recomendations', function ($join) use ($hotelId) {
             $join->on('products.id', '=', 'recomendations.recommendable_id')
                 ->where('recomendations.hotel_id', '=', $hotelId)
-                ->where('recommendable_type', 'App\Models\Products')
-                ->where('recomendations.hotel_id', '=', $hotelId);
+                ->where('recommendable_type', 'App\Models\Products');
         })
         ->leftJoin('service_featured', function ($join) use ($hotelId) {
             $join->on('products.id', '=', 'service_featured.product_id')
                 ->where('service_featured.hotel_id', '=', $hotelId);
         });
 
-        // Ordenar por ciudad, recomendados y destacados
-        $query->orderByRaw("CASE 
-            WHEN activities.city_experince = '$cityName' THEN 0
-            ELSE 1 END, activities.city_experince")
-            ->orderByRaw('CASE 
+        // Ordenar por recomendados, destacados y ciudad
+        $query->orderByRaw('CASE 
                 WHEN recomendations.recommendable_id IS NOT NULL THEN 1
                 WHEN service_featured.product_id IS NOT NULL THEN 2
                 ELSE 3
-            END');
+            END')
+            ->orderByRaw("CASE WHEN activities.city_experience = '$cityName' THEN 0 ELSE 1 END, activities.city_experience");
     }
 
 }
