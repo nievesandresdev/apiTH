@@ -34,7 +34,7 @@ class ExperienceService {
             $collectionExperiences = $queryExperience->orderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
                 // ->orderByASpecificCity($modelHotel->zone)
                 // ->orderByFeatured($modelHotel->id)
-                // ->orderBy('distance', 'asc')
+                ->orderBy('distance', 'asc')
                 // ->orderByWeighing($modelHotel->id)
                 ->paginate(20)
                 ->appends(request()->except('page'));
