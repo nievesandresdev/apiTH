@@ -4,6 +4,7 @@ use App\Models\Language;
 use App\Utils\Enums\EnumResponse;
 use App\Utils\Enums\InventoryError;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Pusher\Pusher;
 
 if (!function_exists('bodyResponseRequest')) {
@@ -377,6 +378,57 @@ if (! function_exists('prepareMessage')) {
         $msg = str_replace('[URL]', $link, $msg);
         // return $msg = googleTanslate($data['msg_lang'], $msg);
         return $msg;
+    }
+}
+
+if (! function_exists('sendSMS')) {
+    function sendSMS($phone,$msg,$from){
+            //reducir nombre_del_hotel
+        if(config('services.smsapi.active')){
+            $hotelName = $from;
+            $words = explode(' ', $hotelName);
+
+            $alias = $words[0];
+            array_shift($words); // Eliminamos la primera palabra
+
+            $currentLength = strlen($alias);
+
+            foreach ($words as $word) {
+                if (strlen($word) < 3) {
+                    continue; // Saltamos palabras de menos de 3 caracteres
+                }
+
+                // Calculamos espacio restante considerando el espacio entre palabras
+                $remainingSpace = 11 - $currentLength - 1;
+
+                if ($remainingSpace >= strlen($word)) {
+                    // Si la palabra cabe completa
+                    $alias .= " " . $word;
+                    $currentLength += strlen($word) + 1; // +1 para el espacio
+                } elseif ($remainingSpace > 1) {
+                    // Si la palabra no cabe completa pero hay espacio para parte de ella y un punto
+                    $alias .= " " . substr($word, 0, $remainingSpace - 1) . ".";
+                    break; // Terminamos el proceso porque ya no hay más espacio para añadir palabras o caracteres
+                } else {
+                    break; // Terminamos el proceso porque no hay espacio suficiente para añadir más palabras
+                }
+            }
+            //
+            //
+
+
+            $response = Http::withHeaders([
+                'X-Api-Key' => config('services.smsapi.token'),
+                'Accept' => 'application/json', // Añade esto
+            ])->post('https://rest.smsmode.com/sms/v1/messages', [
+                'recipient' => [ 'to' => $phone],
+                'body' => [ 'text' => $msg],
+                'from' => $alias,
+            ]);
+            return $response;
+        }else{
+            return 'SMS inactivo';
+        }
     }
 }
 

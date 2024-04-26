@@ -25,6 +25,11 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'smsapi' => [
+        'token' => env('SMS_API_TOKEN'),
+        'active' => env('API_SMS_ACTIVE'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
