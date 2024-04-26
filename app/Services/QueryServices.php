@@ -8,6 +8,8 @@ use App\Models\Stay;
 use App\Http\Resources\QueryResource;
 use App\Jobs\Queries\NotifyPendingQuery;
 use App\Mail\Queries\NewFeedback;
+use App\Mail\Queries\RequestReviewGuest;
+use App\Models\Guest;
 use App\Models\hotel;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
@@ -166,6 +168,17 @@ class QueryServices {
             $stay->pending_queries_seen = true;
             $stay->save();
 
+            $guest = Guest::select('id','phone','email')->where('id',$query->guest_id)->first();
+            //solicitud de reseña
+            if($query->qualification == 'GOOD'){
+                Mail::to($guest->email)->send(new RequestReviewGuest($hotel));    
+                if($guest->phone){
+                    $msg = 'solicitud de reseña';
+                    sendSMS($guest->phone,$msg,$hotel->sender_for_sending_sms);
+                }
+                
+            }
+
             $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id;
             
             if($settings->notify_to_hoster['notify_when_guest_send_via_platform']){
@@ -182,7 +195,7 @@ class QueryServices {
                 $checkinFormat = Carbon::createFromFormat('Y-m-d', $stay->check_in)->format('d/m/Y');
                 $checkoutFormat = Carbon::createFromFormat('Y-m-d', $stay->check_out)->format('d/m/Y');
                 $dates = "$checkinFormat - $checkoutFormat";
-                Mail::to("andresdreamerf@gmail.com")->send(new NewFeedback($dates, $urlQuery, $hotel , 'new'));    
+                Mail::to($guest->email)->send(new NewFeedback($dates, $urlQuery, $hotel , 'new'));    
             }
 
             $via_platform = $settings->notify_to_hoster['notify_later_when_guest_send_via_platform'];
