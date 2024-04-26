@@ -173,7 +173,10 @@ class Products extends Model
     public function scopeOrderByASpecificCity($query, $cityName)
     {
         if ($cityName) {
-            $query->leftJoin('activities', 'activities.products_id', '=', 'products.id', 'activities.language', '=', 'es')
+            $query->leftJoin('activities', function($join) use ($cityName) {
+                $join->on('activities.products_id', '=', 'products.id')
+                     ->where('activities.language', '=', 'es');
+            })
             ->orderByRaw("CASE WHEN activities.city_experince = '$cityName' THEN 0 ELSE 1 END, activities.city_experince");
         }
     }
