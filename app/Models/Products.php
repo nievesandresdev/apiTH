@@ -206,7 +206,7 @@ class Products extends Model
                 WHEN service_featured.product_id IS NOT NULL THEN 2
                 ELSE 3
             END')
-            ->orderByRaw("CASE WHEN activities.city_experience = '$cityName' THEN 0 ELSE 1 END, activities.city_experience");
+            ->orderByRaw("CASE WHEN activities.city_experince = '$cityName' THEN 0 ELSE 1 END, activities.city_experince");
     }
 
 }
