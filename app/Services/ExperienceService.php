@@ -30,11 +30,12 @@ class ExperienceService {
             $productsCountOtherCities = clone $queryExperience;
             $productsCountOtherCities->get();
             $countOtherCities = $productsCountOtherCities->whereDiffLocaleCity($modelHotel->zone)->count();
-
-            $collectionExperiences = $queryExperience->orderByASpecificCity($modelHotel->zone)
-                ->orderByFeatured($modelHotel->id)
-                ->orderByWeighing($modelHotel->id)
+            // ->scopeOrderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
+            $collectionExperiences = $queryExperience->orderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
+                // ->orderByASpecificCity($modelHotel->zone)
+                // ->orderByFeatured($modelHotel->id)
                 ->orderBy('distance', 'asc')
+                ->orderByWeighing($modelHotel->id)
                 ->paginate(20)
                 ->appends(request()->except('page'));
             return ['experiences' => $collectionExperiences, 'countOtherCities' => $countOtherCities];

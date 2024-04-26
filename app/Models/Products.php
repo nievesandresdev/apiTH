@@ -127,6 +127,27 @@ class Products extends Model
         }
     }
 
+    public function scopeSearch ($query, $search)
+    {
+        if ($search) {
+            $query->whereHas('translate', function($query)use($search){
+                if ($search) {
+                    $query->where('title','like',  ['%'.$search.'%'])
+                    ->orWhere('description','like',  ['%'.$search.'%']);
+                }
+            });
+        }
+    }
+
+    public function scopeOrderByWeighing($query, $hotelId)
+    {
+        if ($hotelId) {
+            $query->join('toggle_products', 'products.id', '=', 'toggle_products.products_id')
+                ->where('toggle_products.hotel_id', $hotelId)
+                ->orderBy('toggle_products.order', 'desc');
+        }
+    }
+
     public function scopeOrderByFeatured($query, $hotelId)
     {
         if ($hotelId) {
@@ -149,27 +170,6 @@ class Products extends Model
         }
     }
 
-    public function scopeSearch ($query, $search)
-    {
-        if ($search) {
-            $query->whereHas('translate', function($query)use($search){
-                if ($search) {
-                    $query->where('title','like',  ['%'.$search.'%'])
-                    ->orWhere('description','like',  ['%'.$search.'%']);
-                }
-            });
-        }
-    }
-
-    public function scopeOrderByWeighing($query, $hotelId)
-    {
-        if ($hotelId) {
-            $query->join('toggle_products', 'products.id', '=', 'toggle_products.products_id')
-                ->where('toggle_products.hotel_id', $hotelId)
-                ->orderBy('toggle_products.order', 'desc');
-        }
-    }
-
     public function scopeOrderByASpecificCity($query, $cityName)
     {
         if ($cityName) {
@@ -179,6 +179,37 @@ class Products extends Model
             })
             ->orderByRaw("CASE WHEN activities.city_experince = '$cityName' THEN 0 ELSE 1 END, activities.city_experince");
         }
+    }
+
+    public function scopeOrderByCityAndFeatures($query, $cityName, $hotelId)
+    {
+        // Unirse a la tabla activities
+        $query->leftJoin('activities', function($join) use ($cityName) {
+            $join->on('activities.products_id', '=', 'products.id')
+                ->where('activities.language', '=', 'es');
+        });
+
+        // Unirse a la tabla recomendations y service_featured
+        $query->leftJoin('recomendations', function ($join) use ($hotelId) {
+            $join->on('products.id', '=', 'recomendations.recommendable_id')
+                ->where('recomendations.hotel_id', '=', $hotelId)
+                ->where('recommendable_type', 'App\Models\Products')
+                ->where('recomendations.hotel_id', '=', $hotelId);
+        })
+        ->leftJoin('service_featured', function ($join) use ($hotelId) {
+            $join->on('products.id', '=', 'service_featured.product_id')
+                ->where('service_featured.hotel_id', '=', $hotelId);
+        });
+
+        // Ordenar por ciudad, recomendados y destacados
+        $query->orderByRaw("CASE 
+            WHEN activities.city_experince = '$cityName' THEN 0
+            ELSE 1 END, activities.city_experince")
+            ->orderByRaw('CASE 
+                WHEN recomendations.recommendable_id IS NOT NULL THEN 1
+                WHEN service_featured.product_id IS NOT NULL THEN 2
+                ELSE 3
+            END');
     }
 
 }
