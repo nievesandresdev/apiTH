@@ -40,7 +40,8 @@ class PlaceService {
             $placesCountOtherCities = clone $queryPlace;
             $countOtherCities = $placesCountOtherCities->where('city_places', '!=', $modelHotel->zone)->count();
 
-            $collectionPlaces = $queryPlace->orderByFeatured($modelHotel->id)
+            $collectionPlaces = $queryPlace->orderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
+                // ->orderByFeatured($modelHotel->id)
                 ->orderByWeighing($modelHotel->id)
                 ->orderBy('distance', 'asc')
                 ->paginate(20)

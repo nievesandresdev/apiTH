@@ -166,4 +166,27 @@ class Places extends Model
         }
     }
 
+    public function scopeOrderByCityAndFeatures($query, $cityName, $hotelId)
+    {
+
+        // Unirse a la tabla recomendations y service_featured
+        $query->leftJoin('recomendations', function ($join) use ($hotelId) {
+            $join->on('places.id', '=', 'recomendations.recommendable_id')
+                ->where('recomendations.hotel_id', '=', $hotelId)
+                ->where('recommendable_type', 'App\Models\Places');
+        })
+        ->leftJoin('place_featured', function ($join) use ($hotelId) {
+            $join->on('places.id', '=', 'place_featured.place_id')
+                ->where('place_featured.hotel_id', '=', $hotelId);
+        });
+
+        // Ordenar por ciudad, y luego por recomendados y destacados
+        $query->orderByRaw("CASE WHEN places.city_places = '$cityName' THEN 0 ELSE 1 END")
+            ->orderByRaw('CASE 
+                    WHEN recomendations.recommendable_id IS NOT NULL THEN 1
+                    WHEN place_featured.place_id IS NOT NULL THEN 2
+                    ELSE 3
+                END');
+    }
+
 }
