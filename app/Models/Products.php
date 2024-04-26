@@ -200,13 +200,13 @@ class Products extends Model
                 ->where('service_featured.hotel_id', '=', $hotelId);
         });
 
-        // Ordenar por recomendados, destacados y ciudad
-        $query->orderByRaw('CASE 
-                WHEN recomendations.recommendable_id IS NOT NULL THEN 1
-                WHEN service_featured.product_id IS NOT NULL THEN 2
-                ELSE 3
-            END')
-            ->orderByRaw("CASE WHEN activities.city_experince = '$cityName' THEN 0 ELSE 1 END, activities.city_experince");
+        // Ordenar por ciudad, y luego por recomendados y destacados
+        $query->orderByRaw("CASE WHEN activities.city_experince = '$cityName' THEN 0 ELSE 1 END")
+            ->orderByRaw('CASE 
+                    WHEN recomendations.recommendable_id IS NOT NULL THEN 1
+                    WHEN service_featured.product_id IS NOT NULL THEN 2
+                    ELSE 3
+                END');
     }
 
 }
