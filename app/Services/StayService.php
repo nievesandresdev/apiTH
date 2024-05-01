@@ -91,9 +91,7 @@ class StayService {
             $this->stayAccessService->save($stay->id,$guestId);
             
             //enviar mensaje al creador de la estancia
-            $user = $hotel->user()->first();
-            $user_id = $user->id;
-            $settings =  StayNotificationSetting::where('user_id',$user_id)->first();
+            $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
             if(!$settings){
                 $settingsArray = settingsNotyStayDefault();
                 $settings = (object)$settingsArray;

@@ -122,9 +122,7 @@ class GuestService {
     }
 
     public function inviteToStayByEmail($guest,$stayId,$hotel){
-        $user = $hotel->user()->first();
-        $user_id = $user->id;
-        $settings =  StayNotificationSetting::where('user_id',$user_id)->first();
+        $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
         if(!$settings){
             $settingsArray = settingsNotyStayDefault();
             $settings = (object)$settingsArray;
@@ -169,8 +167,7 @@ class GuestService {
 
         try{
             $hotel = hotel::find($hotelId);
-            $user_id = $hotel->user[0]->id;
-            $settings =  StayNotificationSetting::where('user_id',$user_id)->first();
+            $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
             if(!$settings){
                 $settingsArray = settingsNotyStayDefault();
                 $settings = (object)$settingsArray;
