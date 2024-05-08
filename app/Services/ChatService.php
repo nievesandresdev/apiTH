@@ -29,11 +29,21 @@ class ChatService {
         try{ 
             DB::beginTransaction();
             $langPage = $request->langWeb;
-                
-            $stay = new StayResource(Stay::find($request->stayId));
-            $chat = $stay->chat()->updateOrCreate([], ['pending' => true]);
             
-            $guest = new GuestResource(Guest::find($request->guestId));
+            $guestId = $request->guestId;
+            $stayId = $request->stayId;
+
+            $guest = new GuestResource(Guest::find($guestId));
+            $stay = new StayResource(Stay::find($stayId));
+
+            $chat = $guest->chats()
+                ->updateOrCreate([
+                    'stay_id' => $stayId
+                ], [
+                    'pending' => true,
+            ]);
+            
+            
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
                 'text' => $request->text,
@@ -41,6 +51,7 @@ class ChatService {
                 'by' => 'Guest',
                 'automatic' => false
             ]);
+            
             $msg = $guest->chatMessages()->save($chatMessage);
             $msg->load('messageable');
             if($msg){
@@ -105,7 +116,7 @@ class ChatService {
     
     public function loadMessages ($request) {
         try{ 
-        $chat = $this->findById($request->stayId);    
+        $chat = $this->findByGuestStay($request->guestId, $request->stayId);    
          if($chat){
             return $chat->messages()->get();
          }
@@ -117,7 +128,7 @@ class ChatService {
 
     public function markMsgsAsRead ($request) {
         try{
-            $chat = $this->findById($request->stayId);    
+            $chat = $this->findByGuestStay($request->guestId, $request->stayId);    
             if($chat){
                 $chat->messages()->where([
                     ['by', '=', $request->rol],
@@ -133,9 +144,10 @@ class ChatService {
 
     public function unreadMsgs ($request) {
         try{ 
-            $chat = $this->findById($request->stayId);    
+            $chat = $this->findByGuestStay($request->guestId, $request->stayId);    
             if($chat){
-                return $countUnreadMsgs = $chat->messages()->where([['by', '=', $request->rol],['status', '=', 'Entregado']])->count();
+                $countUnreadMsgs = $chat->messages()->where([['by', '=', $request->rol],['status', '=', 'Entregado']])->count();
+                return $countUnreadMsgs;
             }
          return 0;
         } catch (\Exception $e) {
@@ -143,9 +155,9 @@ class ChatService {
         }   
     }
 
-    public function findById($id){
-        return Chat::where('chatable_id', $id)
-                        ->where('chatable_type', 'App\Models\Stay')
+    public function findByGuestStay($guestId, $stayId){
+        return Chat::where('guest_id', $guestId)
+                        ->where('stay_id', $stayId)
                         ->first();
     }
 

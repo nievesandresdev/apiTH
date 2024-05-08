@@ -79,6 +79,7 @@ class ChatController extends Controller
 
     public function unreadMsgs(Request $request){
         try {
+            
             $model = $this->service->unreadMsgs($request);
             if(!$model){
                 $data = [

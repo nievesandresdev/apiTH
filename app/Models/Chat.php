@@ -11,18 +11,23 @@ class Chat extends Model
 
     protected $fillable = [
         'pending',
-        'chatable_id',
-        'chatable_type',
+        'guest_id',
+        'stay_id'
     ];
 
-    public function chatable()
-    {
-        return $this->morphTo();
-    }
-    
     public function messages()
     {
         return $this->hasMany(ChatMessage::class);
+    }
+
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class);
+    }
+
+    public function stay()
+    {
+        return $this->belongsTo(Guest::class);
     }
 
     //attributes

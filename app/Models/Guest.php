@@ -25,4 +25,9 @@ class Guest extends Model
     {
         return $this->morphMany(ChatMessage::class, 'messageable');
     }
+
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
 }

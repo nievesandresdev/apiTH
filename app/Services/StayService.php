@@ -19,6 +19,9 @@ use App\Services\GuestService;
 use App\Services\MailService;
 
 class StayService {
+    public $mailService;
+    public $guestService;
+    public $stayAccessService;
 
     function __construct(
         MailService $_MailService,
