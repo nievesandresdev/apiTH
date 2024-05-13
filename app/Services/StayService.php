@@ -131,7 +131,7 @@ class StayService {
                         $data['stay_id'] = $stay->id;
                         $data['guest_id'] = $guest->id;
                         $data['guest_name'] = $guest->name;
-                        $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
+                        $data['msg_text'] = $settings->create_msg_email[$guest->lang_web];
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
                         // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
                         $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);    
