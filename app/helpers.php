@@ -300,6 +300,7 @@ if (! function_exists('settingsNotyStayDefault')) {
             'unfilled_check_email' => true,
             //
             'create_check_email' => true,
+            //Mensaje al añadir un envío a un huésped al crear estancia
             'create_msg_email' => [
                     'es'=>'<p>¡Hola [nombre]!<br><br>¡Bienvenido al [nombre_del_hotel]. Queremos que disfrutes al máximo tu estancia, por eso te invitamos a explorar nuestra webapp exclusiva. Accede a [URL] y compártela con el resto de huéspedes de la estancia para conocer toda la información del hotel y una guía completa de la ciudad. Si necesitas ayuda, nuestro equipo está disponible. ¡Esperamos que tengas una experiencia increíble en nuestro hotel! <br><br>El equipo del [nombre_del_hotel].<p>',
                     'en'=>'<p>Hello [nombre]!<br><br>Welcome to [nombre_del_hotel]. We want you to enjoy your stay to the fullest, which is why we invite you to explore our exclusive webapp. Access [URL] and share it with the rest of the guests of the stay to find out all the hotel information and a complete guide to the city. If you need help, our team is available. We hope you have an amazing experience at our hotel! <br><br>The [nombre_del_hotel] team.<p>',
@@ -315,6 +316,7 @@ if (! function_exists('settingsNotyStayDefault')) {
             'create_lang_sms' => 'es',
             //
             'guestcreate_check_email' => true,
+            //Mensaje cuando un huésped crea una estancia
             'guestcreate_msg_email' => [
                 'es'=>'<p>¡Hola [nombre]!<br><br>¡Esperamos que  disfrutes tu estancia en el [nombre_del_hotel]! Te invitamos a compartir la webapp con el resto de huéspedes [URL]. Descubrirán detalles del hotel y una guía completa de la ciudad. ¡Estamos aquí para que disfrutes al máximo! <br><br>El equipo del [nombre_del_hotel].<p>',
                 'en'=>'<p>Hello [nombre]!<br><br>We hope you enjoy your stay at [nombre_del_hotel]! We invite you to share the webapp with the rest of the guests [URL]. You will discover details of the hotel and a complete guide to the city. We are here for you to enjoy to the fullest! <br><br>The [nombre_del_hotel] team.<p>',
@@ -322,6 +324,7 @@ if (! function_exists('settingsNotyStayDefault')) {
             ],
             //
             'guestinvite_check_email' => true,
+            //Mensaje cuando un huésped invita a otro huésped cuando ya esta la estancia creada
             'guestinvite_msg_email' => [
                 'es'=>'<p>¡Hola [nombre]!<br><br>Échale un vistazo a la webapp de [nombre_del_hotel], que está llena de información para hacer nuestra experiencia aún más completa. Accede a través de [URL]. Descubre detalles del hotel y una guía completa de la ciudad. ¡Disfrutarás al máximo!<p>',
                 'en'=>'<p>Hello [nombre]!<br><br>Take a look at the [nombre_del_hotel] webapp, which is full of information to make our experience even more complete. Access through [URL]. Discover hotel details and a complete city guide. You will enjoy it to the fullest!<p>',
