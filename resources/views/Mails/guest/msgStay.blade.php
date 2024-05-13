@@ -15,7 +15,7 @@
     </div> --}}
     <div style="display: flex; justify-content: center; align-items: center; text-align: center; height: 100vh; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('{{ asset("mails/alarma.png") }}'); background-size: cover; background-position: center;">
         <div style="font-size: 2em; color: #333;">
-            <p style="margin: 0;">ESCRIBE ALGO</p>
+            <p style="margin: 10rem;">ESCRIBE ALGO</p>
             <p style="margin: 0;">Escribe algo</p>
         </div>
     </div>
