@@ -14,3 +14,5 @@ Route::group(['prefix' => 'stay'], function () {
     Route::post('/updateStayAndGuests', [StayController::class, 'updateStayAndGuests']);
     Route::post('/deleteGuestOfStay/{stayId}/{guestId}', [StayController::class, 'deleteGuestOfStay']);
 });
+
+

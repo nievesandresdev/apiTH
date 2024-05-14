@@ -69,6 +69,22 @@ class StayService {
         }
     }
 
+    public function testMail() {
+        $data = [
+            'stay_id' => 1,
+            'guest_id' => 1,
+            'stay_lang' => 'es',
+            'msg_text' => 'Hola, te hemos invitado a una estancia',
+            'guest_name' => 'Juan',
+            'hotel_name' => 'Hotel'
+        ];
+        $hotel = Hotel::find(187);
+        $msg = prepareMessage($data,$hotel);
+        $this->mailService->sendEmail(new MsgStay($msg,$hotel), 'francisco20990@gmail.com');
+        dd('mail enviado');
+
+    }
+
     public function createAndInviteGuest($hotel,$request)
     {
         try {
@@ -99,6 +115,7 @@ class StayService {
                 $settingsArray = settingsNotyStayDefault();
                 $settings = (object)$settingsArray;
             }
+
 
             $data = [
                 'stay_id' => $stay->id,

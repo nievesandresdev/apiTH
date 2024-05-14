@@ -18,12 +18,13 @@
             background-size: contain;
             height: 10%;
           }
+          h2 {
+            font-size: 85px;
+          }
         }
       </style>
 </head>
-<body style="background-image: url('{{ asset("mails/mail.png") }}'); background-size: cover; height: 6100px; font-family: 'Montserrat', sans-serif;">
-
-
-
+<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 6100px; font-family: 'Montserrat', sans-serif;">
+    <h2>Hola</h2>
 </body>
 </html>
