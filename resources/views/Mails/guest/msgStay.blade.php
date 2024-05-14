@@ -20,9 +20,9 @@
         </div>
     </div> --}}
     <div style="position: relative; height: 100vh; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('{{ asset("mails/alarma.png") }}'); background-size: cover; background-position: center;">
-        <div style="position: absolute; right: 20px; bottom: 20px; text-align: right; font-size: 2em; color: #333; padding : 3em">
-            <p style="margin-top: 30px;">ESCRIBE ALGO</p>
-            <p style="margin: 0; font-size: 0.5em; color: #666;">escribe algo</p>
+        <div style="position: absolute; right: 20px; bottom: 20px; text-align: right; font-size: 36px; color: #333; padding : 3em">
+            <p style="margin-top: 30px;">Te damos la bienvenida a <br>[Hotel]</p>
+            {{-- <p style="margin: 0; font-size: 0.5em; color: #666;">escribe algo</p> --}}
         </div>
     </div>
 
