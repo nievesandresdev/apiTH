@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Mail\Guest\MsgStay;
+use App\Mail\HuespedMail;
 use App\Models\Guest;
 use App\Models\hotel;
 use Illuminate\Support\Facades\DB;
@@ -75,13 +76,13 @@ class StayService {
             DB::beginTransaction();
             $guestId = $request->guestId;
             $guest = Guest::find($guestId);
-            
+
             $langs = [
                 'en' => 'Inglés',
                 'es' => 'Español',
                 'fr' => 'Francés'
             ];
-            
+
             $stay = Stay::create([
                 'hotel_id' =>$hotel->id,
                 'number_guests' => $request->numberGuests,
@@ -92,14 +93,14 @@ class StayService {
             $guest->stays()->syncWithoutDetaching([$stay->id]);
             //guardar acceso
             $this->stayAccessService->save($stay->id,$guestId);
-            
+
             //enviar mensaje al creador de la estancia
             $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
             if(!$settings){
                 $settingsArray = settingsNotyStayDefault();
                 $settings = (object)$settingsArray;
             }
-            
+
             $data = [
                 'stay_id' => $stay->id,
                 'guest_id' => $guest->id,
@@ -111,8 +112,8 @@ class StayService {
             ];
             if($settings->guestcreate_check_email){
                 $msg = prepareMessage($data,$hotel);
-                // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);     
+                Mail::to($guest->email)->send(new HuespedMail());
+                //$this->mailService->sendEmail(new HuespedMail($msg,$hotel), $guest->email);
             }
             DB::commit();
             //adjutar huespedes y enviar correos
@@ -133,8 +134,8 @@ class StayService {
                         $data['guest_name'] = $guest->name;
                         $data['msg_text'] = $settings->create_msg_email[$guest->lang_web];
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
-                        // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                        $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);    
+                        Mail::to($guest->email)->send(new HuespedMail());
+                        //$this->mailService->sendEmail(new HuespedMail($msg,$hotel), $guest->email);
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
                     $this->stayAccessService->save($stay->id,$guestId);
@@ -150,10 +151,10 @@ class StayService {
                 $stay->number_guests = $currentStayAccesses;
                 $stay->save();
             }
-            
+
             sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
             return $stay;
-            
+
         } catch (\Exception $e) {
             DB::rollback();
             return $e;
@@ -225,7 +226,7 @@ class StayService {
     }
 
     public function getGuests($stayId){
-        
+
         try{
             $stay = Stay::find($stayId);
             $guests = $stay->guests()->get();
@@ -236,7 +237,7 @@ class StayService {
     }
 
     public function updateStayData($request){
-        
+
         try{
             $stay = Stay::find($request->stayId);
             $stay->room = $request->room;
@@ -244,7 +245,7 @@ class StayService {
             $stay->check_in = $request->checkDate['start'];
             $stay->check_out = $request->checkDate['end'];
             $stay->save();
-            
+
             return $stay;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateStayData');
@@ -289,5 +290,5 @@ class StayService {
             return $e;
         }
     }
-    
+
 }
