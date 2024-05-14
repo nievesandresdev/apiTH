@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Mail\Guest\MsgStay;
-use App\Mail\HuespedMail;
 use App\Models\Guest;
 use App\Models\hotel;
 use Illuminate\Support\Facades\DB;
@@ -112,8 +111,8 @@ class StayService {
             ];
             if($settings->guestcreate_check_email){
                 $msg = prepareMessage($data,$hotel);
-                Mail::to($guest->email)->send(new HuespedMail());
-                //$this->mailService->sendEmail(new HuespedMail($msg,$hotel), $guest->email);
+                // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
+                $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);
             }
             DB::commit();
             //adjutar huespedes y enviar correos
@@ -134,8 +133,8 @@ class StayService {
                         $data['guest_name'] = $guest->name;
                         $data['msg_text'] = $settings->create_msg_email[$guest->lang_web];
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
-                        Mail::to($guest->email)->send(new HuespedMail());
-                        //$this->mailService->sendEmail(new HuespedMail($msg,$hotel), $guest->email);
+                        // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
+                        $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
                     $this->stayAccessService->save($stay->id,$guestId);
