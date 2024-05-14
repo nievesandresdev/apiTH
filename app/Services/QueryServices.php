@@ -39,8 +39,9 @@ class QueryServices {
             $guestId = $request->guestId ?? null;
             $period = $request->period ?? null;
             $visited = $request->visited ?? 'null';
+            $disabled = $request->disabled ?? false;
 
-            $query = Query::where(function($query) use($stayId, $guestId, $period, $visited){
+            $query = Query::where(function($query) use($stayId, $guestId, $period, $visited, $disabled){
                 if ($stayId) {
                     $query->where('stay_id', $stayId);
                 }
@@ -56,7 +57,11 @@ class QueryServices {
                 if ($visited !== 'null') {
                     $query->where('visited', $visited);
                 }
-                
+                if ($disabled) {
+                    $query->where('disabled', true);
+                }else{
+                    $query->where('disabled', false);
+                }
             });
             $model = $query->first();
 
@@ -119,12 +124,13 @@ class QueryServices {
         }
     }
 
-    public function firstOrCreate ($stayId, $guestId, $period) {
+    public function firstOrCreate ($stayId, $guestId, $period, $disabled = false) {
         try{
             return Query::firstOrCreate([
                 'stay_id' => $stayId,
                 'guest_id' => $guestId,
                 'period' => $period,
+                'disabled' => $disabled,
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.firstOrCreate');
