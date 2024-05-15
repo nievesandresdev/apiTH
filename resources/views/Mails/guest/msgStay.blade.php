@@ -16,7 +16,7 @@
                 top: 15%;
                 left: 10%;
                 font-size: 36px;
-                width: calc(100% - 20%);
+                /* width: calc(100% - 20%); */
             }
         }
         @media (max-width: 768px) {
@@ -24,13 +24,13 @@
                 top: 10%;
                 left: 5%;
                 font-size: 24px;
-                width: calc(100% - 10%);
+                /* width: calc(100% - 10%); */
             }
         }
     </style>
 </head>
-<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: auto; width: 100%; font-family: 'Montserrat', sans-serif; position: relative;">
-    <div style="position: absolute; top: 10%; left: 50%; font-size: 48px; color: #333; width: calc(100% - 40%);">
+<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: auto; font-family: 'Montserrat', sans-serif; position: relative;">
+    <div style="position: absolute; top: 20%; left: 20%; font-size: 48px; color: #333; width: calc(100% - 40%);">
         Te damos la bienvenida a [Hotel]
     </div>
 </body>
