@@ -32,14 +32,15 @@
 <body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 100%; font-family: 'Montserrat', sans-serif; position: absolute;">
     <table style="width: 100%; height: 100%; border-collapse: collapse;">
         <tr>
-            <td style="text-align: right; padding-right: 20%; vertical-align: top;">
+            <td>&nbsp;</td>
+            <td style="text-align: right; padding: 20%; vertical-align: top; margin-left: 40%">
                 <div style="font-size: 48px; color: #333;">
                     Te damos la bienvenida a [Hotel]
                 </div>
             </td>
         </tr>
     </table>
-    <
+
 </body>
 
 
