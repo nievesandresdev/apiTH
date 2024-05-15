@@ -22,11 +22,11 @@
 
         @media (max-width: 768px) {
             .welcome-text {
-                padding-right: 16px;
+                padding-right: 1px;
             }
 
             .welcome-text h1 {
-                font-size: 30px;
+                font-size: 10px;
                 margin-left: 0;
             }
         }
@@ -39,11 +39,11 @@
         {{-- <p style="color: #333; font-size: 16px;">{{ $msg }}</p> --}}
     </div>
 
-    <img src="{{ asset("mails/1.png") }}" alt="1" style="display: block; margin: 0 auto;">
-    <img src="{{ asset("mails/2.png") }}" alt="2" style="display: block; margin: 0 auto;">
-    <img src="{{ asset("mails/3.png") }}" alt="3" style="display: block; margin: 0 auto;">
-    <img src="{{ asset("mails/4.png") }}" alt="4" style="display: block; margin: 0 auto;">
-    <img src="{{ asset("mails/5.png") }}" alt="5" style="display: block; margin: 0 auto;">
+    <img src="{{ asset("mails/1.png") }}" alt="1" style="display: block; margin: 0 auto; padding: 10px">
+    <img src="{{ asset("mails/2.png") }}" alt="2" style="display: block; margin: 0 auto; padding: 10px">
+    <img src="{{ asset("mails/3.png") }}" alt="3" style="display: block; margin: 0 auto; padding: 10px">
+    <img src="{{ asset("mails/4.png") }}" alt="4" style="display: block; margin: 0 auto; padding: 10px">
+    <img src="{{ asset("mails/5.png") }}" alt="5" style="display: block; margin: 0 auto; padding: 10px">
 
     <!-- Texto y QR -->
     <div style="text-align: center; padding: 20px;">
