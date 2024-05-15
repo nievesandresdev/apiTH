@@ -80,6 +80,7 @@ class StayService {
         ];
         $hotel = Hotel::find(187);
         $msg = prepareMessage($data,$hotel);
+        //dd($msg);
         $this->mailService->sendEmail(new MsgStay($msg,$hotel), 'francisco20990@gmail.com');
         dd('mail enviado');
 

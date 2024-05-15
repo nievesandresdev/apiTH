@@ -26,8 +26,16 @@
             }
 
             .welcome-text h1 {
-                font-size: 22px;
+                font-size: 25px;
                 margin-left: 0;
+            }
+
+            /* Ajustar margen superior en pantallas pequeñas */
+            .welcome-message {
+                margin-top: 20px;
+                padding-left: 16px;
+                padding-right: 16px;
+                font-size: 12px;
             }
         }
       </style>
@@ -37,6 +45,16 @@
     <div class="welcome-text" style="height: 500px; padding: 16px; padding-right: 180px; text-align: right; font-family: 'Montserrat', sans-serif;">
         <h1 style="color: #333; font-size: 48px; margin-left: -20px;">Te damos la <br>bienvenida a <br>[Hotel]</h1>
         {{-- <p style="color: #333; font-size: 16px;">{{ $msg }}</p> --}}
+    </div>
+
+    <!-- Nuevo texto -->
+    <div class="welcome-message" style="margin-top: -10px; margin-bottom: 15px; padding-left: 40px; padding-right: 40px; font-family: 'Montserrat', sans-serif;">
+        <p style="color: #333; font-size: 16px;font-style: normal; font-weight: 500; line-height: normal;">
+            Estimado huésped,<br>
+            Estamos encantados de darte la bienvenida a [Hotel].<br><br>
+            Esperamos que tu estancia sea única e inolvidable,<br>
+            nuestro equipo está a tu disposición.
+        </p>
     </div>
 
     <img src="{{ asset("mails/1.png") }}" alt="1" style="display: block; margin: 0 auto; padding: 10px">
