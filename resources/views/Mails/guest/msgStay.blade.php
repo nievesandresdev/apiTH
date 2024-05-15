@@ -21,18 +21,19 @@
         }
       </style>
 </head>
-<body style="background-image: url('{{ asset("mails/fondo.png") }}'); background-size: cover; height: 10%; font-family: 'Montserrat', sans-serif;">
-    <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">Todo lo que necesitas para optimizar tu estancia, en tu mano. Prueba nuestra WebApp.</span>
-    <div style="height: 500px; padding: 10px; text-align: right;font-family: 'Montserrat', sans-serif;">
-        <h1 style="color: #333; font-size: 48px;">Te damos la <br>bienvenida a <br>[Hotel]</h1>
+<body style="background-image: url('{{ asset("mails/fondo.png") }}'); background-size: cover; height: 100%; font-family: 'Montserrat', sans-serif;">
+    <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">Todo lo que necesitas para optimizar tu estancia, en tu mano. Prueba nuestra WebApp.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <div style="height: 500px; padding: 16px; padding-right:180px; text-align: right;font-family: 'Montserrat', sans-serif;">
+        <h1 style="color: #333; font-size: 48px; margin-left: -20px;">Te damos la <br>bienvenida a <br>[Hotel]</h1>
         {{-- <p style="color: #333; font-size: 16px;">{{ $msg }}</p> --}}
     </div>
 
-    <img src="{{ asset("mails/1.png") }}" alt="1">
-    <img src="{{ asset("mails/2.png") }}" alt="2">
-    <img src="{{ asset("mails/3.png") }}" alt="3">
-    <img src="{{ asset("mails/4.png") }}" alt="4">
-    <img src="{{ asset("mails/5.png") }}" alt="5">
+    <img src="{{ asset("mails/1.png") }}" alt="1" style="display: block; margin: 0 auto;">
+    <img src="{{ asset("mails/2.png") }}" alt="2" style="display: block; margin: 0 auto;">
+    <img src="{{ asset("mails/3.png") }}" alt="3" style="display: block; margin: 0 auto;">
+    <img src="{{ asset("mails/4.png") }}" alt="4" style="display: block; margin: 0 auto;">
+    <img src="{{ asset("mails/5.png") }}" alt="5" style="display: block; margin: 0 auto;">
 
 </body>
+
 </html>
