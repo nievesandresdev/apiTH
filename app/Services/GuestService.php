@@ -144,7 +144,7 @@ class GuestService {
             Log::info("inviteToStayByEmail prepareMessage".$msg);
             Log::info("inviteToStayByEmail hotel".json_encode($hotel));
             // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel,true,$guest->name,$link), $guest->email);
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name), $guest->email);
         }
     }
 
@@ -188,7 +188,7 @@ class GuestService {
             $msg = prepareMessage($data,$hotel);
             $link = prepareLink($data,$hotel);
             // Maiil::to($guestEmail)->send(new MsgStay($msg,$hotel));
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel,true,$guest->name,$link), $guestEmail);
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name), $guestEmail);
             //
             return  true;
         } catch (\Exception $e) {

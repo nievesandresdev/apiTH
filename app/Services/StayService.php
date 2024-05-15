@@ -88,7 +88,7 @@ class StayService {
         $msg = prepareMessage($data,$hotel,'&subject=invited');
         $link = prepareLink($data,$hotel);
         //dd($msg,$link);
-        $this->mailService->sendEmail(new MsgStay($msg,$hotel,false,false,$link), 'francisco20990@gmail.com');
+        $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,'',true), 'francisco20990@gmail.com');
         dd('mail enviado');
 
     }
@@ -136,9 +136,9 @@ class StayService {
             ];
             if($settings->guestcreate_check_email){
                 $msg = prepareMessage($data,$hotel,'&subject=invited');
-                $link = prepareLink($data,$hotel);
+                $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                $this->mailService->sendEmail(new MsgStay($msg,$hotel,false,false,$link), $guest->email);
+                $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link), $guest->email);
             }
             DB::commit();
             //adjutar huespedes y enviar correos
@@ -161,7 +161,7 @@ class StayService {
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
                         $link = prepareLink($data,$hotel,'&subject=invited');
                         // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                        $this->mailService->sendEmail(new MsgStay($msg,$hotel,true,$guest->name,$link), $guest->email);
+                        $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name,true), $guest->email);
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
                     $this->stayAccessService->save($stay->id,$guestId);
