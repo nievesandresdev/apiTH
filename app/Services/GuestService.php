@@ -25,7 +25,7 @@ class GuestService {
         $this->stayAccessService = $_StayAccessService;
         $this->mailService = $_MailService;
     }
-    
+
     public function findById($id)
     {
         try {
@@ -76,12 +76,12 @@ class GuestService {
     }
 
     public function findLastStayAndAccess($id,$hotel){
-        
+
         try {
             $guest = Guest::find($id);
             $last_stay = $guest->stays()
                         ->where('hotel_id',$hotel->id)
-                        ->orderBy('check_out','DESC')->first();   
+                        ->orderBy('check_out','DESC')->first();
             if($last_stay){
                 $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
                 // Verifica si han pasado más de 10 días desde el checkout
@@ -100,13 +100,13 @@ class GuestService {
 
 
     public function findAndValidLastStay($guestId,$hotel){
-        
+
         try {
             if(!$guestId) return;
             $guest = Guest::find($guestId);
             $last_stay = $guest->stays()
                         ->where('hotel_id',$hotel->id)
-                        ->orderBy('check_out','DESC')->first();   
+                        ->orderBy('check_out','DESC')->first();
             if($last_stay){
                 $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
                 // Verifica si han pasado más de 10 días desde el checkout
@@ -140,10 +140,11 @@ class GuestService {
                 'hotel_id' => $hotel->id,
             ];
             $msg = prepareMessage($data,$hotel);
+            $link = prepareLink($data,$hotel);
             Log::info("inviteToStayByEmail prepareMessage".$msg);
             Log::info("inviteToStayByEmail hotel".json_encode($hotel));
-            // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));  
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);  
+            // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,true,$guest->name,$link), $guest->email);
         }
     }
 
@@ -157,7 +158,7 @@ class GuestService {
             $guest->phone = $data->phone ?? $guest->phone;
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
             $guest->save();
-            return $guest; 
+            return $guest;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateById');
         }
@@ -183,12 +184,13 @@ class GuestService {
                 'hotel_name' => $hotel->name,
                 'hotel_id' => $hotel->id,
             ];
-            
+
             $msg = prepareMessage($data,$hotel);
+            $link = prepareLink($data,$hotel);
             // Maiil::to($guestEmail)->send(new MsgStay($msg,$hotel));
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guestEmail);
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,true,$guest->name,$link), $guestEmail);
             //
-            return  true;   
+            return  true;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.sendEmail');
         }

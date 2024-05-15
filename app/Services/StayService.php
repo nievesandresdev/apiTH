@@ -72,17 +72,23 @@ class StayService {
     public function testMail() {
 
         $hotel = Hotel::find(187);
+        $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
+            if(!$settings){
+                $settingsArray = settingsNotyStayDefault();
+                $settings = (object)$settingsArray;
+            }
         $data = [
             'stay_id' => 1,
             'guest_id' => 1,
             'stay_lang' => 'es',
-            'msg_text' => 'Estimado huésped,<br> Estamos encantados de darte la bienvenida a [nombre_del_hotel].<br>Esperamos que tu estancia sea única e inolvidable,<br>nuestro equipo está a tu disposición.',
+            'msg_text' => $settings->create_msg_email['es'],
             'guest_name' => 'Juan',
             'hotel_name' => $hotel->name,
         ];
-        $msg = prepareMessage($data,$hotel);
-        //dd($msg,$hotel);
-        $this->mailService->sendEmail(new MsgStay($msg,$hotel), 'francisco20990@gmail.com');
+        $msg = prepareMessage($data,$hotel,'&subject=invited');
+        $link = prepareLink($data,$hotel);
+        //dd($msg,$link);
+        $this->mailService->sendEmail(new MsgStay($msg,$hotel,false,false,$link), 'francisco20990@gmail.com');
         dd('mail enviado');
 
     }
@@ -129,9 +135,10 @@ class StayService {
                 'hotel_id' => $hotel->id,
             ];
             if($settings->guestcreate_check_email){
-                $msg = prepareMessage($data,$hotel);
+                $msg = prepareMessage($data,$hotel,'&subject=invited');
+                $link = prepareLink($data,$hotel);
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);
+                $this->mailService->sendEmail(new MsgStay($msg,$hotel,false,false,$link), $guest->email);
             }
             DB::commit();
             //adjutar huespedes y enviar correos
@@ -152,8 +159,9 @@ class StayService {
                         $data['guest_name'] = $guest->name;
                         $data['msg_text'] = $settings->create_msg_email[$guest->lang_web];
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
+                        $link = prepareLink($data,$hotel,'&subject=invited');
                         // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                        $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);
+                        $this->mailService->sendEmail(new MsgStay($msg,$hotel,true,$guest->name,$link), $guest->email);
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
                     $this->stayAccessService->save($stay->id,$guestId);
