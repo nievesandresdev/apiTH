@@ -11,20 +11,30 @@
     <title>Document</title>
     {{-- app.css --}}
     <style>
-
-        /* Media queries para ajustar la imagen de fondo en dispositivos más pequeños */
-        @media only screen and (max-width: 600px) {
-          body {
-            background-size: contain;
-            height: 10%;
-          }
-          h2 {
-            font-size: 85px;
-          }
+        @media (max-width: 1024px) {
+            div {
+                top: 15%;
+                left: 10%;
+                font-size: 36px;
+                width: calc(100% - 20%);
+            }
         }
-      </style>
+        @media (max-width: 768px) {
+            div {
+                top: 10%;
+                left: 5%;
+                font-size: 24px;
+                width: calc(100% - 10%);
+            }
+        }
+    </style>
 </head>
-<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 6100px; font-family: 'Montserrat', sans-serif;">
-    <h2>Hola</h2>
+<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 6100px; font-family: 'Montserrat', sans-serif; position: relative;">
+    <div style="position: absolute; top: 20%; left: 20%; font-size: 48px; color: #333; width: calc(100% - 40%);">
+        Te damos la bienvenida a [Hotel]
+    </div>
+
 </body>
+
+
 </html>
