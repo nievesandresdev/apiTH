@@ -21,7 +21,7 @@
         }
       </style>
 </head>
-<body style="background-image: url('{{ asset("mails/mail.png") }}'); background-size: cover; height: 6100px; font-family: 'Montserrat', sans-serif;">
+<body style="background-image: url('{{ asset("mails/mail.png") }}'); background-size: cover; height: 6190px; font-family: 'Montserrat', sans-serif;">
 
 
 
