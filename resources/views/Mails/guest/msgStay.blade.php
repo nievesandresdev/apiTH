@@ -12,36 +12,30 @@
     {{-- app.css --}}
     <style>
         @media (max-width: 1024px) {
-            td {
-                padding-right: 10%;
-            }
             div {
+                top: 15%;
+                left: 10%;
                 font-size: 36px;
+                width: calc(100% - 20%);
             }
         }
         @media (max-width: 768px) {
-            td {
-                padding-right: 5%;
-            }
             div {
+                top: 10%;
+                left: 5%;
                 font-size: 24px;
+                width: calc(100% - 10%);
             }
         }
     </style>
 </head>
-<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 100%; font-family: 'Montserrat', sans-serif; position: absolute;">
-    <table style="width: 100%; height: 100%; border-collapse: collapse;">
-        <tr>
-            <td>&nbsp;</td>
-            <td style="text-align: right; padding: 20%; vertical-align: top; margin-left: 40%">
-                <div style="font-size: 48px; color: #333;">
-                    Te damos la bienvenida a [Hotel]
-                </div>
-            </td>
-        </tr>
-    </table>
+<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 1024px; font-family: 'Montserrat', sans-serif; position: relative;">
+    <div style="position: absolute; top: 20%; left: 20%; font-size: 48px; color: #333;">
+        Te damos la bienvenida a [Hotel]
+    </div>
 
 </body>
+
 
 
 
