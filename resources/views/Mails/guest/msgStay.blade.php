@@ -12,6 +12,13 @@
     {{-- app.css --}}
     <style>
 
+        /* Media queries para ajustar la imagen de fondo en dispositivos móviles */
+        @media only screen and (max-width: 768px) {
+            body {
+                background-image: url('{{ asset("mails/fondomobile.png") }}');
+            }
+        }
+
         /* Media queries para ajustar la imagen de fondo en dispositivos más pequeños */
         @media only screen and (max-width: 600px) {
           body {
@@ -40,7 +47,7 @@
         }
       </style>
 </head>
-<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 100%; font-family: 'Montserrat', sans-serif;">
+<body style="background-image: url('{{ asset("mails/fondodesktop.png") }}'); background-size: cover; height: 100%; font-family: 'Montserrat', sans-serif;">
     @if ($guest == true)
         <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">¿Has probado la WebApp de {{ $hotel->name }}? Mira todo lo que hay para explorar!.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     @elseif ($create == true)
@@ -60,7 +67,7 @@
     </div>
 
     <!-- Nuevo texto -->
-    <div class="welcome-message" style="margin-top: -10px; margin-bottom: 35px; padding-left: 40px; padding-right: 40px; font-family: 'Montserrat', sans-serif;">
+    <div class="welcome-message" style="margin-top: 15px; margin-bottom: 35px; padding-left: 40px; padding-right: 40px; font-family: 'Montserrat', sans-serif;">
         <p style="color: #333; font-size: 35px; font-style: normal; font-weight: 500; line-height: normal;">
             {!! $msg !!}
         </p>
