@@ -47,16 +47,26 @@
 
     <!-- Texto y QR -->
     <div style="text-align: center; padding: 20px;">
-        <p style="color: #333; font-size: 22px; font-family: 'Montserrat', sans-serif;font-style: normal; font-weight: 500; line-height: normal;">
+        <p style="color: #333; font-size: 22px; font-family: 'Montserrat', sans-serif;">
             Escanea el código QR o haz click en el botón y empieza a vivir tu viaje como nunca antes
         </p>
-        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #f5b700; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px;">Ingresar a WebApp</a>
+        <a href="URL_DE_LA_WEBAPP" style="display: inline-block; padding: 10px 20px; background-color: #f5b700; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px;">Ingresar a WebApp</a>
         <div>
             <img src="{{ asset('mails/qr.png') }}" alt="QR Code" style="display: block; margin: 0 auto;">
         </div>
     </div>
 
+    <!-- Pie de página -->
+    <div style="background-color: #333333; color: white; padding: 20px; text-align: center; font-family: 'Montserrat', sans-serif;">
+        <p style="font-size: 10px;font-style: normal; font-weight: 200; line-height: normal;">
+            Le informamos que ha recibido este correo electrónico en relación con su estancia en nuestro hotel, gestionada a través de una de nuestras plataforma de reservas en línea. Este mensaje tiene como objetivo mejorar su experiencia como cliente y brindarle información relevante sobre nuestros servicios.<br>
+            Para cualquier consulta o comentario adicional sobre su reserva o nuestros servicios, le invitamos a contactarnos pulsando <a href="#" style="color: #f5b700; text-decoration: none;">aquí</a> o utilizando los datos de contacto proporcionados en nuestro sitio web.<br>
+            Le recordamos que sus datos están siendo tratados de acuerdo con nuestra política de privacidad, la cual puede consultar <a href="#" style="color: #f5b700; text-decoration: none;">aquí</a> o solicitándola a nuestro equipo de atención al cliente.<br>
+            [Nombre de empresa hotelera] [Dirección fiscal] [CIF-00000000]
+        </p>
+    </div>
 </body>
+
 
 
 </html>
