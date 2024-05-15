@@ -29,7 +29,7 @@
         }
     </style>
 </head>
-<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 6100px; font-family: 'Montserrat', sans-serif; position: relative;">
+<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 100%; font-family: 'Montserrat', sans-serif; position: absolute;">
     <table style="width: 100%; height: 100%; border-collapse: collapse;">
         <tr>
             <td style="text-align: right; padding-right: 20%; vertical-align: top;">
