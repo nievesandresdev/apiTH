@@ -29,11 +29,10 @@
         }
     </style>
 </head>
-<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 1024px; font-family: 'Montserrat', sans-serif; position: relative;">
-    <div style="position: absolute; top: 20%; left: 20%; font-size: 48px; color: #333;">
+<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 100vh; font-family: 'Montserrat', sans-serif; position: relative;">
+    <div style="position: absolute; top: 40%; left: 60%; font-size: 48px; color: #333;">
         Te damos la bienvenida a [Hotel]
     </div>
-
 </body>
 
 
