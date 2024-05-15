@@ -317,9 +317,18 @@ if (! function_exists('settingsNotyStayDefault')) {
             //
             'guestcreate_check_email' => true,
             //Mensaje cuando un huésped crea una estancia
-            'guestcreate_msg_email' => [
+            /* 'guestcreate_msg_email' => [
                 'es'=>'<p>¡Hola [nombre]!<br><br>¡Esperamos que  disfrutes tu estancia en el [nombre_del_hotel]! Te invitamos a compartir la webapp con el resto de huéspedes [URL]. Descubrirán detalles del hotel y una guía completa de la ciudad. ¡Estamos aquí para que disfrutes al máximo! <br><br>El equipo del [nombre_del_hotel].<p>',
                 'en'=>'<p>Hello [nombre]!<br><br>We hope you enjoy your stay at [nombre_del_hotel]! We invite you to share the webapp with the rest of the guests [URL]. You will discover details of the hotel and a complete guide to the city. We are here for you to enjoy to the fullest! <br><br>The [nombre_del_hotel] team.<p>',
+                'fr'=>"<p>Bonjour [nombre]!<br><br>Nous espérons que vous apprécierez votre séjour à [nombre_del_hotel]! Nous vous invitons à partager la webapp avec le reste des invités [URL]. Vous découvrirez les détails de l'hôtel et un guide complet de la ville. Nous sommes là pour que vous en profitiez au maximum ! <br><br>L'équipe de [nombre_del_hotel].<p>"
+            ], */
+            'guestcreate_msg_email' => [
+                /* 'es'=>'<p>¡Hola [nombre]!<br><br>¡Esperamos que  disfrutes tu estancia en el [nombre_del_hotel]! Te invitamos a compartir la webapp con el resto de huéspedes [URL]. Descubrirán detalles del hotel y una guía completa de la ciudad. ¡Estamos aquí para que disfrutes al máximo! <br><br>El equipo del [nombre_del_hotel].<p>', */
+
+                'es' => 'Estimado huésped,<br> Estamos encantados de darte la bienvenida a [nombre_del_hotel].<br>Esperamos que tu estancia sea única e inolvidable,<br>nuestro equipo está a tu disposición.',
+
+                'en'=>'<p>Hello [nombre]!<br><br>We hope you enjoy your stay at [nombre_del_hotel]! We invite you to share the webapp with the rest of the guests [URL]. You will discover details of the hotel and a complete guide to the city. We are here for you to enjoy to the fullest! <br><br>The [nombre_del_hotel] team.<p>',
+
                 'fr'=>"<p>Bonjour [nombre]!<br><br>Nous espérons que vous apprécierez votre séjour à [nombre_del_hotel]! Nous vous invitons à partager la webapp avec le reste des invités [URL]. Vous découvrirez les détails de l'hôtel et un guide complet de la ville. Nous sommes là pour que vous en profitiez au maximum ! <br><br>L'équipe de [nombre_del_hotel].<p>"
             ],
             //

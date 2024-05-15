@@ -70,17 +70,18 @@ class StayService {
     }
 
     public function testMail() {
+
+        $hotel = Hotel::find(187);
         $data = [
             'stay_id' => 1,
             'guest_id' => 1,
             'stay_lang' => 'es',
-            'msg_text' => 'Hola, te hemos invitado a una estancia',
+            'msg_text' => 'Estimado huésped,<br> Estamos encantados de darte la bienvenida a [nombre_del_hotel].<br>Esperamos que tu estancia sea única e inolvidable,<br>nuestro equipo está a tu disposición.',
             'guest_name' => 'Juan',
-            'hotel_name' => 'Hotel'
+            'hotel_name' => $hotel->name,
         ];
-        $hotel = Hotel::find(187);
         $msg = prepareMessage($data,$hotel);
-        //dd($msg);
+        //dd($msg,$hotel);
         $this->mailService->sendEmail(new MsgStay($msg,$hotel), 'francisco20990@gmail.com');
         dd('mail enviado');
 
