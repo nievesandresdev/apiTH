@@ -22,17 +22,17 @@
 
         @media (max-width: 768px) {
             .welcome-text {
-                padding-right: 1px;
+                padding-right: 3px;
             }
 
             .welcome-text h1 {
-                font-size: 10px;
+                font-size: 22px;
                 margin-left: 0;
             }
         }
       </style>
 </head>
-<body style="background-image: url('{{ asset("mails/fondo.png") }}'); background-size: cover; height: 100%; font-family: 'Montserrat', sans-serif;">
+<body style="background-image: url('{{ asset("mails/fondo.jpg") }}'); background-size: cover; height: 100%; font-family: 'Montserrat', sans-serif;">
     <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">Todo lo que necesitas para optimizar tu estancia, en tu mano. Prueba nuestra WebApp.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <div class="welcome-text" style="height: 500px; padding: 16px; padding-right: 180px; text-align: right; font-family: 'Montserrat', sans-serif;">
         <h1 style="color: #333; font-size: 48px; margin-left: -20px;">Te damos la <br>bienvenida a <br>[Hotel]</h1>
