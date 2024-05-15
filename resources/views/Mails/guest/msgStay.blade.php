@@ -32,10 +32,10 @@
 
             /* Ajustar margen superior en pantallas pequeñas */
             .welcome-message {
-                margin-top: 20px;
+                margin-top: 3px;
                 padding-left: 16px;
                 padding-right: 16px;
-                font-size: 12px;
+                font-size: 20px;
             }
         }
       </style>
@@ -49,7 +49,7 @@
 
     <!-- Nuevo texto -->
     <div class="welcome-message" style="margin-top: -10px; margin-bottom: 15px; padding-left: 40px; padding-right: 40px; font-family: 'Montserrat', sans-serif;">
-        <p style="color: #333; font-size: 16px;font-style: normal; font-weight: 500; line-height: normal;">
+        <p style="color: #333; font-size: 35px; font-style: normal; font-weight: 500; line-height: normal;">
             Estimado huésped,<br>
             Estamos encantados de darte la bienvenida a [Hotel].<br><br>
             Esperamos que tu estancia sea única e inolvidable,<br>
