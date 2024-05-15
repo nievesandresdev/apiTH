@@ -21,9 +21,13 @@
         }
       </style>
 </head>
-<body style="background-image: url('{{ asset("mails/mail.png") }}'); background-size: cover; height: 6190px; font-family: 'Montserrat', sans-serif;">
+<body style="background-image: url('{{ asset("mails/fondo.png") }}'); background-size: cover; height: 10%; font-family: 'Montserrat', sans-serif;">
+    <div style="height: 500px; padding: 10px; text-align: right;font-family: 'Montserrat', sans-serif;">
+        <h1 style="color: #333; font-size: 24px;">¡Hola, !</h1>
+        <p style="color: #333; font-size: 16px;">{{ $msg }}</p>
+    </div>
 
-
+    <img src="{{ asset("mails/1.png") }}" alt="1">
 
 </body>
 </html>
