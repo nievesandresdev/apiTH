@@ -229,6 +229,14 @@ class StayService {
                 $currentStayData->guests()->update(['stay_id'=> $invitedStay->id]);
                 //relacionar accesos actuales a la estancia del invitado
                 $currentStayData->accesses()->update(['stay_id'=> $invitedStay->id]);
+                //relacionar queries actuales a la estancia del invitado
+                $currentStayData->queries()->update(['stay_id'=> $invitedStay->id]);
+                //relacionar chats actuales a la estancia del invitado
+                $currentStayData->chats()->update(['stay_id'=> $invitedStay->id]);
+                //relacionar notas actuales a la estancia del invitado
+                $currentStayData->notes()->update(['stay_id'=> $invitedStay->id]);
+                //relacionar notas de huespedes de la estancia actual a la estancia del invitado
+                $currentStayData->guestNotes()->update(['stay_id'=> $invitedStay->id]);
                 //eliminar estancia
                 $currentStayData->delete();
                 //retorna la estancia del invitado como nueva estancia para la sesion actual
