@@ -643,3 +643,25 @@ if (! function_exists('queriesTextDefault')) {
         return (object)$mergedArray;
     }
 }
+
+if (! function_exists('requestSettingsDefault')) {
+    function requestSettingsDefault(){
+        $requestSettings = new stdClass();
+        $requestSettings->msg_title = [
+            "es" => "¡Nos alegra que hayas disfrutado en [nombre del hotel]!",
+            "en" => "We are glad you enjoyed your stay at [nombre del hotel]!",
+            "fr" => "Nous sommes heureux que vous ayez apprécié votre séjour à [nombre del hotel]!",
+        ];
+        $requestSettings->msg_text = [
+            "es" => '<p>Tu experiencia es muy importante, compartirla ayudaría a otros viajeros a conocernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si reservaste online, podrían solicitarte tu opinión pronto. Valoramos mucho que la compartieras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos tu tiempo y ¡Gracias por habernos elegido!</strong></p>',
+            "en" => '<p>Your experience is very important, sharing it would help other travelers get to know us.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>If you booked online, you may be asked for your opinion soon. We really appreciate that you shared it.</p><p><br></p><p class="ql-align-center"><strong>We appreciate your time and thank you for choosing us!</strong></p>',
+            "fr" => "<p>Votre expérience est très importante, la partager aiderait d'autres voyageurs à nous connaître.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si vous avez réservé en ligne, votre avis pourrait bientôt vous être demandé. Nous apprécions vraiment que vous l'ayez partagé.</p><p><br></p><p class='ql-align-center'><strong>Nous apprécions votre temps et merci de nous avoir choisis !</strong></p>",
+        ];
+        $requestSettings->otas_enabled = [
+            "google" => true,
+            "tripadvisor" => true
+        ];
+        $requestSettings->request_to = "positive queries";
+        return $requestSettings;
+    }
+}

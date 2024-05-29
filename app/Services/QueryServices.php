@@ -23,14 +23,18 @@ class QueryServices {
 
     protected $chatGPTService;
     public $settings;
+    public $requestSettings;
 
     public function __construct(
         ChatGPTService $chatGPTService,
-        QuerySettingsServices $_QuerySettingsServices
+        QuerySettingsServices $_QuerySettingsServices,
+        RequestSettingService $_RequestSettingService
     )
     {
         $this->chatGPTService = $chatGPTService;
         $this->settings = $_QuerySettingsServices;
+        $this->requestSettings = $_RequestSettingService;
+        
     }
 
     public function findByParams ($request) {
@@ -175,9 +179,14 @@ class QueryServices {
             $stay->save();
 
             $guest = Guest::select('id','phone','email')->where('id',$query->guest_id)->first();
+            
             //solicitud de reseña
-            if($query->qualification == 'GOOD'){
-                Mail::to($guest->email)->send(new RequestReviewGuest($hotel));    
+            $requestSettings = $this->requestSettings->getAll($hotel->id);
+            $condition1 = $requestSettings->request_to == "positive queries" && $query->qualification == "GOOD" && $query->period == 'post-stay';
+            $condition2 = $requestSettings->request_to == "positive, normal and not answered queries" && ($query->qualification == "GOOD" || $query->qualification == "NORMAL") && $query->period == 'post-stay';
+            if($condition1 || $condition2){
+                // $guest->email
+                Mail::to("andresdreamerf@gmail.com")->send(new RequestReviewGuest($hotel));    
                 if($guest->phone){
                     $msg = 'solicitud de reseña';
                     sendSMS($guest->phone,$msg,$hotel->sender_for_sending_sms);
