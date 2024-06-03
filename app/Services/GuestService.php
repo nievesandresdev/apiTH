@@ -28,7 +28,7 @@ class GuestService {
     {
         $this->stayAccessService = $_StayAccessService;
         $this->mailService = $_MailService;
-        $this->colors = ['#5E7A96','#5E5E96','#967E5E','#966B5E','#5E968F','#5E966A','#965E71','#965E96'];
+        $this->colors = ['5E7A96','5E5E96','967E5E','966B5E','5E968F','5E966A','965E71','965E96'];
     }
 
     public function findById($id)
