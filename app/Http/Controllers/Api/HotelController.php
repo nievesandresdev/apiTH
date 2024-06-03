@@ -62,15 +62,15 @@ class HotelController extends Controller
         try {
             $modelHotel = $request->attributes->get('hotel');
 
-            $modelTypePlaces = TypePlaces::all();
+            // $modelTypePlaces = TypePlaces::all();
 
             //crear array de ciudades para la consulta
             $citySlug = \Str::slug($modelHotel->zone);
             $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
 
-            $leisureId = $modelTypePlaces->where('name','Ocio')->first()->id;
-            $whereeatId = $modelTypePlaces->where('name','Dónde comer')->first()->id;
-            $whatvisitId = $modelTypePlaces->where('name','Qué visitar')->first()->id;
+            // $leisureId = $modelTypePlaces->where('name','Ocio')->first()->id;
+            // $whereeatId = $modelTypePlaces->where('name','Dónde comer')->first()->id;
+            // $whatvisitId = $modelTypePlaces->where('name','Qué visitar')->first()->id;
             
 
             $facilities = $this->serviceFacility->getCrosselling($modelHotel);
@@ -79,24 +79,24 @@ class HotelController extends Controller
             $experiences = $this->serviceExperience->getCrosselling($modelHotel, $cityData);
             $crossellingExperiences = ExperienceResource::collection($experiences);
 
-            $placesLeisure = $this->servicePlace->getCrosselling('Ocio', $modelHotel);
-            $crossellingPlacesLeisure = PlaceResource::collection($placesLeisure)->toArray(request());
+            // $placesLeisure = $this->servicePlace->getCrosselling('Ocio', $modelHotel);
+            // $crossellingPlacesLeisure = PlaceResource::collection($placesLeisure)->toArray(request());
 
-            $placesWhereeat = $this->servicePlace->getCrosselling('Dónde comer', $modelHotel);
-            $crossellingPlacesWhereeat = PlaceResource::collection($placesWhereeat)->toArray(request());
+            // $placesWhereeat = $this->servicePlace->getCrosselling('Dónde comer', $modelHotel);
+            // $crossellingPlacesWhereeat = PlaceResource::collection($placesWhereeat)->toArray(request());
 
-            $placesWhatvisit = $this->servicePlace->getCrosselling('Qué visitar', $modelHotel);
-            $crossellingPlacesWhatvisit = PlaceResource::collection($placesWhatvisit)->toArray(request());
+            // $placesWhatvisit = $this->servicePlace->getCrosselling('Qué visitar', $modelHotel);
+            // $crossellingPlacesWhatvisit = PlaceResource::collection($placesWhatvisit)->toArray(request());
 
             $data = [
                 'crosselling_facilities' => $crossellingFacilities,
                 'crosselling_experiences' => $crossellingExperiences,
-                'crosselling_places_leisure' => $crossellingPlacesLeisure,
-                'crosselling_places_whereeat' => $crossellingPlacesWhereeat,
-                'crosselling_places_whatvisit' => $crossellingPlacesWhatvisit,
-                'leisure_id' => $leisureId,
-                'whereeat_id' => $whereeatId,
-                'whatvisit_id' => $whatvisitId
+                // 'crosselling_places_leisure' => $crossellingPlacesLeisure,
+                // 'crosselling_places_whereeat' => $crossellingPlacesWhereeat,
+                // 'crosselling_places_whatvisit' => $crossellingPlacesWhatvisit,
+                // 'leisure_id' => $leisureId,
+                // 'whereeat_id' => $whereeatId,
+                // 'whatvisit_id' => $whatvisitId
             ];
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
