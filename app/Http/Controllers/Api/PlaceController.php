@@ -31,15 +31,15 @@ class PlaceController extends Controller
             $modelHotel = $request->attributes->get('hotel');
 
             $hotelId = $modelHotel->id;
-            $search = $request->search ?? null; 
-            $cityName = $request->city ?? $modelHotel->zone;       
-            $featured = $request->featured && $request->featured != 'false' && $request->featured != '0'; 
+            $search = $request->search ?? null;
+            $cityName = $request->city ?? $modelHotel->zone;
+            $featured = $request->featured && $request->featured != 'false' && $request->featured != '0';
             $points = $request->points ?? [];
 
             $typeplace = $request->typeplace ?? null;
             $categoriplace = $request->categoriplace ?? null;
 
-            
+
             //crear array de ciudades para la consulta
             $citySlug = Str::slug($modelHotel->zone);
             $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
@@ -75,9 +75,9 @@ class PlaceController extends Controller
             $modelHotel = $request->attributes->get('hotel');
 
             $hotelId = $modelHotel->id;
-            $search = $request->search ?? null; 
-            $cityName = $request->city ?? $modelHotel->zone;       
-            $featured = $request->featured && $request->featured != 'false' && $request->featured != '0'; 
+            $search = $request->search ?? null;
+            $cityName = $request->city ?? $modelHotel->zone;
+            $featured = $request->featured && $request->featured != 'false' && $request->featured != '0';
             $points = $request->points ?? [];
             $all = $request->all ?? null;
             $withNumbersPlaces = $request->withNumbersPlaces ?? false;
@@ -103,7 +103,7 @@ class PlaceController extends Controller
             $categoriesCollection = $this->service->getCategoriesByType($request, $dataFilter, $modelHotel);
             // return $categoriesCollection;
             // $data = new ExperiencePaginateResource($experiencesCollection);
-            
+
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $categoriesCollection);
 
@@ -122,7 +122,7 @@ class PlaceController extends Controller
             $typePlacesCollection = $this->service->getTypePlaces($request, $modelHotel);
             // return $typePlacesCollection;
             // $data = new ExperiencePaginateResource($experiencesCollection);
-            
+
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $typePlacesCollection);
 
@@ -160,7 +160,7 @@ class PlaceController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getDataReviews');
-        }   
+        }
     }
 
     public function getReviewsByRating(Request $request){
@@ -169,6 +169,6 @@ class PlaceController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getReviewsByRating');
-        }   
+        }
     }
 }

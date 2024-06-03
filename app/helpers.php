@@ -300,10 +300,14 @@ if (! function_exists('settingsNotyStayDefault')) {
             'unfilled_check_email' => true,
             //
             'create_check_email' => true,
+            //Mensaje al añadir un envío a un huésped al crear estancia
             'create_msg_email' => [
-                    'es'=>'<p>¡Hola [nombre]!<br><br>¡Bienvenido al [nombre_del_hotel]. Queremos que disfrutes al máximo tu estancia, por eso te invitamos a explorar nuestra webapp exclusiva. Accede a [URL] y compártela con el resto de huéspedes de la estancia para conocer toda la información del hotel y una guía completa de la ciudad. Si necesitas ayuda, nuestro equipo está disponible. ¡Esperamos que tengas una experiencia increíble en nuestro hotel! <br><br>El equipo del [nombre_del_hotel].<p>',
+                    /* 'es'=>'<p>¡Hola [nombre]!<br><br>¡Bienvenido al [nombre_del_hotel]. Queremos que disfrutes al máximo tu estancia, por eso te invitamos a explorar nuestra webapp exclusiva. Accede a [URL] y compártela con el resto de huéspedes de la estancia para conocer toda la información del hotel y una guía completa de la ciudad. Si necesitas ayuda, nuestro equipo está disponible. ¡Esperamos que tengas una experiencia increíble en nuestro hotel! <br><br>El equipo del [nombre_del_hotel].<p>',
                     'en'=>'<p>Hello [nombre]!<br><br>Welcome to [nombre_del_hotel]. We want you to enjoy your stay to the fullest, which is why we invite you to explore our exclusive webapp. Access [URL] and share it with the rest of the guests of the stay to find out all the hotel information and a complete guide to the city. If you need help, our team is available. We hope you have an amazing experience at our hotel! <br><br>The [nombre_del_hotel] team.<p>',
-                    'fr'=>"<p>Bonjour [nombre] !<br><br>Bienvenue à [nombre_del_hotel]. Nous souhaitons que vous profitiez au maximum de votre séjour, c'est pourquoi nous vous invitons à explorer notre webapp exclusive. Accédez à [URL] et partagez-le avec le reste des invités du séjour pour découvrir toutes les informations de l'hôtel et un guide complet de la ville. Si vous avez besoin d'aide, notre équipe est disponible. Nous espérons que vous vivrez une expérience incroyable dans notre hôtel ! <br><br>L'équipe de [nombre_del_hotel].<p>"
+                    'fr'=>"<p>Bonjour [nombre] !<br><br>Bienvenue à [nombre_del_hotel]. Nous souhaitons que vous profitiez au maximum de votre séjour, c'est pourquoi nous vous invitons à explorer notre webapp exclusive. Accédez à [URL] et partagez-le avec le reste des invités du séjour pour découvrir toutes les informations de l'hôtel et un guide complet de la ville. Si vous avez besoin d'aide, notre équipe est disponible. Nous espérons que vous vivrez une expérience incroyable dans notre hôtel ! <br><br>L'équipe de [nombre_del_hotel].<p>" */
+                    'es' => 'Hola [nombre],<br>Nos alegra que utilices nuestra WebApp!<br><br>Aprovecha al máximo todo lo que te ofrecemos:<br>Conoce las instalaciones del hotel<br>Descubre sitios turísticos imperdibles<br>Disfruta con nuestras recomendaciones de restaurantes<br>Comunícate con nuestro personal utilizando el Chat<br><br>Estamos a tu disposición para brindarte la mejor experiencia en tu estancia. Gracias por elegirnos.',
+                    'en' => 'Hello [nombre],<br>We are glad you are using our WebApp!<br><br>Take full advantage of everything we offer you:<br>Get to know the hotel facilities<br>Discover unmissable tourist sites<br>Enjoy our restaurant recommendations<br>Communicate with our staff using the Chat<br><br>We are at your disposal to provide you with the best experience during your stay. Thank you for choosing us.',
+                    'fr' => 'Bonjour [nombre],<br>Nous sommes ravis que vous utilisiez notre WebApp!<br><br>Profitez pleinement de tout ce que nous vous offrons:<br>Découvrez les installations de l\'hôtel<br>Découvrez des sites touristiques incontournables<br>Profitez de nos recommandations de restaurants<br>Communiquez avec notre personnel en utilisant le Chat<br><br>Nous sommes à votre disposition pour vous offrir la meilleure expérience lors de votre séjour. Merci de nous avoir choisis.'
             ],
             'create_lang_email' => 'es',
             'create_check_sms' => true,
@@ -315,17 +319,34 @@ if (! function_exists('settingsNotyStayDefault')) {
             'create_lang_sms' => 'es',
             //
             'guestcreate_check_email' => true,
-            'guestcreate_msg_email' => [
+            //Mensaje cuando un huésped crea una estancia
+            /* 'guestcreate_msg_email' => [
                 'es'=>'<p>¡Hola [nombre]!<br><br>¡Esperamos que  disfrutes tu estancia en el [nombre_del_hotel]! Te invitamos a compartir la webapp con el resto de huéspedes [URL]. Descubrirán detalles del hotel y una guía completa de la ciudad. ¡Estamos aquí para que disfrutes al máximo! <br><br>El equipo del [nombre_del_hotel].<p>',
                 'en'=>'<p>Hello [nombre]!<br><br>We hope you enjoy your stay at [nombre_del_hotel]! We invite you to share the webapp with the rest of the guests [URL]. You will discover details of the hotel and a complete guide to the city. We are here for you to enjoy to the fullest! <br><br>The [nombre_del_hotel] team.<p>',
                 'fr'=>"<p>Bonjour [nombre]!<br><br>Nous espérons que vous apprécierez votre séjour à [nombre_del_hotel]! Nous vous invitons à partager la webapp avec le reste des invités [URL]. Vous découvrirez les détails de l'hôtel et un guide complet de la ville. Nous sommes là pour que vous en profitiez au maximum ! <br><br>L'équipe de [nombre_del_hotel].<p>"
+            ], */
+            'guestcreate_msg_email' => [
+
+                'es' => 'Estimado huésped,<br> Estamos encantados de darte la bienvenida a [nombre_del_hotel].<br><br>Esperamos que tu estancia sea única e inolvidable,<br>nuestro equipo está a tu disposición.',
+
+                'en'=>'<p>Dear guest,<br> We are delighted to welcome you to [nombre_del_hotel].<br> We hope your stay is unique and unforgettable.<br> Our team is at your service.<p>',
+
+                'fr'=>"Cher invité,<br> Nous sommes ravis de vous accueillir à [nombre_del_hotel].<br> Nous espérons que votre séjour sera unique et inoubliable.<br> Notre équipe est à votre disposition."
             ],
             //
             'guestinvite_check_email' => true,
-            'guestinvite_msg_email' => [
+            //Mensaje cuando un huésped invita a otro huésped cuando ya esta la estancia creada
+            /* 'guestinvite_msg_email' => [
                 'es'=>'<p>¡Hola [nombre]!<br><br>Échale un vistazo a la webapp de [nombre_del_hotel], que está llena de información para hacer nuestra experiencia aún más completa. Accede a través de [URL]. Descubre detalles del hotel y una guía completa de la ciudad. ¡Disfrutarás al máximo!<p>',
                 'en'=>'<p>Hello [nombre]!<br><br>Take a look at the [nombre_del_hotel] webapp, which is full of information to make our experience even more complete. Access through [URL]. Discover hotel details and a complete city guide. You will enjoy it to the fullest!<p>',
                 'fr'=>"<p>Bonjour [nombre]!<br><br>Jetez un œil à la webapp [nombre_del_hotel], qui regorge d'informations pour rendre notre expérience encore plus complète. Accès via [URL]. Découvrez les détails de l'hôtel et un guide complet de la ville. Vous en profiterez pleinement!<p>"
+            ], */
+            'guestinvite_msg_email' => [
+                'es' => 'Hola [nombre],<br>¿Ya has probado la WebApp de [nombre_del_hotel]?<br><br>No necesitas descargarla, puedes ver información del hotel, obtener recomendaciones de lugares para visitar y hasta chatear con recepción!<br><br>Excelente acompañante para disfrutar al máximo nuestra estancia.',
+
+                'en'=>'Hello [nombre],<br>Have you tried the WebApp of [nombre_del_hotel]?<br><br>You don\'t need to download it, you can see information about the hotel, get recommendations of places to visit and even chat with reception!<br><br>Excellent companion to enjoy our stay to the fullest.',
+
+                'fr'=>"Bonjour [nombre],<br>Avez-vous essayé la WebApp de [nombre_del_hotel]?<br><br>Vous n'avez pas besoin de le télécharger, vous pouvez voir des informations sur l'hôtel, obtenir des recommandations de lieux à visiter et même discuter avec la réception!<br><br>Excellent compagnon pour profiter pleinement de notre séjour."
             ],
             //
             'chat_hoster' => [
@@ -378,6 +399,18 @@ if (! function_exists('prepareMessage')) {
         $msg = str_replace('[URL]', $link, $msg);
         // return $msg = googleTanslate($data['msg_lang'], $msg);
         return $msg;
+    }
+}
+
+//preparelink
+if (! function_exists('prepareLink')) {
+    function prepareLink($data,$hotel,$params_url = null){
+        $link = url('webapp?e='.$data['stay_id'].'&g='.$data['guest_id'].'&lang='.$data['stay_lang']);
+        $link =  includeSubdomainInUrlHuesped($link, $hotel);
+        if($params_url){
+            $link = $link.$params_url;
+        }
+        return $link;
     }
 }
 
@@ -608,5 +641,27 @@ if (! function_exists('queriesTextDefault')) {
 
         // Convertimos el array resultante de nuevo a un objeto
         return (object)$mergedArray;
+    }
+}
+
+if (! function_exists('requestSettingsDefault')) {
+    function requestSettingsDefault(){
+        $requestSettings = new stdClass();
+        $requestSettings->msg_title = [
+            "es" => "¡Nos alegra que hayas disfrutado en [nombre del hotel]!",
+            "en" => "We are glad you enjoyed your stay at [nombre del hotel]!",
+            "fr" => "Nous sommes heureux que vous ayez apprécié votre séjour à [nombre del hotel]!",
+        ];
+        $requestSettings->msg_text = [
+            "es" => '<p>Tu experiencia es muy importante, compartirla ayudaría a otros viajeros a conocernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si reservaste online, podrían solicitarte tu opinión pronto. Valoramos mucho que la compartieras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos tu tiempo y ¡Gracias por habernos elegido!</strong></p>',
+            "en" => '<p>Your experience is very important, sharing it would help other travelers get to know us.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>If you booked online, you may be asked for your opinion soon. We really appreciate that you shared it.</p><p><br></p><p class="ql-align-center"><strong>We appreciate your time and thank you for choosing us!</strong></p>',
+            "fr" => "<p>Votre expérience est très importante, la partager aiderait d'autres voyageurs à nous connaître.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si vous avez réservé en ligne, votre avis pourrait bientôt vous être demandé. Nous apprécions vraiment que vous l'ayez partagé.</p><p><br></p><p class='ql-align-center'><strong>Nous apprécions votre temps et merci de nous avoir choisis !</strong></p>",
+        ];
+        $requestSettings->otas_enabled = [
+            "google" => true,
+            "tripadvisor" => true
+        ];
+        $requestSettings->request_to = "positive queries";
+        return $requestSettings;
     }
 }

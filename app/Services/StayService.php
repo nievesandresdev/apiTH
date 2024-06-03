@@ -69,19 +69,43 @@ class StayService {
         }
     }
 
+    public function testMail() {
+
+        $hotel = Hotel::find(187);
+        $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
+            if(!$settings){
+                $settingsArray = settingsNotyStayDefault();
+                $settings = (object)$settingsArray;
+            }
+        $data = [
+            'stay_id' => 1,
+            'guest_id' => 1,
+            'stay_lang' => 'es',
+            'msg_text' => $settings->create_msg_email['es'],
+            'guest_name' => 'Juan',
+            'hotel_name' => $hotel->name,
+        ];
+        $msg = prepareMessage($data,$hotel,'&subject=invited');
+        $link = prepareLink($data,$hotel);
+        //dd($msg,$link);
+        $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,'',true), 'francisco20990@gmail.com');
+        dd('mail enviado');
+
+    }
+
     public function createAndInviteGuest($hotel,$request)
     {
         try {
             DB::beginTransaction();
             $guestId = $request->guestId;
             $guest = Guest::find($guestId);
-            
+
             $langs = [
                 'en' => 'Inglés',
                 'es' => 'Español',
                 'fr' => 'Francés'
             ];
-            
+
             $stay = Stay::create([
                 'hotel_id' =>$hotel->id,
                 'number_guests' => $request->numberGuests,
@@ -92,14 +116,15 @@ class StayService {
             $guest->stays()->syncWithoutDetaching([$stay->id]);
             //guardar acceso
             $this->stayAccessService->save($stay->id,$guestId);
-            
+
             //enviar mensaje al creador de la estancia
             $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
             if(!$settings){
                 $settingsArray = settingsNotyStayDefault();
                 $settings = (object)$settingsArray;
             }
-            
+
+
             $data = [
                 'stay_id' => $stay->id,
                 'guest_id' => $guest->id,
@@ -110,9 +135,10 @@ class StayService {
                 'hotel_id' => $hotel->id,
             ];
             if($settings->guestcreate_check_email){
-                $msg = prepareMessage($data,$hotel);
+                $msg = prepareMessage($data,$hotel,'&subject=invited');
+                $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);     
+                $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link), $guest->email);
             }
             DB::commit();
             //adjutar huespedes y enviar correos
@@ -131,10 +157,11 @@ class StayService {
                         $data['stay_id'] = $stay->id;
                         $data['guest_id'] = $guest->id;
                         $data['guest_name'] = $guest->name;
-                        $data['msg_text'] = $settings->guestinvite_msg_email[$guest->lang_web];
+                        $data['msg_text'] = $settings->create_msg_email[$guest->lang_web];
                         $msg = prepareMessage($data,$hotel,'&subject=invited');
+                        $link = prepareLink($data,$hotel,'&subject=invited');
                         // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                        $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);    
+                        $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name,true), $guest->email);
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
                     $this->stayAccessService->save($stay->id,$guestId);
@@ -150,10 +177,10 @@ class StayService {
                 $stay->number_guests = $currentStayAccesses;
                 $stay->save();
             }
-            
+
             sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
             return $stay;
-            
+
         } catch (\Exception $e) {
             DB::rollback();
             return $e;
@@ -202,6 +229,14 @@ class StayService {
                 $currentStayData->guests()->update(['stay_id'=> $invitedStay->id]);
                 //relacionar accesos actuales a la estancia del invitado
                 $currentStayData->accesses()->update(['stay_id'=> $invitedStay->id]);
+                //relacionar queries actuales a la estancia del invitado
+                $currentStayData->queries()->update(['stay_id'=> $invitedStay->id]);
+                //relacionar chats actuales a la estancia del invitado
+                $currentStayData->chats()->update(['stay_id'=> $invitedStay->id]);
+                //relacionar notas actuales a la estancia del invitado
+                $currentStayData->notes()->update(['stay_id'=> $invitedStay->id]);
+                //relacionar notas de huespedes de la estancia actual a la estancia del invitado
+                $currentStayData->guestNotes()->update(['stay_id'=> $invitedStay->id]);
                 //eliminar estancia
                 $currentStayData->delete();
                 //retorna la estancia del invitado como nueva estancia para la sesion actual
@@ -225,7 +260,7 @@ class StayService {
     }
 
     public function getGuests($stayId){
-        
+
         try{
             $stay = Stay::find($stayId);
             $guests = $stay->guests()->get();
@@ -236,7 +271,7 @@ class StayService {
     }
 
     public function updateStayData($request){
-        
+
         try{
             $stay = Stay::find($request->stayId);
             $stay->room = $request->room;
@@ -244,7 +279,7 @@ class StayService {
             $stay->check_in = $request->checkDate['start'];
             $stay->check_out = $request->checkDate['end'];
             $stay->save();
-            
+
             return $stay;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateStayData');
@@ -289,5 +324,5 @@ class StayService {
             return $e;
         }
     }
-    
+
 }

@@ -29,24 +29,25 @@ class StayAccessObserver
     public function created(StayAccess $stayAccess)
     {
         try{   
+            $disabled = false;
             $stay = Stay::select('stays.id','stays.hotel_id', 'hotels.checkin as hotel_checkin')
                     ->where('stays.id',$stayAccess->stay_id)
                     ->join('hotels', 'stays.hotel_id', '=', 'hotels.id')
                     ->first();
             Log::info('observer access: $stay' . $stay);
             
-            $hotel = new stdClass();
-            $hotel->checkin = $stay->hotel_checkin ?? null;    
-            $period = $this->queryservice->getCurrentPeriod($hotel, $stay->id);    
+            $period = $this->queryservice->getCurrentPeriod($stay->hotel, $stay->id);    
             Log::info('observer access: $period' . $period);
-            if($period !== 'post-stay'){
+            if($period == 'pre-stay' || $period == 'in-stay'){
                 $settings = $this->settingsService->getAll($stay->hotel_id);
                 $periodKey = str_replace("-", "_", $period).'_activate';
-                if(!$settings->$periodKey)  return;
+                if(!$settings->$periodKey){
+                    $disabled = true;
+                }  
             }
             
             if($period){
-                $query = $this->queryservice->firstOrCreate($stay->id, $stayAccess->guest_id, $period);    
+                $query = $this->queryservice->firstOrCreate($stay->id, $stayAccess->guest_id, $period, $disabled);    
                 Log::info('observer access: $query' . $query);
             }   
             

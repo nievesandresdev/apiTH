@@ -46,6 +46,7 @@ class RouteServiceProvider extends ServiceProvider
                  $this->loadModuleRoutes('api_facility.php');
                  $this->loadModuleRoutes('api_queries.php');
                  $this->loadModuleRoutes('api_stay_access.php');
+                 $this->loadModuleRoutes('api_requests.php');
                  // Aquí puedes añadir más archivos de módulos según sea necesario
              });
     }

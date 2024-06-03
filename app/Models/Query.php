@@ -19,7 +19,8 @@ class Query extends Model
         'attended',
         'visited',
         'response_lang',
-        'responded_at'
+        'responded_at',
+        'disabled'
     ];
     
     protected $casts = [

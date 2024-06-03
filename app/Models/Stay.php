@@ -32,19 +32,34 @@ class Stay extends Model
         return $this->belongsTo(hotel::class);
     }
 
-    public function chat()
-    {
-        return $this->morphOne(Chat::class, 'chatable');
-    }
-
     public function accesses()
     {
         return $this->hasMany(StayAccess::class);
     }
 
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
+
     public function guests()
     {
         return $this->belongsToMany(Guest::class);
+    }
+
+    public function queries()
+    {
+        return $this->hasMany(Query::class);
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(NoteStay::class);
+    }
+
+    public function guestNotes()
+    {
+        return $this->hasMany(NoteGuest::class);
     }
 
 }
