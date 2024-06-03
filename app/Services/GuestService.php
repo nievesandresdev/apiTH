@@ -17,6 +17,10 @@ use App\Services\MailService;
 
 class GuestService {
 
+    public $stayAccessService; 
+    public $mailService;
+    public $colors;
+
     function __construct(
         StayAccessService $_StayAccessService,
         MailService $_MailService
@@ -24,6 +28,7 @@ class GuestService {
     {
         $this->stayAccessService = $_StayAccessService;
         $this->mailService = $_MailService;
+        $this->colors = ['#5E7A96','#5E5E96','#967E5E','#966B5E','#5E968F','#5E966A','#965E71','#965E96'];
     }
 
     public function findById($id)
@@ -44,14 +49,18 @@ class GuestService {
 
             $guest = Guest::where('email',$email)->first();
             if(!$guest){
+                $acronym = $this->generateInitialsName($email);
                 $guest = Guest::create([
                     'name' =>$name,
                     'email' => $email,
-                    'lang_web' => $lang
+                    'lang_web' => $lang,
+                    'acronym' => $acronym,
                 ]);
             }else{
+                $acronym = $this->generateInitialsName($name);
                 $guest->name = $name;
                 $guest->lang_web = $lang;
+                $guest->acronym = $acronym;
                 $guest->save();
             }
             return $guest;
@@ -193,6 +202,28 @@ class GuestService {
             return  true;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.sendEmail');
+        }
+    }
+
+    public function generateInitialsName($name)
+    {
+        try{
+            // Divide el nombre en partes
+            $parts = explode(' ', trim($name));
+            $initials = '';
+
+            // Verifica si el nombre tiene más de una parte
+            if (count($parts) > 1) {
+                // Si tiene nombre y apellido, toma la primera letra de cada uno
+                $initials = strtoupper(substr($parts[0], 0, 1) . substr($parts[1], 0, 1));
+            } else {
+                // Si solo tiene un nombre, toma las primeras dos letras
+                $initials = strtoupper(substr($name, 0, 2));
+            }
+
+            return $initials;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.generateInitialsName');
         }
     }
 }
