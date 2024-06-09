@@ -30,13 +30,13 @@ class TranslateController extends Controller
     public function load(LoadTranslateRequest $request){
         
         try {
-            $data = $this->service->load([
+            $context = [
                 "dirTemplate" => $request->dirTemplate,
                 "languageCodes" => $request->languageCodes,
-                "context" => $request->context,
-            ]);
+                "context" => $request->context
+            ];
+            $data = $this->service->load($context);
 
-            return $data;
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {

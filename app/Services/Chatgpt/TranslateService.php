@@ -35,7 +35,7 @@ class TranslateService {
             do {
 
                 $attempts++;
-
+                \Log::info($attempts);
                 // var_dump($attempts);
 
                 $inputTranslation = $this->loadInputTranslation($payload);
