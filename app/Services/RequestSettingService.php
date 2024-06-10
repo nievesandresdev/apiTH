@@ -32,12 +32,31 @@ class RequestSettingService {
             $localLang = localeCurrent();
 
             //titulo
+            $nameHotelText = "[nombre del hotel]";
+            switch ($nameHotelText) {
+                case $localLang == "fr":
+                    $nameHotelText = "[nom de l'hôtel]";
+                    break;
+                case $localLang == "en":
+                    $nameHotelText = "[hotel name]";
+                    break;
+            }
             $title = $settings->msg_title[$localLang];
-            $title = str_replace('[nombre del hotel]', $hotel->name, $title);
-
+            $title = str_replace($nameHotelText, $hotel->name, $title);
+            
             //mensaje
-            $text = $settings->msg_text[$localLang];
-            $parts = explode("<p><strong>[Link a las OTAs]</strong></p><p><br></p>", $text);
+            $linkText = "[Link a las OTAs]";
+            switch ($linkText) {
+                case $localLang == "fr":
+                    $linkText = "[Lien vers les OTA]";
+                    break;
+                case $localLang == "en":
+                    $linkText = "[Link to OTAs]";
+                    break;
+            }
+            
+            $text = preg_replace('/>\s+</', '><', $settings->msg_text[$localLang]);
+            $parts = explode("<p><strong>$linkText</strong></p><p><br></p>", $text);
 
             $text1 = $parts[0] ?? null;
             $text2 = $parts[1] ?? null;
