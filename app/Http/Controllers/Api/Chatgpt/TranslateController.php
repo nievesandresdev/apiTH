@@ -52,6 +52,7 @@ class TranslateController extends Controller
                     'attempts' => $attempts,
                     'errorValidate' => $errorValidate,
                 ];
+                return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
             }
             $data = [
                 'input' => $input,
