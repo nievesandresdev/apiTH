@@ -79,7 +79,6 @@ class TranslateController extends Controller
                 'attempts' => $attempts,
                 'errorValidate' => $errorValidate,
             ];
-            return $data;
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.validateTranslation');
