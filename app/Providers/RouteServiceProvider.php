@@ -33,6 +33,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::middleware('api')
              ->group(function () {
+                 $this->loadModuleRoutes('api_chatgpt.php');
                  $this->loadModuleRoutes('api_hotel.php');
                  $this->loadModuleRoutes('api_hotel_ota.php');
                  $this->loadModuleRoutes('api_stay.php');

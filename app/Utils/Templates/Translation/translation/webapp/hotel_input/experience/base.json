@@ -1,0 +1,17 @@
+{
+    "function_expected_parameter": {
+        "{{ language_code }}": {
+            "type": "object",
+            "properties": {
+                "recommendation": {
+                    "type": "string",
+                    "description": "The translated text."
+                }
+            },
+            "required": [
+                "recommendation"
+            ]
+        }
+    },
+    "system_expected_parameter": "\n    \"{{ language_code }}\": {\n        \"recommendation\": <text>}"
+}

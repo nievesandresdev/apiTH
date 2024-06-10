@@ -1,0 +1,20 @@
+[
+  {
+    "role": "system",
+    "content": [
+      {
+        "type": "text",
+        "text": "You are a translator expert. Check if this translation done by an LLM is donde correctly.\nThe expected output is:\n```json\n{\n    \"valid\": <boolean>\n}\n```"
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n    \"input\": \"{{ input }}\"\n    \"output\": \"{{ output }}\"\n}"
+      }
+    ]
+  }
+]
