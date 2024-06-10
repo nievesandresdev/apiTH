@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 use App\Services\MailService;
+use App\Utils\Enums\GuestEnum;
 
 class GuestService {
 
@@ -28,7 +29,6 @@ class GuestService {
     {
         $this->stayAccessService = $_StayAccessService;
         $this->mailService = $_MailService;
-        $this->colors = ['5E7A96','5E5E96','967E5E','966B5E','5E968F','5E966A','965E71','965E96'];
     }
 
     public function findById($id)
@@ -137,6 +137,7 @@ class GuestService {
             $settings = (object)$settingsArray;
         }
         Log::info("inviteToStayByEmail settings".json_encode($settings));
+        Log::info("lang_web ".$guest->lang_web);
         if($settings->guestinvite_check_email){
             Log::info("inviteToStayByEmail entro en envio");
             $data = [
@@ -226,4 +227,35 @@ class GuestService {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.generateInitialsName');
         }
     }
+
+    public function updateColorGuestForStay($colorsExists) {
+        // Obtener los colores definidos
+        $colors = GuestEnum::COLORS;
+    
+        // Asegurarse de que $colorsExists es un array
+        $colorsExistsArray = $colorsExists->toArray();
+    
+        // Log para ver qué contiene $colorsExistsArray
+        Log::info('$colors '.json_encode($colors));
+        Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
+    
+        // Filtrar colores para encontrar aquellos que no están en $colorsExistsArray
+        $availableColors = array_diff($colors, $colorsExistsArray);
+        Log::info('$availableColors '.json_encode($availableColors));
+    
+        // Verificar si hay colores disponibles
+        if (!empty($availableColors)) {
+            Log::info('if');
+            Log::info('if '.$availableColors[array_rand($availableColors)]);
+            // Seleccionar un color al azar de los colores disponibles
+            return $availableColors[array_rand($availableColors)];
+        } else {
+            Log::info('else');
+            Log::info('else '.$colors[array_rand($colors)]);
+            // Todos los colores están en uso, seleccionar uno al azar de la lista total
+            return $colors[array_rand($colors)];
+        }
+    }
+    
+    
 }

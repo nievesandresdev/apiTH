@@ -140,6 +140,14 @@ class StayService {
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
                 $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link), $guest->email);
             }
+
+            $colorsExists = $stay->guests()->select('color')->pluck('color');
+            $color = $this->guestService->updateColorGuestForStay($colorsExists);
+            if($color){
+                Log::info('se agregar el color al huesped '.$color);
+                $guest->color = $color;
+                $guest->save();
+            }
             DB::commit();
             //adjutar huespedes y enviar correos
             $list_guest = $request->listGuest ?? [];
@@ -165,6 +173,14 @@ class StayService {
                     }
                     $guest->stays()->syncWithoutDetaching([$stay->id]);
                     $this->stayAccessService->save($stay->id,$guestId);
+                    $colorsExists = $stay->guests()->select('color')->pluck('color');
+                    Log::info('agregado colors '.json_encode($colorsExists));
+                    $color = $this->guestService->updateColorGuestForStay($colorsExists);
+                    if($color){
+                        Log::info('se agregar el color al huesped agregado '.$color);
+                        $guest->color = $color;
+                        $guest->save();
+                    }
                 }
                 DB::commit();
             }
@@ -249,6 +265,13 @@ class StayService {
                     $this->stayAccessService->save($currentStayData->id,$invited->id);
                     //agregar relacion a estancia
                     $invited->stays()->syncWithoutDetaching([$currentStayData->id]);
+                    $colorsExists = $currentStayData->guests()->select('color')->pluck('color');
+                    $color = $this->guestService->updateColorGuestForStay($colorsExists);
+                    if($color){
+                        Log::info('se agregar el color al huesped invitado'.$color);
+                        $invited->color = $color;
+                        $invited->save();
+                    }
                 }
             }
             Log::info("currentStayData:".$currentStayData);
