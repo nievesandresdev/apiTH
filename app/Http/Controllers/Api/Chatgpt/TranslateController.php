@@ -32,7 +32,7 @@ class TranslateController extends Controller
         
         try {
 
-            $withValidation = $request->withValidation ?? true;
+            $withValidation = isset($request->withValidation) ? $request->withValidation  : true;
             $context = [
                 "dirTemplate" => $request->dirTemplate,
                 "languageCodes" => $request->languageCodes,
