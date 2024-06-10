@@ -73,15 +73,13 @@ class TranslateController extends Controller
             $output = $request->output ?? nulll;
             $responseValidate = $this->service->validate($input, $output);
             ['status' => $status, 'attempts'=>$attempts, 'errorValidate' => $errorValidate] =  $responseValidate;
-            if ($errorTranslate) {
-                return bodyResponseRequest(EnumResponse::NOT_IMPLEMENTED, $e, $errorValidate, self::class . '.validateTranslation');
-            }
             $data = [
                 'output' => $output,
                 'status' => $status,
                 'attempts' => $attempts,
                 'errorValidate' => $errorValidate,
             ];
+            return $data;
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.validateTranslation');
