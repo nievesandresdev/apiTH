@@ -60,7 +60,9 @@ class GuestService {
                 $acronym = $this->generateInitialsName($name);
                 $guest->name = $name;
                 $guest->lang_web = $lang;
-                $guest->acronym = $acronym;
+                if($acronym){
+                    $guest->acronym = $acronym;   
+                }
                 $guest->save();
             }
             return $guest;
@@ -163,10 +165,18 @@ class GuestService {
 
         try{
             $guest = Guest::find($data->id);
-            $guest->name = $data->name ?? $guest->name;
+
+            $name = $guest->name;
+            if($data->name){
+                $name = $data->name;
+            }
+            $acronym = $this->generateInitialsName($name);
+            
+            $guest->name = $name;
             $guest->email = $data->email ?? $guest->email;
             $guest->phone = $data->phone ?? $guest->phone;
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
+            $guest->acronym = $acronym;
             $guest->save();
             return $guest;
         } catch (\Exception $e) {
@@ -209,9 +219,10 @@ class GuestService {
     public function generateInitialsName($name)
     {
         try{
+            if(!$name) return null;
             // Divide el nombre en partes
             $parts = explode(' ', trim($name));
-            $initials = '';
+            $initials = null;
 
             // Verifica si el nombre tiene más de una parte
             if (count($parts) > 1) {
