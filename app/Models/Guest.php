@@ -18,14 +18,14 @@ class Guest extends Model
         'color'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-        static::creating(function ($guest) {
-            $availableColors = ['5E7A96','5E5E96','967E5E','966B5E','5E968F','5E966A','965E71','965E96'];
-            $guest->color = $availableColors[array_rand($availableColors)];
-        });
-    }
+    // protected static function boot()
+    // {
+    //     parent::boot();
+    //     static::creating(function ($guest) {
+    //         $availableColors = ['5E7A96','5E5E96','967E5E','966B5E','5E968F','5E966A','965E71','965E96'];
+    //         $guest->color = $availableColors[array_rand($availableColors)];
+    //     });
+    // }
 
     public function stays()
     {
