@@ -1,0 +1,11 @@
+{
+    "name": "translation",
+    "description": "Translate this place/restaurant webapp content recommended from a hotel into multiple target languages.",
+    "parameters": {
+        "type": "object",
+        "properties": "{{ function_expected_parameters }}",
+        "required": [
+            "{{ expected_languages_keys }}"
+        ]
+    }
+}
