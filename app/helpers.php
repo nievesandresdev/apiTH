@@ -674,10 +674,20 @@ if (! function_exists('requestSettingsDefault')) {
 }
 
 
-if (! function_exists('isOnlyEmojis')) {
-    function isOnlyEmojis($text) {
-        // Esta regex detecta emojis
-        $regex = '/^[\p{Emoji}]*$/u';
-        return preg_match($regex, $text);
-    }
+function decodeUnicodeString($text) {
+    // Convertir secuencias de escape Unicode a caracteres UTF-8
+    $text = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($match) {
+        return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
+    }, $text);
+
+    return $text;
+}
+
+function isOnlyEmojis($text) {
+    // Primero decodificar la cadena
+    $text = decodeUnicodeString($text);
+
+    // Esta regex detecta emojis
+    $regex = '/^[\p{Emoji}]*$/u';
+    return preg_match($regex, $text);
 }
