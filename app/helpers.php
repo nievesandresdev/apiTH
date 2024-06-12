@@ -672,7 +672,3 @@ if (! function_exists('requestSettingsDefault')) {
         return $requestSettings;
     }
 }
-
-function isOnlyEmojiEscapes($text) {
-    return preg_match('/^(\\\\u[0-9A-Fa-f]{4,6})+$/', $text);
-}

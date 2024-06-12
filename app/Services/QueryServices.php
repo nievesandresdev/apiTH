@@ -155,19 +155,15 @@ class QueryServices {
     public function saveResponse ($id, $request, $hotel) {
         try{
             $comment = $request->comment;
+            $originalComment = $request->comment;
             $responseLang = 'es';
-
             if($comment){
-                Log::info('isOnlyEmojis:'. isOnlyEmojiEscapes($comment));
-                if(isOnlyEmojiEscapes($comment)){
-                    $translations = [];
-                    $translations['es'] = $comment;
-                    $translations['en'] = $comment;
-                    $comment = $translations;
-                }else{
-                    $response = $this->chatGPTService->translateQueryMessage($comment, $id);
-                    $comment = $response["translations"];
-                    $responseLang = $response["responseLang"];   
+                $response = $this->chatGPTService->translateQueryMessage($comment, $id);
+                $comment = $response["translations"];
+                $responseLang = $response["responseLang"];
+                if($responseLang == 'und'){
+                    $responseLang = 'es';
+                    $comment = ['es' => $originalComment, 'en' => $originalComment];
                 }
             }
             
