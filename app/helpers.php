@@ -672,3 +672,12 @@ if (! function_exists('requestSettingsDefault')) {
         return $requestSettings;
     }
 }
+
+
+if (! function_exists('isOnlyEmojis')) {
+    function isOnlyEmojis($text) {
+        // Esta regex detecta emojis
+        $regex = '/^[\p{Emoji}]*$/u';
+        return preg_match($regex, $text);
+    }
+}

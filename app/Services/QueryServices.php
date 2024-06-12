@@ -156,10 +156,19 @@ class QueryServices {
         try{
             $comment = $request->comment;
             $responseLang = 'es';
+
             if($comment){
-                $response = $this->chatGPTService->translateQueryMessage($comment, $id);
-                $comment = $response["translations"];
-                $responseLang = $response["responseLang"];
+                Log::info('isOnlyEmojis:'. isOnlyEmojis($comment));
+                if(isOnlyEmojis($comment)){
+                    $translations = [];
+                    $translations['es'] = $comment;
+                    $translations['en'] = $comment;
+                    $comment = $translations;
+                }else{
+                    $response = $this->chatGPTService->translateQueryMessage($comment, $id);
+                    $comment = $response["translations"];
+                    $responseLang = $response["responseLang"];   
+                }
             }
             
             $query = Query::find($id);
