@@ -674,20 +674,14 @@ if (! function_exists('requestSettingsDefault')) {
 }
 
 
-function decodeUnicodeString($text) {
-    // Convertir secuencias de escape Unicode a caracteres UTF-8
-    $text = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($match) {
-        return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
-    }, $text);
-
-    return $text;
-}
-
 function isOnlyEmojis($text) {
-    // Primero decodificar la cadena
-    $text = decodeUnicodeString($text);
+    // Decodificar primero cualquier secuencia Unicode
+    $text = json_decode(sprintf('"%s"', $text));
 
-    // Esta regex detecta emojis
-    $regex = '/^[\p{Emoji}]*$/u';
+    // Verificar si todos los caracteres son emojis (incluyendo secuencias ZWJ)
+    // Esta regex incluye caracteres de emojis y el ZWJ
+    $regex = '/^(\X[\p{Emoji}]\X*[\x{200D}\p{Emoji}]*\X*)+$/u';
+
     return preg_match($regex, $text);
 }
+
