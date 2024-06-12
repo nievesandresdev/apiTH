@@ -158,8 +158,8 @@ class QueryServices {
             $responseLang = 'es';
 
             if($comment){
-                Log::info('isOnlyEmojis:'. isOnlyEmojis($comment));
-                if(isOnlyEmojis($comment)){
+                Log::info('isOnlyEmojis:'. isOnlyEmojiEscapes($comment));
+                if(isOnlyEmojiEscapes($comment)){
                     $translations = [];
                     $translations['es'] = $comment;
                     $translations['en'] = $comment;

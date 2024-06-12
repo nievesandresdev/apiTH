@@ -673,15 +673,6 @@ if (! function_exists('requestSettingsDefault')) {
     }
 }
 
-
-function isOnlyEmojis($text) {
-    // Decodificar primero cualquier secuencia Unicode
-    $text = json_decode(sprintf('"%s"', $text));
-
-    // Verificar si todos los caracteres son emojis (incluyendo secuencias ZWJ)
-    // Esta regex incluye caracteres de emojis y el ZWJ
-    $regex = '/^(\X[\p{Emoji}]\X*[\x{200D}\p{Emoji}]*\X*)+$/u';
-
-    return preg_match($regex, $text);
+function isOnlyEmojiEscapes($text) {
+    return preg_match('/^(\\\\u[0-9A-Fa-f]{4,6})+$/', $text);
 }
-
