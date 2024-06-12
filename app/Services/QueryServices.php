@@ -165,9 +165,9 @@ class QueryServices {
                     $translations['en'] = $comment;
                     $comment = $translations;
                 }else{
-                    $response = $this->chatGPTService->translateQueryMessage($comment, $id);
-                    $comment = $response["translations"];
-                    $responseLang = $response["responseLang"];   
+                    // $response = $this->chatGPTService->translateQueryMessage($comment, $id);
+                    // $comment = $response["translations"];
+                    // $responseLang = $response["responseLang"];   
                 }
             }
             
