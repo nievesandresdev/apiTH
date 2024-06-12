@@ -27,55 +27,15 @@ class TranslateService {
         $status = null;
         $valid = null;
         $attempts = 0;
-        $errorTranslate = null;
+        
         $errorValidation = null;
         try {
-
-
-            do {
 
                 $attempts++;
                 \Log::info($attempts);
                 // var_dump($attempts);
-
-                $inputTranslation = $this->loadInputTranslation($payload);
-                if (!$inputTranslation) null;
-
-                $outputTranslationChagpt = $this->requestChatgpt($inputTranslation);
-                /*$outputTranslationChagpt = json_decode('{
-                    "id": "chatcmpl-9WlgoipYOJyDhMKOb8Bo4DcleJmy8",
-                    "object": "chat.completion",
-                    "created": 1717596842,
-                    "model": "gpt-3.5-turbo-0125",
-                    "choices": [
-                        {
-                            "index": 0,
-                            "message": {
-                                "role": "assistant",
-                                "content": null,
-                                "function_call": {
-                                    "name": "translation",
-                                    "arguments": "{\n    \"es\": {\n        \"description\": \"descripcion prueba\"\n    },\n    \"en\": {\n        \"description\": \"test description\"\n    },\n    \"fr\": {\n        \"description\": \"description de test\"\n    },\n    \"de\": {\n        \"description\": \"Testbeschreibung\"\n    },\n    \"it\": {\n        \"description\": \"descrizione di prova\"\n    },\n    \"pt\": {\n        \"description\": \"descrição de teste\"\n    }\n}"
-                                }
-                            },
-                            "logprobs": null,
-                            "finish_reason": "stop"
-                        }
-                    ],
-                    "usage": {
-                        "prompt_tokens": 237,
-                        "completion_tokens": 101,
-                        "total_tokens": 338
-                    },
-                    "system_fingerprint": null
-                }', true);*/
-                if (isset($outputTranslationChagpt['error'])) {
-                       $errorTranslate = $outputTranslationChagpt['body'];
-                }
-
-                $arguments = $outputTranslationChagpt['choices'][0]['message']['function_call']['arguments'] ?? [];
-                $dataTranslate = $arguments ? (object) json_decode($arguments) : [];
                     
+                // VALIDATION
                 $inputValidationTranslation = $this->loadInputValidationTranslate($inputTranslation, $outputTranslationChagpt);
                 if (!$inputValidationTranslation) null;
 
@@ -86,18 +46,22 @@ class TranslateService {
 
                 $arguments = $outputValidationTranslationChagpt['choices'][0]['message']['function_call']['arguments'] ?? [];
                 $dataValidation = $arguments ? json_decode($arguments, true) : [];
-                $valid = $dataValidation['valid'] ?? false;
-                if ($valid) {
+                $valid = $dataValidation['valid'] ?? null;
+
+                if ($valid  === true) {
                     $status = 200;
-                } else {
+                } else if ($valid !== true && $attempts < 3) {
                     $status = 300;
                 }
+                else if ($valid !== true && $attempts >= 3) {
+                    $status = 500;
+                } else {
+                    $status = 501;
+                }
 
-            } while ($attempts < 3 && $status != 200);
-
-            if ($attempts >= 3 && $status != 200) {
-                $status = 500;
-            }
+                if ($status === 300) {
+                    $this->load();
+                }
 
             $res = [
                 'status' => $status,
@@ -120,6 +84,27 @@ class TranslateService {
     }
 
     // TRANSLATION
+
+    public function translate ($payload) {
+        try {
+            $errorTranslate = null;
+            $inputTranslation = $this->loadInputTranslation($payload);
+            if (!$inputTranslation) null;
+
+            $outputTranslationChagpt = $this->requestChatgpt($inputTranslation);
+            if (isset($outputTranslationChagpt['error'])) {
+                   $errorTranslate = $outputTranslationChagpt['body'];
+            }
+
+            $arguments = $outputTranslationChagpt['choices'][0]['message']['function_call']['arguments'] ?? [];
+            $dataTranslate = $arguments ? (object) json_decode($arguments) : [];
+            return ['errorTranslate' => $errorTranslate, 'input' => $inputTranslation, 'output' => $outputTranslationChagpt, 'translation' => $dataTranslate];
+
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
     public function loadInputTranslation ($payload) {
         try {
 
@@ -167,6 +152,59 @@ class TranslateService {
     }
 
     // VALIDATION OUTPUT
+
+    public function validate ($input, $output, $attempts = 0) {
+
+        $status = null;
+        $valid = null;
+        $errorValidate = null;
+
+        try {
+
+            $attempts++;
+            \Log::info($attempts);
+
+            $inputValidationTranslation = $this->loadInputValidationTranslate($input, $output);
+            if (!$inputValidationTranslation) null;
+
+            $outputValidationTranslationChagpt = $this->requestChatgpt($inputValidationTranslation);
+            if (isset($outputValidationTranslationChagpt['error'])) {
+                $errorValidate = $outputValidationTranslationChagpt['body'];
+            }
+
+            $arguments = $outputValidationTranslationChagpt['choices'][0]['message']['function_call']['arguments'] ?? [];
+            $dataValidation = $arguments ? json_decode($arguments, true) : [];
+
+            $valid = isset($dataValidation['valid']) && gettype($dataValidation['valid']) === 'boolean' ? $dataValidation['valid'] : null;
+
+            if ($valid  === true) {
+                $status = 200;
+            } else if ($valid !== true && $attempts < 3) {
+                $status = 300;
+            }
+            else if ($valid !== true && $attempts >= 3) {
+                $status = 500;
+            } else {
+                $status = 501;
+            }
+
+            if ($status === 300) {
+                return $this->validate($input, $output, $attempts);
+            }
+
+
+            $res = [
+                'status' => $status,
+                'attempts' => $attempts,
+                'errorValidate' => $errorValidate,
+            ];
+            return $res;
+
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
     public function loadInputValidationTranslate ($input, $output) {
         try {
             if (!$input || !$output) return;
