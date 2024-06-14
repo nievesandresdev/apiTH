@@ -16,7 +16,7 @@ class VerifyApiKey
         $envApiKey = config('app.x_key_api');
 
         if (!$apiKey || !$envApiKey || ($apiKey !== $envApiKey)) {
-           // return bodyResponseRequest(EnumResponse::UNAUTHORIZED);
+            return bodyResponseRequest(EnumResponse::UNAUTHORIZED);
         }
 
         return $next($request);
