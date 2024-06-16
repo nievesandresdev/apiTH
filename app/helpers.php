@@ -295,8 +295,8 @@ if (!function_exists('localeCurrent')) {
 
 if (! function_exists('getAllLanguages')) {
     function getAllLanguages(){
-        $otas =  collect(['es', 'en', 'fr']);
-        return $otas;
+        $lgs = Language::where('active', 1)->get()->pluck('abbreviation');
+        return $lgs;
     }
 }
 

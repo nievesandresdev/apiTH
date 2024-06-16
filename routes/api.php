@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UtilityController;
 use App\Http\Controllers\Subdomain\SubdomainController;
+use App\Http\Controllers\Api\LanguageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +31,4 @@ Route::group(['prefix' => 'utility'], function () {
 Route::post('/send-message-to-thehoster', [ContactController::class, 'send_message_to_thehoster']);
 Route::post('/create-dns-record', [SubdomainController::class, 'createDNSRecord']);
 
-
+Route::get('/language/getAll', [LanguageController::class, 'getAll']);
