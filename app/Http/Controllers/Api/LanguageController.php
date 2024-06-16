@@ -25,7 +25,6 @@ class LanguageController extends Controller
         
         try {
             $data = getAllLanguages();
-            return $data;
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
