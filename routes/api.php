@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UtilityController;
 use App\Http\Controllers\Subdomain\SubdomainController;
 use App\Http\Controllers\Api\LanguageController;
+use App\Http\Controllers\Auth\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,10 +20,6 @@ use App\Http\Controllers\Api\LanguageController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::group(['prefix' => 'utility'], function () {
     Route::get('/getExpAndPlaceBySaearch', [UtilityController::class, 'getExpAndPlace']);
     Route::get('/getPhoneCodesApi', [UtilityController::class, 'getPhoneCodesApi']);
@@ -32,3 +29,10 @@ Route::post('/send-message-to-thehoster', [ContactController::class, 'send_messa
 Route::post('/create-dns-record', [SubdomainController::class, 'createDNSRecord']);
 
 Route::get('/language/getAll', [LanguageController::class, 'getAll']);
+Route::group(['prefix' => 'v1'], function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::middleware('auth:api')->group(function () {
+        Route::get('/user', [AuthController::class, 'getUsers']);
+    });
+});
+

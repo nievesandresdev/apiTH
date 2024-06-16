@@ -155,11 +155,16 @@ class QueryServices {
     public function saveResponse ($id, $request, $hotel) {
         try{
             $comment = $request->comment;
+            $originalComment = $request->comment;
             $responseLang = 'es';
             if($comment){
                 $response = $this->chatGPTService->translateQueryMessage($comment, $id);
                 $comment = $response["translations"];
                 $responseLang = $response["responseLang"];
+                if($responseLang == 'und'){
+                    $responseLang = 'es';
+                    $comment = ['es' => $originalComment, 'en' => $originalComment];
+                }
             }
             
             $query = Query::find($id);
