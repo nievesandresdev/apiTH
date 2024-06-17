@@ -162,7 +162,7 @@ class TranslateService {
         try {
 
             $attempts++;
-            \Log::info($attempts);
+            // \Log::info($attempts);
 
             $inputValidationTranslation = $this->loadInputValidationTranslate($input, $output);
             if (!$inputValidationTranslation) null;
