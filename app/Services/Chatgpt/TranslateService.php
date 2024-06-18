@@ -176,7 +176,7 @@ class TranslateService {
             $dataValidation = $arguments ? json_decode($arguments, true) : [];
 
             $valid = isset($dataValidation['valid']) && gettype($dataValidation['valid']) === 'boolean' ? $dataValidation['valid'] : null;
-
+            
             if ($valid  === true) {
                 $status = 200;
             } else if ($valid !== true && $attempts < 3) {

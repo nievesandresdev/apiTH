@@ -87,6 +87,8 @@ class ExperienceController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
+            $experienceModel = $experienceModel->load('translate');
+            return $experienceModel;
             $data = new ExperienceDetailResource($experienceModel);
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
