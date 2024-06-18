@@ -88,7 +88,7 @@ class ExperienceController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
             $data = new ExperienceDetailResource($experienceModel);
-            return $data;
+
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         // } catch (\Exception $e) {
