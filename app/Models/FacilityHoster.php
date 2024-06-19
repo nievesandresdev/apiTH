@@ -36,6 +36,7 @@ class FacilityHoster extends Model
     }
     public function translations()
     {
+        //
         return $this->hasMany('App\Models\FacilityHosterLanguage', 'facility_hoster_id');
     }
 
