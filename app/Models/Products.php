@@ -26,6 +26,7 @@ class Products extends Model
         'city_id',
         'location',
         'url',
+        'url',
     ];
 
     protected $casts = [
@@ -85,7 +86,7 @@ class Products extends Model
 
         $modelActivityLanguage = "activities".ucfirst(localeCurrent());
 
-        $query->whereHas('translate', function($query) use($city){
+        $query->whereHas('translation', function($query) use($city){
             $query->where('city_experince','like', ['%'.$city.'%']);
         });
     }
@@ -96,7 +97,7 @@ class Products extends Model
 
         $modelActivityLanguage = "activities".ucfirst(localeCurrent());
 
-        $query->whereHas('translate', function($query) use($city){
+        $query->whereHas('translation', function($query) use($city){
             $query->where('city_experince','!=', $city);
         });
     }
@@ -107,7 +108,7 @@ class Products extends Model
 
         $modelActivityLanguage = "activities".ucfirst(localeCurrent());
 
-        $query->whereHas('translate', function($query) use($cities){
+        $query->whereHas('translation', function($query) use($cities){
             $query->whereIn('city_experince',$cities);
         });
     }
@@ -130,7 +131,7 @@ class Products extends Model
     public function scopeSearch ($query, $search)
     {
         if ($search) {
-            $query->whereHas('translate', function($query)use($search){
+            $query->whereHas('translation', function($query)use($search){
                 if ($search) {
                     $query->where('title','like',  ['%'.$search.'%'])
                     ->orWhere('description','like',  ['%'.$search.'%']);
