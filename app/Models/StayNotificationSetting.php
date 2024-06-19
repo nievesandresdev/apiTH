@@ -10,7 +10,7 @@ class StayNotificationSetting extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'hotel_id',
         'unfilled_check_platform',
         'unfilled_check_email',
         'create_check_email',

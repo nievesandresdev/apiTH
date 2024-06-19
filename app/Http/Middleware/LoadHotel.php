@@ -14,6 +14,9 @@ class LoadHotel
 {
     public function handle(Request $request, Closure $next): Response
     {
+        if (!$request->header('Hotel-SUBDOMAIN')) {
+            return $next($request);
+        }
         $hotelSubdomain = $request->header('Hotel-SUBDOMAIN');
         // $modelHotel = Hotel::where('subdomain', $hotelSubdomain)->first();
         $modelHotel = Hotel::whereHas('subdomains', function($query) use($hotelSubdomain){
@@ -21,9 +24,9 @@ class LoadHotel
         })->first();
 
         $data = new HotelResource($modelHotel);
-    
+
         $request->attributes->add(['hotel' => $data]);
-    
+
         return $next($request);
     }
 }

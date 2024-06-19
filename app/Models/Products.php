@@ -43,7 +43,7 @@ class Products extends Model
         return $this->belongsTo(City::class, 'city_id');
     }
 
-    public function translate()
+    public function translation()
     {
         return $this->hasOne(Activity::class)->where('language', localeCurrent());
     }

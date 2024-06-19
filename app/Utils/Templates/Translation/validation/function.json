@@ -1,0 +1,16 @@
+{
+    "name": "translator_checker",
+    "description": "You are a translator expert. Check if this translation done by an LLM is donde correctly.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "valid": {
+                "type": "boolean",
+                "description": "It is True if the translation was correct, False in other case."
+            }
+        },
+        "required": [
+            "valid"
+        ]
+    }
+}

@@ -33,6 +33,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::middleware('api')
              ->group(function () {
+                 $this->loadModuleRoutes('api_chatgpt.php');
                  $this->loadModuleRoutes('api_hotel.php');
                  $this->loadModuleRoutes('api_hotel_ota.php');
                  $this->loadModuleRoutes('api_stay.php');
@@ -46,6 +47,8 @@ class RouteServiceProvider extends ServiceProvider
                  $this->loadModuleRoutes('api_facility.php');
                  $this->loadModuleRoutes('api_queries.php');
                  $this->loadModuleRoutes('api_stay_access.php');
+                 $this->loadModuleRoutes('api_requests.php');
+                 $this->loadModuleRoutes('api_data_services.php');
                  // Aquí puedes añadir más archivos de módulos según sea necesario
              });
     }

@@ -1,0 +1,22 @@
+{
+    "function_expected_parameter": {
+        "{{ language_code }}": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The translated text."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The translated text."
+                }
+            },
+            "required": [
+                "name",
+                "description"
+            ]
+        }
+    },
+    "system_expected_parameter": "\n    \"{{ language_code }}\": {\n        \"title\": <text>,\n        \"description\": <text>}"
+}

@@ -23,14 +23,18 @@ class QueryServices {
 
     protected $chatGPTService;
     public $settings;
+    public $requestSettings;
 
     public function __construct(
         ChatGPTService $chatGPTService,
-        QuerySettingsServices $_QuerySettingsServices
+        QuerySettingsServices $_QuerySettingsServices,
+        RequestSettingService $_RequestSettingService
     )
     {
         $this->chatGPTService = $chatGPTService;
         $this->settings = $_QuerySettingsServices;
+        $this->requestSettings = $_RequestSettingService;
+        
     }
 
     public function findByParams ($request) {
@@ -39,8 +43,9 @@ class QueryServices {
             $guestId = $request->guestId ?? null;
             $period = $request->period ?? null;
             $visited = $request->visited ?? 'null';
+            $disabled = $request->disabled ?? false;
 
-            $query = Query::where(function($query) use($stayId, $guestId, $period, $visited){
+            $query = Query::where(function($query) use($stayId, $guestId, $period, $visited, $disabled){
                 if ($stayId) {
                     $query->where('stay_id', $stayId);
                 }
@@ -56,7 +61,11 @@ class QueryServices {
                 if ($visited !== 'null') {
                     $query->where('visited', $visited);
                 }
-                
+                if ($disabled) {
+                    $query->where('disabled', true);
+                }else{
+                    $query->where('disabled', false);
+                }
             });
             $model = $query->first();
 
@@ -119,12 +128,13 @@ class QueryServices {
         }
     }
 
-    public function firstOrCreate ($stayId, $guestId, $period) {
+    public function firstOrCreate ($stayId, $guestId, $period, $disabled = false) {
         try{
             return Query::firstOrCreate([
                 'stay_id' => $stayId,
                 'guest_id' => $guestId,
                 'period' => $period,
+                'disabled' => $disabled,
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.firstOrCreate');
@@ -145,11 +155,16 @@ class QueryServices {
     public function saveResponse ($id, $request, $hotel) {
         try{
             $comment = $request->comment;
+            $originalComment = $request->comment;
             $responseLang = 'es';
             if($comment){
                 $response = $this->chatGPTService->translateQueryMessage($comment, $id);
                 $comment = $response["translations"];
                 $responseLang = $response["responseLang"];
+                if($responseLang == 'und'){
+                    $responseLang = 'es';
+                    $comment = ['es' => $originalComment, 'en' => $originalComment];
+                }
             }
             
             $query = Query::find($id);
@@ -169,8 +184,12 @@ class QueryServices {
             $stay->save();
 
             $guest = Guest::select('id','phone','email')->where('id',$query->guest_id)->first();
+            
             //solicitud de reseña
-            if($query->qualification == 'GOOD'){
+            $requestSettings = $this->requestSettings->getAll($hotel->id);
+            $condition1 = $requestSettings->request_to == "positive queries" && $query->qualification == "GOOD" && $query->period == 'post-stay';
+            $condition2 = $requestSettings->request_to == "positive, normal and not answered queries" && ($query->qualification == "GOOD" || $query->qualification == "NORMAL") && $query->period == 'post-stay';
+            if($condition1 || $condition2){
                 Mail::to($guest->email)->send(new RequestReviewGuest($hotel));    
                 if($guest->phone){
                     $msg = 'solicitud de reseña';

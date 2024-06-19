@@ -34,13 +34,13 @@ class ExperienceResource extends JsonResource
             'recomendations' => $this->recomendations()->where('hotel_id', $modelHotel->id)->first(),
             'product_featured' => $this->productFeatured()->where('hotel_id', $modelHotel->id)->first(),
             // activities
-            'title' => $this['translate']['title'],
-            'cancellation_policy' => $this['translate']['cancellation_policy'], 
-            'hours_reservation' => $this['translate']['hours_reservation'],
-            'language_experince' => $this['translate']['language_experince'],
-            'city_experince' => $this['translate']['city_experince'],
-            'slug_city' => Str::slug($this['translate']['city_experince']),
-            'duration' => $this['translate']['duration'],
+            'title' => $this['translation']['title'],
+            'cancellation_policy' => $this['translation']['cancellation_policy'], 
+            'hours_reservation' => $this['translation']['hours_reservation'],
+            'language_experince' => $this['translation']['language_experince'],
+            'city_experince' => $this['translation']['city_experince'],
+            'slug_city' => Str::slug($this['translation']['city_experince']),
+            'duration' => $this['translation']['duration'],
         ];
     }
 }

@@ -1,0 +1,11 @@
+{
+    "name": "translation",
+    "description": "Translate this place/restaurant name and description into multiple target languages.",
+    "parameters": {
+        "type": "object",
+        "properties": "{{ function_expected_parameters }}",
+        "required": [
+            "{{ expected_languages_keys }}"
+        ]
+    }
+}

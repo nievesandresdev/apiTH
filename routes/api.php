@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UtilityController;
 use App\Http\Controllers\Subdomain\SubdomainController;
+use App\Http\Controllers\Api\LanguageController;
+use App\Http\Controllers\Api\Auth\{
+    AuthController,
+    ForgotPasswordController
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +23,6 @@ use App\Http\Controllers\Subdomain\SubdomainController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::group(['prefix' => 'utility'], function () {
     Route::get('/getExpAndPlaceBySaearch', [UtilityController::class, 'getExpAndPlace']);
     Route::get('/getPhoneCodesApi', [UtilityController::class, 'getPhoneCodesApi']);
@@ -29,5 +30,26 @@ Route::group(['prefix' => 'utility'], function () {
 
 Route::post('/send-message-to-thehoster', [ContactController::class, 'send_message_to_thehoster']);
 Route::post('/create-dns-record', [SubdomainController::class, 'createDNSRecord']);
+
+Route::get('/language/getAll', [LanguageController::class, 'getAll']);
+
+
+Route::group(['prefix' => 'v1'], function () {
+    Route::post('/login', [AuthController::class, 'login']);
+
+    //resetPassword
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+    Route::post('api/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::post('api/password/reset', [ForgotPasswordController::class, 'reset'])->name('password.update');
+    Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+
+    Route::post('password/verify-token', [ForgotPasswordController::class, 'verifyToken'])->name('password.verify');
+
+
+    Route::middleware('auth:api')->group(function () {
+        Route::get('/user', [AuthController::class, 'getUsers']);
+    });
+});
+
 
 

@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 use App\Http\Resources\GuestResource;
-use App\Jobs\Chat\AutomaticMsg;
-use App\Jobs\Chat\NotifyUnreadMsg;
+use App\Jobs\Chat\{AutomaticMsg, SendPendingMessageEmail,NotifyUnreadMsg};
 use App\Models\ChatMessage;
 use App\Models\Guest;
 use App\Models\Stay;
@@ -26,14 +25,24 @@ class ChatService {
     }
 
     public function sendMsgToHoster ($request) {
-        try{ 
+        try{
             DB::beginTransaction();
             $langPage = $request->langWeb;
-                
-            $stay = new StayResource(Stay::find($request->stayId));
-            $chat = $stay->chat()->updateOrCreate([], ['pending' => true]);
-            
-            $guest = new GuestResource(Guest::find($request->guestId));
+
+            $guestId = $request->guestId;
+            $stayId = $request->stayId;
+
+            $guest = new GuestResource(Guest::find($guestId));
+            $stay = new StayResource(Stay::find($stayId));
+
+            $chat = $guest->chats()
+                ->updateOrCreate([
+                    'stay_id' => $stayId
+                ], [
+                    'pending' => true,
+            ]);
+
+
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
                 'text' => $request->text,
@@ -41,14 +50,15 @@ class ChatService {
                 'by' => 'Guest',
                 'automatic' => false
             ]);
+
             $msg = $guest->chatMessages()->save($chatMessage);
             $msg->load('messageable');
             if($msg){
                 $hotel = $request->attributes->get('hotel');
                 $defaultChatSettingsArray  = defaultChatSettings();
-                $settings = ChatSetting::where('hotel_id',$hotel->id)->first() ?? $defaultChatSettingsArray; 
+                $settings = ChatSetting::where('hotel_id',$hotel->id)->first() ?? $defaultChatSettingsArray;
                 sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
-                sendEventPusher('private-noti-hotel.' . $hotel->id, 'App\Events\NotifyStayHotelEvent', 
+                sendEventPusher('private-noti-hotel.' . $hotel->id, 'App\Events\NotifyStayHotelEvent',
                     [
                         'stay_id' => $stay->id,
                         'chat_id' => $chat->id,
@@ -66,7 +76,7 @@ class ChatService {
 
                 //se envia la notificacion si el hoster no responde en 2 min
                 NotifyUnreadMsg::dispatch('send-by'.$guest->id,$msg->id,$stay->hotel_id,$stay->id,$stay->room)->delay(now()->addMinutes(2));
-                
+
                 //se envia el mensaje si el hoster no responde en 1 min
                 if($request->isAvailable && $settings->first_available_show){
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->first_available_msg[$langPage])->delay(now()->addMinutes(1));
@@ -78,6 +88,17 @@ class ChatService {
                 //se envia el mensaje si el hoster no responde en 10 min
                 if($request->isAvailable && $settings->three_available_show){
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(10));//10
+
+                    /** enviar Mail */
+                        $mailData = [
+                            'guest' => $guest,
+                            'stay' => $stay,
+                            'msg' => $msg,
+                            'messageContent' => $settings->three_available_msg[$langPage]
+                        ];
+                        // evento
+                        SendPendingMessageEmail::dispatch($mailData)->delay(now()->addMinutes(10));
+                    /** fin enviar mail */
                 }
 
                 //se envia el mensaje si no hay agente disponible
@@ -102,22 +123,22 @@ class ChatService {
             return $e;
         }
     }
-    
+
     public function loadMessages ($request) {
-        try{ 
-        $chat = $this->findById($request->stayId);    
+        try{
+        $chat = $this->findByGuestStay($request->guestId, $request->stayId);
          if($chat){
             return $chat->messages()->get();
          }
          return [];
         } catch (\Exception $e) {
             return $e;
-        }   
+        }
     }
 
     public function markMsgsAsRead ($request) {
         try{
-            $chat = $this->findById($request->stayId);    
+            $chat = $this->findByGuestStay($request->guestId, $request->stayId);
             if($chat){
                 $chat->messages()->where([
                     ['by', '=', $request->rol],
@@ -128,24 +149,25 @@ class ChatService {
          return true;
         } catch (\Exception $e) {
             return $e;
-        }   
+        }
     }
 
     public function unreadMsgs ($request) {
-        try{ 
-            $chat = $this->findById($request->stayId);    
+        try{
+            $chat = $this->findByGuestStay($request->guestId, $request->stayId);
             if($chat){
-                return $countUnreadMsgs = $chat->messages()->where([['by', '=', $request->rol],['status', '=', 'Entregado']])->count();
+                $countUnreadMsgs = $chat->messages()->where([['by', '=', $request->rol],['status', '=', 'Entregado']])->count();
+                return $countUnreadMsgs;
             }
          return 0;
         } catch (\Exception $e) {
             return $e;
-        }   
+        }
     }
 
-    public function findById($id){
-        return Chat::where('chatable_id', $id)
-                        ->where('chatable_type', 'App\Models\Stay')
+    public function findByGuestStay($guestId, $stayId){
+        return Chat::where('guest_id', $guestId)
+                        ->where('stay_id', $stayId)
                         ->first();
     }
 

@@ -14,8 +14,13 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 use App\Services\MailService;
+use App\Utils\Enums\GuestEnum;
 
 class GuestService {
+
+    public $stayAccessService; 
+    public $mailService;
+    public $colors;
 
     function __construct(
         StayAccessService $_StayAccessService,
@@ -25,7 +30,7 @@ class GuestService {
         $this->stayAccessService = $_StayAccessService;
         $this->mailService = $_MailService;
     }
-    
+
     public function findById($id)
     {
         try {
@@ -44,14 +49,20 @@ class GuestService {
 
             $guest = Guest::where('email',$email)->first();
             if(!$guest){
+                $acronym = $this->generateInitialsName($email);
                 $guest = Guest::create([
                     'name' =>$name,
                     'email' => $email,
-                    'lang_web' => $lang
+                    'lang_web' => $lang,
+                    'acronym' => $acronym,
                 ]);
             }else{
+                $acronym = $this->generateInitialsName($name);
                 $guest->name = $name;
                 $guest->lang_web = $lang;
+                if($acronym){
+                    $guest->acronym = $acronym;   
+                }
                 $guest->save();
             }
             return $guest;
@@ -76,12 +87,12 @@ class GuestService {
     }
 
     public function findLastStayAndAccess($id,$hotel){
-        
+
         try {
             $guest = Guest::find($id);
             $last_stay = $guest->stays()
                         ->where('hotel_id',$hotel->id)
-                        ->orderBy('check_out','DESC')->first();   
+                        ->orderBy('check_out','DESC')->first();
             if($last_stay){
                 $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
                 // Verifica si han pasado más de 10 días desde el checkout
@@ -100,13 +111,13 @@ class GuestService {
 
 
     public function findAndValidLastStay($guestId,$hotel){
-        
+
         try {
             if(!$guestId) return;
             $guest = Guest::find($guestId);
             $last_stay = $guest->stays()
                         ->where('hotel_id',$hotel->id)
-                        ->orderBy('check_out','DESC')->first();   
+                        ->orderBy('check_out','DESC')->first();
             if($last_stay){
                 $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
                 // Verifica si han pasado más de 10 días desde el checkout
@@ -122,14 +133,13 @@ class GuestService {
     }
 
     public function inviteToStayByEmail($guest,$stayId,$hotel){
-        $user = $hotel->user()->first();
-        $user_id = $user->id;
-        $settings =  StayNotificationSetting::where('user_id',$user_id)->first();
+        $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
         if(!$settings){
             $settingsArray = settingsNotyStayDefault();
             $settings = (object)$settingsArray;
         }
         Log::info("inviteToStayByEmail settings".json_encode($settings));
+        Log::info("lang_web ".$guest->lang_web);
         if($settings->guestinvite_check_email){
             Log::info("inviteToStayByEmail entro en envio");
             $data = [
@@ -142,10 +152,11 @@ class GuestService {
                 'hotel_id' => $hotel->id,
             ];
             $msg = prepareMessage($data,$hotel);
+            $link = prepareLink($data,$hotel);
             Log::info("inviteToStayByEmail prepareMessage".$msg);
             Log::info("inviteToStayByEmail hotel".json_encode($hotel));
-            // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));  
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guest->email);  
+            // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name), $guest->email);
         }
     }
 
@@ -154,12 +165,20 @@ class GuestService {
 
         try{
             $guest = Guest::find($data->id);
-            $guest->name = $data->name ?? $guest->name;
+
+            $name = $guest->name;
+            if($data->name){
+                $name = $data->name;
+            }
+            $acronym = $this->generateInitialsName($name);
+            
+            $guest->name = $name;
             $guest->email = $data->email ?? $guest->email;
             $guest->phone = $data->phone ?? $guest->phone;
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
+            $guest->acronym = $acronym;
             $guest->save();
-            return $guest; 
+            return $guest;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateById');
         }
@@ -169,8 +188,7 @@ class GuestService {
 
         try{
             $hotel = hotel::find($hotelId);
-            $user_id = $hotel->user[0]->id;
-            $settings =  StayNotificationSetting::where('user_id',$user_id)->first();
+            $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
             if(!$settings){
                 $settingsArray = settingsNotyStayDefault();
                 $settings = (object)$settingsArray;
@@ -186,14 +204,69 @@ class GuestService {
                 'hotel_name' => $hotel->name,
                 'hotel_id' => $hotel->id,
             ];
-            
+
             $msg = prepareMessage($data,$hotel);
+            $link = prepareLink($data,$hotel);
             // Maiil::to($guestEmail)->send(new MsgStay($msg,$hotel));
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel), $guestEmail);
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name), $guestEmail);
             //
-            return  true;   
+            return  true;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.sendEmail');
         }
     }
+
+    public function generateInitialsName($name)
+    {
+        try{
+            if(!$name) return null;
+            // Divide el nombre en partes
+            $parts = explode(' ', trim($name));
+            $initials = null;
+
+            // Verifica si el nombre tiene más de una parte
+            if (count($parts) > 1) {
+                // Si tiene nombre y apellido, toma la primera letra de cada uno
+                $initials = strtoupper(substr($parts[0], 0, 1) . substr($parts[1], 0, 1));
+            } else {
+                // Si solo tiene un nombre, toma las primeras dos letras
+                $initials = strtoupper(substr($name, 0, 2));
+            }
+
+            return $initials;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.generateInitialsName');
+        }
+    }
+
+    public function updateColorGuestForStay($colorsExists) {
+        // Obtener los colores definidos
+        $colors = GuestEnum::COLORS;
+    
+        // Asegurarse de que $colorsExists es un array
+        $colorsExistsArray = $colorsExists->toArray();
+    
+        // Log para ver qué contiene $colorsExistsArray
+        Log::info('$colors '.json_encode($colors));
+        Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
+    
+        // Filtrar colores para encontrar aquellos que no están en $colorsExistsArray
+        $availableColors = array_diff($colors, $colorsExistsArray);
+        Log::info('$availableColors '.json_encode($availableColors));
+    
+        // Verificar si hay colores disponibles
+        if (!empty($availableColors)) {
+            Log::info('if');
+            Log::info('if '.$availableColors[array_rand($availableColors)]);
+            // Seleccionar un color al azar de los colores disponibles
+            return $availableColors[array_rand($availableColors)];
+        } else {
+            Log::info('else');
+            Log::info('else '.$colors[array_rand($colors)]);
+            // Todos los colores están en uso, seleccionar uno al azar de la lista total
+            return $colors[array_rand($colors)];
+        }
+    }
+    
+    
 }

@@ -17,8 +17,8 @@ class ExperienceDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         $hotel = $request->attributes->get('hotel');
-        $metting_point_reference = $this['translate']['metting_point_reference'];
-        $end_point_reference = $this['translate']['end_point_reference'];
+        $metting_point_reference = $this['translation']['metting_point_reference'];
+        $end_point_reference = $this['translation']['end_point_reference'];
 
         $metting_point_latitude='';
         $metting_point_longitude='';
@@ -55,10 +55,10 @@ class ExperienceDetailResource extends JsonResource
             }        
         }*/
 
-        // $end_point_latitude = $this['translate']['end_point_latitude'] ?? null;
-        // $end_point_longitude = $this['translate']['end_point_longitude'] ?? null;
-        // $metting_point_latitude = $this['translate']['metting_point_latitude'] ?? null;
-        // $metting_point_longitude = $this['translate']['metting_point_longitude'] ?? null;
+        // $end_point_latitude = $this['translation']['end_point_latitude'] ?? null;
+        // $end_point_longitude = $this['translation']['end_point_longitude'] ?? null;
+        // $metting_point_latitude = $this['translation']['metting_point_latitude'] ?? null;
+        // $metting_point_longitude = $this['translation']['metting_point_longitude'] ?? null;
 
         $recomendation = $hotel ? $this->recomendations()->where('hotel_id', $hotel->id)->with('hotel')->first() : null;
         return [
@@ -80,28 +80,28 @@ class ExperienceDetailResource extends JsonResource
             'recomendations' => $recomendation,
             'recomendation_language_current' => $recomendation ? $recomendation->translationLanguageCurrent() : null,
             'product_featured' => $hotel ? $this->productFeatured()->where('hotel_id', $hotel->id)->with('hotel')->first() : null,
-            'title' => $this['translate']['title'],
-            'description' => $this['translate']['description'],
+            'title' => $this['translation']['title'],
+            'description' => $this['translation']['description'],
             // 'metting_point_latitude' => $metting_point_latitude,
             // 'metting_point_longitude' => $metting_point_longitude,
             // 'end_point_latitude' => $end_point_latitude,
             // 'end_point_longitude' => $end_point_longitude,
-            'metting_point_latitude' => $this['translate']['metting_point_latitude'],
-            'end_point_latitude' => $this['translate']['end_point_latitude'],
-            'metting_point_longitude' => $this['translate']['metting_point_longitude'],
-            'end_point_longitude' => $this['translate']['end_point_longitude'],
-            'metting_point_reference' => $this['translate']['metting_point_reference'],
-            'end_point_reference' => $this['translate']['end_point_reference'],
+            'metting_point_latitude' => $this['translation']['metting_point_latitude'],
+            'end_point_latitude' => $this['translation']['end_point_latitude'],
+            'metting_point_longitude' => $this['translation']['metting_point_longitude'],
+            'end_point_longitude' => $this['translation']['end_point_longitude'],
+            'metting_point_reference' => $this['translation']['metting_point_reference'],
+            'end_point_reference' => $this['translation']['end_point_reference'],
             'location' => $this['location'],
-            'include_experince' => $this['translate']['include_experince'],
-            'not_include_experince' => $this['translate']['not_include_experince'],
-            'other_information' => $this['translate']['recommendations'],
-            'rules' => $this['translate']['rules'],
-            'cancellation_policy' => $this['translate']['cancellation_policy'], 
-            'hours_reservation' => $this['translate']['hours_reservation'],
-            'language_experince' => $this['translate']['language_experince'],
-            'city_experince' => $this['translate']['city_experince'],
-            'duration' => $this['translate']['duration']
+            'include_experince' => $this['translation']['include_experince'],
+            'not_include_experince' => $this['translation']['not_include_experince'],
+            'other_information' => $this['translation']['recommendations'],
+            'rules' => $this['translation']['rules'],
+            'cancellation_policy' => $this['translation']['cancellation_policy'], 
+            'hours_reservation' => $this['translation']['hours_reservation'],
+            'language_experince' => $this['translation']['language_experince'],
+            'city_experince' => $this['translation']['city_experince'],
+            'duration' => $this['translation']['duration']
         ];
     }
 }
