@@ -89,16 +89,18 @@ class ForgotPasswordController extends Controller
     {
         $request->validate(['token' => 'required', 'email' => 'required|email']);
 
-        $record = DB::table('password_reset')->where([
+        $record = DB::table('password_resets')->where([
             ['token', $request->token],
             ['email', $request->email],
         ])->first();
 
         if (!$record || Carbon::parse($record->created_at)->addMinutes(60)->isPast()) {
-            return response()->json(['message' => 'El token de restablecimiento de contraseña es inválido o ha expirado.'], 400);
+            //return response()->json(['message' => 'El token de restablecimiento de contraseña es inválido o ha expirado.'], 400);
+            return bodyResponseRequest(EnumResponse::BAD_REQUEST, ['message' => 'El token de restablecimiento de contraseña es inválido o ha expirado.']);
         }
 
-        return response()->json(['message' => 'El token es válido.'], 200);
+        //return response()->json(['message' => 'El token es válido.'], 200);
+        return bodyResponseRequest(EnumResponse::SUCCESS_OK, ['message' => 'El token es válido.']);
     }
 }
 
