@@ -34,5 +34,9 @@ class FacilityHoster extends Model
     {
         return $this->hasOne('App\Models\FacilityHosterLanguage')->where('language', localeCurrent());
     }
+    public function translations()
+    {
+        return $this->hasMany('App\Models\FacilityHosterLanguage');
+    }
 
 }
