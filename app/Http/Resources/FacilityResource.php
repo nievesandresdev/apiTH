@@ -20,8 +20,7 @@ class FacilityResource extends JsonResource
             'images' => $this->images,
             'title' => $this->translate->title ?? null,
             'description' => $this->translate->description ?? null,
-            'schedule' => $this->translate->schedule ?? null,
-            'translations' => $this->translations
+            'schedule' => $this->translate->schedule ?? null
         ];
     }
 }
