@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Validation\ValidationException;
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\Hash;
 
 class ForgotPasswordController extends Controller
 {
@@ -27,30 +28,26 @@ class ForgotPasswordController extends Controller
             'password' => 'required|confirmed|min:8',
         ]);
 
-        $record = DB::table('password_reset')->where([
+        $record = DB::table('password_resets')->where([
             ['token', $request->token],
             ['email', $request->email],
         ])->first();
 
-        if (!$record || Carbon::parse($record->created_at)->addMinutes(60)->isPast()) {
-            return response()->json(['message' => 'El token de restablecimiento de contraseña es inválido o ha expirado.'], 400);
-
-
-        }
-
         $user = DB::table('users')->where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'No encontramos un usuario con ese correo electrónico.'], 404);
+            //return response()->json(['message' => 'No encontramos un usuario con ese correo electrónico.'], 404);
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, ['message' => 'No encontramos un usuario con ese correo electrónico.']);
         }
 
         DB::table('users')->where('email', $request->email)->update([
             'password' => Hash::make($request->password),
         ]);
 
-        DB::table('password_reset')->where('email', $request->email)->delete();
+        DB::table('password_resets')->where('email', $request->email)->delete();
 
-        return response()->json(['message' => 'Tu contraseña ha sido restablecida!']);
+        //return response()->json(['message' => 'Tu contraseña ha sido restablecida!']);
+        return bodyResponseRequest(EnumResponse::SUCCESS_OK, ['message' => 'Tu contraseña ha sido restablecida!']);
     }
 
     public function sendResetLinkEmail(Request $request)
@@ -95,7 +92,6 @@ class ForgotPasswordController extends Controller
         ])->first();
 
         if (!$record || Carbon::parse($record->created_at)->addMinutes(60)->isPast()) {
-            //return response()->json(['message' => 'El token de restablecimiento de contraseña es inválido o ha expirado.'], 400);
             return bodyResponseRequest(EnumResponse::BAD_REQUEST, ['message' => 'El token de restablecimiento de contraseña es inválido o ha expirado.']);
         }
 
