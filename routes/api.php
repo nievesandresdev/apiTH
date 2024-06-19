@@ -33,6 +33,7 @@ Route::post('/create-dns-record', [SubdomainController::class, 'createDNSRecord'
 
 Route::get('/language/getAll', [LanguageController::class, 'getAll']);
 
+
 Route::group(['prefix' => 'v1'], function () {
     Route::post('/login', [AuthController::class, 'login']);
 

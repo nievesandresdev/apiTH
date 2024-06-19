@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Validation\ValidationException;
+use App\Utils\Enums\EnumResponse;
 
 class ForgotPasswordController extends Controller
 {
@@ -33,6 +34,8 @@ class ForgotPasswordController extends Controller
 
         if (!$record || Carbon::parse($record->created_at)->addMinutes(60)->isPast()) {
             return response()->json(['message' => 'El token de restablecimiento de contraseña es inválido o ha expirado.'], 400);
+
+
         }
 
         $user = DB::table('users')->where('email', $request->email)->first();
@@ -58,7 +61,12 @@ class ForgotPasswordController extends Controller
         $user = DB::table('users')->where('email', $email)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'No encontramos un usuario con ese correo electrónico.'], 404);
+
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
         }
 
         $token = Str::random(60);
@@ -73,7 +81,8 @@ class ForgotPasswordController extends Controller
         $user = \App\Models\User::where('email', $email)->first();
         $user->notify(new ResetPasswordNotification($token));
 
-        return response()->json(['message' => 'Enlace de restablecimiento de contraseña enviado a tu correo.']);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, ['message' => 'Hemos enviado un correo electrónico con un enlace para restablecer tu contraseña.']);
+
     }
 
     public function verifyToken(Request $request)
