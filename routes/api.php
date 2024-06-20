@@ -36,6 +36,8 @@ Route::get('/language/getAll', [LanguageController::class, 'getAll']);
 
 Route::group(['prefix' => 'v1'], function () {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
 
     //resetPassword
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
