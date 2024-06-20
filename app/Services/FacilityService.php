@@ -40,7 +40,7 @@ class FacilityService {
 
     public function getAll ($modelHotel) {
         try {
-            $facilities = FacilityHoster::with('images')
+            $facilities = FacilityHoster::with(['images', 'translations'])
                 ->where('hotel_id',$modelHotel->id)
                 ->where(['status' => 1, 'select' => 1])->where('visible',1)
                 ->orderBy('updated_at', 'desc')
