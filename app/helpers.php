@@ -534,6 +534,8 @@ if (!function_exists('defaultChatSettings')) {
             "fr" => "Cela semble prendre plus de temps que prévu, désolé pour le désagrément. Vous pouvez nous laisser ce dont vous avez besoin et nous vous répondrons dans les plus brefs délais. Nous vous informerons également de la réponse par e-mail.",
         ];
         $chat_settings->three_available_show = true;
+        $chat_settings->email_notify_new_message_to = [];
+        $chat_settings->email_notify_pending_chat_to = ['Operator'];
 
         return $chat_settings;
     }
@@ -625,7 +627,9 @@ if (! function_exists('queryNotifyDefault')) {
             "notify_when_guest_send_via_email" => false,
             "notify_later_when_guest_send_via_platform" => true,
             "notify_later_when_guest_send_via_email" => false,
-        ];
+        ];//borrar en algun momento luego de la transicion
+        $queriesNotifyDefault->email_notify_new_feedback_to = [];
+        $queriesNotifyDefault->email_notify_pending_feedback_to = ['Operator'];
         return $queriesNotifyDefault;
     }
 }
