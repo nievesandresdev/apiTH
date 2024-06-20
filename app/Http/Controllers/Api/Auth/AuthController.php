@@ -9,32 +9,27 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\RedirectResponse;
 use App\Models\User;
+use App\Utils\Enums\EnumResponse;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        if (!Auth::guard('web')->attempt($credentials))
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to authenticaded',
-            ], 401);
+        if (!Auth::guard('web')->attempt($credentials)) {
 
-            $user = Auth::guard('web')->user();
+            return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Failed to authenticate']);
+        }
 
-            $token = $user->createToken('appToken')->accessToken;
+        $user = Auth::guard('web')->user();
+        $token = $user->createToken('appToken')->accessToken;
 
-            return response()->json([
-                'success' => true,
-                'token' => $token,
-                'user' => $user,
-            ], 200);
+
+        return bodyResponseRequest(EnumResponse::SUCCESS, ['token' => $token, 'user' => $user]);
     }
 
     public function getUsers(Request $request)
@@ -59,6 +54,15 @@ class AuthController extends Controller
 
         throw ValidationException::withMessages([
             'email' => [trans($status)],
+        ]);
+    }
+    public function logout(Request $request)
+    {
+        //return auth()->user();
+        $request->user()->token()->revoke();
+
+        return response()->json([
+            'message' => 'Successfully logged out'
         ]);
     }
 }
