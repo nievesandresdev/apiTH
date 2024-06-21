@@ -23,8 +23,9 @@ class QuerySettingsController extends Controller
     public function getAll(Request $request){
         
         try {
-            $hotel = $request->attributes->get('hotel');
-            $model = $this->service->getAll($hotel->id);
+            // $hotel = $request->attributes->get('hotel');
+            // $model = $this->service->getAll($hotel->id);
+            $model = $this->service->getAll(191);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

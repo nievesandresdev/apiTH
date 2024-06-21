@@ -21,6 +21,9 @@ class ChatSetting extends Model
         'three_available_show',
         'name',
         'show_guest',
+        'email_notify_new_message_to',
+        'email_notify_pending_chat_to',
+        'email_notify_not_answered_chat_to',
     ];
 
     protected $casts = [
@@ -28,6 +31,9 @@ class ChatSetting extends Model
         'first_available_msg' => 'array',
         'second_available_msg' => 'array',
         'three_available_msg' => 'array',
+        'email_notify_new_message_to' => 'array',
+        'email_notify_pending_chat_to' => 'array',
+        'email_notify_not_answered_chat_to' => 'array',
     ];
     //relations 
     public function languages()
