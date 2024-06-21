@@ -24,7 +24,7 @@ class LanguageController extends Controller
     public function getAll(Request $request){
         
         try {
-            $data = getAllLanguages();
+            $data = ['es', 'en', 'fr'];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {

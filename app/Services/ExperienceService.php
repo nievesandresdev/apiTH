@@ -114,7 +114,7 @@ class ExperienceService {
         }    
 
         if (count($dataFilter['duration']) > 0) {
-            $queryExperience->whereHas('translate', function($query) use($dataFilter, $durations){
+            $queryExperience->whereHas('translation', function($query) use($dataFilter, $durations){
                 foreach ($dataFilter['duration'] as $key => $item) {
                     $d = intval($item) - 1;
                     $interval = $durations[$d];
@@ -190,11 +190,11 @@ class ExperienceService {
                 return [
                     'id' => $item->id,
                     'type' => 'experience',
-                    'title' => $item->translate->title,
-                    'description' => $item->translate->description,
+                    'title' => $item->translation->title,
+                    'description' => $item->translation->description,
                     'slug' => $item->slug,
                     'price' => $item->from_price,
-                    'city' => $item->translate->city_experince,
+                    'city' => $item->translation->city_experince,
                     'image' => $image ? $image->url : null,
                 ];
             })->values()->collect();

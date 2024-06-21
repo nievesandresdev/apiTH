@@ -40,9 +40,8 @@ class FacilityController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
-            
+            //
             $data = FacilityResource::collection($facilities);
-
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
