@@ -34,7 +34,7 @@ Route::post('/create-dns-record', [SubdomainController::class, 'createDNSRecord'
 Route::get('/language/getAll', [LanguageController::class, 'getAll']);
 
 
-Route::group(['prefix' => 'v1'], function () {
+Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
