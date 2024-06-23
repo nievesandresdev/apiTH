@@ -559,6 +559,7 @@ if (!function_exists('defaultChatSettings')) {
         $chat_settings->three_available_show = true;
         $chat_settings->email_notify_new_message_to = [];
         $chat_settings->email_notify_pending_chat_to = ['Operator'];
+        $chat_settings->email_notify_not_answered_chat_to = ['Associate','Administrator','Operator'];
 
         return $chat_settings;
     }

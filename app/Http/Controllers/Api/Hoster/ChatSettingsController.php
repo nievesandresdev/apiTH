@@ -1,30 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Hoster;
 
 use App\Http\Controllers\Controller;
-use App\Services\QuerySettingsServices;
+use App\Http\Resources\ChatSettingResource;
+use App\Services\Hoster\Chat\ChatSettingsServices;
 use Illuminate\Http\Request;
-
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\DB;
 
-class QuerySettingsController extends Controller
+class ChatSettingsController extends Controller
 {
     public $service;
 
     function __construct(
-        QuerySettingsServices $service
+        ChatSettingsServices $_ChatSettingsServices
     )
     {
-        $this->service = $service;
+        $this->service = $_ChatSettingsServices;
     }
 
-
     public function getAll(Request $request){
-        
         try {
-            // $hotel = $request->attributes->get('hotel');
-            // $model = $this->service->getAll($hotel->id);
+            
             $model = $this->service->getAll(191);
             if(!$model){
                 $data = [
@@ -32,7 +30,7 @@ class QuerySettingsController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
-            
+            $model = new ChatSettingResource($model,['email_notify_new_message_to','email_notify_pending_chat_to','email_notify_not_answered_chat_to']);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
