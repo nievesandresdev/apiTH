@@ -27,7 +27,6 @@ class AuthController extends Controller
 
         $user = Auth::guard('web')->user();
 
-        // Carga las relaciones necesarias aquí si es necesario
         //$user->load('hotels');
 
         $token = $user->createToken('appToken')->accessToken;
