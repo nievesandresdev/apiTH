@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\RedirectResponse;
-use App\Models\User;
 use App\Utils\Enums\EnumResponse;
+use App\Http\Resources\UserResource;
 
 class AuthController extends Controller
 {
@@ -26,10 +26,17 @@ class AuthController extends Controller
         }
 
         $user = Auth::guard('web')->user();
+
+        // Carga las relaciones necesarias aquí si es necesario
+        //$user->load('hotels');
+
         $token = $user->createToken('appToken')->accessToken;
 
-
-        return bodyResponseRequest(EnumResponse::SUCCESS, ['token' => $token, 'user' => $user]);
+        return bodyResponseRequest(EnumResponse::SUCCESS, [
+            'token' => $token,
+            'user' => new UserResource($user),
+            'tyest' => auth()->user()
+        ]);
     }
 
     public function getUsers(Request $request)
