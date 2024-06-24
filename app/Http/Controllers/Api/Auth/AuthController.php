@@ -62,13 +62,10 @@ class AuthController extends Controller
             'email' => [trans($status)],
         ]);
     }
-    public function logout(Request $request)
+    public function logout()
     {
-        //return auth()->user();
-        $request->user()->token()->revoke();
+        auth()->user()->token()->revoke();
 
-        return response()->json([
-            'message' => 'Successfully logged out'
-        ]);
+        return bodyResponseRequest(EnumResponse::SUCCESS, ['message' => 'Successfully logged out']);
     }
 }
