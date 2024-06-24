@@ -14,10 +14,10 @@ class LoadHotel
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->header('Hotel-SUBDOMAIN')) {
+        if (!$request->header('hotelsubdomain')) {
             return $next($request);
         }
-        $hotelSubdomain = $request->header('Hotel-SUBDOMAIN');
+        $hotelSubdomain = $request->header('hotelsubdomain');
         // $modelHotel = Hotel::where('subdomain', $hotelSubdomain)->first();
         $modelHotel = Hotel::whereHas('subdomains', function($query) use($hotelSubdomain){
             $query->where('name', $hotelSubdomain);

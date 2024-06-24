@@ -22,8 +22,7 @@ class ChatSettingsController extends Controller
 
     public function getAll(Request $request){
         try {
-            return $request->header('x-key-api');
-            return $hotel = $request->attributes->get('hotel');
+            $hotel = $request->attributes->get('hotel');
             $model = $this->service->getAll($hotel->id);
             if(!$model){
                 $data = [
