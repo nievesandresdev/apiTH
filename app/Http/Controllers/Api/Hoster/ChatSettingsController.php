@@ -22,8 +22,8 @@ class ChatSettingsController extends Controller
 
     public function getAll(Request $request){
         try {
-            
-            $model = $this->service->getAll(191);
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->getAll($hotel->id);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
