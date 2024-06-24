@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
+    use HasRoles;
 
     protected $fillable = [
         'name',
@@ -21,8 +23,8 @@ class User extends Authenticatable
         'last_session',
 
         //OTHERS
-        'del',      
-        'google_url',       
+        'del',
+        'google_url',
 
         // STRIPE
         'stripe_id',
@@ -61,9 +63,23 @@ class User extends Authenticatable
         'trial_starts_at' => 'datetime',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($user) {
+            $availableColors = ['C5DC69', 'FB5607', 'FF006E', '8338EC', '3A86FF', '8AC926', 'B12E2E', '1982C4', 'FF595E'];
+            $user->color = $availableColors[array_rand($availableColors)];
+        });
+    }
+
     public function profile()
     {
       return $this->hasOne(Profile::class);
+    }
+
+    public function hotel()
+    {
+        return $this->belongsToMany(hotel::class)->withPivot(['manager','permissions']);
     }
 
 }
