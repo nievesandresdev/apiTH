@@ -9,15 +9,17 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Models\Hotel;
 
 use App\Http\Resources\HotelResource;
+use Illuminate\Support\Facades\Log;
 
 class LoadHotel
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->header('hotelsubdomain')) {
+        Log::info(json_encode($request->header()));
+        if (!$request->header('subdomainHotel')) {
             return $next($request);
         }
-        $hotelSubdomain = $request->header('hotelsubdomain');
+        $hotelSubdomain = $request->header('subdomainHotel');
         // $modelHotel = Hotel::where('subdomain', $hotelSubdomain)->first();
         $modelHotel = Hotel::whereHas('subdomains', function($query) use($hotelSubdomain){
             $query->where('name', $hotelSubdomain);
