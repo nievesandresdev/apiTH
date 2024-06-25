@@ -54,6 +54,9 @@ Route::group(['prefix' => 'auth'], function () {
 //prefix users
 Route::group(['prefix' => 'users'], function () {
     Route::get('/work-position', [WorkPositionController::class, 'getAllWorkPosition']);
+    Route::post('/work-position', [WorkPositionController::class, 'store']);
+    Route::post('/work-position/update', [WorkPositionController::class, 'update']);
+    Route::post('/work-position/delete', [WorkPositionController::class, 'delete']);
 });
 
 
