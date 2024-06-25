@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -10,15 +9,48 @@ class UserResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
      */
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
+        $firstHotelId = $this->hotel()->first() ?? null;
 
         return [
-            "name" => $this->name,
-            "email" => $this->email,
-            "profile" => $this->profile
+            'name' => $this->profile->firstname ?? '',
+            'lastname' => $this->profile->lastname ?? '',
+            'email' => $this->email,
+            //'code' => $this->code,
+            //'sessions_current_period' => $this->sessions_current_period,
+            'last_session' => $this->last_session,
+            'created_at' => $this->created_at,
+            'color' => $this->color,
+            'hotels' => $this->hotel->map(function ($hotel) {
+                return [
+                    'id' => $hotel->id,
+                    'name' => $hotel->name,
+                    'name_origin' => $hotel->name_origin,
+                    'type' => $hotel->type,
+                    'address' => $hotel->address,
+                    'zone' => $hotel->zone,
+                    'category' => $hotel->category,
+                    'image' => $hotel->image,
+                    'phone' => $hotel->phone,
+                    'email' => $hotel->email,
+                    'latitude' => $hotel->latitude,
+                    'longitude' => $hotel->longitude,
+                    'description' => $hotel->description,
+                    'instagram_url' => $hotel->instagram_url,
+                    'facebook_url' => $hotel->facebook_url,
+                    'pinterest_url' => $hotel->pinterest_url,
+                    'slug' => $hotel->slug,
+                    'name_short' => $hotel->name_short,
+                    'subdomain' => $hotel->subdomain,
+                    'permissions' =>  $hotel->pivot->permissions,
+                ];
+            }),
+            'current_hotel' => $firstHotelId->id,
+            'curent_subdmain_hotel' => $firstHotelId->subdomain
         ];
     }
 }

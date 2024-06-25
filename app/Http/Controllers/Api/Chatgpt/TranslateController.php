@@ -43,6 +43,9 @@ class TranslateController extends Controller
             if ($withValidation) {
                 $responseValidate = $this->service->validate($input, $output);
                 ['status' => $status, 'attempts'=>$attempts, 'errorValidate' => $errorValidate] =  $responseValidate;
+                if ($status != 200) {
+                    \Log::error('ERROR_TRANSLATION', ['status' => $status, 'attempts' => $attempts, 'output' => $output]);
+                }
                 $data = [
                     'input' => $input,
                     'output' => $output,

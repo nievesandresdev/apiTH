@@ -225,6 +225,29 @@ if (!function_exists('bodyResponseRequest')) {
     }
 }
 
+if (! function_exists('currentHotel')) {
+    function currentHotel (){
+        $user = auth()->user();
+        if ($user) {
+            if($user->hasRole('Associate') || $user->hasRole('Operator') || $user->hasRole('Administrator')){
+                $hotel = null;
+                if (session()->has('hotel_selected')) {
+                    $hotel_session = session('hotel_selected');
+                    $hotel = hotel::with(['images', 'language_names'])->find($hotel_session->id);
+                }
+                if(!$hotel){
+                    $hotel = $user->hotel()->orderBy('hotels.id','ASC')->first();
+                }
+                if($hotel){
+                    $hotel->load('images');
+                }
+                return $hotel;
+            }
+        }
+        return null;
+    }
+}
+
 /**
 * Custom messages response json request in Playbox.
 *
@@ -536,6 +559,7 @@ if (!function_exists('defaultChatSettings')) {
         $chat_settings->three_available_show = true;
         $chat_settings->email_notify_new_message_to = [];
         $chat_settings->email_notify_pending_chat_to = ['Operator'];
+        $chat_settings->email_notify_not_answered_chat_to = ['Associate','Administrator','Operator'];
 
         return $chat_settings;
     }

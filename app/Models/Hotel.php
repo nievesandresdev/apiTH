@@ -52,9 +52,14 @@ class hotel extends Model
         'sender_for_sending_email',
     ];
 
-    public function user()
+    /* public function user()
     {
         return $this->belongsToMany(User::class);
+    } */
+
+    public function user()
+    {
+        return $this->belongsToMany(User::class)->withPivot('manager');
     }
 
     public function subdomains()
@@ -69,10 +74,10 @@ class hotel extends Model
 
     public function translate()
     {
-        
+
         return $this->hasOne(HotelTranslate::class)->where('language', localeCurrent());
     }
-    
+
     public function otas()
     {
         return $this->hasMany(HotelOta::class);
