@@ -32,7 +32,7 @@ class TranslateService {
         try {
 
                 $attempts++;
-                \Log::info($attempts);
+                // \Log::info($attempts);
                 // var_dump($attempts);
                     
                 // VALIDATION
