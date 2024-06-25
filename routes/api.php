@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Auth\{
     AuthController,
     ForgotPasswordController
 };
+use App\Http\Controllers\Api\Users\WorkPositionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,11 +38,8 @@ Route::get('/language/getAll', [LanguageController::class, 'getAll']);
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);
-
-
     //resetPassword
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
-    //Route::post('api/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::post('password/reset', [ForgotPasswordController::class, 'reset'])->name('password.update');
     Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 
@@ -51,6 +49,11 @@ Route::group(['prefix' => 'auth'], function () {
     Route::middleware('auth:api')->group(function () {
         Route::get('/user', [AuthController::class, 'getUsers']);
     });
+});
+
+//prefix users
+Route::group(['prefix' => 'users'], function () {
+    Route::get('/work-position', [WorkPositionController::class, 'getAllWorkPosition']);
 });
 
 
