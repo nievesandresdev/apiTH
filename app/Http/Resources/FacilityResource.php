@@ -16,7 +16,7 @@ class FacilityResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'image' => $this->images->first(),
+            'image' => !empty($this->images) ? $this->images->first() : null,
             'images' => $this->images,
             'title' => $this->translate->title ?? null,
             'description' => $this->translate->description ?? null,
