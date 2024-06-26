@@ -40,20 +40,18 @@ class ChatSettingsController extends Controller
 
     public function updateNotificationsEmail(Request $request){
         try {
-            return $request;
-            // $hotel = $request->attributes->get('hotel');
-            // $model = $this->service->getAll($hotel->id);
-            // if(!$model){
-            //     $data = [
-            //         'message' => __('response.bad_request_long')
-            //     ];
-            //     return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
-            // }
-            // $model = new ChatSettingResource($model,['email_notify_new_message_to','email_notify_pending_chat_to','email_notify_not_answered_chat_to']);
-            // return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->updateSettings($hotel->id, ['email_notify_new_message_to','email_notify_pending_chat_to','email_notify_not_answered_chat_to'], $request);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateNotificationsEmail');
         }
     }
 
