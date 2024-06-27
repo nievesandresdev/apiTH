@@ -15,7 +15,6 @@ class LoadHotel
 {
     public function handle(Request $request, Closure $next): Response
     {
-        Log::info(json_encode($request->header()));
         if (!$request->header('subdomainHotel')) {
             return $next($request);
         }

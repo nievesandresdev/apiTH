@@ -683,9 +683,9 @@ if (! function_exists('requestSettingsDefault')) {
     function requestSettingsDefault(){
         $requestSettings = new stdClass();
         $requestSettings->msg_title = [
-            "es" => "¡Nos alegra que hayas disfrutado en [nombre del hotel]!",
-            "en" => "We are glad you enjoyed your stay at [hotel name]!",
-            "fr" => "Nous sommes heureux que vous ayez apprécié votre séjour à [nom de l'hôtel]!",
+            "es" => "<p>¡Nos alegra que hayas disfrutado en [nombre del hotel]!</p>",
+            "en" => "<p>We are glad you enjoyed your stay at [hotel name]!</p>",
+            "fr" => "<p>Nous sommes heureux que vous ayez apprécié votre séjour à [nom de l'hôtel]!</p>",
         ];
         $requestSettings->msg_text = [
             "es" => '<p>Tu experiencia es muy importante, compartirla ayudaría a otros viajeros a conocernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si reservaste online, podrían solicitarte tu opinión pronto. Valoramos mucho que la compartieras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos tu tiempo y ¡Gracias por habernos elegido!</strong></p>',

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Hoster\QuerySettingsHosterController;
 use App\Http\Controllers\Api\QueryController;
 use App\Http\Controllers\Api\QuerySettingsController;
 use Illuminate\Support\Facades\Route;
@@ -7,6 +8,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'query-settings'], function () {
     Route::get('/getAll', [QuerySettingsController::class, 'getAll']);
+    Route::group(['prefix' => 'hoster'], function () {
+        Route::post('/updateNotificationsEmail', [QuerySettingsHosterController::class, 'updateNotificationsEmail']);
+    });
 });
 
 Route::group(['prefix' => 'query'], function () {

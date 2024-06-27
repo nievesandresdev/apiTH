@@ -17,6 +17,7 @@ Route::group(['prefix' => 'chat'], function () {
         //settings endopoints
         Route::group(['prefix' => 'settings'], function () {
             Route::get('/getAll', [ChatSettingsController::class, 'getAll']);
+            Route::post('/updateNotificationsEmail', [ChatSettingsController::class, 'updateNotificationsEmail']);
         });
         
     });
