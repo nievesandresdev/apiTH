@@ -98,6 +98,11 @@ class ExperienceService {
         // }else{
         //     $queryExperience->whereCity($dataFilter['city']);
         // }
+
+        $queryExperience->whereHas('activities', function($query){   
+            $query->whereNotNull('metting_point_longitude')
+            ->whereNotNull('metting_point_latitude');
+        });
         
 
         if($dataFilter['search']){
