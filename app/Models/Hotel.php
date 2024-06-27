@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Cashier\Billable;
 
-class hotel extends Model
+class Hotel extends Model
 {
     use HasFactory;
     // use Billable;

@@ -79,7 +79,7 @@ class User extends Authenticatable
 
     public function hotel()
     {
-        return $this->belongsToMany(hotel::class)->withPivot(['manager','permissions']);
+        return $this->belongsToMany(Hotel::class)->withPivot(['manager','permissions']);
     }
 
 }
