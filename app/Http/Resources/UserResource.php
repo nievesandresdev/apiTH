@@ -49,8 +49,8 @@ class UserResource extends JsonResource
                     'permissions' =>  $hotel->pivot->permissions,
                 ];
             }),
-            'current_hotel' => $firstHotelId->id,
-            'curent_subdmain_hotel' => $firstHotelId->subdomain
+            //'current_hotel' => $firstHotelId->id,
+            'curent_subdmain_hotel' => $firstHotelId?->subdomain
         ];
     }
 }
