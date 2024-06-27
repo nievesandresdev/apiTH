@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\HotelResource;
 
 class UserResource extends JsonResource
 {
@@ -49,7 +50,7 @@ class UserResource extends JsonResource
                     'permissions' =>  $hotel->pivot->permissions,
                 ];
             }),
-            'current_hotel' => $firstHotelId ?? [],
+            'current_hotel' => new HotelResource($firstHotelId),
             'curent_subdmain_hotel' => $firstHotelId?->subdomain
         ];
     }
