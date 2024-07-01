@@ -45,6 +45,11 @@ class Hotel extends Model
         'scraper_run',
         'last_date_historical',
         'show_experiences',
+        'phone_optional',
+        'with_wifi',
+        'checkin_until',
+        'checkout_until',
+        'x_url',
         // customization
         'subdomain',
         'language_default_webapp',
