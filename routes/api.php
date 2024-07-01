@@ -11,7 +11,10 @@ use App\Http\Controllers\Api\Auth\{
     AuthController,
     ForgotPasswordController
 };
-use App\Http\Controllers\Api\Users\WorkPositionController;
+use App\Http\Controllers\Api\Users\{
+    UsersController,
+    WorkPositionController
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +60,8 @@ Route::group(['prefix' => 'users'], function () {
     Route::post('/work-position', [WorkPositionController::class, 'store']);
     Route::post('/work-position/update', [WorkPositionController::class, 'update']);
     Route::post('/work-position/delete', [WorkPositionController::class, 'delete']);
+
+    Route::post('/store', [UsersController::class, 'store']);
 });
 
 
