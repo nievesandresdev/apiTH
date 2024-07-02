@@ -47,7 +47,7 @@ class HotelService {
 
             $model = $query->first();
 
-            $data = new HotelResource($model);
+            // $data = new HotelResource($model);
 
             return $model;
 
