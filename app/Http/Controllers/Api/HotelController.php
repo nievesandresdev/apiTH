@@ -133,6 +133,7 @@ class HotelController extends Controller
         try {
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            \Log::info(['hotel'=>$hotelModel->id]);
             if(!$hotelModel){
                 $data = [
                     'message' => __('response.bad_request_long')
