@@ -52,6 +52,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $guard_name ='web';
+
     /**
      * The attributes that should be cast.
      *
@@ -72,6 +74,12 @@ class User extends Authenticatable
         });
     }
 
+    public function scopeMyHotels($query,$hotelIds) {
+        $query->whereHas('hotel', function ($query) use ($hotelIds) {
+            $query->whereIn('hotel_id', $hotelIds);
+        });
+    }
+
     public function profile()
     {
       return $this->hasOne(Profile::class);
@@ -80,6 +88,28 @@ class User extends Authenticatable
     public function hotel()
     {
         return $this->belongsToMany(Hotel::class)->withPivot(['manager','permissions']);
+    }
+
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    public function getRole()
+    {
+        return $this->getRoles()->first();
+    }
+
+    public function getRoleName()
+    {
+        return $this->getRole()->name;
+    }
+
+    public function isHoster() {
+
+        $role = $this->getRoleNames()->first();
+
+        return in_array($role, ['Administrator', 'Operator']);
     }
 
 }

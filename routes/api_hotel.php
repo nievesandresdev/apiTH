@@ -7,6 +7,7 @@ use App\Http\Controllers\Subdomain\SubdomainController;
 
 Route::group(['prefix' => 'hotel'], function () {
     Route::get('/findByParams', [HotelController::class, 'findByParams']);
+    Route::post('/profile', [HotelController::class, 'updateProfile']);
     Route::get('/getAllCrossellings', [HotelController::class, 'getAllCrossellings']);
     Route::get('/create/subdomain', [SubdomainController::class, 'createDNSRecord']);
     Route::get('/getChatHours', [HotelController::class, 'getChatHours']);

@@ -16,6 +16,8 @@ use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\File;
 
+use App\Utils\Templates\Translation\PathTemplate;
+
 class TranslateService {
 
     function __construct()
@@ -23,7 +25,42 @@ class TranslateService {
 
     }
 
-    public function load ($payload) {
+    public function load ($context) {
+        $withValidation = true;
+        
+
+        if (!isset($context['dirTemplate']) || !isset($context['languageCodes']) || !isset($context['context'])) {
+            return;
+        }
+        // $templates = PathTemplate::getAllowedTemplates();
+        $responseTranslate = $this->translate($context);
+        ['errorTranslate' => $errorTranslate, 'input' => $input, 'output' => $output, 'translation' => $translation] = $responseTranslate;
+        if ($withValidation) {
+            $responseValidate = $this->validate($input, $output);
+            ['status' => $status, 'attempts'=>$attempts, 'errorValidate' => $errorValidate] =  $responseValidate;
+            if ($status != 200) {
+                \Log::error('ERROR_TRANSLATION', ['status' => $status, 'attempts' => $attempts,  'output' => $output]);
+            }
+            $data = [
+                'input' => $input,
+                'output' => $output,
+                'translation' => $status == 200 ? $translation : [],
+                'errorTranslate' => $errorTranslate,
+                'status' => $status,
+                'attempts' => $attempts,
+                'errorValidate' => $errorValidate,
+            ];
+            return $data;
+        }
+        $data = [
+            'input' => $input,
+            'output' => $output,
+            'translation' => $translation,
+            'errorTranslate' => $errorTranslate,
+        ];
+    }
+
+    /*public function load ($payload) {
         $status = null;
         $valid = null;
         $attempts = 0;
@@ -81,7 +118,7 @@ class TranslateService {
             ];
             return $res;
         }
-    }
+    }*/
 
     // TRANSLATION
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\TypePlaces;
+use App\Models\Hotel;
 
 use App\Services\HotelService;
 use App\Services\FacilityService;
@@ -19,6 +20,8 @@ use App\Http\Resources\ExperienceResource;
 use App\Http\Resources\PlaceResource;
 
 use App\Utils\Enums\EnumResponse;
+
+use App\Http\Requests\Hotel\UpdateProfileRequest;
 
 class HotelController extends Controller
 {
@@ -125,4 +128,27 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getChatHours');
         }
     }
+
+    public function updateProfile (UpdateProfileRequest $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $traslationProfile = $this->service->processTranslateProfile($request, $hotelModel);
+            
+            $hotelModel = $this->service->updateProfile($request, $hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+        }
+    }
+
 }
