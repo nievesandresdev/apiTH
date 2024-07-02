@@ -13,11 +13,17 @@ use App\Models\User;
 use App\Http\Resources\HotelResource;
 use App\Models\ChatHour;
 
+use App\Services\Chatgpt\TranslateService;
+
+use App\Jobs\TranslateJob;
+
 class HotelService {
 
-    function __construct()
+    function __construct(
+        TranslateService $_TranslateService
+    )
     {
-
+        $this->translateService = $_TranslateService;
     }
 
     public function findByParams ($request) {
@@ -41,7 +47,7 @@ class HotelService {
 
             $model = $query->first();
 
-            $data = new HotelResource($model);
+            // $data = new HotelResource($model);
 
             return $model;
 
@@ -76,6 +82,65 @@ class HotelService {
             }
         } catch (\Exception $e) {
             return $e;
+        }
+    }
+
+    public function updateProfile ($request, $hotelModel) {
+        $hotelModel->name = $request->name;
+        $hotelModel->type = $request->type;
+        $hotelModel->category = $request->category;
+        $hotelModel->email = $request->email;
+        $hotelModel->phone = $request->phone;
+        $hotelModel->phone_optional = $request->phone_optional;
+        $hotelModel->address = $request->address;
+        $hotelModel->latitude = $request->metting_point_latitude;
+        $hotelModel->longitude = $request->metting_point_longitude;
+        $hotelModel->checkin = $request->checkin;
+        $hotelModel->checkin_until = $request->checkin_until;
+        $hotelModel->checkout = $request->checkout;
+        $hotelModel->checkout_until = $request->checkout_until;
+        $hotelModel->description = $request->description;
+        $hotelModel->instagram_url = $request->urlInstagram;
+        $hotelModel->pinterest_url = $request->urlPinterest;
+        $hotelModel->facebook_url = $request->urlFacebook;
+        $hotelModel->x_url = $request->urlX;
+        $hotelModel->with_wifi = $request->with_wifi;
+        $hotelModel->show_profile = $request->show_profile;
+
+        $hotelModel->save();
+        return $hotelModel;
+    }
+
+    public function updateTranslation ($model, $translation) {
+        $translation = collect($translation ?? []);
+
+        foreach ($translation as $lg => $value) {
+            $value = $value->description ?? null;
+            if ($lg == 'es') {
+                $model->description = $value;
+                $model->save();
+            }
+            $model->translations()->updateOrCreate(
+                [
+                    'language' => $lg,
+                    'hotel_id' => $model->id
+                ],
+                [
+                    'description' => $value,
+                    'name' => $model->name,
+                    'zone' => $model->zone,
+                    'type' => $model->type
+                ]
+            );
+        }
+    }
+
+    public function processTranslateProfile ($request, $hotelModel) {
+        $description = $request->description;
+        if ($description != $hotelModel->description) {
+            $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
+            $inputsTranslate = ['description' => $description];
+            TranslateJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
         }
     }
 }

@@ -696,7 +696,7 @@ if (! function_exists('requestSettingsDefault')) {
             "google" => true,
             "tripadvisor" => true
         ];
-        $requestSettings->request_to = "positive queries";
+        $requestSettings->request_to = json_encode(['GOOD','VERYGOOD']);
         return $requestSettings;
     }
 }

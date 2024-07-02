@@ -45,6 +45,11 @@ class Hotel extends Model
         'scraper_run',
         'last_date_historical',
         'show_experiences',
+        'phone_optional',
+        'with_wifi',
+        'checkin_until',
+        'checkout_until',
+        'x_url',
         // customization
         'subdomain',
         'language_default_webapp',
@@ -76,6 +81,11 @@ class Hotel extends Model
     {
 
         return $this->hasOne(HotelTranslate::class)->where('language', localeCurrent());
+    }
+
+    public function translations()
+    {
+        return $this->hasMany(HotelTranslate::class);
     }
 
     public function otas()

@@ -60,7 +60,12 @@ class HotelResource extends JsonResource
             // "chatHours" => $chatHours,
             "language_default_webapp"=> $this->language_default_webapp,
             "sender_for_sending_sms"=> $this->sender_for_sending_sms,
-            "sender_for_sending_email"=> $this->sender_for_sending_email
+            "sender_for_sending_email"=> $this->sender_for_sending_email,
+            "phone_optional" => null,
+            "with_wifi" => false,
+            "checkin_until" => null,
+            "checkout_until" => null,
+            "x_url" => null,
         ];
     }
 }
