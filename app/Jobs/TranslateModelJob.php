@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 
 use App\Services\Chatgpt\TranslateService;
 
-class TranslateJob implements ShouldQueue
+class TranslateModelJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

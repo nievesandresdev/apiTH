@@ -140,7 +140,7 @@ class HotelService {
         if ($description != $hotelModel->description) {
             $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
             $inputsTranslate = ['description' => $description];
-            TranslateJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
+            TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
         }
     }
 }
