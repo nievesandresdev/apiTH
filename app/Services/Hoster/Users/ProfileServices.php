@@ -28,7 +28,7 @@ class ProfileServices
                 'firstname' => $request->name,
                 'lastname' => $request->lastname,
                 'phone' => $request->prefix . ' ' . $request->phone,
-                'work_position' => $request->work_position,
+                'work_position_id' => $request->work_position_id,
             ]);
         } else {
 
@@ -37,7 +37,7 @@ class ProfileServices
                 'firstname' => $request->name,
                 'lastname' => $request->lastname,
                 'phone' => $request->prefix . ' ' . $request->phone,
-                'work_position' => $request->work_position,
+                'work_position_id' => $request->work_position_id,
             ]);
         }
 
