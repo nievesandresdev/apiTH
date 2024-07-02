@@ -143,7 +143,7 @@ class HotelController extends Controller
             $traslationProfile = $this->service->processTranslateProfile($request, $hotelModel);
 
             $hotelModel = $this->service->updateProfile($request, $hotelModel);
-            
+
             $hotelModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
         } catch (\Exception $e) {

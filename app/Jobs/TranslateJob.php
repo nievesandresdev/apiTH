@@ -32,7 +32,7 @@ class TranslateJob implements ShouldQueue
 
     public function handle()
     {
-        // \Log::info("handle TranslateJob:");
+        \Log::info("handle TranslateJob:");
         try {
             if (empty($this->model)) {
                 \Log::error("no existe el modelo");
