@@ -11,7 +11,7 @@ class UpdateProfileRequest extends FormRequest
         return [
             'name' => 'required|string',
             'type' => 'nullable|string',
-            'category' => 'nullable|string',
+            'category' => 'nullable|numeric',
             'email' => 'required|email',
             'phone' => 'required|string',
             'phone_optional' => 'nullable|string',
