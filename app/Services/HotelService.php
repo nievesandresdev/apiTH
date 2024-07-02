@@ -15,7 +15,7 @@ use App\Models\ChatHour;
 
 use App\Services\Chatgpt\TranslateService;
 
-use App\Jobs\TranslateJob;
+use App\Jobs\TranslateModelJob;
 
 class HotelService {
 
