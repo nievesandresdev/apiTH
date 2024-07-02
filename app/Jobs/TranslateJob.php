@@ -20,17 +20,13 @@ class TranslateJob implements ShouldQueue
     protected $service;
     protected $model;
 
-    public function __construct($dirTemplate, $inputsTranslate, $service, $model)
+    public function __construct()
     {
-        $this->dirTemplate = $dirTemplate;
-        $this->inputsTranslate = $inputsTranslate;
-        $this->service = $service;
-        $this->model = $model;
     }
 
     public function handle()
     {
-        \Log::info("handle TranslateJob:");
+        \Log::info("handle TranslateJobs");
         // try {
         //     if (empty($this->model)) {
         //         \Log::error("no existe el modelo");
