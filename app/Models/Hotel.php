@@ -83,6 +83,11 @@ class Hotel extends Model
         return $this->hasOne(HotelTranslate::class)->where('language', localeCurrent());
     }
 
+    public function translations()
+    {
+        return $this->hasMany(HotelTranslate::class);
+    }
+
     public function otas()
     {
         return $this->hasMany(HotelOta::class);
