@@ -30,25 +30,25 @@ class TranslateJob implements ShouldQueue
 
     public function handle()
     {
-        \Log::info("handle TranslateJobaa:");
-        // try {
-        //     if (empty($this->model)) {
-        //         \Log::error("no existe el modelo");
-        //     }
-        //     ini_set('max_execution_time', '2400');
+        \Log::info("handle TranslateJob:");
+        try {
+            if (empty($this->model)) {
+                \Log::error("no existe el modelo");
+            }
+            ini_set('max_execution_time', '2400');
             
-        //     $translateService = new TranslateService();
-        //     $responseRranslation = $translateService->load([
-        //         'dirTemplate' => $this->dirTemplate,
-        //         'context' => $this->inputsTranslate,
-        //         'languageCodes' => getAllLanguages(),
-        //     ]);
-        //     $translation = $responseRranslation['translation'] ?? [];
-        //     $this->service->updateTranslation($this->model, $translation);
+            $translateService = new TranslateService();
+            $responseRranslation = $translateService->load([
+                'dirTemplate' => $this->dirTemplate,
+                'context' => $this->inputsTranslate,
+                'languageCodes' => getAllLanguages(),
+            ]);
+            $translation = $responseRranslation['translation'] ?? [];
+            $this->service->updateTranslation($this->model, $translation);
 
-        // } catch (\Exception $e) {
-        //     \Log::error("handle TranslateJob:", ['exception' => $e]);
-        // }
+        } catch (\Exception $e) {
+            \Log::error("handle TranslateJob:", ['exception' => $e]);
+        }
     }
 
 }
