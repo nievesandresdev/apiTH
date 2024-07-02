@@ -47,22 +47,23 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 
     Route::post('password/verify-token', [ForgotPasswordController::class, 'verifyToken'])->name('password.verify');
-
-
-    Route::middleware('auth:api')->group(function () {
-        Route::get('/user', [AuthController::class, 'getUsers']);
-    });
 });
 
 //prefix users
-Route::group(['prefix' => 'users'], function () {
-    Route::get('/work-position', [WorkPositionController::class, 'getAllWorkPosition']);
-    Route::post('/work-position', [WorkPositionController::class, 'store']);
-    Route::post('/work-position/update', [WorkPositionController::class, 'update']);
-    Route::post('/work-position/delete', [WorkPositionController::class, 'delete']);
+Route::middleware('auth:api')->group(function () {
 
-    Route::post('/store', [UsersController::class, 'store']);
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('/work-position', [WorkPositionController::class, 'getAllWorkPosition']);
+        Route::post('/work-position', [WorkPositionController::class, 'store']);
+        Route::post('/work-position/update', [WorkPositionController::class, 'update']);
+        Route::post('/work-position/delete', [WorkPositionController::class, 'delete']);
+
+        Route::post('/store', [UsersController::class, 'store']);
+        Route::post('/update', [UsersController::class, 'update']);
+        Route::get('/getUsers', [UsersController::class, 'getUsers']);
+    });
 });
+
 
 
 

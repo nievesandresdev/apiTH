@@ -38,10 +38,10 @@ class AuthController extends Controller
         ]);
     }
 
-    public function getUsers(Request $request)
+   /*  public function getUsers(Request $request)
     {
         return response()->json($request->user()->load('profile'));
-    }
+    } */
 
     public function sendResetLinkEmail(Request $request): RedirectResponse
     {
