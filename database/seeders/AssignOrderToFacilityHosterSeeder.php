@@ -15,7 +15,7 @@ class AssignOrderToFacilityHosterSeeder extends Seeder
     {
         $hotelCollection = Hotel::all();
         foreach ($hotelCollection as $hotelModel) {
-            $faciltiesCollection = $hotelModel->facilities()->where('select', 1)->get();
+            $faciltiesCollection = $hotelModel->facilities()->where('select', 1)->where('status', 1)->get();
             foreach ($faciltiesCollection as $keyFacility => $facilityModel) {
                 $facilityModel->update(['order' => $keyFacility + 1]);
             }
