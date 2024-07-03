@@ -30,6 +30,8 @@ class FacilityResource extends JsonResource
             'title' => $title,
             'description' => $description,
             'schedule' => $schedule,
+            'select' => $this->select,
+            'status' => $this->status,
         ];
     }
 }
