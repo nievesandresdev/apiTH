@@ -11,6 +11,7 @@ Route::group(['prefix' => 'query-settings'], function () {
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/updateNotificationsEmail', [QuerySettingsHosterController::class, 'updateNotificationsEmail']);
         Route::get('/getPreStaySettings', [QuerySettingsHosterController::class, 'getPreStaySettings']);
+        Route::post('/updatePreStaySettings', [QuerySettingsHosterController::class, 'updatePreStaySettings']);
     });
 });
 

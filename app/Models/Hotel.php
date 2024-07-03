@@ -72,6 +72,11 @@ class Hotel extends Model
         return $this->hasMany(HotelSubdomain::class);
     }
 
+    public function facilities()
+    {
+        return $this->hasMany(FacilityHoster::class);
+    }
+
     public function images()
     {
         return $this->hasMany(ImagesHotels::class);

@@ -24,7 +24,7 @@ class QuerySettingsHosterResource extends JsonResource
     public function toArray(Request $request): array
     {
         $allData = [
-            "hotel_id" => $this->hotel_id,
+            "hotel_id" => $this->hotel_id ?? null,
             "pre_stay_activate" => $this->pre_stay_activate,
             "pre_stay_thanks" => $this->pre_stay_thanks,
             "pre_stay_comment" => $this->pre_stay_comment,
