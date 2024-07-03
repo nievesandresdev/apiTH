@@ -45,4 +45,8 @@ class FacilityHoster extends Model
         return $this->hasMany('App\Models\FacilityHosterLanguage', 'facility_hoster_id');
     }
 
+    public function scopeWhereVisible ($query) {
+        $query->where(['select' => 1, 'status' => 1, 'visible' => 1]);
+    }
+
 }
