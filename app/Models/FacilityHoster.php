@@ -18,6 +18,10 @@ class FacilityHoster extends Model
         'facility_id',
         'select',
         'hotel_id',
+        'schedules',
+        'always_open',
+        'ad_tag',
+        'order',
     ];
 
     public function facilities()
