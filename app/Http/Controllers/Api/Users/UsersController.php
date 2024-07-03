@@ -3,17 +3,23 @@
 namespace App\Http\Controllers\Api\Users;
 
 use App\Http\Controllers\Controller;
-use App\Services\Hoster\Users\UserServices;
+use App\Services\Hoster\Users\{UserServices, ProfileServices};
+use Illuminate\Support\Facades\Hash;
 use App\Utils\Enums\EnumResponse;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use App\Models\User;
+
 
 class UsersController extends Controller
 {
     protected $userServices;
+    protected $profileServices;
 
-    public function __construct(UserServices $userServices)
+    public function __construct(UserServices $userServices, ProfileServices $profileServices)
     {
         $this->userServices = $userServices;
+        $this->profileServices = $profileServices;
     }
 
     public function getUsers()
@@ -33,6 +39,21 @@ class UsersController extends Controller
             'last_page' => $users->lastPage(),
             //'test' => $this->userServices->get_ids_hotels()
         ]);
+    }
+
+    public function getUser()
+    {
+        $user = $this->userServices->getUserById(auth()->id());
+
+        if (!$user) {
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, [
+                'message' => 'Usuario no encontrado',
+            ]);
+        }else{
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'user' => $user
+            ]);
+        }
     }
 
     public function store()
@@ -86,19 +107,49 @@ class UsersController extends Controller
         }
     }
 
-    public function updateProfile()
-    {
-        try {
-            $user = $this->userServices->updateProfileHoster(request(), request()->user_id);
+    public function updateProfile(Request $request)
+{
+    try {
+        $userId = auth()->id();
 
-            return bodyResponseRequest(EnumResponse::SUCCESS, [
-                'message' => 'Perfil actualizado con éxito',
-                'user' => $user
-            ]);
-        } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, [
-                'message' => $e->getMessage(),
-            ],null,$e->getMessage());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $userId,
+            'prefix' => 'required|string|max:5',
+            'phone' => 'required|string|max:15',
+            //'current_password' => 'required_with:new_password|string|min:6',
+        ]);
+
+        $user = User::findOrFail($userId);
+
+        // Validar la contraseña actual
+        if ($request->filled('new_password') && !Hash::check($request->current_password, $user->password)) {
+
+            return bodyResponseRequest(EnumResponse::ERROR, [],null,'La contraseña actual no es correcta');
         }
+
+        // Actualizar los datos del perfil
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        $this->profileServices->handleUpdateProfileHoster($request, $user);
+
+        // Actualizar la contraseña
+        if ($request->filled('new_password')) {
+            $user->password = bcrypt($request->new_password);
+        }
+
+        $user->save();
+
+        return bodyResponseRequest(EnumResponse::SUCCESS, [
+            'message' => 'Actualizado Correctamente',
+            'user' => new UserResource($user)
+        ]);
+    } catch (\Exception $e) {
+        return bodyResponseRequest(EnumResponse::ERROR, [
+            'message' => $e->getMessage(),
+        ], null, $e->getMessage());
     }
+}
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Hoster\Users;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Services\Hoster\Users\ProfileServices;
@@ -42,6 +43,17 @@ class UserServices
         }
 
         return $users;
+    }
+
+    public function getUserById($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user) {
+            return new UserResource($user);
+        }else{
+            return false;
+        }
     }
 
     public function filterUsersBySearchTerms(&$data_filter)
@@ -436,6 +448,7 @@ class UserServices
             }
         }
     }
+
 
     public function deleteUserHoster($userId)
     {
