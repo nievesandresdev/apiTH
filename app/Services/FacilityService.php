@@ -43,7 +43,7 @@ class FacilityService {
             $facilities = FacilityHoster::with(['images', 'translations'])
                 ->where('hotel_id',$modelHotel->id)
                 ->where(['status' => 1, 'select' => 1])->where('visible',1)
-                ->orderBy('updated_at', 'desc')
+                ->orderBy('order')
                 ->get();
                 
             return $facilities;
@@ -63,6 +63,13 @@ class FacilityService {
             return $facility;
         } catch (\Exception $e) {
             return $e;
+        }
+    }
+
+    public function updateOrder ($request, $hotelModel) {
+        $orderedOrders = $request->order;
+        foreach ($orderedOrders as $position => $id) {
+            FacilityHoster::where(['id' => $id])->update(['order' => $position]);
         }
     }
     

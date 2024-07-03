@@ -51,4 +51,4 @@ class TranslateModelJob implements ShouldQueue
         }
     }
 
-}
+}`

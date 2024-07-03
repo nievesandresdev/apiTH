@@ -377,4 +377,5 @@ class PlaceService {
             ], 500); // Puedes cambiar el código de estado HTTP según corresponda
         }
     }
+
 }

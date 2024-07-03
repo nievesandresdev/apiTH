@@ -71,5 +71,18 @@ class FacilityController extends Controller
         }
     }
 
+    public function updateOrder (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            \DB::beginTransaction();
+            $this->service->updateOrder($request, $hotelModel);
+            \DB::commit();
+            $data = $hotelModel->facilities()->orderBy('order')->pluck('id');
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
+        }
+    }
 
 }
