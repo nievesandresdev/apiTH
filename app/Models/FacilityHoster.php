@@ -17,6 +17,7 @@ class FacilityHoster extends Model
         'user_id',
         'facility_id',
         'select',
+        'visible',
         'hotel_id',
         'schedules',
         'always_open',

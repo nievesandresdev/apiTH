@@ -31,6 +31,7 @@ class FacilityResource extends JsonResource
             'description' => $description,
             'schedule' => $schedule,
             'select' => $this->select,
+            'visible' => $this->visible,
             'status' => $this->status,
             'schedules' => $this->schedules,
             'always_open' => $this->always_open,
