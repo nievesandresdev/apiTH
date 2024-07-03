@@ -60,6 +60,7 @@ Route::middleware('auth:api')->group(function () {
 
         Route::post('/store', [UsersController::class, 'store']);
         Route::post('/update', [UsersController::class, 'update']);
+        Route::post('/update-profile', [UsersController::class, 'updateProfile']);
         Route::get('/getUsers', [UsersController::class, 'getUsers']);
     });
 });

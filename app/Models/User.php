@@ -100,4 +100,16 @@ class User extends Authenticatable
         return $this->getRoles()->first();
     }
 
+    public function getRoleName()
+    {
+        return $this->getRole()->name;
+    }
+
+    public function isHoster() {
+
+        $role = $this->getRoleNames()->first();
+
+        return in_array($role, ['Administrator', 'Operator']);
+    }
+
 }

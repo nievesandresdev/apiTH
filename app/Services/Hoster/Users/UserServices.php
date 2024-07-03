@@ -354,7 +354,7 @@ class UserServices
 
         $user->assignRole($role);
 
-        $this->profileServices->handle_profile_hoster($request, $user);
+        $this->profileServices->handleProfileHoster($request, $user);
 
         $this->storeHotelsUser($request, $user);
 
@@ -401,7 +401,7 @@ class UserServices
             $user->syncRoles([$role]);
         }
 
-        $this->profileServices->handle_profile_hoster($request, $user);
+        $this->profileServices->handleProfileHoster($request, $user);
 
         $this->updateHotelsUser($request, $user);
 

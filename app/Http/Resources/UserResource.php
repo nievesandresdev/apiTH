@@ -17,12 +17,31 @@ class UserResource extends JsonResource
     {
         $firstHotelId = $this->hotel()->first() ?? null;
 
+        $phone = $this->profile->phone ?? '';
+        $prefix = null;
+        $number = null;
+
+        if (!empty($phone)) {
+            if (preg_match('/^(\+\d+)\s(.+)/', $phone, $matches)) {
+                $prefix = $matches[1];
+                $number = $matches[2];
+            } else {
+                $number = $phone;
+            }
+        }
+
+        if (empty($phone)) {
+            $prefix = null;
+            $number = null;
+        }
+
         return [
             'name' => $this->profile->firstname ?? '',
             'lastname' => $this->profile->lastname ?? '',
             'email' => $this->email,
-            //'code' => $this->code,
-            //'sessions_current_period' => $this->sessions_current_period,
+            'prefix' => $prefix,
+            'phone' => $number,
+            'role' => $this->getRoleName(),
             'last_session' => $this->last_session,
             'created_at' => $this->created_at,
             'color' => $this->color,
@@ -55,3 +74,4 @@ class UserResource extends JsonResource
         ];
     }
 }
+
