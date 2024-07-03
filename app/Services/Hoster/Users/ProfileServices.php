@@ -18,7 +18,7 @@ class ProfileServices
         ]);
     } */
 
-    public function handle_profile_hoster($request, $user)
+    public function handleProfileHoster($request, $user)
     {
         $profile = Profile::where('user_id', $user->id)->first();
 

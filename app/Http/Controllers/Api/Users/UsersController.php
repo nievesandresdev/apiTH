@@ -85,4 +85,20 @@ class UsersController extends Controller
             ],null,$e->getMessage());
         }
     }
+
+    public function updateProfile()
+    {
+        try {
+            $user = $this->userServices->updateProfileHoster(request(), request()->user_id);
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Perfil actualizado con éxito',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
 }
