@@ -6,7 +6,10 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UtilityController;
 use App\Http\Controllers\Subdomain\SubdomainController;
-use App\Http\Controllers\Api\LanguageController;
+use App\Http\Controllers\Api\{
+    LanguageController,
+    DasboardController
+};
 use App\Http\Controllers\Api\Auth\{
     AuthController,
     ForgotPasswordController
@@ -64,6 +67,11 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/getUsers', [UsersController::class, 'getUsers']);
         Route::get('/getUser', [UsersController::class, 'getUser']);
         Route::post('/delete', [UsersController::class, 'delete']);
+    });
+
+    //dashboard
+    Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('/dataCustomerExperience', [DasboardController::class, 'dataCustomerExperience']);
     });
 });
 

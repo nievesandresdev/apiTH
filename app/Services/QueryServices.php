@@ -34,7 +34,7 @@ class QueryServices {
         $this->chatGPTService = $chatGPTService;
         $this->settings = $_QuerySettingsServices;
         $this->requestSettings = $_RequestSettingService;
-        
+
     }
 
     public function findByParams ($request) {
@@ -83,19 +83,16 @@ class QueryServices {
         try {
             $query = Query::findOrFail($id);
             $query->update($params);
-            return $query; 
+            return $query;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateParams');
         }
     }
 
     //obtener periodo actual para la consulta
-    public function getCurrentPeriod ($hotel, $stayId) {
-        if(!$stayId) return;
+    public function getCurrentPeriod($hotel, $stayId) {
         try {
-            // Log::info('getCurrentPeriod stayId:'.$stayId);
             $stay =  Stay::find($stayId);
-            // Log::info('getCurrentPeriod stay-result'.$stay);
             $dayCheckin = $stay->check_in;
             $dayCheckout = $stay->check_out;
             $hourCheckin = $hotel->checkin ?? '16:00';
@@ -103,28 +100,35 @@ class QueryServices {
             // Crear objeto Carbon para check-in
             $checkinDateTimeString = $dayCheckin . ' ' . $hourCheckin;
             $checkinDateTime = Carbon::createFromFormat('Y-m-d H:i', $checkinDateTimeString);
-            
-            // período in-stay 
-            $inStayStart = (clone $checkinDateTime)->addDay()->setTime(5, 0);
+
+            // período in-stay
+            // $inStayStart = (clone $checkinDateTime)->addDay()->setTime(5, 0);
             $hideStart = Carbon::createFromFormat('Y-m-d', $dayCheckout);
 
              // período post-stay
             $postStayStart = Carbon::createFromFormat('Y-m-d H:i', $dayCheckout . ' 05:00');
             $postStayEnd = (clone $hideStart)->addDays(10);
-            
+
             //fecha actual
             $now = Carbon::now();
             if ($now->lessThan($checkinDateTime)) {
                 return 'pre-stay';
             }
-            if ($now->greaterThanOrEqualTo($inStayStart) && $now->lessThan($hideStart)) {
+            // if ($now->greaterThanOrEqualTo($inStayStart) && $now->lessThan($hideStart)) {
+            if ($now->greaterThan($checkinDateTime) && $now->lessThan($hideStart)) {
                 return 'in-stay';
             }
             if ($now->greaterThanOrEqualTo($postStayStart) && $now->lessThanOrEqualTo($postStayEnd)) {
                 return 'post-stay';
             }
+             // Nueva condición para verificar si han pasado más de 10 días después del checkout
+            if ($now->greaterThan($postStayEnd)) {
+                //return 'invalid-stay';
+                return 'post-stay';
+            }
+            return null;
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCurrentPeriod');
+            return $e;
         }
     }
 
@@ -166,7 +170,7 @@ class QueryServices {
                     $comment = ['es' => $originalComment, 'en' => $originalComment];
                 }
             }
-            
+
             $query = Query::find($id);
             $query->answered = true;
             $query->qualification = $request->qualification;
@@ -174,9 +178,9 @@ class QueryServices {
             $query->responded_at= now();
             $query->comment = $comment;
             $query->save();
-            
+
             $settings = $this->settings->notifications($hotel->id);
-            
+
             $periodUrl = $query->period;
             if($periodUrl == 'in-stay') $periodUrl = 'stay';
             $stay = Stay::find($request->stayId);
@@ -184,37 +188,37 @@ class QueryServices {
             $stay->save();
 
             $guest = Guest::select('id','phone','email')->where('id',$query->guest_id)->first();
-            
+
             //solicitud de reseña
             $requestSettings = $this->requestSettings->getAll($hotel->id);
             $condition1 = $requestSettings->request_to == "positive queries" && $query->qualification == "GOOD" && $query->period == 'post-stay';
             $condition2 = $requestSettings->request_to == "positive, normal and not answered queries" && ($query->qualification == "GOOD" || $query->qualification == "NORMAL") && $query->period == 'post-stay';
             if($condition1 || $condition2){
-                Mail::to($guest->email)->send(new RequestReviewGuest($hotel));    
+                Mail::to($guest->email)->send(new RequestReviewGuest($hotel));
                 if($guest->phone){
                     $msg = 'solicitud de reseña';
                     sendSMS($guest->phone,$msg,$hotel->sender_for_sending_sms);
                 }
-                
+
             }
 
             $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id;
-            
+
             if($settings->notify_to_hoster['notify_when_guest_send_via_platform']){
-                sendEventPusher('notify-send-query.' . $hotel->id, 'App\Events\NotifySendQueryEvent', 
+                sendEventPusher('notify-send-query.' . $hotel->id, 'App\Events\NotifySendQueryEvent',
                 [
                     "urlQuery" => $urlQuery,
                     "title" => "Nuevo feedback",
                     "text" => "Tienes un nuevo feedback",
                 ]
-                );   
+                );
             }
-            
+
             if($settings->notify_to_hoster['notify_when_guest_send_via_email']){
                 $checkinFormat = Carbon::createFromFormat('Y-m-d', $stay->check_in)->format('d/m/Y');
                 $checkoutFormat = Carbon::createFromFormat('Y-m-d', $stay->check_out)->format('d/m/Y');
                 $dates = "$checkinFormat - $checkoutFormat";
-                Mail::to($guest->email)->send(new NewFeedback($dates, $urlQuery, $hotel , 'new'));    
+                Mail::to($guest->email)->send(new NewFeedback($dates, $urlQuery, $hotel , 'new'));
             }
 
             $via_platform = $settings->notify_to_hoster['notify_later_when_guest_send_via_platform'];
@@ -223,11 +227,11 @@ class QueryServices {
                 NotifyPendingQuery::dispatch($hotel->id, $stay->id, $via_platform, $via_email)->delay(now()->addMinutes(10));
             }
 
-            return $query; 
+            return $query;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveResponse');
         }
     }
 
-    
+
 }
