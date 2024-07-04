@@ -33,12 +33,11 @@ class DasboardController extends Controller
                 ];
             });
 
-            $count = $p->pluck('period')->countBy()->all(); //cuanto cuantas veces se repite con countBy
+            $count = $p->pluck('period')->countBy()->all(); // Contar cuántas veces se repite cada periodo
 
             $preStayGuests = $p->where('period', 'pre-stay')->sum('guests_count');
             $inStayGuests = $p->where('period', 'in-stay')->sum('guests_count');
             $postStayGuests = $p->where('period', 'post-stay')->sum('guests_count');
-
 
             $languages = $stays->flatMap(function ($stay) {
                 return $stay->guests->pluck('lang_web');
@@ -57,9 +56,9 @@ class DasboardController extends Controller
                 'postStay' => $count['post-stay'] ?? 0,
                 'preStay' => $count['pre-stay'] ?? 0,
                 'inStay' => $count['in-stay'] ?? 0,
-                'guestsPreStay' => $preStayGuests,
-                'guestsStay' => $inStayGuests,
-                'guestsPostStay' => $postStayGuests,
+                'guestsPreStay' => $preStayGuests ?? 0,
+                'guestsStay' => $inStayGuests ?? 0,
+                'guestsPostStay' => $postStayGuests ?? 0,
                 'languages' => $languagePercentages
             ]);
         } catch (\Exception $e) {
