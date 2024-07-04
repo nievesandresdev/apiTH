@@ -145,7 +145,7 @@ class HotelService {
     }
 
     public function updateVisivilityFacilities ($hotelModel) {
-        $hotelModel = $hotelModel->update(['show_facilities' => !$hotelModel->hotelModel]);
+        $hotelModel = $hotelModel->update(['show_facilities' => !$hotelModel->show_facilities]);
         return $hotelModel;
     }
 }
