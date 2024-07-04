@@ -50,6 +50,7 @@ class Hotel extends Model
         'checkin_until',
         'checkout_until',
         'x_url',
+        'show_facilities',
         // customization
         'subdomain',
         'language_default_webapp',
