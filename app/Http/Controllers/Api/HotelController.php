@@ -162,7 +162,7 @@ class HotelController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             
-            $hotelModel = $this->service->updateVisivilityFacilities($hotelModel);
+            $this->service->updateVisivilityFacilities($hotelModel);
 
             $hotelModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
