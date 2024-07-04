@@ -39,13 +39,15 @@ class FacilityService {
         }
     }
 
-    public function getAll ($modelHotel) {
+    public function getAll ($request, $modelHotel) {
         try {
-            $facilities = FacilityHoster::with(['images', 'translations'])
+            $query = FacilityHoster::with(['images', 'translations'])
                 ->where('hotel_id',$modelHotel->id)
-                ->where(['status' => 1, 'select' => 1])->where('visible',1)
-                ->orderBy('order')
-                ->get();
+                ->where(['status' => 1])->where('visible',1);
+            if (isset($request->visible)) {
+                $query = $query->where(['select' => $request->visible]);
+            }
+            $facilities = $query->orderBy('order')->get();
                 
             return $facilities;
         } catch (\Exception $e) {

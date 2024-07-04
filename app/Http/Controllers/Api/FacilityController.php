@@ -33,9 +33,8 @@ class FacilityController extends Controller
 
     public function getAll (Request $request) {
         try {
-            $hotel = $request->attributes->get('hotel');
-            $facilities = $this->service->getAll($hotel);
-
+            $hotelModel = $request->attributes->get('hotel');
+            $facilities = $this->service->getAll($request, $hotelModel);
             if(!$facilities){
                 $data = [
                     'message' => __('response.bad_request_long')
