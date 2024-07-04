@@ -70,7 +70,7 @@ class UserResource extends JsonResource
                 ];
             }),
             'current_hotel' => new HotelResource($firstHotelId),
-            'curent_subdmain_hotel' => $firstHotelId?->subdomain
+            'current_subdmain_hotel' => $firstHotelId?->subdomain
         ];
     }
 }

@@ -49,6 +49,7 @@ class QuerySettingsHosterServices {
                     'email_notify_pending_feedback_to' => in_array('email_notify_pending_feedback_to', $keysToSave) ? $newdata->email_notify_pending_feedback_to : $default->email_notify_pending_feedback_to,
                 ]
             );
+            $this->processTranslateStay($newdata, $save);
             return $save;
             
         } catch (\Exception $e) {
@@ -57,33 +58,36 @@ class QuerySettingsHosterServices {
     }
 
     public function updateTranslation ($model, $translation) {
-        $translation = collect($translation ?? []);
+        Log::info('updateTranslation result'. json_encode($translation));
+        Log::info('$model'. json_encode($model));
+        // $translation = collect($translation ?? []);
 
-        foreach ($translation as $lg => $value) {
-            $value = $value->description ?? null;
-            if ($lg == 'es') {
-                $model->description = $value;
-                $model->save();
-            }
-            $model->translations()->updateOrCreate(
-                [
-                    'language' => $lg,
-                    'hotel_id' => $model->id
-                ],
-                [
-                    'description' => $value,
-                    'name' => $model->name,
-                    'zone' => $model->zone,
-                    'type' => $model->type
-                ]
-            );
-        }
+        // foreach ($translation as $lg => $value) {
+        //     $value = $value->description ?? null;
+        //     if ($lg == 'es') {
+        //         $model->description = $value;
+        //         $model->save();
+        //     }
+        //     $model->translations()->updateOrCreate(
+        //         [
+        //             'language' => $lg,
+        //             'hotel_id' => $model->id
+        //         ],
+        //         [
+        //             'description' => $value,
+        //             'name' => $model->name,
+        //             'zone' => $model->zone,
+        //             'type' => $model->type
+        //         ]
+        //     );
+        // }
     }
 
-    public function processTranslate ($request, $hotelModel, $period = null) {
+    public function processTranslateStay ($request, $hotelModel, $period = null) {
         
-        $pre_stay_thanks = $request->pre_stay_thanks;
-        $pre_stay_comment = $request->pre_stay_comment;
+        $pre_stay_thanks = $request->pre_stay_thanks['es'];
+        $pre_stay_comment = $request->pre_stay_comment['es'];
+        Log::info('$pre_stay_thanks'. json_encode($pre_stay_thanks));
         $inputsTranslate = ['pre_stay_thanks' => $pre_stay_thanks,'pre_stay_comment' => $pre_stay_comment];
         $dirTemplateTranslate = 'translation/generic';    
         TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
