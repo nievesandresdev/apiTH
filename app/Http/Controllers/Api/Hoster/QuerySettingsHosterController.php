@@ -56,6 +56,76 @@ class QuerySettingsHosterController extends Controller
         }
     }
 
+    public function getStaySettings(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->getAll($hotel->id);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            $model = new QuerySettingsHosterResource($model,['in_stay_activate','in_stay_thanks_good','in_stay_thanks_normal','in_stay_comment']);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getStaySettings');
+        }
+    }
+    
+    public function updateStaySettings(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->updateSettings($hotel->id, ['in_stay_activate','in_stay_thanks_good','in_stay_thanks_normal','in_stay_comment'], $request, 'in-stay');
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateStaySettings');
+        }
+    }
+    
+    public function getPostStaySettings(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->getAll($hotel->id);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            $model = new QuerySettingsHosterResource($model,['post_stay_thanks_normal','post_stay_comment']);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getPostStaySettings');
+        }
+    }
+    
+    public function updatePostStaySettings(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->updateSettings($hotel->id, ['post_stay_thanks_normal','post_stay_comment'], $request, 'post-stay');
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updatePostStaySettings');
+        }
+    }
+
     public function updateNotificationsEmail(Request $request){
         try {
             $hotel = $request->attributes->get('hotel');

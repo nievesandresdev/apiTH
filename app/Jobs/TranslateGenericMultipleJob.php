@@ -29,7 +29,7 @@ class TranslateGenericMultipleJob implements ShouldQueue
 
     public function handle()
     {
-        Log::info("handle TranslateJob: prueba");
+        Log::info("TranslateGenericMultipleJob");
         try {
             if (empty($this->model)) {
                 Log::error("no existe el modelo");
