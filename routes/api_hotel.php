@@ -11,4 +11,5 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/getAllCrossellings', [HotelController::class, 'getAllCrossellings']);
     Route::get('/create/subdomain', [SubdomainController::class, 'createDNSRecord']);
     Route::get('/getChatHours', [HotelController::class, 'getChatHours']);
+    Route::post('/facilityVisivility', [HotelController::class, 'updateVisivilityFacilities']);
 });
