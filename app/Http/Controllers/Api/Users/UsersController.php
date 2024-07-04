@@ -108,48 +108,63 @@ class UsersController extends Controller
     }
 
     public function updateProfile(Request $request)
-{
-    try {
-        $userId = auth()->id();
+    {
+        try {
+            $userId = auth()->id();
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $userId,
-            'prefix' => 'required|string|max:5',
-            'phone' => 'required|string|max:15',
-            //'current_password' => 'required_with:new_password|string|min:6',
-        ]);
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'lastname' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:users,email,' . $userId,
+                'prefix' => 'required|string|max:5',
+                'phone' => 'required|string|max:15',
+                //'current_password' => 'required_with:new_password|string|min:6',
+            ]);
 
-        $user = User::findOrFail($userId);
+            $user = User::findOrFail($userId);
 
-        // Validar la contraseña actual
-        if ($request->filled('new_password') && !Hash::check($request->current_password, $user->password)) {
+            // Validar la contraseña actual
+            if ($request->filled('new_password') && !Hash::check($request->current_password, $user->password)) {
 
-            return bodyResponseRequest(EnumResponse::ERROR, [],null,'La contraseña actual no es correcta');
+                return bodyResponseRequest(EnumResponse::ERROR, [],null,'La contraseña actual no es correcta');
+            }
+
+            // Actualizar los datos del perfil
+            $user->name = $request->name;
+            $user->email = $request->email;
+
+            $this->profileServices->handleUpdateProfileHoster($request, $user);
+
+            // Actualizar la contraseña
+            if ($request->filled('new_password')) {
+                $user->password = bcrypt($request->new_password);
+            }
+
+            $user->save();
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Actualizado Correctamente',
+                'user' => new UserResource($user)
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ], null, $e->getMessage());
         }
-
-        // Actualizar los datos del perfil
-        $user->name = $request->name;
-        $user->email = $request->email;
-
-        $this->profileServices->handleUpdateProfileHoster($request, $user);
-
-        // Actualizar la contraseña
-        if ($request->filled('new_password')) {
-            $user->password = bcrypt($request->new_password);
-        }
-
-        $user->save();
-
-        return bodyResponseRequest(EnumResponse::SUCCESS, [
-            'message' => 'Actualizado Correctamente',
-            'user' => new UserResource($user)
-        ]);
-    } catch (\Exception $e) {
-        return bodyResponseRequest(EnumResponse::ERROR, [
-            'message' => $e->getMessage(),
-        ], null, $e->getMessage());
     }
-}
+
+    public function delete(){
+        try {
+            $user = $this->userServices->deleteUserHoster(request()->user_id);
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario eliminado con éxito',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
 }
