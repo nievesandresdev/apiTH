@@ -27,6 +27,7 @@ class FacilityService {
                             ->where('hotel_id',$modelHotel->id)
                             ->where('visible',1)
                             ->where('select',1)
+                            ->orderBy('order')
                             ->orderBy('updated_at', 'desc')
                             ->limit(12)
                             ->get();
@@ -38,13 +39,15 @@ class FacilityService {
         }
     }
 
-    public function getAll ($modelHotel) {
+    public function getAll ($request, $modelHotel) {
         try {
-            $facilities = FacilityHoster::with(['images', 'translations'])
+            $query = FacilityHoster::with(['images', 'translations'])
                 ->where('hotel_id',$modelHotel->id)
-                ->where(['status' => 1, 'select' => 1])->where('visible',1)
-                ->orderBy('order')
-                ->get();
+                ->where(['status' => 1])->where('visible',1);
+            if (isset($request->visible)) {
+                $query = $query->where(['select' => $request->visible]);
+            }
+            $facilities = $query->orderBy('order')->get();
                 
             return $facilities;
         } catch (\Exception $e) {
@@ -57,7 +60,7 @@ class FacilityService {
             $facility = FacilityHoster::with('images')
                 ->where('id',$id)
                 ->where('hotel_id',$modelHotel->id)
-                ->where(['status' => 1, 'select' => 1])->where('visible',1)
+                // ->where(['status' => 1, 'select' => 1])->where('visible',1)
                 ->first();
                 
             return $facility;
@@ -66,11 +69,21 @@ class FacilityService {
         }
     }
 
-    public function updateOrder ($request, $hotelModel) {
-        $orderedOrders = $request->order;
-        foreach ($orderedOrders as $position => $id) {
+    public function updateOrder ($order, $hotelModel) {
+        $facilitiesIdsOrded = collect($order??[]);
+        foreach ($facilitiesIdsOrded as $position => $id) {
             FacilityHoster::where(['id' => $id])->update(['order' => $position]);
         }
+    }
+    public function syncOrder ($hotelModel) {
+        $facilitiesIdsOrded = $hotelModel->facilities()->whereVisible()->orderBy('order')->orderBy('updated_at', 'desc')->pluck('id');
+        foreach ($facilitiesIdsOrded as $position => $id) {
+            FacilityHoster::where(['id' => $id])->update(['order' => $position]);
+        }
+    }
+
+    public function updateVisible ($request, $facilityHosterModel) {
+        $facilityHosterModel->update(['select' => $request->visible, 'order' => 0]);
     }
     
 }

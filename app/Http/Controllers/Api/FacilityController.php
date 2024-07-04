@@ -19,6 +19,8 @@ use App\Http\Resources\PlaceResource;
 
 use App\Utils\Enums\EnumResponse;
 
+use App\Http\Requests\UpdateFacilityOrderRequest;
+
 class FacilityController extends Controller
 {
     public $service;
@@ -31,9 +33,8 @@ class FacilityController extends Controller
 
     public function getAll (Request $request) {
         try {
-            $hotel = $request->attributes->get('hotel');
-            $facilities = $this->service->getAll($hotel);
-
+            $hotelModel = $request->attributes->get('hotel');
+            $facilities = $this->service->getAll($request, $hotelModel);
             if(!$facilities){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -71,13 +72,35 @@ class FacilityController extends Controller
         }
     }
 
-    public function updateOrder (Request $request) {
+    public function updateOrder (UpdateFacilityOrderRequest $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
             \DB::beginTransaction();
-            $this->service->updateOrder($request, $hotelModel);
+            $this->service->updateOrder($request->order, $hotelModel);
             \DB::commit();
             $data = $hotelModel->facilities()->orderBy('order')->pluck('id');
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
+        }
+    }
+
+    public function updateVisible (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $facilityHosterModel = $this->service->findById($request->facility_hoster_id, $hotelModel);
+            if(!$facilityHosterModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            \DB::beginTransaction();
+            $this->service->updateVisible($request, $facilityHosterModel);
+            $this->service->syncOrder($hotelModel);
+            \DB::commit();
+            $data = $facilityHosterModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             \DB::rollback();
