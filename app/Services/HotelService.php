@@ -143,4 +143,9 @@ class HotelService {
             TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
         }
     }
+
+    public function updateVisivilityFacilities ($hotelModel) {
+        $hotelModel = $hotelModel->update(['show_facilities' => !$hotelModel->hotelModel]);
+        return $hotelModel;
+    }
 }
