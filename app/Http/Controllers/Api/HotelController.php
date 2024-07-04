@@ -151,7 +151,7 @@ class HotelController extends Controller
         }
     }
 
-    public function updateVisivilityFacilities ($request) {
+    public function updateVisivilityFacilities (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
