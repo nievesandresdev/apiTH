@@ -42,7 +42,7 @@ class QuerySettingsHosterController extends Controller
     public function updatePreStaySettings(Request $request){
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->updateSettings($hotel->id, ['pre_stay_activate','pre_stay_thanks','pre_stay_comment'], $request);
+            $model = $this->service->updateSettings($hotel->id, ['pre_stay_activate','pre_stay_thanks','pre_stay_comment'], $request, 'pre-stay');
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
