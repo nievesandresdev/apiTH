@@ -62,6 +62,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/update', [UsersController::class, 'update']);
         Route::post('/update-profile', [UsersController::class, 'updateProfile']);
         Route::get('/getUsers', [UsersController::class, 'getUsers']);
+        Route::get('/getUser', [UsersController::class, 'getUser']);
+        Route::post('/delete', [UsersController::class, 'delete']);
     });
 });
 
