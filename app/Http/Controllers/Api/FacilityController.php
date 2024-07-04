@@ -97,6 +97,7 @@ class FacilityController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
+            return $facilityHosterModel;
             \DB::beginTransaction();
             $this->service->updateVisible($request, $facilityHosterModel);
             $this->service->syncOrder($hotelModel);
