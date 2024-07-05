@@ -127,6 +127,15 @@ class DasboardController extends Controller
                 return [$qualification => $percentage];
             });
 
+            $maxInStayPercentage = $inStayPercentages->max();
+
+            $inStayPercentages = $inStayPercentages->mapWithKeys(function ($percentage, $qualification) use ($maxInStayPercentage) {
+                return [$qualification => [
+                    'percentage' => $percentage,
+                    'isMax' => $percentage == $maxInStayPercentage && $percentage > 0
+                ]];
+            });
+
             // porcentajes para post-stay
             $postStayQualificationCount = $postStayQueries->pluck('qualification')->countBy();
             $totalPostStay = $postStayQualificationCount->sum();
@@ -135,6 +144,15 @@ class DasboardController extends Controller
                 $count = $postStayQualificationCount->get($qualification, 0);
                 $percentage = $totalPostStay > 0 ? round(($count / $totalPostStay) * 100) : 0;
                 return [$qualification => $percentage];
+            });
+
+            $maxPostStayPercentage = $postStayPercentages->max();
+
+            $postStayPercentages = $postStayPercentages->mapWithKeys(function ($percentage, $qualification) use ($maxPostStayPercentage) {
+                return [$qualification => [
+                    'percentage' => $percentage,
+                    'isMax' => $percentage == $maxPostStayPercentage && $percentage > 0
+                ]];
             });
 
             Log::info('In-Stay Percentages:', ['inStay' => $inStayPercentages]);
@@ -152,6 +170,7 @@ class DasboardController extends Controller
             ], null, $e->getMessage());
         }
     }
+
 
 
 
