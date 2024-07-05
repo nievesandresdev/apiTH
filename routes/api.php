@@ -72,6 +72,7 @@ Route::middleware('auth:api')->group(function () {
     //dashboard
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/dataCustomerExperience', [DasboardController::class, 'dataCustomerExperience']);
+        Route::get('/dataFeedback', [DasboardController::class, 'dataFeedback']);
     });
 });
 
