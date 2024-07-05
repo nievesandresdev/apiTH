@@ -24,10 +24,10 @@ class DasboardController extends Controller
     {
         try {
             $hotel = $request->attributes->get('hotel');
-            Log::info('Hotel ID:', ['hotel_id' => $hotel['id']]);
+            Log::info('Hotel ID:', ['hotel_id' => $hotel->id]);
 
             $stays = Stay::withCount('guests')
-                ->where('hotel_id', $hotel['id'])
+                ->where('hotel_id', $hotel->id)
                 ->get();
 
             Log::info('Stays:', ['stays' => $stays]);
@@ -99,13 +99,13 @@ class DasboardController extends Controller
     {
         try {
             $hotel = $request->attributes->get('hotel');
-            Log::info('Hotel ID:', ['hotel_id' => $hotel['id']]);
+            Log::info('Hotel ID:', ['hotel_id' => $hotel->id]);
 
             // Rconsulta
             $stays = Stay::with(['queries' => function($query) {
                     $query->where('answered', 1)->whereNotNull('qualification');
                 }, 'guests'])
-                ->where('hotel_id', $hotel['id'])
+                ->where('hotel_id', $hotel->id)
                 ->withCount('guests')
                 ->get();
 
