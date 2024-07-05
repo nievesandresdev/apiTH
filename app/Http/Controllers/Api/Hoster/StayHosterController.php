@@ -21,6 +21,7 @@ class StayHosterController extends Controller
 
     public function getAllByHotel(Request $request){
         try {
+            
             $hotel = $request->attributes->get('hotel');
             $model = $this->service->getAllByHotel($hotel);
             if(!$model){
