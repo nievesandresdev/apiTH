@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Hoster\StayHosterController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\StayController;
@@ -13,6 +14,10 @@ Route::group(['prefix' => 'stay'], function () {
     Route::get('/getGuestsAndSortByCurrentguestIdApi/{stayId}/{guestId}', [StayController::class, 'getGuestsAndSortByCurrentguestId']);
     Route::post('/updateStayAndGuests', [StayController::class, 'updateStayAndGuests']);
     Route::post('/deleteGuestOfStay/{stayId}/{guestId}', [StayController::class, 'deleteGuestOfStay']);
+
+    Route::group(['prefix' => 'hoster'], function () {
+        Route::get('/getAllByHotel', [StayHosterController::class, 'getAllByHotel']);
+    });
 });
 
 
