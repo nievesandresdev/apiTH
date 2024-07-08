@@ -118,7 +118,7 @@ class FacilityService {
         return $facilityHosterModel;
     }
 
-    public function updateImages ($images, $facilityHosterModel) {
+    public function updateImages ($images, $facilityHosterModel, $hotelModel) {
         $images = collect($images ?? []);
         $imagesNew = $images->filter(function ($item) {
             return !isset($item['id']) || empty($item['id']);
@@ -138,6 +138,10 @@ class FacilityService {
                 $imgDelete->delete();
                 return $id;
             });
+        }
+
+        if ((count($facilityHosterModel->images) < 1) && !empty($hotelModel->image) && (count($imagesNew) < 1)) {
+            $imagesNew[] = ['url' => $hotel->image, 'type' => 'STORAGE'];
         }
 
         foreach ($imagesNew as $item) {

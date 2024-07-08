@@ -133,6 +133,7 @@ class FacilityController extends Controller
             $hotelModel = $request->attributes->get('hotel');
             \DB::beginTransaction();
             $this->service->delete($request->id, $hotelModel);
+            $this->service->syncOrder($hotelModel);
             \DB::commit();
             return bodyResponseRequest(EnumResponse::SUCCESS_OK);
         } catch (\Exception $e) {
