@@ -125,5 +125,22 @@ class Hotel extends Model
         return $array;
     }
 
+    public function subscription () {
+        $hotel = $this;
+        $user = $hotel->user[0];
+        $subscription = null;
+        if (!empty($hotel->subscription_active)) {
+            $subscription = $user->subscription($hotel->subscription_active);
+        }
+        // $subscriptions = $user->subscriptions;
+        // $subscription = $subscriptions->where('hotel_id', $hotel->id)->first();
+        return $subscription;    }
+
+    public function price_current () {
+        $subscription = $this->subscription();
+        return $subscription;
+        // $plan = $this->stripe->plans->retrieve($request->price_id);
+    }
+
 
 }

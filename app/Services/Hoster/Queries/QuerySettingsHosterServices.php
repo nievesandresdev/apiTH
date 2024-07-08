@@ -2,6 +2,7 @@
 
 namespace App\Services\Hoster\Queries;
 
+use App\Jobs\TranslateGenericMultipleJob;
 use App\Jobs\TranslateModelJob;
 use App\Models\QuerySetting;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +29,7 @@ class QuerySettingsHosterServices {
         }
     }
 
-    public function updateSettings ($hotelId, $keysToSave, $newdata) {
+    public function updateSettings ($hotelId, $keysToSave, $newdata, $period = null) {
         try {
             $default = $this->getAll($hotelId);
 
@@ -49,48 +50,61 @@ class QuerySettingsHosterServices {
                     'email_notify_pending_feedback_to' => in_array('email_notify_pending_feedback_to', $keysToSave) ? $newdata->email_notify_pending_feedback_to : $default->email_notify_pending_feedback_to,
                 ]
             );
-            $this->processTranslateStay($newdata, $save);
+            $this->processTranslateTexts($newdata, $save, $period);
             return $save;
             
         } catch (\Exception $e) {
             return $e;
         }
     }
-
-    public function updateTranslation ($model, $translation) {
-        Log::info('updateTranslation result'. json_encode($translation));
-        Log::info('$model'. json_encode($model));
-        // $translation = collect($translation ?? []);
-
-        // foreach ($translation as $lg => $value) {
-        //     $value = $value->description ?? null;
-        //     if ($lg == 'es') {
-        //         $model->description = $value;
-        //         $model->save();
-        //     }
-        //     $model->translations()->updateOrCreate(
-        //         [
-        //             'language' => $lg,
-        //             'hotel_id' => $model->id
-        //         ],
-        //         [
-        //             'description' => $value,
-        //             'name' => $model->name,
-        //             'zone' => $model->zone,
-        //             'type' => $model->type
-        //         ]
-        //     );
-        // }
-    }
-
-    public function processTranslateStay ($request, $hotelModel, $period = null) {
+    public function updateTranslation($model, $translation) {
+        Log::info('execute updateTranslation'. json_encode($translation));
+        // Asegurarse de que $translation sea un arreglo
+        $translationFormat = json_decode(json_encode($translation), true);
+    
+        foreach ($translationFormat as $key => &$categories) {
+            foreach ($categories as $lang => &$details) {
+                // Asegurarse de que 'text' existe antes de intentar accederlo
+                if (isset($details['text'])) {
+                    $details = $details['text'];
+                }
+            }
+        }
         
-        $pre_stay_thanks = $request->pre_stay_thanks['es'];
-        $pre_stay_comment = $request->pre_stay_comment['es'];
-        Log::info('$pre_stay_thanks'. json_encode($pre_stay_thanks));
-        $inputsTranslate = ['pre_stay_thanks' => $pre_stay_thanks,'pre_stay_comment' => $pre_stay_comment];
-        $dirTemplateTranslate = 'translation/generic';    
-        TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
+        $model->pre_stay_thanks = isset($translationFormat['pre_stay_thanks']) ? $translationFormat['pre_stay_thanks'] : $model->pre_stay_thanks;
+        $model->pre_stay_comment = isset($translationFormat['pre_stay_comment']) ? $translationFormat['pre_stay_comment'] : $model->pre_stay_comment;
+        //
+        $model->in_stay_thanks_good = isset($translationFormat['in_stay_thanks_good']) ? $translationFormat['in_stay_thanks_good'] : $model->in_stay_thanks_good;
+        $model->in_stay_thanks_normal = isset($translationFormat['in_stay_thanks_normal']) ? $translationFormat['in_stay_thanks_normal'] : $model->in_stay_thanks_normal;
+        $model->in_stay_comment = isset($translationFormat['in_stay_comment']) ? $translationFormat['in_stay_comment'] : $model->in_stay_comment;
+        //
+        $model->post_stay_thanks_normal = isset($translationFormat['post_stay_thanks_normal']) ? $translationFormat['post_stay_thanks_normal'] : $model->post_stay_thanks_normal;
+        $model->post_stay_comment = isset($translationFormat['post_stay_comment']) ? $translationFormat['post_stay_comment'] : $model->post_stay_comment;
+        //
+        $model->save();
+        Log::info('nueva traduccion guardada');
     }
+    
+
+    public function processTranslateTexts ($request, $model, $period){
+        
+        $pre_stay_thanks = $request->pre_stay_thanks['es'] ?? null;
+        $pre_stay_comment = $request->pre_stay_comment['es'] ?? null;
+        $arrToTranslate = ['pre_stay_thanks' => $pre_stay_thanks,'pre_stay_comment' => $pre_stay_comment];
+        if($period == 'in-stay'){
+            $in_stay_thanks_good = $request->in_stay_thanks_good['es'] ?? null;
+            $in_stay_thanks_normal = $request->in_stay_thanks_normal['es'] ?? null;
+            $in_stay_comment = $request->in_stay_comment['es'] ?? null;
+            $arrToTranslate = ['in_stay_thanks_good' => $in_stay_thanks_good,'in_stay_thanks_normal' => $in_stay_thanks_normal,'in_stay_comment' => $in_stay_comment];
+        }
+        if($period == 'post-stay'){
+            $post_stay_thanks_normal = $request->post_stay_thanks_normal['es'] ?? null;
+            $post_stay_comment = $request->post_stay_comment['es'] ?? null;
+            $arrToTranslate = ['post_stay_thanks_normal' => $post_stay_thanks_normal,'post_stay_comment' => $post_stay_comment];
+        }
+        
+        TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model);
+    }
+
     
 }

@@ -330,7 +330,7 @@ class UserServices
         return auth()->user()->hotel->pluck('id');
     }
 
-    public function get_first_hotel_id()
+   /*  public function get_first_hotel_id()
     {
         if (auth()->user()->hotel->count() > 0) {
             return auth()->user()->hotel->first()->id;
@@ -351,7 +351,7 @@ class UserServices
             ? auth()->user()->hotel->skip(1)->first()->id
             : auth()->user()->hotel->first()->id)
         : null;
-    }
+    } */
 
     public function storeUserHoster($request)
     {
@@ -384,6 +384,10 @@ class UserServices
             default:
                 return auth()->user()->parent_id;
         }
+    }
+
+    function getUserId() {
+        return User::findOrFail(auth()->id());
     }
 
     public function storeAccessUser($request, $user){

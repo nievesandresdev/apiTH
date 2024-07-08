@@ -167,4 +167,20 @@ class UsersController extends Controller
             ],null,$e->getMessage());
         }
     }
+
+    public function getStatusSubscription(Request $request){
+
+        try{
+            $user = $this->userServices->getUserId();
+            $hotel = $request->attributes->get('hotel');
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'status' => $user->status_subscription($hotel),
+            ]);
+        }catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
 }

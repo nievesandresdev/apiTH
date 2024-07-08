@@ -12,6 +12,10 @@ Route::group(['prefix' => 'query-settings'], function () {
         Route::post('/updateNotificationsEmail', [QuerySettingsHosterController::class, 'updateNotificationsEmail']);
         Route::get('/getPreStaySettings', [QuerySettingsHosterController::class, 'getPreStaySettings']);
         Route::post('/updatePreStaySettings', [QuerySettingsHosterController::class, 'updatePreStaySettings']);
+        Route::get('/getStaySettings', [QuerySettingsHosterController::class, 'getStaySettings']);
+        Route::post('/updateStaySettings', [QuerySettingsHosterController::class, 'updateStaySettings']);
+        Route::get('/getPostStaySettings', [QuerySettingsHosterController::class, 'getPostStaySettings']);
+        Route::post('/updatePostStaySettings', [QuerySettingsHosterController::class, 'updatePostStaySettings']);
     });
 });
 
