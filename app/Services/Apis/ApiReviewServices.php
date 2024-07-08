@@ -26,13 +26,9 @@ class ApiReviewServices {
         $url = $hotel->url_google;
         $cid = get_property_in_url($url, "cid");
 
-
-
         $params = [
             "googleMapCid" => $cid
         ];
-
-
 
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->KEY_API_REVIEW];
