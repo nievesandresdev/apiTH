@@ -119,6 +119,7 @@ class FacilityController extends Controller
             // $this->service->processTranslate($request, $facilityHosterModel, $hotelModel);
             $images = $request->images ?? [];
             $this->service->updateImages($images, $facilityHosterModel, $hotelModel);
+            $this->service->syncOrder($hotelModel);
             \DB::commit();
             $data = [];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);

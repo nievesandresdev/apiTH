@@ -100,7 +100,6 @@ class FacilityService {
                 'ad_tag' => $request->ad_tag ?? null,
             ]);
         }else{
-            $order = $hotelModel->facilities()->whereVisible()->count() - 1;
             $facilityHosterModel  = FacilityHoster::create([
                 'title' => $request->title,
                 'description' => $request->description,
@@ -111,7 +110,7 @@ class FacilityService {
                 'hotel_id' => $hotelModel->id,
                 'schedules' => $request->schedules ? json_encode($request->schedules) : null,
                 'ad_tag' => $request->ad_tag ?? null,
-                'order' => $order
+                'order' => 0,
             ]);
         }
         $facilityHosterModel = $facilityHosterModel->refresh();
