@@ -18,19 +18,24 @@ class ApiReviewServices {
 
     public function get_summary_reviews_otas ($hotel) {
         $URL_BASE_API_REVIEW = config('app.url_base_api_review');
-        //return $URL_BASE_API_REVIEW.'/hotels/getSummaryReviewsOtas/'.$this->KEY_API_REVIEW;
+        //return $URL_BASE_API_REVIEW.'/hotels/getSummaryReviewsOtas/';
 
 
         $url = $hotel->url_google;
         $cid = get_property_in_url($url, "cid");
 
+
+
         $params = [
             "googleMapCid" => $cid
         ];
 
+
+
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->KEY_API_REVIEW];
         $response_request = $http_client_service->make_request('get', "$URL_BASE_API_REVIEW/hotels/getSummaryReviewsOtas", $params, $headers, 60);
+        return $response_request;
         // $response_request = null;
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
