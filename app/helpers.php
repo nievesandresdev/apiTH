@@ -225,6 +225,17 @@ if (!function_exists('bodyResponseRequest')) {
     }
 }
 
+if (! function_exists('get_property_in_url')) {
+    function get_property_in_url($url, $property){
+        if (!$url) return;
+        $parts = parse_url($url);
+        $query_string = $parts['query'];
+        parse_str($query_string, $query_array);
+        $cid = $query_array[$property];
+        return $cid;
+    }
+}
+
 if (! function_exists('currentHotel')) {
     function currentHotel (){
         $user = auth()->user();

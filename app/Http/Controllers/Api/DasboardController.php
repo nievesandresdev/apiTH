@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Stay;
+use App\Services\Apis\ApiReviewServices;
 use App\Utils\Enums\EnumResponse;
 use App\Services\QueryServices;
 use Illuminate\Support\Facades\Log;
@@ -12,12 +13,16 @@ use Illuminate\Http\Request;
 class DasboardController extends Controller
 {
     public $queryservice;
+    public $api_review_service;
+
 
     public function __construct(
         QueryServices $_queryservice,
+        ApiReviewServices $_api_review_service
 
     ) {
         $this->queryservice = $_queryservice;
+        $this->api_review_service = $_api_review_service;
     }
 
     public function dataCustomerExperience(Request $request)
@@ -30,12 +35,12 @@ class DasboardController extends Controller
                 ->where('hotel_id', $hotel->id)
                 ->get();
 
-            Log::info('Stays:', ['stays' => $stays]);
+            //Log::info('Stays:', ['stays' => $stays]);
 
             $p = $stays->map(function ($stay) {
                 $period = $this->queryservice->getCurrentPeriod($stay->hotel_id, $stay->id);
 
-                Log::info('Period and Guests Count:', ['period' => $period, 'guests_count' => $stay->guests_count]);
+                //Log::info('Period and Guests Count:', ['period' => $period, 'guests_count' => $stay->guests_count]);
 
                 return [
                     'period' => $period,
@@ -43,7 +48,7 @@ class DasboardController extends Controller
                 ];
             });
 
-            Log::info('Mapped Collection:', ['collection' => $p]);
+            //Log::info('Mapped Collection:', ['collection' => $p]);
 
             $count = $p->pluck('period')->countBy()->all(); // Contar cuántas veces se repite cada periodo
 
@@ -63,7 +68,7 @@ class DasboardController extends Controller
                 return $stay->guests->pluck('lang_web');
             })->countBy(); // Contar la cantidad de cada idioma
 
-            Log::info('Languages Count:', ['languages' => $languages]);
+            //Log::info('Languages Count:', ['languages' => $languages]);
 
             $totalGuests = $languages->sum(); // Total de huéspedes
             $languagePercentages = $languages->map(function ($count, $lang) use ($totalGuests) {
@@ -74,7 +79,7 @@ class DasboardController extends Controller
                 ];
             });
 
-            Log::info('Language Percentages:', ['languagePercentages' => $languagePercentages]);
+            //Log::info('Language Percentages:', ['languagePercentages' => $languagePercentages]);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'postStay' => $count['post-stay'] ?? 0,
@@ -109,7 +114,7 @@ class DasboardController extends Controller
                 ->withCount('guests')
                 ->get();
 
-            Log::info('Stays:', ['stays' => $stays]);
+            //Log::info('Stays:', ['stays' => $stays]);
 
             // consulta x periodo
             $inStayQueries = $stays->flatMap->queries->where('period', 'in-stay');
@@ -155,8 +160,8 @@ class DasboardController extends Controller
                 ]];
             });
 
-            Log::info('In-Stay Percentages:', ['inStay' => $inStayPercentages]);
-            Log::info('Post-Stay Percentages:', ['postStay' => $postStayPercentages]);
+           /*  Log::info('In-Stay Percentages:', ['inStay' => $inStayPercentages]);
+            Log::info('Post-Stay Percentages:', ['postStay' => $postStayPercentages]); */
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'inStay' => $inStayPercentages,
@@ -169,6 +174,17 @@ class DasboardController extends Controller
                 'message' => $e->getMessage()
             ], null, $e->getMessage());
         }
+    }
+
+    public function getDataReviewOTA(Request $request){
+
+        $hotel = $request->attributes->get('hotel');
+        $summary_reviews = $this->api_review_service->get_summary_reviews_otas($hotel);
+
+        return bodyResponseRequest(EnumResponse::SUCCESS, [
+            'summary_reviews' => $summary_reviews,
+            'hotel' => $hotel->name
+        ]);
     }
 
 
