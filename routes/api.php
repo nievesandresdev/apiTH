@@ -67,6 +67,8 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/getUsers', [UsersController::class, 'getUsers']);
         Route::get('/getUser', [UsersController::class, 'getUser']);
         Route::post('/delete', [UsersController::class, 'delete']);
+
+        Route::get('/get-subscription-status', [UsersController::class, 'getStatusSubscription']);
     });
 
     //dashboard
