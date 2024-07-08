@@ -183,7 +183,7 @@ class DasboardController extends Controller
 
         return bodyResponseRequest(EnumResponse::SUCCESS, [
             'summary_reviews' => $summary_reviews,
-            'hotel' => $hotel->name
+            'hotel' => $hotel
         ]);
     }
 
