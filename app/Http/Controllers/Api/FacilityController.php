@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\TypePlaces;
+use App\Models\FacilityHoster;
 
 use App\Services\HotelService;
 use App\Services\FacilityService;
@@ -105,6 +106,25 @@ class FacilityController extends Controller
         } catch (\Exception $e) {
             \DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
+        }
+    }
+
+    public function storeOrUpdate (Request $request) {
+        try {
+            // $f = FacilityHoster::find($request->id);
+            // return $f;
+            $hotelModel = $request->attributes->get('hotel');
+            \DB::beginTransaction();
+            $facilityHosterModel = $this->service->storeOrUpdate($request, $hotelModel);
+            // $this->service->processTranslate($request, $facilityHosterModel, $hotelModel);
+            $images = $request->images ?? [];
+            $this->service->updateImages($images, $facilityHosterModel, $hotelModel);
+            \DB::commit();
+            $data = [];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdate');
         }
     }
 

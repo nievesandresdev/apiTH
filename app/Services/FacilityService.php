@@ -9,9 +9,12 @@ use Carbon\Carbon;
 
 use App\Models\Facility;
 use App\Models\FacilityHoster;
+use App\Models\FacilityHosterLanguage;
 use App\Models\User;
 
 use App\Http\Resources\FacilityResource;
+
+use App\Jobs\TranslateModelJob;
 
 class FacilityService {
 
@@ -84,6 +87,99 @@ class FacilityService {
 
     public function updateVisible ($request, $facilityHosterModel) {
         $facilityHosterModel->update(['select' => $request->visible, 'order' => 0]);
+    }
+
+    public function storeOrUpdate ($request, $hotelModel) {
+        if($request->id){
+            $facilityHosterModel = FacilityHoster::find($request->id);
+            $facilityHosterModel->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                // 'schedule' =>  $request->schedule,
+                'schedules' => $request->schedules ? json_encode($request->schedules) : null,
+                'ad_tag' => $request->ad_tag ?? null,
+            ]);
+        }else{
+            $order = $hotelModel->facilities()->whereVisible()->count() - 1;
+            $facilityHosterModel  = FacilityHoster::create([
+                'title' => $request->title,
+                'description' => $request->description,
+                // 'schedule' =>  $request->schedule,
+                'status' => 1,
+                'select' => 1,
+                'user_id' =>  $hotelModel->user[0]->id,
+                'hotel_id' => $hotelModel->id,
+                'schedules' => $request->schedules ? json_encode($request->schedules) : null,
+                'ad_tag' => $request->ad_tag ?? null,
+                'order' => $order
+            ]);
+        }
+        $facilityHosterModel = $facilityHosterModel->refresh();
+        return $facilityHosterModel;
+    }
+
+    public function updateImages ($images, $facilityHosterModel) {
+        $images = collect($images ?? []);
+        $imagesNew = $images->filter(function ($item) {
+            return !isset($item['id']) || empty($item['id']);
+        });
+        $imagesOld = $images->filter(function ($item) {
+            return isset($item['id']);
+        });
+        $imagesCurrent = $facilityHosterModel->images ?? [];
+
+        $deletedIds = [];
+
+        if (count($imagesCurrent) > 0) {
+            $deletedIds = $imagesCurrent->filter(function ($childImg) use ($imagesOld) {
+                return empty($imagesOld->where('id', $childImg->id)->first());
+            })->map(function ($imgDelete) {
+                $id = $img_delete->id;
+                $imgDelete->delete();
+                return $id;
+            });
+        }
+
+        foreach ($imagesNew as $item) {
+            $facilityHosterModel->images()->create([
+                'url' => $item['url'],
+                'type' => $item['type']
+            ]);
+        }
+    }
+
+    public function processTranslate ($request, $facilityHosterModel, $hotelModel) {
+
+        $dirTemplateTranslate = 'translation/webapp/hotel_input/facility';
+        $inputsTranslate = ['title' => $request->title, 'description' => $request->description, 'schedule' => $request->ad_tag];
+        TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $facilityHosterModel);
+    }
+
+    public function updateTranslation ($model, $translation) {
+        try{
+            if (!$translation) return;
+            
+            foreach ($translation as $lg => $value) {
+                $title = !isset($value->title) || !$value->title || ($value->title == 'null') ? null : $value->title;
+                $description = !isset($value->description) || !$value->description || ($value->description == 'null') ? null : $value->description;
+                $schedule = !isset($value->schedule) || !$value->schedule || ($value->schedule == 'null') ? null : $value->schedule;
+                FacilityHosterLanguage::updateOrCreate([
+                    'language' => $lg,
+                    'facility_hoster_id' => $model['id'],
+                ],[
+                    'title' => $title,
+                    'description' => $description,
+                    'language' => $lg,
+                    'ad_tag' => $schedule,
+                    'facility_hoster_id' => $model['id'],
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            Log::error('updateTranslation:'.' '. $message);
+            return $e;
+        }
     }
     
 }
