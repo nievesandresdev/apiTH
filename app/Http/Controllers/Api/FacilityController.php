@@ -102,7 +102,7 @@ class FacilityController extends Controller
             $this->service->syncOrder($hotelModel);
             \DB::commit();
             $data = $facilityHosterModel->refresh();
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+            return bodyResponseRequest(EnumResponse::SUCCESS_OK);
         } catch (\Exception $e) {
             \DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
@@ -125,6 +125,19 @@ class FacilityController extends Controller
         } catch (\Exception $e) {
             \DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdate');
+        }
+    }
+
+    public function destroy ($id, Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            \DB::beginTransaction();
+            $this->service->delete($request->id, $hotelModel);
+            \DB::commit();
+            return bodyResponseRequest(EnumResponse::SUCCESS_OK);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.destroy');
         }
     }
 

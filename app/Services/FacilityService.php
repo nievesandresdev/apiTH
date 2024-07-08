@@ -134,7 +134,7 @@ class FacilityService {
             $deletedIds = $imagesCurrent->filter(function ($childImg) use ($imagesOld) {
                 return empty($imagesOld->where('id', $childImg->id)->first());
             })->map(function ($imgDelete) {
-                $id = $img_delete->id;
+                $id = $imgDelete->id;
                 $imgDelete->delete();
                 return $id;
             });
@@ -180,6 +180,11 @@ class FacilityService {
             Log::error('updateTranslation:'.' '. $message);
             return $e;
         }
+    }
+
+    public function delete ($id, $hotelModel) {
+        $facilityHosterModel = FacilityHoster::find($id);
+        $facilityHosterModel->update(['visible' => 0]);
     }
     
 }
