@@ -4,6 +4,8 @@ namespace App\Services\Apis;
 
 use App\Models\HotelOta;
 use App\Services\HttpClientService;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 
 
 class ApiReviewServices {
@@ -35,13 +37,13 @@ class ApiReviewServices {
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->KEY_API_REVIEW];
         $response_request = $http_client_service->make_request('get', "$URL_BASE_API_REVIEW/hotels/getSummaryReviewsOtas", $params, $headers, 60);
-        return [
+        /* return [
             'response_request' => $response_request,
             'hotel' => $hotel,
-            'cid' => $cid,
+            'cid' => $params,
             'url' => $URL_BASE_API_REVIEW.'/hotels/getSummaryReviewsOtas',
 
-        ];
+        ]; */
         // $response_request = null;
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {

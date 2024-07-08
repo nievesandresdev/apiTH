@@ -182,8 +182,7 @@ class DasboardController extends Controller
         $summary_reviews = $this->api_review_service->get_summary_reviews_otas($hotel);
 
         return bodyResponseRequest(EnumResponse::SUCCESS, [
-            'summary_reviews' => $summary_reviews,
-            'hotel' => $hotel
+            'summaryReviews' => $summary_reviews,
         ]);
     }
 
