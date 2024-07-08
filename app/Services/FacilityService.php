@@ -141,7 +141,7 @@ class FacilityService {
         }
 
         if ((count($facilityHosterModel->images) < 1) && !empty($hotelModel->image) && (count($imagesNew) < 1)) {
-            $imagesNew[] = ['url' => $hotel->image, 'type' => 'STORAGE'];
+            $imagesNew[] = ['url' => $hotelModel->image, 'type' => 'STORAGE'];
         }
 
         foreach ($imagesNew as $item) {
