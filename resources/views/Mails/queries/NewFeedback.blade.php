@@ -4,26 +4,7 @@
     <meta charset="UTF-8">
     <title>Nuevo Feedback</title>
     <style>
-        @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 400;
-            src: url('{{ asset('fonts/montserrat/Montserrat-Regular.ttf') }}') format('truetype');
-        }
-
-        @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 500;
-            src: url('{{ asset('fonts/montserrat/Montserrat-Medium.ttf') }}') format('truetype');
-        }
-
-        @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 700;
-            src: url('{{ asset('fonts/montserrat/Montserrat-Bold.ttf') }}') format('truetype');
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
 
         body {
             font-family: 'Montserrat', sans-serif;
@@ -65,9 +46,9 @@
         <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding: 20px;">
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                    <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-size: 16px; font-weight: 500;">
+                    <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-family: 'Montserrat', sans-serif; font-size: 16px; font-style: normal; font-weight: 500;">
                         <h1 style="margin: 0;">¡Feedback pendiente de respuesta!</h1>
-                        <p style="margin: 10px 0; font-weight: 400;">Un huésped ha brindado un feedback acerca de su experiencia en tu [tipo de alojamiento] [nombre alojamiento]</p>
+                        <p style="margin: 10px 0;">Un huésped ha brindado un feedback acerca de su experiencia en tu [tipo de alojamiento] [nombre alojamiento]</p>
                         <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Feedback</a>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
@@ -79,9 +60,9 @@
 
         <!-- Nueva sección añadida aquí -->
         <div style="background-color: white; padding: 20px; text-align: left; margin-top: 24px;">
-            <h2 style="margin: 0; font-weight: 700;">Feedback en Stay</h2>
+            <h2 style="margin: 0;">Feedback en Stay</h2>
             <p style="margin: 10px 0; font-weight: 700;">Rosa</p>
-            <p style="margin: 10px 0; font-weight: 400;">
+            <p style="margin: 10px 0;">
                 <img src="{{ asset('icons/flags/es.svg') }}" alt="Idioma original" style="vertical-align: middle; margin-right: 5px;">
                 Idioma original: <span style="font-weight: 400;">Francés</span>
             </p>
