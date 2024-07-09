@@ -50,7 +50,7 @@
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
                     <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-family: 'Montserrat', sans-serif; font-size: 16px; font-style: normal; font-weight: 500;">
-                        <h1 style="margin: 0;">¡Bienvenido a Thehoster!</h1>
+                        <h1 style="margin: 0;">¡Bienvenido a TheHoster!</h1>
                         <p style="margin: 10px 0;">[Nombre del usuario] ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
                         <p style="margin: 10px 0; font-weight: 700;">¡Gracias por elegirnos!</p>
                     </td>

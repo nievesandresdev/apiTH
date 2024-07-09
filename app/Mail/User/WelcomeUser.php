@@ -35,8 +35,12 @@ class WelcomeUser extends Mailable
         $subject = 'Welcome User';
 
 
-        return $this->from("no-reply@thehoster.es", "Hoster Team")
-                    ->subject($subject)->view('Mails.users.welcome');
+        /* return $this->from("no-reply@thehoster.es", "Hoster Team")
+                    ->subject($subject)->view('Mails.users.welcome'); */
+
+                    return $this->from("no-reply@thehoster.es", "Hoster Team")
+                    ->subject($subject)->view('Mails.Queries.NewFeedback');
+
 
     }
 
