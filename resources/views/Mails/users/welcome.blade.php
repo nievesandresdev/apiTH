@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Bienvenido a Thehoster</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
         @media only screen and (max-width: 600px) {
             .responsive-table, .responsive-table-2 {
                 width: 100% !important;
@@ -21,7 +25,7 @@
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background: #ffffff;">
+<body style="margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; background: #ffffff;">
     <div style="width: 100%; max-width: 600px; margin: 0 auto;">
         <div style="background-color: white; padding: 20px; text-align: center;">
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
@@ -45,15 +49,15 @@
         <div style="background-color: white; padding: 20px; text-align: center;">
             <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                    <td style="width: 50%; vertical-align: top; padding-right: 20px;">
+                    <td style="width: 40%; vertical-align: top; padding-right: 20px;">
                         <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: auto; border-radius: 8px;">
                     </td>
-                    <td class="text-content" style="width: 50%; vertical-align: top; text-align: left;">
+                    <td class="text-content" style="width: 60%; vertical-align: top; text-align: left;">
                         <h2 style="margin: 0;">Datos de acceso</h2>
-                        <p style="margin: 10px 0;">Estas son tus credenciales de acceso a la plataforma.</p>
-                        <p style="margin: 10px 0;"><strong>Usuario:</strong> [mail@mail.com]</p>
-                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> [wef9123sdjinql]</p>
-                        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px;">Entrar a Thehoster</a>
+                        <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
+                        <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">[mail@mail.com]</span></p>
+                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">[wef9123sdjinql]</span></p>
+                        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 600;">Entrar a Thehoster</a>
                     </td>
                 </tr>
             </table>
