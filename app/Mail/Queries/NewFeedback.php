@@ -41,6 +41,6 @@ class NewFeedback extends Mailable
         }
         return $this->from("no-reply@thehoster.es", $this->hotel['sender_for_sending_email'])
                     ->subject($typeTitle)->view('Mails.queries.NewFeedback');
-        
+
     }
 }
