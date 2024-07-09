@@ -39,7 +39,7 @@ class WelcomeUser extends Mailable
                     ->subject($subject)->view('Mails.users.welcome'); */
 
                     return $this->from("no-reply@thehoster.es", "Hoster Team")
-                    ->subject($subject)->view('mails.queries.newfeedback');
+                    ->subject($subject)->view('Mails.queries.NewFeedback');
 
 
     }
