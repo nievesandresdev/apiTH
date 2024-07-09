@@ -22,6 +22,7 @@ class HotelBasicDataResource extends JsonResource
         return [
             "id"=> $this->id,
             "name"=> $this->name,
+            "subdomain"=> $this->subdomain,
             "type"=> $this->type,
             "zone"=> $this->zone,
             "image"=> $this->image,
