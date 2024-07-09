@@ -1,0 +1,16 @@
+<svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Flags">
+<g clip-path="url(#clip0_2073_5339)">
+<path id="Vector" d="M0 0H22V16H0V0Z" fill="#012169"/>
+<path id="Vector_2" d="M2.57812 0L10.9656 6.03333L19.3188 0H22V2.06667L13.75 8.03333L22 13.9667V16H19.25L11 10.0333L2.78437 16H0V14L8.21562 8.06667L0 2.13333V0H2.57812Z" fill="white"/>
+<path id="Vector_3" d="M14.575 9.36667L22 14.6667V16L12.6844 9.36667H14.575ZM8.25 10.0333L8.45625 11.2L1.85625 16H0L8.25 10.0333ZM22 0V0.1L13.4406 6.36667L13.5094 4.9L20.2812 0H22ZM0 0L8.21562 5.86667H6.15313L0 1.4V0Z" fill="#C8102E"/>
+<path id="Vector_4" d="M8.28438 0V16H13.7844V0H8.28438ZM0 5.33333V10.6667H22V5.33333H0Z" fill="white"/>
+<path id="Vector_5" d="M0 6.43333V9.63333H22V6.43333H0ZM9.38438 0V16H12.6844V0H9.38438Z" fill="#C8102E"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_2073_5339">
+<rect width="22" height="16" rx="2" fill="white"/>
+</clipPath>
+</defs>
+</svg>
