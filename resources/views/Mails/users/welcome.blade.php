@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>Bienvenido a Thehoster</title>
     <style>
-        @media screen and (max-width: 600px) {
+        @media only screen and (max-width: 600px) {
             .flex-container {
-                flex-direction: column !important;
+                display: block !important;
                 text-align: center !important;
             }
             .flex-item {
+                width: 100% !important;
                 margin-bottom: 20px !important;
                 padding: 0 !important;
                 text-align: center !important;
