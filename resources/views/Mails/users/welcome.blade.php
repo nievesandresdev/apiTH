@@ -75,10 +75,10 @@
             <img src="{{ asset('mails/logo-white.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto 20px;">
             <div style="margin-bottom: 20px;">
                 <a href="#" style="margin: 0 10px; display: inline-block;">
-                    <img src="{{ asset('mails/linkedin.svg') }}" alt="LinkedIn" style="width: 24px; height: 24px;">
+                    <img src="{{ asset('mails/linkedin.png') }}" alt="LinkedIn" style="width: 24px; height: 24px;">
                 </a>
                 <a href="#" style="margin: 0 10px; display: inline-block;">
-                    <img src="{{ asset('mails/web.svg') }}" alt="Website" style="width: 24px; height: 24px;">
+                    <img src="{{ asset('mails/web.png') }}" alt="Website" style="width: 24px; height: 24px;">
                 </a>
             </div>
             <div style="margin-bottom: 12px;">
