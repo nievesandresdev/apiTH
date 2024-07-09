@@ -26,6 +26,15 @@ class HotelService {
         $this->translateService = $_TranslateService;
     }
 
+    public function getAll ($request, $modelHotel) {
+
+        $user = $modelHotel->user[0];
+
+        $hotelsCollection = $user->hotel;
+
+        return $hotelsCollection;
+    }
+
     public function findByParams ($request) {
         try {
             $subdomain = $request->subdomain ?? null;

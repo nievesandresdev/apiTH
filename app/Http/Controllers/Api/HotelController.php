@@ -18,6 +18,7 @@ use App\Http\Resources\HotelResource;
 use App\Http\Resources\FacilityResource;
 use App\Http\Resources\ExperienceResource;
 use App\Http\Resources\PlaceResource;
+use App\Http\Resources\HotelBasicDataResource;
 
 use App\Utils\Enums\EnumResponse;
 
@@ -38,6 +39,18 @@ class HotelController extends Controller
         $this->serviceExperience = $_ExperienceService;
         $this->servicePlace = $_PlaceService;
         $this->cityService = $_CityService;
+    }
+
+    public function getAll (Request $request) {
+        try {
+            $modelHotel = $request->attributes->get('hotel');
+            $hotelsCollection = $this->service->getAll($request, $modelHotel);
+            $data = HotelBasicDataResource::collection($hotelsCollection);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
+        }
     }
 
     public function findByParams (Request $request) {
