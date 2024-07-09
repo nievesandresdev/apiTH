@@ -46,7 +46,7 @@
                         <p style="margin: 10px 0;">¡Gracias por elegirnos!</p>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
-                        <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="width: 255px; height: 240px;">
+                        <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="width: 228px; height: 240px;">
                     </td>
                 </tr>
             </table>
@@ -57,7 +57,7 @@
             <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
                 <tr>
                     <td style="width: 40%; vertical-align: top; padding-right: 20px;">
-                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 188px; border-radius: 8px; max-height: 300px;" class="image-frame">
+                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 187px; border-radius: 8px; max-height: 300px;" class="image-frame">
                     </td>
                     <td class="text-content" style="width: 60%; vertical-align: top; text-align: left; font-family: 'Montserrat', sans-serif;">
                         <h2 style="margin: 0;">Datos de acceso</h2>
