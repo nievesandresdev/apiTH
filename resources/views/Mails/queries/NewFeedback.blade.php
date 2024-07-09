@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Nuevo Feedback</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
 
         body {
             font-family: 'Montserrat', sans-serif;
