@@ -4,7 +4,26 @@
     <meta charset="UTF-8">
     <title>Nuevo Feedback</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 400;
+            src: url('{{ asset('fonts/montserrat/Montserrat-Regular.ttf') }}') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 500;
+            src: url('{{ asset('fonts/montserrat/Montserrat-Medium.ttf') }}') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 700;
+            src: url('{{ asset('fonts/montserrat/Montserrat-Bold.ttf') }}') format('truetype');
+        }
 
         body {
             font-family: 'Montserrat', sans-serif;
