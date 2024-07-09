@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Bienvenido a Thehoster</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 400;
+            src: url('https://fonts.gstatic.com/s/montserrat/v14/4qM2l7RhNmFtD8Kka4bVZ0EAvth_LlrfE80CYdSH47w.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 600;
+            src: url('https://fonts.gstatic.com/s/montserrat/v14/4qM2l7RhNmFtD8Kka4bVZ0EAvth_LlrfE80CYdSH47w.woff2') format('woff2');
+        }
         body {
             font-family: 'Montserrat', sans-serif;
         }
@@ -21,6 +32,10 @@
             }
             .responsive-table .text-content, .responsive-table-2 .text-content {
                 text-align: left !important;
+            }
+            .full-width-button {
+                width: 100% !important;
+                box-sizing: border-box !important;
             }
         }
     </style>
@@ -57,7 +72,7 @@
                         <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
                         <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">[mail@mail.com]</span></p>
                         <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">[wef9123sdjinql]</span></p>
-                        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 600;">Entrar a Thehoster</a>
+                        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 600; width: 100%; box-sizing: border-box;">Entrar a Thehoster</a>
                     </td>
                 </tr>
             </table>
