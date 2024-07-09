@@ -5,8 +5,8 @@
     <title>Bienvenido a Thehoster</title>
     <style>
         @media screen and (max-width: 600px) {
-            .flex-container {
-                flex-direction: column !important;
+            .grid-container {
+                grid-template-columns: 1fr !important;
             }
         }
     </style>
@@ -17,14 +17,14 @@
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
         </div>
         <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding: 20px;">
-            <div class="flex-container" style="display: flex; align-items: center;">
-                <div style="color: white; padding-right: 20px; flex: 1; text-align: left;">
+            <div class="grid-container" style="display: grid; grid-template-columns: 2fr 3fr; align-items: center;">
+                <div style="color: white; padding-right: 20px; text-align: right;">
                     <h1 style="margin: 0;">¡Bienvenido a Thehoster!</h1>
                     <p style="margin: 10px 0;">[Nombre del usuario] ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
                     <p style="margin: 10px 0;">¡Gracias por elegirnos!</p>
                 </div>
-                <div style="text-align: center; flex: 1;">
-                    <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="max-width: 100%; height: auto;">
+                <div style="text-align: center;">
+                    <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="width: 100%; height: auto;">
                 </div>
             </div>
         </div>
