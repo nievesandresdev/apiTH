@@ -7,7 +7,7 @@
         @media screen and (max-width: 600px) {
             .grid-container {
                 display: grid !important;
-                grid-template-columns: 1fr !important;
+                grid-template-columns: 2fr !important;
                 text-align: center !important;
             }
             .grid-item {
@@ -22,7 +22,7 @@
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
         </div>
         <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding: 20px;">
-            <div class="grid-container" style="display: grid; grid-template-columns: 1fr 1fr; align-items: center;">
+            <div class="grid-container" style="display: grid; grid-template-columns: 2fr 2fr; align-items: center;">
                 <div class="grid-item" style="color: white; padding-right: 40px; text-align: left;">
                     <h1 style="margin: 0;">¡Bienvenido a Thehoster!</h1>
                     <p style="margin: 10px 0;">[Nombre del usuario] ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
