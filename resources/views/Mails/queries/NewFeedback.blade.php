@@ -59,11 +59,11 @@
         </div>
 
         <!-- Nueva sección añadida aquí -->
-        <div style="background-color: white; padding: 20px; text-align: center; margin-top: 24px;">
+        <div style="background-color: white; padding: 20px; text-align: left; margin-top: 24px;">
             <h2 style="margin: 0;">Feedback en Stay</h2>
             <p style="margin: 10px 0; font-weight: 700;">Rosa</p>
             <p style="margin: 10px 0;">
-                <img src="{{ asset('icons/flags/fr.png') }}" alt="Idioma original" style="vertical-align: middle; margin-right: 5px;">
+                <img src="{{ asset('icons/flags/es.svg') }}" alt="Idioma original" style="vertical-align: middle; margin-right: 5px;">
                 Idioma original: <span style="font-weight: 400;">Francés</span>
             </p>
             <p style="margin: 10px 0; font-weight: 700;">¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?</p>
