@@ -4,21 +4,6 @@
     <meta charset="UTF-8">
     <title>Bienvenido a Thehoster</title>
     <style>
-        @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 400;
-            src: url('https://fonts.gstatic.com/s/montserrat/v14/4qM2l7RhNmFtD8Kka4bVZ0EAvth_LlrfE80CYdSH47w.woff2') format('woff2');
-        }
-        @font-face {
-            font-family: 'Montserrat';
-            font-style: normal;
-            font-weight: 600;
-            src: url('https://fonts.gstatic.com/s/montserrat/v14/4qM2l7RhNmFtD8Kka4bVZ0EAvth_LlrfE80CYdSH47w.woff2') format('woff2');
-        }
-        body {
-            font-family: 'Montserrat', sans-serif;
-        }
         @media only screen and (max-width: 600px) {
             .responsive-table, .responsive-table-2 {
                 width: 100% !important;
@@ -36,19 +21,20 @@
             .full-width-button {
                 width: 100% !important;
                 box-sizing: border-box !important;
+                text-align: center !important;
             }
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; background: #ffffff;">
-    <div style="width: 100%; max-width: 600px; margin: 0 auto;">
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background: #ffffff;">
+    <div style="width: 100%; max-width: 600px; margin: 0 auto; font-family: 'Montserrat', sans-serif;">
         <div style="background-color: white; padding: 20px; text-align: center;">
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
         </div>
         <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding: 20px;">
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                    <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top;">
+                    <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-family: 'Montserrat', sans-serif;">
                         <h1 style="margin: 0;">¡Bienvenido a Thehoster!</h1>
                         <p style="margin: 10px 0;">[Nombre del usuario] ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
                         <p style="margin: 10px 0;">¡Gracias por elegirnos!</p>
@@ -67,12 +53,12 @@
                     <td style="width: 40%; vertical-align: top; padding-right: 20px;">
                         <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: auto; border-radius: 8px;">
                     </td>
-                    <td class="text-content" style="width: 60%; vertical-align: top; text-align: left;">
+                    <td class="text-content" style="width: 60%; vertical-align: top; text-align: left; font-family: 'Montserrat', sans-serif;">
                         <h2 style="margin: 0;">Datos de acceso</h2>
                         <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
                         <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">[mail@mail.com]</span></p>
                         <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">[wef9123sdjinql]</span></p>
-                        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 600; width: 100%; box-sizing: border-box;">Entrar a Thehoster</a>
+                        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center;">Entrar a Thehoster</a>
                     </td>
                 </tr>
             </table>
