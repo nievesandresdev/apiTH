@@ -16,7 +16,7 @@ Route::group(['prefix' => 'stay'], function () {
     Route::post('/deleteGuestOfStay/{stayId}/{guestId}', [StayController::class, 'deleteGuestOfStay']);
 
     Route::group(['prefix' => 'hoster'], function () {
-        Route::get('/getAllByHotel', [StayHosterController::class, 'getAllByHotel']);
+        Route::post('/getAllByHotel', [StayHosterController::class, 'getAllByHotel']);
     });
 });
 

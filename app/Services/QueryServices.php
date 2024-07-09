@@ -36,7 +36,7 @@ class QueryServices {
         $this->requestSettings = $_RequestSettingService;
 
     }
-
+    
     public function findByParams ($request) {
         try {
             $stayId = $request->stayId ?? null;
@@ -152,7 +152,7 @@ class QueryServices {
                         ->where('guest_id', $guestId)
                         ->get();
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.firstOrCreate');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getResponses');
         }
     }
 
