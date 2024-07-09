@@ -16,7 +16,7 @@
                 padding: 10px 0 !important;
             }
             .responsive-table .text-content {
-                text-align: right !important;
+                text-align: left !important;
             }
         }
     </style>
