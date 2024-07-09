@@ -5,6 +5,9 @@
     <title>Bienvenido a Thehoster</title>
     <style>
         @media only screen and (max-width: 600px) {
+            body {
+                background-color: #ffffff !important;
+            }
             .responsive-table, .responsive-table-2 {
                 width: 100% !important;
                 display: block !important;
@@ -23,10 +26,13 @@
                 box-sizing: border-box !important;
                 text-align: center !important;
             }
+            .image-frame {
+                height: auto !important;
+            }
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background: #ffffff;">
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #FAFAFA;">
     <div style="width: 100%; max-width: 600px; margin: 0 auto; font-family: 'Montserrat', sans-serif;">
         <div style="background-color: white; padding: 20px; text-align: center;">
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
@@ -48,10 +54,10 @@
 
         <!-- Nueva sección añadida aquí -->
         <div style="background-color: white; padding: 20px; text-align: center;">
-            <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
                 <tr>
                     <td style="width: 40%; vertical-align: top; padding-right: 20px;">
-                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: auto; border-radius: 8px;">
+                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 188px; border-radius: 8px; max-height: 300px;" class="image-frame">
                     </td>
                     <td class="text-content" style="width: 60%; vertical-align: top; text-align: left; font-family: 'Montserrat', sans-serif;">
                         <h2 style="margin: 0;">Datos de acceso</h2>
