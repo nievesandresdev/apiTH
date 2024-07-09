@@ -69,6 +69,9 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/delete', [UsersController::class, 'delete']);
 
         Route::get('/get-subscription-status', [UsersController::class, 'getStatusSubscription']);
+
+        //test mail
+        Route::get('/testMail', [UsersController::class, 'testMail']);
     });
 
     //dashboard

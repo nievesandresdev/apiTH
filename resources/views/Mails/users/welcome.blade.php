@@ -2,7 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nuevo Feedback</title>
+    <title>Bienvenido a Thehoster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
 
@@ -47,32 +50,33 @@
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
                     <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-family: 'Montserrat', sans-serif; font-size: 16px; font-style: normal; font-weight: 500;">
-                        <h1 style="margin: 0;">¡Feedback pendiente de respuesta!</h1>
-                        <p style="margin: 10px 0;">Un huésped ha brindado un feedback acerca de su experiencia en tu [tipo de alojamiento] [nombre alojamiento]</p>
-                        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Feedback</a>
+                        <h1 style="margin: 0;">¡Bienvenido a TheHoster!</h1>
+                        <p style="margin: 10px 0;">[Nombre del usuario] ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
+                        <p style="margin: 10px 0; font-weight: 700;">¡Gracias por elegirnos!</p>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
-                        <img src="{{ asset('mails/feedback.png') }}" alt="Feedback Image" style="width: 227px; height: 240px;">
+                        <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px;">
                     </td>
                 </tr>
             </table>
         </div>
 
         <!-- Nueva sección añadida aquí -->
-        <div style="background-color: white; padding: 20px; text-align: left; margin-top: 24px;">
-            <h2 style="margin: 0;">Feedback en Stay</h2>
-            <p style="margin: 10px 0; font-weight: 700;">Rosa</p>
-            <p style="margin: 10px 0;">
-                <img src="{{ asset('icons/flags/es.svg') }}" alt="Idioma original" style="vertical-align: middle; margin-right: 5px;">
-                Idioma original: <span style="font-weight: 400;">Francés</span>
-            </p>
-            <p style="margin: 10px 0; font-weight: 700;">¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?</p>
-            <div style="display: flex; align-items: center; margin: 10px 0;">
-                <img src="{{ asset('icons/reviews/GOOD.svg') }}" alt="Satisfacción" style="width: 24px; height: 24px; margin-right: 10px;">
-                <p style="margin: 0; text-align: left; font-weight: 400;">Normal. Le personnel est venu dans la chambre car ma climatisation ne fonctionnait pas correctement. Ils l'avaient réparé mais au bout de dix minutes il s'est encore cassé, la chaleur est insupportable</p>
-            </div>
-            <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender feedback</a>
-            <p style="margin: 10px 0; font-weight: 400; color: #A0A0A0;">Nota: En la plataforma podrás ver el mensaje en el idioma de elijas</p>
+        <div style="background-color: white; padding: 20px; text-align: center; margin-top: 24px;">
+            <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
+                <tr>
+                    <td style="width: 40%; vertical-align: top; padding-right: 20px;">
+                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 187px; border-radius: 8px; max-height: 300px;" class="image-frame">
+                    </td>
+                    <td class="text-content" style="width: 60%; vertical-align: top; text-align: left; font-family: 'Montserrat', sans-serif;">
+                        <h2 style="margin: 0;">Datos de acceso</h2>
+                        <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
+                        <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">[mail@mail.com]</span></p>
+                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">[wef9123sdjinql]</span></p>
+                        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center;">Entrar a Thehoster</a>
+                    </td>
+                </tr>
+            </table>
         </div>
 
         <!-- Footer -->
