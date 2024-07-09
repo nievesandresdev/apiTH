@@ -15,6 +15,9 @@
                 text-align: center !important;
                 padding: 10px 0 !important;
             }
+            .responsive-table .text-content {
+                text-align: right !important;
+            }
         }
     </style>
 </head>
@@ -26,7 +29,7 @@
         <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding: 20px;">
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                    <td style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top;">
+                    <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top;">
                         <h1 style="margin: 0;">¡Bienvenido a Thehoster!</h1>
                         <p style="margin: 10px 0;">[Nombre del usuario] ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
                         <p style="margin: 10px 0;">¡Gracias por elegirnos!</p>
