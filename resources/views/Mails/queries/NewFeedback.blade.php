@@ -6,9 +6,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-        }
+
 
         @media only screen and (max-width: 600px) {
             body {
@@ -59,7 +57,7 @@
         </div>
 
         <!-- Nueva sección añadida aquí -->
-        <div style="background-color: white; padding: 20px; text-align: left; margin-top: 24px;">
+        <div style="background-color: white; padding: 20px; text-align: center; margin-top: 24px;">
             <h2 style="margin: 0;">Feedback en Stay</h2>
             <p style="margin: 10px 0; font-weight: 700;">Rosa</p>
             <p style="margin: 10px 0;">
