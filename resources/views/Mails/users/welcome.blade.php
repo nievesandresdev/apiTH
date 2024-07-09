@@ -17,7 +17,7 @@
                     <p style="margin: 10px 0;">¡Gracias por elegirnos!</p>
                 </div>
                 <div style="text-align: center; flex: 1;">
-                    <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="width: 216px; height: 240px;">
+                    <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="width: 350px; height: 240px;">
                 </div>
             </div>
         </div>
