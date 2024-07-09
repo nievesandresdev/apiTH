@@ -45,7 +45,7 @@ class HotelResource extends JsonResource
             "show_profile"=> $this->show_profile,
             "name_short"=> $this->name_short,
             "slug"=> $this->slug,
-            "subscription_active"=> $this->subscription_active,
+            // "subscription_active"=> $this->subscription_active,
             "logo"=> $this->logo,
             "url_google"=> $this->url_google,
             "website_google"=> $this->website_google,

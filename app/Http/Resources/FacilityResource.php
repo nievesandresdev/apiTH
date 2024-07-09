@@ -18,10 +18,12 @@ class FacilityResource extends JsonResource
             $title = $this->title;
             $description = $this->description;
             $schedule = $this->schedule;
+            $ad_tag = $this->ad_tag;
         } else {
             $title = $this->translate->title ?? null;
             $description = $this->translate->description ?? null;
             $schedule = $this->translate->schedule ?? null;
+            $ad_tag = $this->translate->ad_tag ?? null;
         }
         return [
             'id' => $this->id,
@@ -35,7 +37,7 @@ class FacilityResource extends JsonResource
             'status' => $this->status,
             'schedules' => $this->schedules,
             'always_open' => $this->always_open,
-            'ad_tag' => $this->ad_tag,
+            'ad_tag' => $ad_tag,
             'order' => $this->order,
         ];
     }

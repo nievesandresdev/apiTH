@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Utils\Enums\EnumResponse;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use App\Services\MailService;
+use App\Mail\User\WelcomeUser;
 use App\Models\User;
 
 
@@ -15,11 +17,13 @@ class UsersController extends Controller
 {
     protected $userServices;
     protected $profileServices;
+    protected $mailService;
 
-    public function __construct(UserServices $userServices, ProfileServices $profileServices)
+    public function __construct(UserServices $userServices, ProfileServices $profileServices,MailService $_MailService)
     {
         $this->userServices = $userServices;
         $this->profileServices = $profileServices;
+        $this->mailService = $_MailService;
     }
 
     public function getUsers()
@@ -160,6 +164,35 @@ class UsersController extends Controller
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Usuario eliminado con éxito',
                 'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
+
+    public function getStatusSubscription(Request $request){
+        try{
+            $user = $this->userServices->getUserId();
+            $hotel = $request->attributes->get('hotel');
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'status' => $user->status_subscription($hotel),
+            ]);
+        }catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
+
+    public function testMail(){
+        try {
+            $this->mailService->sendEmail(new WelcomeUser(), "francisco20990@gmail.com");
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Correo enviado con éxito',
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [

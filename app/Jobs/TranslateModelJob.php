@@ -30,7 +30,6 @@ class TranslateModelJob implements ShouldQueue
 
     public function handle()
     {
-        \Log::info("handle TranslateJob: prueba");
         try {
             if (empty($this->model)) {
                 \Log::error("no existe el modelo");
@@ -38,12 +37,12 @@ class TranslateModelJob implements ShouldQueue
             ini_set('max_execution_time', '2400');
             
             $translateService = new TranslateService();
-            $responseRranslation = $translateService->load([
+            $responseTranslation = $translateService->load([
                 'dirTemplate' => $this->dirTemplate,
                 'context' => $this->inputsTranslate,
                 'languageCodes' => getAllLanguages(),
             ]);
-            $translation = $responseRranslation['translation'] ?? [];
+            $translation = $responseTranslation['translation'] ?? [];
             $this->service->updateTranslation($this->model, $translation);
 
         } catch (\Exception $e) {
@@ -51,4 +50,4 @@ class TranslateModelJob implements ShouldQueue
         }
     }
 
-}`
+}

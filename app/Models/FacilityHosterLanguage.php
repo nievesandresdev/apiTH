@@ -15,6 +15,7 @@ class FacilityHosterLanguage extends Model
         'facility_hoster_id',
         'language',
         'schedule',
+        'ad_tag',
     ];
 
 }
