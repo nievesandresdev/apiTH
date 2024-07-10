@@ -83,6 +83,7 @@ class UsersController extends Controller
             // Si la validación pasa, proceder a crear el usuario
             $user = $this->userServices->storeUserHoster(request());
 
+
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Usuario creado con éxito',
                 'user' => $user
@@ -197,15 +198,12 @@ class UsersController extends Controller
 
     public function testMail(Request $request){
         try {
-            $hotel = $request->attributes->get('hotel');
-            $settings = $this->settings->getAll($hotel->id);
-            $guest = Guest::find(188);
-            //$this->mailService->sendEmail(new WelcomeUser(), "francisco20990@gmail.com");
+            $url = config('app.hoster_url');
+            $user = User::findOrFail(2);
+            $this->mailService->sendEmail(new WelcomeUser($user,$url,'20990397'), "francisco20990@gmail.com");
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
-                'settings' => $settings,
-                'guest' => $guest
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [

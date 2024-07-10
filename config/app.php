@@ -58,6 +58,7 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
     'guest_path' => env('LOCAL_GUEST_URL', 'http://localhost'),
     'asset_url' => env('ASSET_URL'),
+    'hoster_url' => env('HOSTER_URL'),
     'url_base_api_review' => env('URL_BASE_API_REVIEW',null),
     'key_api_review' => env('KEY_API_REVIEW',null),
     //OPENAI

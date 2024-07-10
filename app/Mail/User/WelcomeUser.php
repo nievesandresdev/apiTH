@@ -13,33 +13,29 @@ class WelcomeUser extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $user;
+    public $url;
+    public $password;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($user,$url,$password)
     {
-        //
+        $this->user = $user;
+        $this->url = $url;
+        $this->password = $password;
     }
 
 
     public function build()
     {
-       /*  if($this->guest){
-            $subject = 'Hola '.$this->guest_name.', prueba la WebApp de '.$this->hotel->name.' ' ;
-        }else if($this->create){
-            $subject = 'Explora y disfruta la ciudad junto a '. $this->hotel->name;
-        }else{
-            $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
-        } */
 
-        $subject = 'Welcome User';
+        $subject = 'Bienvendio a TheHoster';
 
 
-        /* return $this->from("no-reply@thehoster.es", "Hoster Team")
-                    ->subject($subject)->view('Mails.users.welcome'); */
-
-                    return $this->from("no-reply@thehoster.es", "Hoster Team")
-                    ->subject($subject)->view('Mails.queries.NewFeedback');
+        return $this->from("no-reply@thehoster.es", "Hoster Team")
+                    ->subject($subject)->view('Mails.users.welcome');
 
 
     }

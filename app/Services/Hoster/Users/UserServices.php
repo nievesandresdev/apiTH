@@ -4,6 +4,8 @@ namespace App\Services\Hoster\Users;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Mail\User\WelcomeUser;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use App\Services\Hoster\Users\ProfileServices;
 
@@ -382,6 +384,7 @@ class UserServices
 
     public function storeUserHoster($request)
     {
+        $url = config('app.hoster_url');
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -396,6 +399,8 @@ class UserServices
         $this->profileServices->handleProfileHoster($request, $user);
 
         $this->storeHotelsUser($request, $user);
+
+        Mail::to($user['email'])->send(new WelcomeUser($user,$url,$request->password));
 
         return $user ?? false;
     }

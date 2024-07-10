@@ -38,6 +38,18 @@
             .image-frame {
                 height: auto !important;
             }
+
+            .div-normal {
+                display: none;
+            }
+
+            .div-responsive {
+                display: block !important;
+            }
+        }
+
+        .div-responsive {
+            display: none;
         }
     </style>
 </head>
@@ -51,7 +63,7 @@
                 <tr>
                     <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-family: 'Montserrat', sans-serif; font-size: 16px; font-style: normal; font-weight: 500;">
                         <h1 style="margin: 0;">¡Bienvenido a TheHoster!</h1>
-                        <p style="margin: 10px 0;">[Nombre del usuario] ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
+                        <p style="margin: 10px 0;">{{$user->username}}</p> ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
                         <p style="margin: 10px 0; font-weight: 700;">¡Gracias por elegirnos!</p>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
@@ -62,7 +74,7 @@
         </div>
 
         <!-- Nueva sección añadida aquí -->
-        <div style="background-color: white; padding: 20px; text-align: center; margin-top: 24px;">
+        <div style="background-color: white; padding: 20px; text-align: center; margin-top: 24px;" class="div-normal">
             <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
                 <tr>
                     <td style="width: 40%; vertical-align: top; padding-right: 20px;">
@@ -71,9 +83,28 @@
                     <td class="text-content" style="width: 60%; vertical-align: top; text-align: left; font-family: 'Montserrat', sans-serif;">
                         <h2 style="margin: 0;">Datos de acceso</h2>
                         <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
-                        <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">[mail@mail.com]</span></p>
-                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">[wef9123sdjinql]</span></p>
-                        <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center;">Entrar a Thehoster</a>
+                        <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">{{ $user->email }}</span></p>
+                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">{{ $password }}</span></p>
+                        <a href="{{ $url }}" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center;">Entrar a Thehoster</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="background-color: white; padding: 20px; text-align: center; margin-top: 24px;" class="div-responsive">
+            <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
+                <tr>
+                    <td class="text-content order-1" style="width: 60%; vertical-align: top; text-align: left; font-family: 'Montserrat', sans-serif;">
+                        <h2 style="margin: 0;">Datos de acceso</h2>
+                        <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
+                        <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">{{ $user->email }}</span></p>
+                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">{{ $password }}</span></p>
+                    </td>
+                    <td class="text-content order-2" style="width: 60%; vertical-align: top;">
+                        <a href="{{ $url }}" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center;">Entrar a Thehoster</a>
+                    </td>
+                    <td class="order-3" style="width: 40%; vertical-align: top; padding-right: 20px;">
+                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 187px; border-radius: 8px; max-height: 300px;" class="image-frame">
                     </td>
                 </tr>
             </table>
