@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Api\Users;
 
 use App\Http\Controllers\Controller;
 use App\Services\Hoster\Users\{UserServices, ProfileServices};
+use App\Services\QueryServices;
+use App\Services\QuerySettingsServices;
 use Illuminate\Support\Facades\Hash;
 use App\Utils\Enums\EnumResponse;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use App\Services\MailService;
 use App\Mail\User\WelcomeUser;
+use App\Models\Guest;
 use App\Models\User;
 
 
@@ -18,12 +21,17 @@ class UsersController extends Controller
     protected $userServices;
     protected $profileServices;
     protected $mailService;
+    protected $serviceQuery;
+    protected $settings;
 
-    public function __construct(UserServices $userServices, ProfileServices $profileServices,MailService $_MailService)
+
+    public function __construct(UserServices $userServices, ProfileServices $profileServices,MailService $_MailService,QueryServices $serviceQuery,QuerySettingsServices $_QuerySettingsServices,)
     {
         $this->userServices = $userServices;
         $this->profileServices = $profileServices;
         $this->mailService = $_MailService;
+        $this->serviceQuery = $serviceQuery;
+        $this->settings = $_QuerySettingsServices;
     }
 
     public function getUsers()
@@ -187,12 +195,17 @@ class UsersController extends Controller
         }
     }
 
-    public function testMail(){
+    public function testMail(Request $request){
         try {
-            $this->mailService->sendEmail(new WelcomeUser(), "francisco20990@gmail.com");
+            $hotel = $request->attributes->get('hotel');
+            $settings = $this->settings->getAll($hotel->id);
+            $guest = Guest::find(188);
+            //$this->mailService->sendEmail(new WelcomeUser(), "francisco20990@gmail.com");
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
+                'settings' => $settings,
+                'guest' => $guest
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [

@@ -278,6 +278,33 @@ class UserServices
     }
 
 
+    function getUsersHotelBasicData($hotelId)
+    {
+        $queryUsers = User::whereHas('hotel', function ($query) use ($hotelId) {
+            $query->where('hotel_id', $hotelId);
+        })
+        ->select('id', 'email', 'name')
+        ->where('del', 0)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        if ($queryUsers->isEmpty()) {
+            return [];
+        }
+
+        $users = $queryUsers->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'email' => $user->email,
+                'name' => $user->name,
+                'role' => $user->getRoleName(),
+            ];
+        });
+
+        return $users;
+    }
+
+
 
     public function arrayMapUser($user)
     {

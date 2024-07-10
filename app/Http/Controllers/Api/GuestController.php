@@ -27,7 +27,7 @@ class GuestController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             $data = new GuestResource($model);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
@@ -44,7 +44,7 @@ class GuestController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             $data = new GuestResource($model);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
@@ -73,7 +73,7 @@ class GuestController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             $data = new StayResource($model);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
@@ -90,8 +90,8 @@ class GuestController extends Controller
         $hotelId = $request->attributes->get('hotel')->id;
 
         $data = ['message' => __('response.bad_request_long')];
-        if(!$stayId || !$guestId || !$guestEmail) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
-        
+        if(!$stayId || !$guestId || !$guestEmail) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+
         $sent = $this->service->sendEmail($stayId,$guestId,$guestEmail,$hotelId);
         return bodyResponseRequest(EnumResponse::ACCEPTED, $sent);
     }

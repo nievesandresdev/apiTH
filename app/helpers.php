@@ -225,6 +225,15 @@ if (!function_exists('bodyResponseRequest')) {
     }
 }
 
+
+//lenguageName
+if (!function_exists('lenguagesName')) {
+    function lenguageName($abbreviation){
+        $language = Language::where('abbreviation', $abbreviation)->first();
+        return $language->name ?? 'es';
+    }
+}
+
 if (! function_exists('get_property_in_url')) {
     function get_property_in_url($url, $property){
         if (!$url) return;
