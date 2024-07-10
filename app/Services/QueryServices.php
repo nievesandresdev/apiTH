@@ -14,6 +14,7 @@ use App\Models\hotel;
 use App\Services\Hoster\Users\{UserServices};
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\Queries\FeedbackMsg;
 use Carbon\Carbon;
 use App\Services\ChatGPTService;
 use Illuminate\Support\Facades\Mail;
@@ -243,6 +244,9 @@ class QueryServices {
                 if ($filteredUsers->isNotEmpty()) {
                     $filteredUsers->each(function ($user) use ($dates, $urlQuery, $hotel, $query, $guest, $stay) {
                         Mail::to($user['email'])->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
+
+                        FeedbackMsg::dispatch($user['email'], $dates, $urlQuery, $hotel, $query, $guest, $stay)
+                                                ->delay(now()->addMinutes(10));
                     });
                 }
             //}

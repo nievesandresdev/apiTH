@@ -227,7 +227,7 @@ if (!function_exists('bodyResponseRequest')) {
 
 
 //lenguageName
-if (!function_exists('lenguagesName')) {
+if (!function_exists('lenguageName')) {
     function lenguageName($abbreviation){
         $language = Language::where('abbreviation', $abbreviation)->first();
         return $language->name ?? 'es';
