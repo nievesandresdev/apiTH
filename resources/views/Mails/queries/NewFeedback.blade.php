@@ -66,7 +66,7 @@
                 <p style="margin: 0; text-align: left; font-weight: 400;">Normal. Le personnel est venu dans la chambre car ma climatisation ne fonctionnait pas correctement. Ils l'avaient réparé mais au bout de dix minutes il s'est encore cassé, la chaleur est insupportable</p>
             </div>
             <a href="#" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender feedback</a>
-            <p style="margin: 10px 0; font-weight: 400; color: #A0A0A0;">Nota: En la plataforma podrás ver el mensaje en el idioma de elijas</p>
+            <p style="margin: 10px 0; color: #A0A0A0; text-align: center;">Nota: En la plataforma podrás ver el mensaje en el idioma de elijas</p>
         </div>
 
         <!-- Footer -->
