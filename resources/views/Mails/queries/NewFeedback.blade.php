@@ -64,13 +64,22 @@
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
                     <td class="text-content order-1" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-size: 16px; font-weight: 500;">
-                        <h1 style="margin: 0; font-weight: 700;">¡Feedback pendiente de respuesta!</h1>
-                        <p style="margin: 10px 0; font-weight: 400;">Un huésped ha brindado un feedback acerca de su experiencia en tu {{ $hotel->type }} {{ $hotel->name }} </p>
+                        @if($type == 'pending')
+                            <h1 style="margin: 0; font-weight: 700;">¡Feedback pendiente de respuesta!</h1>
+                            <p style="margin: 10px 0; font-weight: 400;">Han transcurrido <span style="color: #FFD453;">10 minutos</span> desde que un huésped ha brindado un feedback acerca de su experiencia en el {{ $hotel->type }} {{ $hotel->name }}. Responde cuanto antes.</p>
+                        @else
+                            <h1 style="margin: 0; font-weight: 700;">Tienes un nuevo feedback</h1>
+                            <p style="margin: 10px 0; font-weight: 400;">Un huésped ha brindado un feedback acerca de su experiencia en tu {{ $hotel->type }} {{ $hotel->name }} </p>
+                        @endif
                         <!-- Botón que se muestra en el modo no responsive -->
                         <a href="{{$url}}" class="full-width-button order-3" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Feedback</a>
                     </td>
                     <td class="order-2" style="text-align: center; width: 50%; vertical-align: top;">
-                        <img src="{{ asset('mails/feedback.png') }}" alt="Feedback Image" style="width: 227px; height: 240px;">
+                        @if($type == 'pending')
+                            <img src="{{ asset('mails/feedback-pending.png') }}" alt="Feedback Image" style="width: 227px; height: 240px;">
+                        @else
+                            <img src="{{ asset('mails/feedback.png') }}" alt="Feedback Image" style="width: 227px; height: 240px;">
+                        @endif
                         <!-- Botón que se muestra en el modo responsive -->
                         <a href="{{$url}}" class="full-width-button order-4" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Feedback</a>
                     </td>
@@ -78,6 +87,7 @@
             </table>
         </div>
 
+        <!-- Nueva sección añadida aquí -->
         <div style="background-color: white; padding: 20px; text-align: left; margin-top: 24px;">
             <h2 style="margin: 0; font-weight: 700;">Feedback en Stay</h2>
             <p style="margin: 10px 0; font-weight: 700;">{{ $guest->name }}</p>
