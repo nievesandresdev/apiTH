@@ -27,6 +27,7 @@ class HotelBasicDataResource extends JsonResource
             "zone"=> $this->zone,
             "image"=> $this->image,
             "subscribed"=> $this->subscription_active ? $user->subscribed($this->subscription_active) : false,
+            "with_notificartion" => false,
         ];
     }
 }
