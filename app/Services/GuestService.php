@@ -18,7 +18,7 @@ use App\Utils\Enums\GuestEnum;
 
 class GuestService {
 
-    public $stayAccessService; 
+    public $stayAccessService;
     public $mailService;
     public $colors;
 
@@ -61,7 +61,7 @@ class GuestService {
                 $guest->name = $name;
                 $guest->lang_web = $lang;
                 if($acronym){
-                    $guest->acronym = $acronym;   
+                    $guest->acronym = $acronym;
                 }
                 $guest->save();
             }
@@ -93,13 +93,16 @@ class GuestService {
             $last_stay = $guest->stays()
                         ->where('hotel_id',$hotel->id)
                         ->orderBy('check_out','DESC')->first();
+
             if($last_stay){
                 $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
                 // Verifica si han pasado más de 10 días desde el checkout
 
+
                 if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
                     //si no han pasado retorna la estancia
                     $this->stayAccessService->save($last_stay->id,$guest->id);
+
                     return $last_stay;
                 }
             }
@@ -171,7 +174,7 @@ class GuestService {
                 $name = $data->name;
             }
             $acronym = $this->generateInitialsName($name);
-            
+
             $guest->name = $name;
             $guest->email = $data->email ?? $guest->email;
             $guest->phone = $data->phone ?? $guest->phone;
@@ -242,18 +245,18 @@ class GuestService {
     public function updateColorGuestForStay($colorsExists) {
         // Obtener los colores definidos
         $colors = GuestEnum::COLORS;
-    
+
         // Asegurarse de que $colorsExists es un array
         $colorsExistsArray = $colorsExists->toArray();
-    
+
         // Log para ver qué contiene $colorsExistsArray
         Log::info('$colors '.json_encode($colors));
         Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
-    
+
         // Filtrar colores para encontrar aquellos que no están en $colorsExistsArray
         $availableColors = array_diff($colors, $colorsExistsArray);
         Log::info('$availableColors '.json_encode($availableColors));
-    
+
         // Verificar si hay colores disponibles
         if (!empty($availableColors)) {
             Log::info('if');
@@ -267,6 +270,6 @@ class GuestService {
             return $colors[array_rand($colors)];
         }
     }
-    
-    
+
+
 }

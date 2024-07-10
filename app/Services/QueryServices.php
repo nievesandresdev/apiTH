@@ -9,11 +9,12 @@ use App\Http\Resources\QueryResource;
 use App\Jobs\Queries\NotifyPendingQuery;
 use App\Mail\Queries\NewFeedback;
 use App\Mail\Queries\RequestReviewGuest;
-use App\Models\Guest;
+use App\Models\{Guest, User};
 use App\Models\hotel;
+use App\Services\Hoster\Users\{UserServices};
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Jobs\Queries\FeedbackMsg;
 use Carbon\Carbon;
 use App\Services\ChatGPTService;
 use Illuminate\Support\Facades\Mail;
@@ -24,19 +25,22 @@ class QueryServices {
     protected $chatGPTService;
     public $settings;
     public $requestSettings;
+    public $userServices;
 
     public function __construct(
         ChatGPTService $chatGPTService,
         QuerySettingsServices $_QuerySettingsServices,
-        RequestSettingService $_RequestSettingService
+        RequestSettingService $_RequestSettingService,
+        UserServices $userServices
     )
     {
         $this->chatGPTService = $chatGPTService;
         $this->settings = $_QuerySettingsServices;
         $this->requestSettings = $_RequestSettingService;
+        $this->userServices = $userServices;
 
     }
-    
+
     public function findByParams ($request) {
         try {
             $stayId = $request->stayId ?? null;
@@ -158,6 +162,25 @@ class QueryServices {
 
     public function saveResponse ($id, $request, $hotel) {
         try{
+
+            $settingsPermissions = $this->settings->getAll($hotel->id);
+            /**
+             * trae los ususarios y sus roles asociados al hotel en cuestion
+             */
+                $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
+
+                // Extraer los roles de email_notify_new_feedback_to
+                $rolesToNotify = collect($settingsPermissions['email_notify_new_feedback_to']);
+
+                // Filtrar los usuarios que tengan uno de esos roles
+                $filteredUsers = $queryUsers->filter(function ($user) use ($rolesToNotify) {
+                    return $rolesToNotify->contains($user['role']);
+                });
+
+            /** fin traer user asociados y permisos */
+
+
+
             $comment = $request->comment;
             $originalComment = $request->comment;
             $responseLang = 'es';
@@ -187,7 +210,7 @@ class QueryServices {
             $stay->pending_queries_seen = true;
             $stay->save();
 
-            $guest = Guest::select('id','phone','email')->where('id',$query->guest_id)->first();
+            $guest = Guest::select('id','phone','email','name')->where('id',$query->guest_id)->first();
 
             //solicitud de reseña
             $requestSettings = $this->requestSettings->getAll($hotel->id);
@@ -199,7 +222,6 @@ class QueryServices {
                     $msg = 'solicitud de reseña';
                     sendSMS($guest->phone,$msg,$hotel->sender_for_sending_sms);
                 }
-
             }
 
             $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id;
@@ -214,21 +236,40 @@ class QueryServices {
                 );
             }
 
-            if($settings->notify_to_hoster['notify_when_guest_send_via_email']){
+            //if($settings->notify_to_hoster['notify_when_guest_send_via_email']){
                 $checkinFormat = Carbon::createFromFormat('Y-m-d', $stay->check_in)->format('d/m/Y');
                 $checkoutFormat = Carbon::createFromFormat('Y-m-d', $stay->check_out)->format('d/m/Y');
                 $dates = "$checkinFormat - $checkoutFormat";
-                Mail::to($guest->email)->send(new NewFeedback($dates, $urlQuery, $hotel , 'new'));
-            }
+
+                if ($filteredUsers->isNotEmpty()) {
+                    $filteredUsers->each(function ($user) use ($dates, $urlQuery, $hotel, $query, $guest, $stay) {
+                        Mail::to($user['email'])->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
+
+                        FeedbackMsg::dispatch($user['email'], $dates, $urlQuery, $hotel, $query, $guest, $stay)
+                                                ->delay(now()->addMinutes(10));
+                    });
+                }
+            //}
 
             $via_platform = $settings->notify_to_hoster['notify_later_when_guest_send_via_platform'];
             $via_email = $settings->notify_to_hoster['notify_later_when_guest_send_via_email'];
             if($via_platform || $via_email){
                 NotifyPendingQuery::dispatch($hotel->id, $stay->id, $via_platform, $via_email)->delay(now()->addMinutes(10));
             }
-
+            /* return [
+                'dates' => $dates,
+                'urlQuery' => $urlQuery,
+                'hotel' => $hotel,
+                'query' => $query,
+                'guest' => $guest,
+                'stay' => $stay,
+                'users' => $queryUsers,
+                'settingsPermissions' => $settingsPermissions,
+                'filteredUsers' => $filteredUsers->all(),
+            ]; */
             return $query;
         } catch (\Exception $e) {
+            //\Log::error('Error Mail Feedback new',$e->getMessage());
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveResponse');
         }
     }

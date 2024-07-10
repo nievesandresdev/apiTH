@@ -2,7 +2,7 @@
 <div style="background-color: #1A1A1A; padding: 20px; text-align: center; color: #ffffff; font-family: 'Montserrat', sans-serif; margin-top: 64px;">
     <img src="{{ asset('mails/logo-white.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto 20px;">
     <div style="margin-bottom: 20px;">
-        <a href="#" style="margin: 0 10px; display: inline-block;">
+        <a href="https://www.linkedin.com/company/the-hoster/" target="_blank" style="margin: 0 10px; display: inline-block;">
             <img src="{{ asset('mails/linkedin.png') }}" alt="LinkedIn" style="width: 24px; height: 24px;">
         </a>
         <a href="#" style="margin: 0 10px; display: inline-block;">
