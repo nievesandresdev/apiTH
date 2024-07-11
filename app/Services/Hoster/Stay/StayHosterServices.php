@@ -30,7 +30,7 @@ class StayHosterServices {
             $query = Stay::with([
                     'chats:id,stay_id,pending',
                     'chats.messages:by,chat_id,status',
-                    'guests:acronym,color',
+                    'guests:acronym,color,lang_web',
                 ])
                 ->select([
                     'stays.id',
@@ -88,8 +88,56 @@ class StayHosterServices {
             return $e;
         }
     }
-    
-    
+
+    public function statisticsByHotel($hotel) {
+        try {
+            $todayDay = Carbon::now()->format('d');
+            $month = ucfirst(Carbon::now()->locale('es')->isoFormat('MMMM'));
+            $today = Carbon::now()->format('Y-m-d');
+            $dataStays = $this->getAllByHotel($hotel, []);
+
+            $checkinToday = 0;
+            $checkoutToday = 0;
+            $totalGuests = 0;
+            $countsByPeriod = ['pre-stay' => 0,'in-stay' => 0,'post-stay' => 0];
+            $guestsByPeriod = ['pre-stay' => 0,'in-stay' => 0,'post-stay' => 0];
+            $langsTotal = ['es' => 0,'fr' => 0,'en' => 0];
+            $percentageLangs = ['es' => 0,'fr' => 0,'en' => 0];
+            
+            foreach($dataStays['stays'] as $stay){
+                //today data
+                $today == $stay->check_in ? $checkinToday++:'';
+                $today == $stay->check_out ? $checkoutToday++:'';
+                //guests counter
+                $guestsByPeriod[$stay->period] += count($stay->guests);
+                $totalGuests += count($stay->guests);
+                foreach($stay->guests as $guest){
+                    $langsTotal[strtolower($guest->lang_web)] += 1;
+                }
+                //stays
+                $countsByPeriod[$stay->period] += 1;
+            }
+
+            
+            foreach(['es','en','fr'] as $lang){
+                $percentageLangs[$lang] = round(($langsTotal[$lang]/$totalGuests)*100);
+            }
+
+            return [
+                'today' => $todayDay,
+                'month' => $month,
+                'checkinToday' => $checkinToday,
+                'checkoutToday' => $checkoutToday,
+                'countsByPeriod' => $countsByPeriod,
+                'guestsByPeriod' => $guestsByPeriod,
+                'totalGuests' => $totalGuests,
+                'langsTotal' => $langsTotal,
+                'percentageLangs' => $percentageLangs
+            ];
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     
 
 }

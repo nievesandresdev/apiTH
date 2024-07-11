@@ -36,5 +36,24 @@ class StayHosterController extends Controller
         }
     }
 
+    public function statisticsByHotel(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->statisticsByHotel($hotel);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.statisticsByHotel');
+        }
+    }
+
+    
+
 
 }

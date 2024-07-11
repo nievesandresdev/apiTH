@@ -24,13 +24,13 @@ class NotifyPendingQuery implements ShouldQueue
     public $stayId;
     public $viaPlatform;
     public $viaEmail;
-    
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    
+
     public function __construct($hotelId, $stayId, $viaPlatform ,$viaEmail)
     {
         $this->hotelId = $hotelId;
@@ -62,13 +62,13 @@ class NotifyPendingQuery implements ShouldQueue
         Log::info('JOB $urlQuery '.$urlQuery);
         Log::info('JOB $this->viaPlatform '.$this->viaPlatform);
         if($query && $this->viaPlatform){
-            sendEventPusher('notify-send-query.' . $hotel->id, 'App\Events\NotifySendQueryEvent', 
+            sendEventPusher('notify-send-query.' . $hotel->id, 'App\Events\NotifySendQueryEvent',
             [
                 "urlQuery" => $urlQuery,
                 "title" => "Feedback pendiente",
                 "text" => "Tienes un feedback pendiente",
             ]
-            ); 
+            );
         }
         Log::info('JOB $this->viaEmail '.$this->viaEmail);
         if($query && $this->viaEmail){
@@ -78,9 +78,9 @@ class NotifyPendingQuery implements ShouldQueue
             $checkoutFormat = Carbon::createFromFormat('Y-m-d', $stay->check_out)->format('d/m/Y');
             Log::info('JOB entro '.$checkoutFormat);
             $dates = "$checkinFormat - $checkoutFormat";
-            Mail::to("andresdreamerf@gmail.com")->send(new NewFeedback($dates, $urlQuery, $hotel, 'pending'));
+            //Mail::to("andresdreamerf@gmail.com")->send(new NewFeedback($dates, $urlQuery, $hotel, 'pending'));
         }
 
-        
+
     }
 }

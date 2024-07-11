@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nuevo Feedback</title>
+    <title>Nuevo Chat</title>
     <style>
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -53,6 +53,26 @@
             display: none !important;
         }
 
+        .message-container {
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 11.2px 0px rgba(55, 55, 55, 0.20);
+        }
+
+        .message-text {
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .message-time {
+            text-align: right;
+            font-size: 16px;
+            font-weight: 400;
+            color: #A0A0A0;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
@@ -65,23 +85,23 @@
                 <tr>
                     <td class="text-content order-1" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-size: 16px; font-weight: 500;">
                         @if($type == 'pending')
-                            <h1 style="margin: 0; font-weight: 600;">¡Feedback pendiente de respuesta!</h1>
-                            <p style="margin: 10px 0; font-weight: 400;">Han transcurrido <span style="color: #FFD453;">10 minutos</span> desde que un huésped ha brindado un feedback acerca de su experiencia en el {{ $hotel->type }} {{ $hotel->name }}. Responde cuanto antes.</p>
+                            <h1 style="margin: 0; font-weight: 600;">¡Tienes un chat pendiente!</h1>
+                            <p style="margin: 10px 0; font-weight: 400;">Han transcurrido <span style="color: #FFD453;">10 minutos</span> desde que un huésped te ha escrito un mensaje desde el chat</p>
                         @else
-                            <h1 style="margin: 0; font-weight: 600;">Tienes un nuevo feedback</h1>
-                            <p style="margin: 10px 0; font-weight: 400;">Un huésped ha brindado un feedback acerca de su experiencia en tu {{ $hotel->type }} {{ $hotel->name }} </p>
+                            <h1 style="margin: 0; font-weight: 600;">Tienes un nuevo mensaje en el chat</h1>
+                            <p style="margin: 10px 0; font-weight: 400;">Has recibido un nuevo mensaje de un huésped. Puedes ir al mensaje dando click al botón de abajo.</p>
                         @endif
                         <!-- Botón que se muestra en el modo no responsive -->
-                        <a href="{{$url}}" class="full-width-button order-3" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Feedback</a>
+                        <a href="#" class="full-width-button order-3" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Chat</a>
                     </td>
                     <td class="order-2" style="text-align: center; width: 50%; vertical-align: top;">
                         @if($type == 'pending')
-                            <img src="{{ asset('mails/feedback-pending.png') }}" alt="Feedback Image" style="width: 227px; height: 240px;">
+                            <img src="{{ asset('mails/chat-pending.png') }}" alt="Chat Image" style="width: 227px; height: 240px;">
                         @else
-                            <img src="{{ asset('mails/feedback.png') }}" alt="Feedback Image" style="width: 227px; height: 240px;">
+                            <img src="{{ asset('mails/chat.png') }}" alt="Chat Image" style="width: 227px; height: 240px;">
                         @endif
                         <!-- Botón que se muestra en el modo responsive -->
-                        <a href="{{$url}}" class="full-width-button order-4" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Feedback</a>
+                        <a href="#" class="full-width-button order-4" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Chat</a>
                     </td>
                 </tr>
             </table>
@@ -89,19 +109,20 @@
 
         <!-- Nueva sección añadida aquí -->
         <div style="background-color: white; padding: 20px; text-align: left; margin-top: 24px;">
-            <h2 style="margin: 0; font-weight: 600;">Feedback en Stay</h2>
-            <p style="margin: 10px 0; font-weight: 600;">{{ $guest->name }}</p>
-            <p style="margin: 10px 0; font-weight: 400;">
-                <img src="{{ asset('icons/flags/'.$query->response_lang.'.svg') }}" alt="Idioma original" style="vertical-align: middle; margin-right: 5px;">
-                Idioma original: <span style="font-weight: 400;">{{ $languageName }}</span>
-            </p>
-            <p style="margin: 10px 0; font-weight: 600;">¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?</p>
-            <div style="display: flex; align-items: center; margin: 10px 0;">
-                <img src="{{ asset('icons/reviews/'.$query->qualification.'.svg') }}" alt="Satisfacción" style="width: 24px; height: 24px; margin-right: 10px;">
-                <p style="margin: 0; text-align: left; font-weight: 400;">{{ $query->comment ?? '--' }}</p>
+            <h2 style="margin: 0; font-weight: 600;">Mensaje</h2>
+            <p style=" margin-top: 20px; font-weight: 600;">Rosa</p>
+
+            <!-- Mensajes -->
+            <div class="message-container">
+                <p class="message-text">No encuentro la secadora de pelo, ¿Me podrían traer una a la habitación porfavor?</p>
             </div>
-            <a href="{{$url}}" class="full-width-button" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender feedback</a>
-            <p style="margin: 10px 0; color: #A0A0A0; text-align: center;">Nota: En la plataforma podrás ver el mensaje en el idioma de elijas</p>
+            <p class="message-time">12 Junio – 14:00</p>
+            <div class="message-container">
+                <p class="message-text">También me gustaría poder reservar el desayuno para mañana pero me esta dando problemas la WebApp</p>
+            </div>
+            <p class="message-time">12 Junio – 14:01</p>
+
+            <a href="#" class="full-width-button" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Chat</a>
         </div>
 
         <!-- Footer -->

@@ -4,6 +4,8 @@ namespace App\Services\Hoster\Users;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Mail\User\WelcomeUser;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use App\Services\Hoster\Users\ProfileServices;
 
@@ -278,6 +280,33 @@ class UserServices
     }
 
 
+    function getUsersHotelBasicData($hotelId)
+    {
+        $queryUsers = User::whereHas('hotel', function ($query) use ($hotelId) {
+            $query->where('hotel_id', $hotelId);
+        })
+        ->select('id', 'email', 'name')
+        ->where('del', 0)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        if ($queryUsers->isEmpty()) {
+            return [];
+        }
+
+        $users = $queryUsers->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'email' => $user->email,
+                'name' => $user->name,
+                'role' => $user->getRoleName(),
+            ];
+        });
+
+        return $users;
+    }
+
+
 
     public function arrayMapUser($user)
     {
@@ -355,6 +384,7 @@ class UserServices
 
     public function storeUserHoster($request)
     {
+        $url = config('app.hoster_url');
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -369,6 +399,8 @@ class UserServices
         $this->profileServices->handleProfileHoster($request, $user);
 
         $this->storeHotelsUser($request, $user);
+
+        Mail::to($user['email'])->send(new WelcomeUser($user,$url,$request->password));
 
         return $user ?? false;
     }

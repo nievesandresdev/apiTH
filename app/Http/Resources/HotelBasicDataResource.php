@@ -6,6 +6,7 @@ use App\Models\ChatHour;
 use App\Models\ChatSetting;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class HotelBasicDataResource extends JsonResource
 {
@@ -18,6 +19,16 @@ class HotelBasicDataResource extends JsonResource
     {
 
         $user = $this->user[0];
+        $pending_chat_count =  $this->stays()
+        ->whereHas('chats', function ($query) {
+            $query->where('pending', 1);
+        })->count();
+
+        $pending_query_count = DB::table('queries')
+            ->join('stays', 'stays.id', '=', 'queries.stay_id')
+            ->select('stays.id as StayId','stays.hotel_id', 'queries.id', 'queries.answered', 'queries.attended')
+            ->where('answered', 1)->where('attended', 0)
+            ->where('hotel_id', $this->id)->count();
 
         return [
             "id"=> $this->id,
@@ -27,7 +38,8 @@ class HotelBasicDataResource extends JsonResource
             "zone"=> $this->zone,
             "image"=> $this->image,
             "subscribed"=> $this->subscription_active ? $user->subscribed($this->subscription_active) : false,
-            "with_notificartion" => false,
+            "with_notificartion" => $pending_chat_count + $pending_query_count,
         ];
+        
     }
 }

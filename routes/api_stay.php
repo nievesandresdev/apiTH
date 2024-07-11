@@ -17,6 +17,7 @@ Route::group(['prefix' => 'stay'], function () {
 
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/getAllByHotel', [StayHosterController::class, 'getAllByHotel']);
+        Route::get('/statisticsByHotel', [StayHosterController::class, 'statisticsByHotel']);
     });
 });
 

@@ -114,6 +114,10 @@ class Hotel extends Model
         return $this->belongsToMany(CategoriPlaces::class, 'hotel_category_places_hides', 'hotel_id', 'categori_places_id');
     }
 
+    public function stays()
+    {
+        return $this->hasMany(Stay::class);
+    }
     // AUXILIARIES
 
     public function toArray()
