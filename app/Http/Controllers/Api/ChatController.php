@@ -24,16 +24,16 @@ class ChatController extends Controller
 
 
     public function sendMsgToHoster(Request $request){
-        
+
         try {
             $model = $this->service->sendMsgToHoster($request);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            
+
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
@@ -42,16 +42,16 @@ class ChatController extends Controller
     }
 
     public function markMsgsAsRead(Request $request){
-        
+
         try {
             $model = $this->service->markMsgsAsRead($request);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            
+
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
@@ -66,9 +66,9 @@ class ChatController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            
+
             $data = ChatMessageResource::collection($models);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
@@ -79,13 +79,13 @@ class ChatController extends Controller
 
     public function unreadMsgs(Request $request){
         try {
-            
+
             $model = $this->service->unreadMsgs($request);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 

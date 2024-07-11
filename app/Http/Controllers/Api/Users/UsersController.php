@@ -14,6 +14,7 @@ use App\Services\MailService;
 use App\Mail\User\WelcomeUser;
 use App\Models\Guest;
 use App\Models\User;
+use App\Mail\Chats\ChatEmail;
 
 
 class UsersController extends Controller
@@ -200,7 +201,7 @@ class UsersController extends Controller
         try {
             $url = config('app.hoster_url');
             $user = User::findOrFail(2);
-            $this->mailService->sendEmail(new WelcomeUser($user,$url,'20990397'), "francisco20990@gmail.com");
+            $this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
