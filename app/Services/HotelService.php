@@ -157,4 +157,17 @@ class HotelService {
         $hotelModel = $hotelModel->update(['show_facilities' => !$hotelModel->show_facilities]);
         return $hotelModel;
     }
+
+    public function updateVisivilityPlaces ($hotelModel) {
+        $hotelModel = $hotelModel->update(['show_places' => !$hotelModel->show_places]);
+        return $hotelModel;
+    }
+
+    public function updateVisivilityCategory ($request, $hotelModel) {
+        if ($hotelModel->hiddenCategories()->where('categori_places_id', $request->categori_places_id)->exists()) {
+            $hotelModel->hiddenCategories()->detach($request->categori_places_id);
+        } else {
+            $hotelModel->hiddenCategories()->attach($request->categori_places_id);
+        }
+    }
 }

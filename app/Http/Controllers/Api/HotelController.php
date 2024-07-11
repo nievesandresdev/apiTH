@@ -184,4 +184,46 @@ class HotelController extends Controller
         }
     }
 
+    public function updateVisivilityPlaces (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $this->service->updateVisivilityPlaces($hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+        }
+    }
+
+    public function updateVisivilityCategory (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $this->service->updateVisivilityCategory($request, $hotelModel);
+
+            $hotelModel->refresh();
+            $data = new HotelResource($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+        }
+    }
+
 }

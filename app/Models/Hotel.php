@@ -45,6 +45,7 @@ class Hotel extends Model
         'scraper_run',
         'last_date_historical',
         'show_experiences',
+        'show_places',
         'phone_optional',
         'with_wifi',
         'checkin_until',
@@ -107,6 +108,12 @@ class Hotel extends Model
     {
         return $this->morphMany(ChatMessage::class, 'messageable');
     }
+
+    public function hiddenCategories()
+    {
+        return $this->belongsToMany(CategoriPlaces::class, 'hotel_category_places_hides', 'hotel_id', 'categori_places_id');
+    }
+
     // AUXILIARIES
 
     public function toArray()
