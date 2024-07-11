@@ -15,17 +15,50 @@ use App\Models\Stay;
 use App\Http\Resources\StayResource;
 use App\Models\Chat;
 use App\Models\ChatSetting;
+use App\Services\Hoster\Chat\ChatSettingsServices;
+use App\Services\Hoster\Users\{UserServices};
 use App\Models\hotel;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Chats\ChatEmail;
+use App\Services\MailService;
+
+
 
 class ChatService {
 
-    function __construct()
-    {
+    public $settings;
+    public $userServices;
+    public $mailService;
 
+    function __construct(
+        ChatSettingsServices $_ChatSettingsServices,
+        UserServices $userServices,
+        MailService $_MailService
+    )
+    {
+        $this->settings = $_ChatSettingsServices;
+        $this->userServices = $userServices;
+        $this->mailService = $_MailService;
     }
 
     public function sendMsgToHoster ($request) {
         try{
+            $hotel = $request->attributes->get('hotel');
+            $settingsPermissions = $this->settings->getAll($hotel->id);
+            /**
+             * trae los ususarios y sus roles asociados al hotel en cuestion
+             */
+                $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
+
+                // Extraer los roles de email_notify_new_feedback_to
+                $rolesToNotify = collect($settingsPermissions['email_notify_new_feedback_to']);
+
+                // Filtrar los usuarios que tengan uno de esos roles
+                $filteredUsers = $queryUsers->filter(function ($user) use ($rolesToNotify) {
+                    return $rolesToNotify->contains($user['role']);
+                });
+
+            /** fin traer user asociados y permisos */
             DB::beginTransaction();
             $langPage = $request->langWeb;
 
@@ -34,6 +67,8 @@ class ChatService {
 
             $guest = new GuestResource(Guest::find($guestId));
             $stay = new StayResource(Stay::find($stayId));
+
+
 
             $chat = $guest->chats()
                 ->updateOrCreate([
@@ -50,6 +85,21 @@ class ChatService {
                 'by' => 'Guest',
                 'automatic' => false
             ]);
+            //Mail::to('francisco20990@gmail.com')->send(new ChatEmail('new'));
+            /* $this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
+            return [
+                'response' => 'successReturn',
+                'guest' => $guest,
+                'stay' => $stay,
+                'chat' => $chat,
+                'chatMessage' => $chatMessage,
+                'filteredUsers' => $filteredUsers,
+                'settingsPermissions' => $settingsPermissions,
+                'hotel' => $hotel
+            ]; */
+
+            //Mail::to($filteredUsers->pluck('email'))->send(new ChatEmail('pending', $hotel));
+
 
             $msg = $guest->chatMessages()->save($chatMessage);
             $msg->load('messageable');
