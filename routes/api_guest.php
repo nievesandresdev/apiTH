@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\GuestController;
+use App\Http\Controllers\Api\Hoster\GuestHosterController;
 
 Route::group(['prefix' => 'guest'], function () {
     Route::get('/findByIdApi/{id}', [GuestController::class, 'findById']);
@@ -10,4 +11,7 @@ Route::group(['prefix' => 'guest'], function () {
     Route::post('/updateLanguageApi', [GuestController::class, 'updateLanguage']);
     Route::get('/findLastStayApi/{id}', [GuestController::class, 'findLastStay']);
     Route::post('/sendMailTo', [GuestController::class, 'sendMailTo']);
+    Route::group(['prefix' => 'hoster'], function () {
+        Route::post('/inviteToHotel', [GuestHosterController::class, 'inviteToHotel']);
+    });
 });
