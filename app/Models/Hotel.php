@@ -107,6 +107,11 @@ class Hotel extends Model
     {
         return $this->morphMany(ChatMessage::class, 'messageable');
     }
+
+    public function stays()
+    {
+        return $this->hasMany(Stay::class);
+    }
     // AUXILIARIES
 
     public function toArray()
