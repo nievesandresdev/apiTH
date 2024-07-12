@@ -12,14 +12,16 @@ use Illuminate\Queue\SerializesModels;
 class ChatEmail extends Mailable
 {
     use Queueable, SerializesModels;
+    public $unansweredMessagesData;
     public $type;
     //public $hotel;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($type)
+    public function __construct($unansweredMessagesData,$type)
     {
+        $this->unansweredMessagesData = $unansweredMessagesData;
         $this->type = $type;
         //$this->hotel = $hotel;
     }

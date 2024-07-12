@@ -110,17 +110,14 @@
         <!-- Nueva sección añadida aquí -->
         <div style="background-color: white; padding: 20px; text-align: left; margin-top: 24px;">
             <h2 style="margin: 0; font-weight: 600;">Mensaje</h2>
-            <p style=" margin-top: 20px; font-weight: 600;">Rosa</p>
-
-            <!-- Mensajes -->
-            <div class="message-container">
-                <p class="message-text">No encuentro la secadora de pelo, ¿Me podrían traer una a la habitación porfavor?</p>
-            </div>
-            <p class="message-time">12 Junio – 14:00</p>
-            <div class="message-container">
-                <p class="message-text">También me gustaría poder reservar el desayuno para mañana pero me esta dando problemas la WebApp</p>
-            </div>
-            <p class="message-time">12 Junio – 14:01</p>
+            {{-- <pre>{{ $unansweredMessagesData }}</pre> --}}
+            @foreach($unansweredMessagesData as $chat)
+                <p style=" margin-top: 20px; font-weight: 600;">{{ $chat['guest_name'] }}</p>
+                <div class="message-container">
+                    <p class="message-text">{{$chat['message_text']}}</p>
+                </div>
+                <p class="message-time">{{ $chat['sent_at'] }}</p>
+            @endforeach
 
             <a href="#" class="full-width-button" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Chat</a>
         </div>
