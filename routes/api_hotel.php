@@ -15,4 +15,5 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::post('/placeVisivility', [HotelController::class, 'updateVisivilityPlaces']);
     Route::post('/facilityVisivility', [HotelController::class, 'updateVisivilityFacilities']);
     Route::post('/categoriVisivility', [HotelController::class, 'updateVisivilityCategory']);
+    Route::post('/typePlaceVisivility', [HotelController::class, 'updateVisivilityTypePlace']);
 });

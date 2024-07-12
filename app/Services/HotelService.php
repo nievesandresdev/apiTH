@@ -170,4 +170,12 @@ class HotelService {
             $hotelModel->hiddenCategories()->attach($request->categori_places_id);
         }
     }
+
+    public function updateVisivilityTypePlace ($request, $hotelModel) {
+        if ($hotelModel->hiddenTypePlaces()->where('type_places_id', $request->type_places_id)->exists()) {
+            $hotelModel->hiddenTypePlaces()->detach($request->type_places_id);
+        } else {
+            $hotelModel->hiddenTypePlaces()->attach($request->type_places_id);
+        }
+    }
 }
