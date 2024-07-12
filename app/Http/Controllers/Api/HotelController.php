@@ -198,7 +198,7 @@ class HotelController extends Controller
             $this->service->updateVisivilityPlaces($hotelModel);
             $hotelModel->refresh();
             $data = new HotelResource($hotelModel);
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
