@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
 
+use function Database\Seeders\run;
+
 class StayHosterController extends Controller
 {
     public $service;
@@ -50,6 +52,39 @@ class StayHosterController extends Controller
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.statisticsByHotel');
+        }
+    }
+
+    public function getdetailData(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->getdetailData($request->stayId, $hotel);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getdetailData');
+        }
+    }
+    
+    public function updateData(Request $request){
+        try {
+            $model = $this->service->updateData($request->stayId, $request);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateData');
         }
     }
 
