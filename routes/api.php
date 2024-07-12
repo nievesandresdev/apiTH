@@ -43,6 +43,8 @@ Route::get('/language/getAll', [LanguageController::class, 'getAll']);
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
+    //loginAdmin
+    Route::post('/loginAdmin', [AuthController::class, 'loginAdmin']);
     Route::post('/logout', [AuthController::class, 'logout']);
     //resetPassword
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
@@ -66,6 +68,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/update-profile', [UsersController::class, 'updateProfile']);
         Route::get('/getUsers', [UsersController::class, 'getUsers']);
         Route::get('/getUser', [UsersController::class, 'getUser']);
+        //getUserData
+        Route::get('/getUserData', [AuthController::class, 'getUserData']);
         Route::post('/delete', [UsersController::class, 'delete']);
 
         Route::get('/get-subscription-status', [UsersController::class, 'getStatusSubscription']);

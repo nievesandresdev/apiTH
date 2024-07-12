@@ -10,11 +10,15 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\RedirectResponse;
 use App\Utils\Enums\EnumResponse;
 use App\Http\Resources\UserResource;
+use App\Models\User;
+use Illuminate\Support\Facades\Session;
+
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
+
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
@@ -37,6 +41,57 @@ class AuthController extends Controller
             'tyest' => auth()->user()
         ]);
     }
+
+    public function loginAdmin(Request $request)
+    {
+        // Limpiar la sesión existente
+        Session::flush();
+        Auth::guard('web')->logout();
+
+        // Buscar al usuario por ID
+        $user = User::find($request->user['id']);
+
+        if (!$user) {
+            return response()->json([
+                'error' => true,
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        // Loguear al usuario directamente
+        Auth::guard('web')->login($user, true);
+
+        // Obtener el usuario autenticado
+        $authenticatedUser = Auth::guard('web')->user();
+
+        // Crear el token de acceso
+        $token = $authenticatedUser->createToken('appToken')->accessToken;
+
+        // Retornar la respuesta con el token y la información del usuario
+        return response()->json([
+            'error' => false,
+            'token' => $token,
+            'user' => new UserResource($authenticatedUser),
+        ], 200);
+    }
+
+    public function getUserData(Request $request)
+    {
+        // Autenticar al usuario desde el token
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Invalid token'], 401);
+        }
+
+        // Retornar los datos del usuario
+        return response()->json([
+            'user' => new UserResource($user),
+            /* 'current_hotel' => $user->current_hotel,
+            'current_subdomain' => $user->current_hotel->subdomain, */
+        ]);
+    }
+
 
    /*  public function getUsers(Request $request)
     {
