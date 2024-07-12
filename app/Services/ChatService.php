@@ -85,18 +85,7 @@ class ChatService {
                 'by' => 'Guest',
                 'automatic' => false
             ]);
-            //Mail::to('francisco20990@gmail.com')->send(new ChatEmail('new'));
-            /* $this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
-            return [
-                'response' => 'successReturn',
-                'guest' => $guest,
-                'stay' => $stay,
-                'chat' => $chat,
-                'chatMessage' => $chatMessage,
-                'filteredUsers' => $filteredUsers,
-                'settingsPermissions' => $settingsPermissions,
-                'hotel' => $hotel
-            ]; */
+
 
             //Mail::to($filteredUsers->pluck('email'))->send(new ChatEmail('pending', $hotel));
 
@@ -166,6 +155,42 @@ class ChatService {
                     sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
                 }
             }
+
+            $unansweredMessages = ChatMessage::whereHas('chat', function ($query) use ($chat) { //los mensajes del ultimo chat pendiung 1
+                $query->where('id', $chat->id)
+                      ->where('pending', 1);
+            })
+            ->where('automatic', 0)
+            ->where('by', '!=', 'Hoster')
+            ->with('messageable')
+            ->latest()
+            ->get();
+
+            $unansweredMessagesData = $unansweredMessages->map(function ($message) { //map
+                $guestName = null;
+                if ($message->messageable_type === 'App\Models\Guest') {
+                    $guestName = $message->messageable->name;
+                }
+
+                return [
+                    'guest_name' => $guestName,
+                    'message_text' => $message->text,
+                    'sent_at' => $message->created_at->toDateTimeString()
+                ];
+            });
+            $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), "francisco20990@gmail.com");
+            /* return [
+                'response' => 'successReturn',
+                'guest' => $guest,
+                'stay' => $stay,
+                'chat' => $chat,
+                'chatMessage' => $chatMessage,
+                'filteredUsers' => $filteredUsers,
+                'settingsPermissions' => $settingsPermissions,
+                'hotel' => $hotel,
+                'unanswered' => $unansweredMessages,
+                'unansweredMessagesData' => $unansweredMessagesData,
+            ]; */
             DB::commit();
             return true;
         } catch (\Exception $e) {
