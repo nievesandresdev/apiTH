@@ -4,6 +4,7 @@ namespace App\Services\Hoster\Stay;
 
 use App\Models\hotel;
 use App\Models\Stay;
+use App\Services\Hoster\UtilsHosterServices;
 use App\Services\QueryServices;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -12,12 +13,15 @@ use Carbon\Carbon;
 class StayHosterServices {
     
     public $queryService;
+    public $utilsServices;
 
     function __construct(
-        QueryServices $_QueryServices
+        QueryServices $_QueryServices,
+        UtilsHosterServices $_UtilsHosterServices
     )
     {
         $this->queryService = $_QueryServices;
+        $this->utilsServices = $_UtilsHosterServices;
     }
 
     // 'stays.pending_queries_seen',
@@ -136,6 +140,71 @@ class StayHosterServices {
             ];
         } catch (\Exception $e) {
             return $e;
+        }
+    }
+
+    public function getdetailData($stayId, $hotel) {
+        try {
+            $stay = Stay::find($stayId);
+
+            $periodStay = $this->queryService->getCurrentPeriod($hotel, $stay->id);
+            
+            //detalle de estancia
+            if($periodStay == 'pre-stay'){
+                $untilCheckin = $this->utilsServices->calculateDaysUntilTo($stay->check_in);
+                $textDay = $untilCheckin == 1 ? ' dia' : ' dias';
+                $detailPeriod =  "Llega en <b>$untilCheckin</b> $textDay";
+            }else if($periodStay == 'in-stay'){
+                $totalDays = $this->utilsServices->calculateDaysBetween($stay->check_in, $stay->check_out);
+                $currentNight = $this->calculateCurrentNight($stay->check_in, $stay->check_out);
+                $detailPeriod = "noche <b>$currentNight</b> de <b>$totalDays</b>";
+            }else{
+                $detailPeriod = $this->utilsServices->calculateDaysOrWeeksFromDate($stay->check_out);
+            }
+            $formatCheckin = $this->utilsServices->formatDateToDayMonthAndYear($stay->check_in);
+            $formatCheckout = $this->utilsServices->formatDateToDayMonthAndYear($stay->check_out);
+
+           return [
+                "detailPeriod" => $detailPeriod,
+                "formatCheckin" => $formatCheckin,
+                "formatCheckout" => $formatCheckout,
+                "period" => $periodStay,
+                "room" => $stay->room,
+                "id" => $stay->id,
+                "middle_reservation" => $stay->middle_reservation,
+            ];
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function updateData($stayId, $data) {
+        try {
+            
+            $stay = Stay::find($stayId);
+            $stay->room = $data->room ?? $stay->room;
+            $stay->middle_reservation = $data->middle_reservation ?? $stay->middle_reservation;
+            return $stay->save();
+            // Cambios guardados con éxito
+        } catch (\Exception $e) {
+            return $e;
+        }
+
+    }
+
+    public function calculateCurrentNight($checkinDate, $checkoutDate) {
+        
+        $checkin = Carbon::parse($checkinDate);
+        $checkout = Carbon::parse($checkoutDate);
+        $now = Carbon::now();
+
+        // Verify if the current date is within the stay period
+        if ($now->between($checkin, $checkout, true)) {
+            // Calculate the difference in days from the check-in date
+            $currentNight = $checkin->diffInDays($now) + 1; // Adding 1 because nights are 1-indexed
+            return $currentNight;
+        } else {
+            return null; // Return null if the current date is not within the stay period
         }
     }
     
