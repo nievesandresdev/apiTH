@@ -180,7 +180,7 @@ class HotelController extends Controller
             $hotelModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityFacilities');
         }
     }
 
@@ -201,7 +201,7 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return $e;
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityPlaces');
         }
     }
 
@@ -223,7 +223,29 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return $e;
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityCategory');
+        }
+    }
+
+    public function updateVisivilityTypePlace (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+            $this->service->updateVisivilityTypePlace($request, $hotelModel);
+
+            $hotelModel->refresh();
+            $data = new HotelResource($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityTypePlace');
         }
     }
 
