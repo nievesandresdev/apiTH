@@ -60,21 +60,6 @@ class UtilsHosterServices
         ];
     }
 
-    function getAllNotesByStay($stayId){
-        return DB::select("
-            (SELECT ns.id, ns.content, ns.created_at, ns.updated_at, ns.edited, NULL as guest_id, NULL as guest_name, NULL as guest_acronym, NULL as guest_color, 'ES' as type
-            FROM note_stays ns
-            WHERE ns.stay_id = :stayId1)
 
-            UNION ALL
-
-            (SELECT ng.id, ng.content, ng.created_at, ng.updated_at, ng.edited, ng.guest_id, g.name as guest_name, g.acronym as guest_acronym, g.color as guest_color, 'HU' as type
-            FROM note_guests ng
-            LEFT JOIN guests g ON ng.guest_id = g.id
-            WHERE ng.stay_id = :stayId2)
-
-            ORDER BY created_at DESC
-        ", ['stayId1' => $stayId, 'stayId2' => $stayId]);
-    }
    
 }

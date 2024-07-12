@@ -164,6 +164,18 @@ class StayHosterServices {
             $formatCheckin = $this->utilsServices->formatDateToDayMonthAndYear($stay->check_in);
             $formatCheckout = $this->utilsServices->formatDateToDayMonthAndYear($stay->check_out);
 
+            $guests = $stay->guests()->select('guests.id','guests.name','guests.lang_web','guests.acronym','guests.color')->get();
+
+            $url_stay_icon = 'https://ui-avatars.com/api/?name=ES&color=fff&background=34A98F';
+            $optionsListNote = [
+                ['img' => $url_stay_icon, 'label' => 'Estancia', 'value' => 'STAY']
+            ];
+            foreach ($guests as $key => $g) {
+                $url_g_icon = "https://ui-avatars.com/api/?name=$g->acronym&color=fff&background=$g->color";
+                array_push($optionsListNote, ['img' => $url_g_icon, 'label' => $g->name, 'value' => $g->id]);
+            }
+
+            $notes = $this->getAllNotesByStay($stay->id);
            return [
                 "detailPeriod" => $detailPeriod,
                 "formatCheckin" => $formatCheckin,
@@ -172,6 +184,8 @@ class StayHosterServices {
                 "room" => $stay->room,
                 "id" => $stay->id,
                 "middle_reservation" => $stay->middle_reservation,
+                "guests" => $guests,
+                'optionsListNote' => $optionsListNote
             ];
         } catch (\Exception $e) {
             return $e;
@@ -208,5 +222,21 @@ class StayHosterServices {
         }
     }
     
+    public function getAllNotesByStay($stayId){
+        return DB::select("
+            (SELECT ns.id, ns.content, ns.created_at, ns.updated_at, ns.edited, NULL as guest_id, NULL as guest_name, NULL as guest_acronym, NULL as guest_color, 'ES' as type
+            FROM note_stays ns
+            WHERE ns.stay_id = :stayId1)
+
+            UNION ALL
+
+            (SELECT ng.id, ng.content, ng.created_at, ng.updated_at, ng.edited, ng.guest_id, g.name as guest_name, g.acronym as guest_acronym, g.color as guest_color, 'HU' as type
+            FROM note_guests ng
+            LEFT JOIN guests g ON ng.guest_id = g.id
+            WHERE ng.stay_id = :stayId2)
+
+            ORDER BY created_at DESC
+        ", ['stayId1' => $stayId, 'stayId2' => $stayId]);
+    }
 
 }

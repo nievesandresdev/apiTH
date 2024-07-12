@@ -41,4 +41,9 @@ class Guest extends Model
     {
         return $this->hasMany(Chat::class);
     }
+
+    public function notes()
+    {
+        return $this->hasMany(NoteGuest::class);
+    }
 }
