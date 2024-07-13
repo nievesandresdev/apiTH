@@ -19,8 +19,11 @@ class HotelResource extends JsonResource
         $defaultChatSettingsArray  = defaultChatSettings();
         $chatSettings = ChatSetting::with('languages')->where('hotel_id',$this->id)->first() ?? $defaultChatSettingsArray;
 
-        // $defaultChatHours = defaultChatHours();
-        // $chatHours = ChatHour::where('hotel_id',$this->id)->get() ?? $defaultChatHours;
+        if (localeCurrent() == 'es') {
+            $description = $this->description;
+        } else {
+            $description = $this->translate->description ?? null;
+        }
 
 
         return [
@@ -38,7 +41,7 @@ class HotelResource extends JsonResource
             "longitude"=> $this->longitude,
             "checkin"=> $this->checkin,
             "checkout"=> $this->checkout,
-            "description"=> $this->description,
+            "description"=> $description,
             "instagram_url"=> $this->instagram_url,
             "facebook_url"=> $this->facebook_url,
             "pinterest_url"=> $this->pinterest_url,
