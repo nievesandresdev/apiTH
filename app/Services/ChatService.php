@@ -51,7 +51,7 @@ class ChatService {
                 $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
 
                 // Extraer los roles de email_notify_new_feedback_to
-                $rolesToNotify = collect($settingsPermissions['email_notify_new_feedback_to']);
+                $rolesToNotify = collect($settingsPermissions['email_notify_new_message_to']);
 
                 // Filtrar los usuarios que tengan uno de esos roles
                 $filteredUsers = $queryUsers->filter(function ($user) use ($rolesToNotify) {
@@ -85,6 +85,12 @@ class ChatService {
                 'by' => 'Guest',
                 'automatic' => false
             ]);
+
+           /*  return [
+                'permisos' => $filteredUsers,
+                '$queryUsers' => $queryUsers,
+                'settingsPermissions' => $settingsPermissions,
+            ]; */
 
 
             //Mail::to($filteredUsers->pluck('email'))->send(new ChatEmail('pending', $hotel));
@@ -178,6 +184,16 @@ class ChatService {
                     'sent_at' => $message->created_at->toDateTimeString()
                 ];
             });
+            if ($filteredUsers->isNotEmpty()) {
+                $filteredUsers->each(function ($user) use ($unansweredMessagesData) {
+                    //Mail::to($user['email'])->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
+                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), $user['email']);
+                });
+            }
+            /* return [
+
+                });
+            }
             $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), "francisco20990@gmail.com");
             /* return [
                 'response' => 'successReturn',
