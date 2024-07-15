@@ -192,6 +192,45 @@ class StayHosterServices {
         }
     }
 
+    public function getdetailDateData($stayId, $hotel) {
+        try {
+            $periodStay = $this->queryService->getCurrentPeriod($hotel, $stayId);
+
+            $stay = Stay::find($stayId);
+            $stayCheckin = $stay->check_in;
+            $stayCheckout = $stay->check_out;
+            
+            //detalle de estancia
+            if($periodStay == 'pre-stay'){
+                $untilCheckin = $this->utilsServices->calculateDaysUntilTo($stayCheckin);
+                $textDay = $untilCheckin == 1 ? ' dia' : ' dias';
+                $detailPeriod =  "Llega en <b>$untilCheckin</b> $textDay";
+            }else if($periodStay == 'in-stay'){
+                $totalDays = $this->utilsServices->calculateDaysBetween($stayCheckin, $stayCheckout);
+                $currentNight = $this->calculateCurrentNight($stayCheckin, $stayCheckout);
+                $detailPeriod = "noche <b>$currentNight</b> de <b>$totalDays</b>";
+            }else{
+                $detailPeriod = $this->utilsServices->calculateDaysOrWeeksFromDate($stayCheckout);
+            }
+            $formatCheckin = $this->utilsServices->formatDateToDayMonthAndYear($stayCheckin);
+            $formatCheckout = $this->utilsServices->formatDateToDayMonthAndYear($stayCheckout);
+
+           return [
+                "detailPeriod" => $detailPeriod,
+                "formatCheckin" => $formatCheckin,
+                "formatCheckout" => $formatCheckout,
+                "period" => $periodStay,
+                "stayCheckin" => $stay->check_in,
+                "stayCheckout" => $stay->check_out,
+                "room" => $stay->room,
+                "middle_reservation" => $stay->middle_reservation,
+                "period" => $periodStay,
+            ];
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
     public function updateData($stayId, $data) {
         try {
             
