@@ -184,6 +184,7 @@ class StayHosterServices {
                 "room" => $stay->room,
                 "id" => $stay->id,
                 "middle_reservation" => $stay->middle_reservation,
+                "sessions" => $stay->sessions,
                 "guests" => $guests,
                 'optionsListNote' => $optionsListNote
             ];
@@ -262,6 +263,8 @@ class StayHosterServices {
         }
     }
     
+    //notes 
+
     public function getAllNotesByStay($stayId){
         return DB::select("
             (SELECT ns.id, ns.content, ns.created_at, ns.updated_at, ns.edited, NULL as guest_id, NULL as guest_name, NULL as guest_acronym, NULL as guest_color, 'ES' as type
@@ -278,5 +281,84 @@ class StayHosterServices {
             ORDER BY created_at DESC
         ", ['stayId1' => $stayId, 'stayId2' => $stayId]);
     }
+
+    //sessions
+
+    public function createSession($data) {
+        try {
+            $stayId = $data->stayId;
+            $field = $data->field;
+            $userColor = $data->userColor;
+            $userEmail = $data->userEmail;
+            $userName = $data->userName;
+            
+            $stay = Stay::find($stayId);
+            if($stay->sessions){
+                $sessions = $stay->sessions ?? []; 
+                // Verifica si el email ya existe en los arrays guardados
+                foreach ($sessions as $session) {
+                    if ($session['userEmail'] === $userEmail) {
+                        return $stay->sessions;
+                    }
+                }
+                // Si el email no existe, agrega el nuevo usuario a la lista
+                $sessions[] = ['userColor' => $userColor, 'userEmail' => $userEmail, 'userName' => $userName];
+        
+                $stay->sessions = $sessions;
+                $stay->save();
+            }else{
+                $stay->sessions = [['userColor'=>$userColor,'userEmail'=>$userEmail,'userName'=>$userName]];
+            }
+            $stay->save();
+            sendEventPusher(
+                'private-stay-sessions.' . $stay->id, 
+                'App\Events\SessionsStayEvent', 
+                [ 'stayId' => $stay->id, 'session' => $stay->sessions]
+            );
+            return $stay->sessions;
+        } catch (\Exception $e) {
+            return $e;
+        }
+            
+    }
+
+    public function deleteSession($data) {
+        try {
+            $stayId = $data->stayId;
+            $userEmail = $data->userEmail;
+            
+            $stay = Stay::find($stayId);
+    
+            $sessions = $stay->sessions ?? [];
+    
+            // Filtra el array para eliminar el usuario con el email dado
+            $filteredSessions = array_filter($sessions, function ($session) use ($userEmail) {
+                return $session['userEmail'] !== $userEmail;
+            });
+    
+            // Comprobar si el número de sesiones ha cambiado después del filtrado
+            if (count($filteredSessions) === count($sessions)) return;
+    
+            // Si el array filtrado está vacío, establece sessions como null
+            if (empty($filteredSessions)) {
+                $stay->sessions = null;
+            } else {
+                $stay->sessions = array_values($filteredSessions); // reindexa el array para asegurar la integridad de los índices
+            }
+    
+            $stay->save();
+            sendEventPusher(
+                'private-stay-sessions.' . $stay->id, 
+                'App\Events\SessionsStayEvent', 
+                [ 'stayId' => $stay->id, 'session' => $stay->sessions]
+            );
+            return $stay->sessions;
+    
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+    
+    
 
 }

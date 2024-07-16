@@ -33,7 +33,8 @@ class UtilsController extends Controller
     
     public function test()
     {
-        return "bool :".isOnlyEmojiEscapes("\u2764\ufe0f");        
+        sendEventPusher('private-stay-sessions.' . 67, 'App\Events\SessionsStayEvent', ['data' => 'qlq']);
+        return 'listo';
     }
 
 
