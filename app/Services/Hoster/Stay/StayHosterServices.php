@@ -237,6 +237,7 @@ class StayHosterServices {
             $stay = Stay::find($stayId);
             $stay->room = $data->room ?? $stay->room;
             $stay->middle_reservation = $data->middle_reservation ?? $stay->middle_reservation;
+            $stay->sessions = $data->sessions ?? $stay->sessions;
             return $stay->save();
             // Cambios guardados con éxito
         } catch (\Exception $e) {
