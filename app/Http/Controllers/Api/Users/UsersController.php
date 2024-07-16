@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Users;
 
 use App\Http\Controllers\Controller;
 use App\Services\Hoster\Users\{UserServices, ProfileServices};
+use App\Services\Apis\ApiReviewServices;
 use App\Services\QueryServices;
 use App\Services\QuerySettingsServices;
 use Illuminate\Support\Facades\Hash;
@@ -24,15 +25,24 @@ class UsersController extends Controller
     protected $mailService;
     protected $serviceQuery;
     protected $settings;
+    protected $api_review_service;
 
 
-    public function __construct(UserServices $userServices, ProfileServices $profileServices,MailService $_MailService,QueryServices $serviceQuery,QuerySettingsServices $_QuerySettingsServices,)
+    public function __construct(
+        UserServices $userServices,
+        ProfileServices $profileServices,
+        MailService $_MailService,
+        QueryServices $serviceQuery,
+        QuerySettingsServices $_QuerySettingsServices,
+        ApiReviewServices $_api_review_service
+    )
     {
         $this->userServices = $userServices;
         $this->profileServices = $profileServices;
         $this->mailService = $_MailService;
         $this->serviceQuery = $serviceQuery;
         $this->settings = $_QuerySettingsServices;
+        $this->api_review_service = $_api_review_service;
     }
 
     public function getUsers()
@@ -196,6 +206,17 @@ class UsersController extends Controller
             ],null,$e->getMessage());
         }
     }
+
+    public function getDataOtas(Request $request){
+
+        $hotel = $request->attributes->get('hotel');
+        $summary_reviews = $this->api_review_service->getDataOta($hotel);
+
+        return bodyResponseRequest(EnumResponse::SUCCESS, [
+            'otas' => $summary_reviews,
+        ]);
+    }
+
 
     public function testMail(Request $request){
         try {
