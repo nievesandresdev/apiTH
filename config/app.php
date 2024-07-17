@@ -57,6 +57,7 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
     'guest_path' => env('LOCAL_GUEST_URL', 'http://localhost'),
+    'storage_image' => env('APP_IMAGE', 'https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/'),
     'asset_url' => env('ASSET_URL'),
     'hoster_url' => env('HOSTER_URL','http://localhost'),
     //OPENAI
