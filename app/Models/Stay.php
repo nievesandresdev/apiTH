@@ -23,6 +23,10 @@ class Stay extends Model
         'sessions'
     ];
 
+    protected $casts = [
+        'sessions' => 'array',
+    ];
+
     public function staySurvey()
     {
         return $this->hasMany(StaySurvey::class, 'stay_id');

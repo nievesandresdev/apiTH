@@ -162,7 +162,7 @@ class QueryServices {
 
     public function saveResponse ($id, $request, $hotel) {
         try{
-
+            
             $settingsPermissions = $this->settings->getAll($hotel->id);
             /**
              * trae los ususarios y sus roles asociados al hotel en cuestion
@@ -179,7 +179,15 @@ class QueryServices {
 
             /** fin traer user asociados y permisos */
 
-
+            $query = Query::find($id);
+            if ($query->answered) {
+                $query->histories()->create([
+                    'qualification'   => $query->qualification,
+                    'comment'         => $query->comment,
+                    'responded_at'    => $query->responded_at,
+                    'response_lang'   => $query->response_lang,
+                ]);
+            }
 
             $comment = $request->comment;
             $originalComment = $request->comment;
@@ -194,7 +202,6 @@ class QueryServices {
                 }
             }
 
-            $query = Query::find($id);
             $query->answered = true;
             $query->qualification = $request->qualification;
             $query->response_lang = $responseLang;
