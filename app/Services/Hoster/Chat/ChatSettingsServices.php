@@ -49,7 +49,7 @@ class ChatSettingsServices {
                 ]
             );
             return $save;
-            
+
         } catch (\Exception $e) {
             return $e;
         }

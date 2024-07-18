@@ -32,4 +32,10 @@ class Query extends Model
     {
         return boolval($value);
     }
+
+    // relations
+    public function histories()
+    {
+        return $this->hasMany(QueryHistory::class);
+    }
 }

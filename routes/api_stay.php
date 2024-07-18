@@ -20,11 +20,15 @@ Route::group(['prefix' => 'stay'], function () {
         Route::get('/statisticsByHotel', [StayHosterController::class, 'statisticsByHotel']);
         Route::get('/getdetailData', [StayHosterController::class, 'getdetailData']);
         Route::post('/updateData', [StayHosterController::class, 'updateData']);
+        //notes
         Route::get('/getAllNotesByStay', [StayHosterController::class, 'getAllNotesByStay']);
         Route::post('/createOrupdateStayNote', [StayHosterController::class, 'createOrupdateStayNote']);
         Route::post('/deleteStayNote', [StayHosterController::class, 'deleteStayNote']);
         Route::post('/createOrupdateGuestNote', [StayHosterController::class, 'createOrupdateGuestNote']);
         Route::post('/deleteGuestNote', [StayHosterController::class, 'deleteGuestNote']);
+        //sessions
+        Route::post('/createSession', [StayHosterController::class, 'createSession']);
+        Route::post('/deleteSession', [StayHosterController::class, 'deleteSession']);
     });
 });
 

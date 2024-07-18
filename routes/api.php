@@ -74,6 +74,9 @@ Route::middleware('auth:api')->group(function () {
 
         Route::get('/get-subscription-status', [UsersController::class, 'getStatusSubscription']);
 
+        //getDataOtas
+        Route::get('/getDataOtas', [UsersController::class, 'getDataOtas']);
+
         //test mail
         Route::get('/testMail', [UsersController::class, 'testMail']);
     });

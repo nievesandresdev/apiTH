@@ -19,7 +19,12 @@ class Stay extends Model
         'check_out',
         'hour_checkin',
         'hour_checkout',
-        'pending_queries_seen'
+        'pending_queries_seen',
+        'sessions'
+    ];
+
+    protected $casts = [
+        'sessions' => 'array',
     ];
 
     public function staySurvey()

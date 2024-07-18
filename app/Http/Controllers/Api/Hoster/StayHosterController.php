@@ -96,6 +96,9 @@ class StayHosterController extends Controller
         }
     }
 
+
+    //notes 
+    
     public function getAllNotesByStay(Request $request){
         try {
             $model = $this->service->getAllNotesByStay($request->stayId);
@@ -198,6 +201,41 @@ class StayHosterController extends Controller
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteGuestNote');
+        }
+    }
+
+
+    //sessions
+
+    public function createSession(Request $request){
+        try {
+            $model = $this->service->createSession($request);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.createSession');
+        }
+    }
+
+    public function deleteSession(Request $request){
+        try {
+            $model = $this->service->deleteSession($request);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteSession');
         }
     }
     
