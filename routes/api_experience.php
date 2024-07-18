@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\ExperienceController;
+use App\Http\Controllers\Api\Hoster\ExperienceController as ExperienceSaasController;
 
 // Route::group(['prefix' => 'e'], function () {
 //     Route::get('/findByAutocomplete', [HotelOtaController::class, 'getAll']);
@@ -13,7 +14,7 @@ Route::group(['prefix' => 'experience'], function () {
     Route::get('/getNumbersByFilters', [ExperienceController::class, 'getNumbersByFilters']);
     Route::get('/findInVIatorByShortId', [ExperienceController::class, 'findInVIatorByShortId']);
     Route::get('/findSchedulesInVIator', [ExperienceController::class, 'findSchedulesInVIator']);
-});
-
-Route::group(['prefix' => '/saas/experience'], function () {
+    Route::group(['prefix' => 'saas'], function () {
+        Route::post('/getAll', [ExperienceSaasController::class, 'getAll']);
+    });
 });
