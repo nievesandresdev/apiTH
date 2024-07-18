@@ -82,7 +82,7 @@ class ChatSettingsController extends Controller
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'settings' => $settings,
-                'chatHours' => $this->hotelService->getChatHours($hotel->id)
+                'chatHours' => $this->hotelService->getChatHours($hotel->id,true)
             ]);
 
         } catch (\Exception $e) {
