@@ -183,6 +183,26 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityFacilities');
         }
     }
+    
+    public function updateVisivilityExperiences (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $this->service->updateVisivilityExperiences($hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityFacilities');
+        }
+    }
 
     public function updateVisivilityPlaces (Request $request) {
         try {

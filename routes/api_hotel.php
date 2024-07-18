@@ -14,6 +14,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/getChatHours', [HotelController::class, 'getChatHours']);
     Route::post('/placeVisivility', [HotelController::class, 'updateVisivilityPlaces']);
     Route::post('/facilityVisivility', [HotelController::class, 'updateVisivilityFacilities']);
+    Route::post('/experienceVisivility', [HotelController::class, 'updateVisivilityExperiences']);
     Route::post('/categoriVisivility', [HotelController::class, 'updateVisivilityCategory']);
     Route::post('/typePlaceVisivility', [HotelController::class, 'updateVisivilityTypePlace']);
 });

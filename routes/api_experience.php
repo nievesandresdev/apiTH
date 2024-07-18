@@ -14,3 +14,6 @@ Route::group(['prefix' => 'experience'], function () {
     Route::get('/findInVIatorByShortId', [ExperienceController::class, 'findInVIatorByShortId']);
     Route::get('/findSchedulesInVIator', [ExperienceController::class, 'findSchedulesInVIator']);
 });
+
+Route::group(['prefix' => '/saas/experience'], function () {
+});

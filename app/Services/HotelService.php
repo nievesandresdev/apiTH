@@ -158,6 +158,11 @@ class HotelService {
         return $hotelModel;
     }
 
+    public function updateVisivilityExperiences ($hotelModel) {
+        $hotelModel = $hotelModel->update(['show_experiences' => !$hotelModel->show_experiences]);
+        return $hotelModel;
+    }
+
     public function updateVisivilityPlaces ($hotelModel) {
         $hotelModel = $hotelModel->update(['show_places' => !$hotelModel->show_places]);
         return $hotelModel;
