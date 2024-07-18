@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Hoster;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -33,10 +33,9 @@ class ExperienceController extends Controller
     public function getAll (Request $request) {
         try {
 
-            $modelHotel = $request->attributes->get('hotel');
-
+            $hotelModel = $request->attributes->get('hotel');
             $lengthAExpFeatured = 12;
-            $hotelId = $modelHotel->id;
+            $hotelId = $hotelModel->id;
             $priceMin = $request->price_min ?? null;
             $priceMax = $request->price_max ?? null;
             $search = $request->search ?? null;
@@ -48,12 +47,12 @@ class ExperienceController extends Controller
             }
 
             //crear array de ciudades para la consulta
-            $citySlug = Str::slug($modelHotel->zone);
-            $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
-            
+            $citySlug = Str::slug($hotelModel->zone);
+            $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+
             $dataFilter = [
                 'city' => $cityName,
-                'cityData' => $cityData,
+                'cityData' => $cityModel,
                 'search' => $search,
                 'price_min' => $priceMin,
                 'price_max' => $priceMax,
@@ -61,7 +60,8 @@ class ExperienceController extends Controller
                 'featured' => $featured,
             ];
 
-            $response = $this->service->getAll($request, $modelHotel, $dataFilter);
+            $response = $this->service->getAll($request, $hotelModel, $dataFilter);
+            
             $expsCollection = $response['experiences'];
             $countOtherCities = $response['countOtherCities'];
             $data = [
