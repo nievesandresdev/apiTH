@@ -93,4 +93,30 @@ class ChatSettingsController extends Controller
 
     }
 
+    public function storeGeneralSetting(Request $request){
+        $hotel = $request->attributes->get('hotel');
+
+        /* return [
+            'hotel' => $hotel,
+            'request' => $request->all(),
+            'languages_id' => $request->languages_id,
+            'languages' => $request->languages,
+
+        ]; */
+
+        try {
+            $model = $this->service->updateSettings($hotel->id, ['name','show_guest','languages'], $request);
+            //$model->languages()->sync($request->languages_id);
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeGeneralSetting');
+        }
+
+        /* $model = $this->service->updateSettings($hotel->id, ['name','show_guest','languages'], $request);
+        $model->languages()->sync($request->languages_id); */
+        return $hotel;
+    }
+
 }
