@@ -14,13 +14,31 @@ class FacilityResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        if (localeCurrent() == 'es') {
+            $title = $this->title;
+            $description = $this->description;
+            $schedule = $this->schedule;
+            $ad_tag = $this->ad_tag;
+        } else {
+            $title = $this->translate->title ?? null;
+            $description = $this->translate->description ?? null;
+            $schedule = $this->translate->schedule ?? null;
+            $ad_tag = $this->translate->ad_tag ?? null;
+        }
         return [
             'id' => $this->id,
             'image' => $this->images->first(),
             'images' => $this->images,
-            'title' => $this->translate->title ?? null,
-            'description' => $this->translate->description ?? null,
-            'schedule' => $this->translate->schedule ?? null
+            'title' => $title,
+            'description' => $description,
+            'schedule' => $schedule,
+            'select' => $this->select,
+            'visible' => $this->visible,
+            'status' => $this->status,
+            'schedules' => $this->schedules,
+            'always_open' => $this->always_open,
+            'ad_tag' => $ad_tag,
+            'order' => $this->order,
         ];
     }
 }
