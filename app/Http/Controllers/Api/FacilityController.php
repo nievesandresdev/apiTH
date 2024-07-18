@@ -116,7 +116,7 @@ class FacilityController extends Controller
             $hotelModel = $request->attributes->get('hotel');
             \DB::beginTransaction();
             $facilityHosterModel = $this->service->storeOrUpdate($request, $hotelModel);
-            // $this->service->processTranslate($request, $facilityHosterModel, $hotelModel);
+            $this->service->processTranslate($request, $facilityHosterModel, $hotelModel);
             $images = $request->images ?? [];
             $this->service->updateImages($images, $facilityHosterModel, $hotelModel);
             $this->service->syncOrder($hotelModel);
