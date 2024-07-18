@@ -210,4 +210,41 @@ class Products extends Model
                 END');
     }
 
+    public function scopeWhereAddExpInHoster($query, $hotelId) {
+        if ($hotelId){
+            $query->whereDoesntHave('toggleableHotels', function($q)use($hotelId){
+                    $q->where('hotel_id', $hotelId);
+                })
+                ->OrWhereHas('productHidden', function($query)use($hotelId){
+                    $query->where('hotel_id', $hotelId);
+                });
+        }
+    }
+
+    public function scopeWithVisibilityForProduct($query, $hotelId)
+    {
+        $query->where(function ($query) use ($hotelId) {
+            $query->whereHas('toggleableHotels', function ($q) use ($hotelId) {
+                $q->where('hotel_id', $hotelId);
+            })->orWhereDoesntHave('productHidden', function ($q) use ($hotelId) {
+                $q->where('hotel_id', $hotelId);
+            });
+        })->orWhere(function ($query) use ($hotelId) {
+            $query->whereDoesntHave('toggleableHotels', function ($q) use ($hotelId) {
+                $q->where('hotel_id', $hotelId);
+            })->orWhereHas('productHidden', function ($q) use ($hotelId) {
+                $q->where('hotel_id', $hotelId);
+            });
+        });
+
+        $query->orderByRaw("
+            CASE WHEN EXISTS (
+                SELECT 1
+                FROM toggle_products
+                WHERE toggle_products.products_id = products.id
+                AND hotel_id = ?
+            ) THEN 0 ELSE 1 END ASC
+        ", [$hotelId]);
+    }
+
 }
