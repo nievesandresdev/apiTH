@@ -81,7 +81,7 @@ class HotelService {
         try {
             $defaultChatHours = defaultChatHours();
 
-            $query = ChatHour::where('hotel_id',$hotelId)->where('active',1);
+            $query = ChatHour::where('hotel_id',$hotelId);
 
             if (!$query->exists()) {
                 return $defaultChatHours;
