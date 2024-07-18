@@ -25,6 +25,8 @@ Route::group(['prefix' => 'chat'], function () {
 
             //search_lang
             Route::post('/searchLang', [ChatSettingsController::class, 'searchLang']);
+            //storeGeneralSetting
+            Route::post('/storeGeneralSetting', [ChatSettingsController::class, 'storeGeneralSetting']);
         });
 
     });

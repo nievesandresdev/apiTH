@@ -34,7 +34,7 @@ class ChatSettingsServices {
             $save = ChatSetting::updateOrCreate(['hotel_id' => $hotelId],
                 [
                     'name' => in_array('name', $keysToSave) ? $newdata->name : $default->name,
-                    'show_guest' => in_array('show_guest', $keysToSave) ? $newdata->show_guest : $default->show_guest,
+                    'show_guest' => in_array('show_guest', $keysToSave) ? ($newdata->show_guest ? 1 : 0 ) : $default->show_guest,
                     'not_available_msg' => in_array('not_available_msg', $keysToSave) ? $newdata->not_available_msg : $default->not_available_msg,
                     'not_available_show' => in_array('not_available_show', $keysToSave) ? $newdata->not_available_show : $default->not_available_show,
                     'first_available_msg' => in_array('first_available_msg', $keysToSave) ? $newdata->first_available_msg : $default->first_available_msg,
@@ -48,6 +48,7 @@ class ChatSettingsServices {
                     'email_notify_not_answered_chat_to' => in_array('email_notify_not_answered_chat_to', $keysToSave) ? $newdata->email_notify_not_answered_chat_to : $default->email_notify_not_answered_chat_to,
                 ]
             );
+            $save->languages()->sync($newdata->languages_id);
             return $save;
 
         } catch (\Exception $e) {
