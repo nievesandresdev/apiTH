@@ -2,7 +2,7 @@
 
 namespace App\Services\Hoster\Chat;
 
-use App\Models\ChatSetting;
+use App\Models\{ChatSetting, ChatHour};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -50,6 +50,25 @@ class ChatSettingsServices {
             );
             $save->languages()->sync($newdata->languages_id);
             return $save;
+
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function updateAvailability ($availability,$hotelId) {
+        try {
+            foreach($availability as $horary){
+                $chat_hour = ChatHour::updateOrCreate(
+                    ['hotel_id' =>  $hotelId,'day' =>  $horary['day']],
+                    [
+                        'active' => $horary['active'],
+                        'horary' => $horary['horary'],
+                    ]
+                );
+            }
+
+            return $chat_hour;
 
         } catch (\Exception $e) {
             return $e;

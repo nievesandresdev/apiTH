@@ -27,6 +27,8 @@ Route::group(['prefix' => 'chat'], function () {
             Route::post('/searchLang', [ChatSettingsController::class, 'searchLang']);
             //storeGeneralSetting
             Route::post('/storeGeneralSetting', [ChatSettingsController::class, 'storeGeneralSetting']);
+            //updateAvailability
+            Route::post('/updateAvailability', [ChatSettingsController::class, 'updateAvailability']);
         });
 
     });

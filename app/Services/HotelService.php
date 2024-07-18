@@ -77,11 +77,15 @@ class HotelService {
         }
     }
 
-    public function getChatHours ($hotelId) {
+    public function getChatHours ($hotelId,$all = false) {
         try {
             $defaultChatHours = defaultChatHours();
 
-            $query = ChatHour::where('hotel_id',$hotelId)->where('active',1);
+            if ($all) {
+                $query = ChatHour::where('hotel_id',$hotelId);
+            }else{
+                $query = ChatHour::where('hotel_id',$hotelId)->where('active',1);
+            }
 
             if (!$query->exists()) {
                 return $defaultChatHours;
