@@ -48,7 +48,10 @@ class ChatSettingsServices {
                     'email_notify_not_answered_chat_to' => in_array('email_notify_not_answered_chat_to', $keysToSave) ? $newdata->email_notify_not_answered_chat_to : $default->email_notify_not_answered_chat_to,
                 ]
             );
-            $save->languages()->sync($newdata->languages_id);
+            if(in_array('languages', $keysToSave)){
+                $save->languages()->sync($newdata->languages_id);
+            }
+
             return $save;
 
         } catch (\Exception $e) {
