@@ -5,16 +5,18 @@ namespace App\Http\Controllers\Api\Hoster;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\TypePlaces;
+use App\Models\Products;
 
 use App\Services\Hoster\ExperienceService;
 
 use App\Http\Resources\ExperienceResource;
 use App\Http\Resources\ExperienceDetailResource;
-use App\Http\Resources\ExperiencePaginateResource;
+
 use Illuminate\Support\Str;
 use App\Utils\Enums\EnumResponse;
 use App\Services\CityService;
+
+use App\Http\Resources\ExperiencePaginateResource;
 
 class ExperienceController extends Controller
 {
@@ -34,13 +36,21 @@ class ExperienceController extends Controller
         try {
 
             $hotelModel = $request->attributes->get('hotel');
+            return $hotelModel;
             $lengthAExpFeatured = 12;
             $hotelId = $hotelModel->id;
             $priceMin = $request->price_min ?? null;
             $priceMax = $request->price_max ?? null;
+            $priceMax = $request->price_max ?? null;
+            $priceMax = $request->price_max ?? null;
             $search = $request->search ?? null;
-            $cityName = $request->city ?? $modelHotel->zone;       
+            $cityName = $request->city ?? $hotelModel->zone;       
             $featured = $request->featured && $request->featured != 'false' && $request->featured != '0';
+            $all_cities = boolval($request->all_cities) ?? false;
+            $city_latitude = $request->city_latitude;
+            $city_longitude = $request->city_longitude;
+            $one_exp_id = $request->one_exp_id ?? null;
+            $visibility = $request->visibility ?? null;
             $duration = [];
             if (!empty($request->duration)) {
                 $duration = gettype($request->duration) == 'string' ? json_decode($request->duration, true) : $request->duration;
@@ -52,26 +62,43 @@ class ExperienceController extends Controller
 
             $dataFilter = [
                 'city' => $cityName,
-                'cityData' => $cityModel,
+                'all_cities' => $all_cities,
                 'search' => $search,
                 'price_min' => $priceMin,
                 'price_max' => $priceMax,
                 'duration' => $duration,
                 'featured' => $featured,
+                'one_exp_id' => $one_exp_id,
+                'visibility' => $visibility,
             ];
 
-            $response = $this->service->getAll($request, $hotelModel, $dataFilter);
+            $queryExperiences = $this->service->queryGetAll($request, $hotelModel, $dataFilter, $cityModel);
+
+            $queryExperiencesVisibles = clone $queryExperiences;
+
+            $countVisible = $queryExperiencesVisibles->where(function ($query) use ($hotelModel) {
+                $query->whereHas('toggleableHotels', function ($q) use ($hotelModel) {
+                    $q->where('hotel_id', $hotelModel->id);
+                });
+            })->count();
+
+            $productspaginate = $queryExperiences->paginate(20)->appends(request()->except('page'));
             
-            $expsCollection = $response['experiences'];
-            $countOtherCities = $response['countOtherCities'];
-            $data = [
-                'experiences' => new ExperiencePaginateResource($expsCollection),
-                'countOtherCities' => $countOtherCities
-            ];
+            // return $products->total();
+            $countHidden = $productspaginate->total() - $countVisible;
 
+            $productsCollection = new ExperiencePaginateResource($productspaginate);
+            
+            $data = [
+                'visibleNumbers' => $countVisible,
+                'hiddenNumbers' => $countHidden,
+                'experiences' => $productsCollection,
+            ];
+            
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
         }
     }
