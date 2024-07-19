@@ -38,6 +38,7 @@ class ExperienceResource extends JsonResource
             'is_visible' => boolval($isVisible),
             'recomendations' => $this->recomendations()->where('hotel_id', $modelHotel->id)->first(),
             'product_featured' => $this->productFeatured()->where('hotel_id', $modelHotel->id)->first(),
+            'featured' => !empty($this->productFeatured()->where('hotel_id', $modelHotel->id)->first()),
             // activities
             'title' => $this['translation']['title'],
             'cancellation_policy' => $this['translation']['cancellation_policy'], 
