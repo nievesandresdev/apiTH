@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Hoster;
 
 use App\Http\Controllers\Controller;
 use App\Services\Hoster\Queries\QueryHosterServices;
-use App\Services\Hoster\Stay\StayHosterServices;
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
@@ -12,15 +11,12 @@ use Illuminate\Support\Facades\DB;
 class StayQueryHosterController extends Controller
 {
     public $service;
-    public $stayHosterService;
 
     function __construct(
-        QueryHosterServices $_QueryHosterController,
-        StayHosterServices $_StayHosterServices
+        QueryHosterServices $_QueryHosterController
     )
     {
         $this->service = $_QueryHosterController;
-        $this->stayHosterService = $_StayHosterServices;
     }
 
     public function getFeedbackSummaryByGuest(Request $request){
@@ -52,7 +48,7 @@ class StayQueryHosterController extends Controller
             $stayId = $request->stayId;
             $guestId = $request->guestId;
 
-            $model = $this->stayHosterService->getDetailQueryByGuest($stayId, $guestId, $hotel);
+            $model = $this->service->getDetailByGuest($guestId, $stayId, $hotel);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

@@ -2,11 +2,11 @@
 namespace App\Services\Hoster\Queries;
 
 use App\Models\Guest;
-// use App\Models\Query;
-// use App\Models\Stay;
+use App\Models\Query;
+use App\Models\Stay;
 use App\Services\Hoster\Stay\StayHosterServices;
-// use App\Services\QueryServices;
-// use App\Utils\Enums\EnumsLanguages;
+use App\Services\QueryServices;
+use App\Utils\Enums\EnumsLanguages;
 use Carbon\Carbon;
 
 class QueryHosterServices {
@@ -17,11 +17,11 @@ class QueryHosterServices {
 
     function __construct(
         StayHosterServices $_StayHosterServices,
-        // QueryServices $_QueryServices
+        QueryServices $_QueryServices
     )
     {
         $this->stayHosterServices = $_StayHosterServices;
-        // $this->queryService = $_QueryServices;
+        $this->queryService = $_QueryServices;
     }
 
     public function getFeedbackSummaryByGuest ($stayId, $guestId, $hotel) {
@@ -56,78 +56,81 @@ class QueryHosterServices {
         }
     }
 
-    // public function getFeedbackTimelineByGuest ($guestId, $stay, $hotel) {
-    //     try {
+    public function getFeedbackTimelineByGuest ($guestId, $stay, $hotel) {
+        try {
             
-    //         $period = $this->queryService->getCurrentPeriod($hotel, $stay->id);
+            $period = $this->queryService->getCurrentPeriod($hotel, $stay->id);
 
-    //         $guestData = Guest::select('id')->where('id',$guestId)->first();
-    //         $guestAccess = $guestData->stayAccesses()->where('stay_id',$stay->id)->first();
+            $guestData = Guest::select('id')->where('id',$guestId)->first();
+            $guestAccess = $guestData->stayAccesses()->where('stay_id',$stay->id)->first();
 
-    //         $preStayQuery = $this->getPrestayStatus($guestData, $stay->id, $period, $stay->check_in, $guestAccess);
-    //         $stayQuery  = $this->geStayStatus($guestData, $stay->id, $period, $stay->check_in, $stay->check_out, $guestAccess);
-    //         $queryPostStay =  $guestData->queries()->where('stay_id',$stay->id)->where('period','post-stay')->orderBy('created_at','asc')->first();
-    //         $postStayQuery  = $this->getPostStayStatus($guestData, $stay->id, $period, $stay->check_out, $guestAccess);
-    //         $postStayRequest = $this->getPostStayRequest($queryPostStay, $period);
+            $preStayQuery = $this->getPrestayStatus($guestData, $stay->id, $period, $stay->check_in, $guestAccess);
+            $stayQuery  = $this->geStayStatus($guestData, $stay->id, $period, $stay->check_in, $stay->check_out, $guestAccess);
+            $queryPostStay =  $guestData->queries()->where('stay_id',$stay->id)->where('period','post-stay')->orderBy('created_at','asc')->first();
+            $postStayQuery  = $this->getPostStayStatus($guestData, $stay->id, $period, $stay->check_out, $guestAccess);
+            $postStayRequest = $this->getPostStayRequest($queryPostStay, $period);
 
-    //         $timeLineData = [
-    //             'pre-stay' => $preStayQuery,
-    //             'in-stay' => $stayQuery,
-    //             'post-stay' => $postStayQuery,
-    //             'request' => $postStayRequest
-    //         ];
-    //         return $timeLineData;
-    //     } catch (\Exception $e) {
-    //         return $e;
-    //     }
-    // }
+            $timeLineData = [
+                'pre-stay' => $preStayQuery,
+                'in-stay' => $stayQuery,
+                'post-stay' => $postStayQuery,
+                'request' => $postStayRequest,
+                'guestAccess' => $guestAccess,
+                'currentPeriod' => $period,
+                'stay' => $stay,
+            ];
+            return $timeLineData;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 
-    // public function getDataByGuest ($guestId, $stayId) {
-    //     try {
-    //         $dataQueries = Query::where('guest_id',$guestId)
-    //             ->where('stay_id',$stayId)
-    //             ->orderBy('created_at','asc')
-    //                 ->get();
+    public function getDataByGuest ($guestId, $stayId) {
+        try {
+            $dataQueries = Query::where('guest_id',$guestId)
+                ->where('stay_id',$stayId)
+                ->orderBy('created_at','asc')
+                    ->get();
             
-    //         foreach ($dataQueries as $query) {
-    //             $languages = [];
-    //             if($query->comment){
-    //                 foreach ($query->comment as $languageCode => $commentText) {
-    //                     $languageName = EnumsLanguages::NAME[$languageCode] ?? 'Desconocido';
-    //                     $languageData = [
-    //                         'name' => $languageName,
-    //                         'code' => $languageCode,
-    //                     ];
+            foreach ($dataQueries as $query) {
+                $languages = [];
+                if($query->comment){
+                    foreach ($query->comment as $languageCode => $commentText) {
+                        $languageName = EnumsLanguages::NAME[$languageCode] ?? 'Desconocido';
+                        $languageData = [
+                            'name' => $languageName,
+                            'code' => $languageCode,
+                        ];
 
-    //                     $languages[] = $languageData; // Agregar al array temporal
-    //                 }
-    //                 $query['languages'] = collect($languages);
-    //             }
-    //         }
-    //         return $dataQueries;
-    //     } catch (\Exception $e) {
-    //         return $e;
-    //     }
-    // }
+                        $languages[] = $languageData; // Agregar al array temporal
+                    }
+                    $query['languages'] = collect($languages);
+                }
+            }
+            return $dataQueries;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 
-    // public function getPostStayRequest($queryPostStay, $currentPeriod){
+    public function getPostStayRequest($queryPostStay, $currentPeriod){
 
-    //     $icon = "Pendiente";
-    //     $answeredTime = null;
-    //     if($currentPeriod == 'post-stay' || $currentPeriod == 'invalid-stay'){
-    //         if($queryPostStay && $queryPostStay->qualification == "GOOD"){
-    //             $icon = "Solicitado";
-    //             $answeredTime = $queryPostStay->responded_at;
-    //         }
-    //         if($queryPostStay && $queryPostStay->answered && $queryPostStay->qualification !== "GOOD"){
-    //             $icon = "No solicitado";
-    //         }
-    //     }
-    //     return [
-    //         "icon" => $icon,
-    //         "answeredTime" => $answeredTime
-    //     ];
-    // }
+        $icon = "Pendiente";
+        $answeredTime = null;
+        if($currentPeriod == 'post-stay' || $currentPeriod == 'invalid-stay'){
+            if($queryPostStay && $queryPostStay->qualification == "GOOD"){
+                $icon = "Solicitado";
+                $answeredTime = $queryPostStay->responded_at;
+            }
+            if($queryPostStay && $queryPostStay->answered && $queryPostStay->qualification !== "GOOD"){
+                $icon = "No solicitado";
+            }
+        }
+        return [
+            "icon" => $icon,
+            "answeredTime" => $answeredTime
+        ];
+    }
 
     public function getPrestayStatus($guest, $stayId, $period, $stayCheckin, $guestAccess){
         
@@ -300,6 +303,25 @@ class QueryHosterServices {
                 "shippingTime" => $shippingTime,
                 "answeredTime" => $answeredTime,
                 "feeling" => $feeling,
+            ];
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function getDetailByGuest($guestId, $stayId, $hotel){
+        try {
+            $stay = Stay::find($stayId);
+            $guestList = $this->stayHosterServices->getGuestListWithNoti($stay);
+
+            $timeline = $this->getFeedbackTimelineByGuest($guestId, $stay, $hotel);
+
+            $queryByGuest = $this->getDataByGuest($guestId, $stay->id);
+
+            return [
+                'guests' => $guestList,
+                'timeline' => $timeline,
+                'queryByGuest' => $queryByGuest
             ];
         } catch (\Exception $e) {
             return $e;

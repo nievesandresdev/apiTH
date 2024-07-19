@@ -4,7 +4,6 @@ namespace App\Services\Hoster\Stay;
 
 use App\Models\hotel;
 use App\Models\Stay;
-use App\Services\Hoster\Queries\QueryHosterServices;
 use App\Services\Hoster\UtilsHosterServices;
 use App\Services\QueryServices;
 use Illuminate\Support\Facades\DB;
@@ -15,17 +14,14 @@ class StayHosterServices {
     
     public $queryService;
     public $utilsServices;
-    public $queryHosterService;
 
     function __construct(
         QueryServices $_QueryServices,
-        UtilsHosterServices $_UtilsHosterServices,
-        QueryHosterServices $_QueryHosterServices
+        UtilsHosterServices $_UtilsHosterServices
     )
     {
         $this->queryService = $_QueryServices;
         $this->utilsServices = $_UtilsHosterServices;
-        $this->queryHosterService = $_QueryHosterServices;
     }
 
     // 'stays.pending_queries_seen',
@@ -381,25 +377,5 @@ class StayHosterServices {
             return $e;
         }
     }
-
-    //queries
-    // public function getDetailQueryByGuest($guestId, $stayId, $hotel){
-    //     try {
-    //         $stay = Stay::find($stayId);
-    //         $guestList = $this->getGuestListWithNoti($stay);
-
-    //         $timeline = $this->queryHosterService->getFeedbackTimelineByGuest($guestId, $stay, $hotel);
-
-    //         $queryByGuest = $this->queryHosterService->getDataByGuest($guestId, $stay->id);
-
-    //         return [
-    //             'guests' => $guestList,
-    //             'timeline' => $timeline,
-    //             'queryByGuest' => $queryByGuest
-    //         ];
-    //     } catch (\Exception $e) {
-    //         return $e;
-    //     }
-    // }
 
 }
