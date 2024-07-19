@@ -247,4 +247,13 @@ class Products extends Model
         ", [$hotelId]);
     }
 
+    public function scopeWhereFeaturedHotel($query, $hotelId)
+    {
+        if ($hotelId){
+            $query->whereHas('productFeatured', function($query)use($hotelId){
+                $query->where('hotel_id', $hotelId);
+            });
+        }
+    }
+
 }
