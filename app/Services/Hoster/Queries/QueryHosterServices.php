@@ -328,4 +328,11 @@ class QueryHosterServices {
         }
     }
     
+    public function togglePendingState($queryId, $bool){
+        try{
+            return Query::where('id',$queryId)->update(['attended' => $bool]);
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }

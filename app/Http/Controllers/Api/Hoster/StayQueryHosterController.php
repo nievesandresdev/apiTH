@@ -62,5 +62,23 @@ class StayQueryHosterController extends Controller
         }
     }
     
+    public function togglePendingState(Request $request){
+        try {
+            $queryId = $request->queryId;
+            $bool = $request->bool;
+
+            $model = $this->service->togglePendingState($queryId, $bool);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.togglePendingState');
+        }
+    }
     
 }
