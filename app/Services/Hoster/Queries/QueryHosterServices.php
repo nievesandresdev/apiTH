@@ -2,20 +2,26 @@
 namespace App\Services\Hoster\Queries;
 
 use App\Models\Guest;
-use App\Models\Stay;
+// use App\Models\Query;
+// use App\Models\Stay;
 use App\Services\Hoster\Stay\StayHosterServices;
+// use App\Services\QueryServices;
+// use App\Utils\Enums\EnumsLanguages;
 use Carbon\Carbon;
 
 class QueryHosterServices {
 
     public $stayHosterServices;
+    public $queryService;
 
 
     function __construct(
-        StayHosterServices $_StayHosterServices
+        StayHosterServices $_StayHosterServices,
+        // QueryServices $_QueryServices
     )
     {
         $this->stayHosterServices = $_StayHosterServices;
+        // $this->queryService = $_QueryServices;
     }
 
     public function getFeedbackSummaryByGuest ($stayId, $guestId, $hotel) {
@@ -50,170 +56,254 @@ class QueryHosterServices {
         }
     }
 
-    public function getPrestayStatus($guest, $stayId, $period, $stayCheckin, $guestAccess){
-        $queryPreStay =  $guest->queries()
-                ->where('stay_id',$stayId)
-                ->where('period','pre-stay')
-                ->first();
+    // public function getFeedbackTimelineByGuest ($guestId, $stay, $hotel) {
+    //     try {
+            
+    //         $period = $this->queryService->getCurrentPeriod($hotel, $stay->id);
 
-        $iconPreStay = "No enviado";
-        $shippingTime = null;
-        $answeredTime = null;
-        $feeling = null;
-        //si existe la query
-        if($queryPreStay){
-            //para todos los casos
-            if($queryPreStay->disabled){
-                $iconPreStay = "Desactivado";
-            }else{
+    //         $guestData = Guest::select('id')->where('id',$guestId)->first();
+    //         $guestAccess = $guestData->stayAccesses()->where('stay_id',$stay->id)->first();
+
+    //         $preStayQuery = $this->getPrestayStatus($guestData, $stay->id, $period, $stay->check_in, $guestAccess);
+    //         $stayQuery  = $this->geStayStatus($guestData, $stay->id, $period, $stay->check_in, $stay->check_out, $guestAccess);
+    //         $queryPostStay =  $guestData->queries()->where('stay_id',$stay->id)->where('period','post-stay')->orderBy('created_at','asc')->first();
+    //         $postStayQuery  = $this->getPostStayStatus($guestData, $stay->id, $period, $stay->check_out, $guestAccess);
+    //         $postStayRequest = $this->getPostStayRequest($queryPostStay, $period);
+
+    //         $timeLineData = [
+    //             'pre-stay' => $preStayQuery,
+    //             'in-stay' => $stayQuery,
+    //             'post-stay' => $postStayQuery,
+    //             'request' => $postStayRequest
+    //         ];
+    //         return $timeLineData;
+    //     } catch (\Exception $e) {
+    //         return $e;
+    //     }
+    // }
+
+    // public function getDataByGuest ($guestId, $stayId) {
+    //     try {
+    //         $dataQueries = Query::where('guest_id',$guestId)
+    //             ->where('stay_id',$stayId)
+    //             ->orderBy('created_at','asc')
+    //                 ->get();
+            
+    //         foreach ($dataQueries as $query) {
+    //             $languages = [];
+    //             if($query->comment){
+    //                 foreach ($query->comment as $languageCode => $commentText) {
+    //                     $languageName = EnumsLanguages::NAME[$languageCode] ?? 'Desconocido';
+    //                     $languageData = [
+    //                         'name' => $languageName,
+    //                         'code' => $languageCode,
+    //                     ];
+
+    //                     $languages[] = $languageData; // Agregar al array temporal
+    //                 }
+    //                 $query['languages'] = collect($languages);
+    //             }
+    //         }
+    //         return $dataQueries;
+    //     } catch (\Exception $e) {
+    //         return $e;
+    //     }
+    // }
+
+    // public function getPostStayRequest($queryPostStay, $currentPeriod){
+
+    //     $icon = "Pendiente";
+    //     $answeredTime = null;
+    //     if($currentPeriod == 'post-stay' || $currentPeriod == 'invalid-stay'){
+    //         if($queryPostStay && $queryPostStay->qualification == "GOOD"){
+    //             $icon = "Solicitado";
+    //             $answeredTime = $queryPostStay->responded_at;
+    //         }
+    //         if($queryPostStay && $queryPostStay->answered && $queryPostStay->qualification !== "GOOD"){
+    //             $icon = "No solicitado";
+    //         }
+    //     }
+    //     return [
+    //         "icon" => $icon,
+    //         "answeredTime" => $answeredTime
+    //     ];
+    // }
+
+    public function getPrestayStatus($guest, $stayId, $period, $stayCheckin, $guestAccess){
+        
+        try {
+            $queryPreStay =  $guest->queries()
+                    ->where('stay_id',$stayId)
+                    ->where('period','pre-stay')
+                    ->first();
+
+            $iconPreStay = "No enviado";
+            $shippingTime = null;
+            $answeredTime = null;
+            $feeling = null;
+            //si existe la query
+            if($queryPreStay){
                 //para todos los casos
-                if($queryPreStay->answered){
-                    $iconPreStay = "Respondido";
-                    $answeredTime = $queryPreStay->responded_at;
-                    $shippingTime = $queryPreStay->created_at;
-                }
-                //cuando estamos aun en pre-stay
-                if(!$queryPreStay->answered && $period == 'pre-stay'){
-                    $iconPreStay = "Esperando respuesta";
-                    $shippingTime = $queryPreStay->created_at;
-                }
-                //cuando ya paso pre-stay
-                if(!$queryPreStay->answered && $period !== 'pre-stay'){
-                    $iconPreStay = "No respondido";
-                    $shippingTime = $queryPreStay->created_at;
+                if($queryPreStay->disabled){
+                    $iconPreStay = "Desactivado";
+                }else{
+                    //para todos los casos
+                    if($queryPreStay->answered){
+                        $iconPreStay = "Respondido";
+                        $answeredTime = $queryPreStay->responded_at;
+                        $shippingTime = $queryPreStay->created_at;
+                    }
+                    //cuando estamos aun en pre-stay
+                    if(!$queryPreStay->answered && $period == 'pre-stay'){
+                        $iconPreStay = "Esperando respuesta";
+                        $shippingTime = $queryPreStay->created_at;
+                    }
+                    //cuando ya paso pre-stay
+                    if(!$queryPreStay->answered && $period !== 'pre-stay'){
+                        $iconPreStay = "No respondido";
+                        $shippingTime = $queryPreStay->created_at;
+                    }
                 }
             }
+
+            //cuando no existe la query
+            if(!$queryPreStay){
+                ////cuando ya paso pre-stay
+                // if($period !== 'pre-stay'){
+                    //validar si el acceso fue posterior a pre-stay
+                    $checkInDate = Carbon::parse($stayCheckin); // Parsea la fecha de check-in
+                    $checkInTime = currentHotel()->checkin ?? '16:00'; // Usa '22:00' como predeterminado si currentHotel()->checkin es null
+                    $checkInHour = explode(':', $checkInTime)[0]; // Extrae la hora
+                    $checkInMinute = explode(':', $checkInTime)[1]; // Extrae los minutos
+                    // Establece la hora de check-in al día de check-in
+                    $checkInDateTime = $checkInDate->copy()->setTime($checkInHour, $checkInMinute);
+                    $accessCreatedAt = Carbon::parse($guestAccess->created_at);
+                    if ($accessCreatedAt->greaterThan($checkInDateTime)) {
+                        $iconPreStay = "No enviado";
+                    }else{
+                        $iconPreStay = "Error";
+                    }
+                // }
+            }
+
+
+            return [
+                "icon" => $iconPreStay,
+                "shippingTime" => $shippingTime,
+                "answeredTime" => $answeredTime,
+                "feeling" => $feeling,
+            ];
+        } catch (\Exception $e) {
+            return $e;
         }
-
-        //cuando no existe la query
-        if(!$queryPreStay){
-            ////cuando ya paso pre-stay
-            // if($period !== 'pre-stay'){
-                //validar si el acceso fue posterior a pre-stay
-                $checkInDate = Carbon::parse($stayCheckin); // Parsea la fecha de check-in
-                $checkInTime = currentHotel()->checkin ?? '16:00'; // Usa '22:00' como predeterminado si currentHotel()->checkin es null
-                $checkInHour = explode(':', $checkInTime)[0]; // Extrae la hora
-                $checkInMinute = explode(':', $checkInTime)[1]; // Extrae los minutos
-                // Establece la hora de check-in al día de check-in
-                $checkInDateTime = $checkInDate->copy()->setTime($checkInHour, $checkInMinute);
-                $accessCreatedAt = Carbon::parse($guestAccess->created_at);
-                if ($accessCreatedAt->greaterThan($checkInDateTime)) {
-                    $iconPreStay = "No enviado";
-                }else{
-                    $iconPreStay = "Error";
-                }
-            // }
-        }
-
-
-        return [
-            "icon" => $iconPreStay,
-            "shippingTime" => $shippingTime,
-            "answeredTime" => $answeredTime,
-            "feeling" => $feeling,
-        ];
     }
 
     public function geStayStatus($guest, $stayId, $period, $stayCheckin, $stayCheckout, $guestAccess){
-        $queryStay =  $guest->queries()
-                ->where('stay_id',$stayId)
-                ->where('period','in-stay')
-                ->first();
-        $checkIn = Carbon::parse($stayCheckin);
+        try {
+            $queryStay =  $guest->queries()
+                    ->where('stay_id',$stayId)
+                    ->where('period','in-stay')
+                    ->first();
+            $checkIn = Carbon::parse($stayCheckin);
 
-        $checkOutDate = Carbon::parse($stayCheckout);
-        // Establece la hora de check-in al día de check-in
-        $checkOutDateTime = $checkOutDate->copy()->setTime('05', '00');
-        $checkInAtFiveAm = $checkIn->copy()->addDay()->startOfDay()->addHours(5);
+            $checkOutDate = Carbon::parse($stayCheckout);
+            // Establece la hora de check-in al día de check-in
+            $checkOutDateTime = $checkOutDate->copy()->setTime('05', '00');
+            $checkInAtFiveAm = $checkIn->copy()->addDay()->startOfDay()->addHours(5);
 
-        //copy para el point respuesta
-        $iconStay = "Envío programado";
-        $shippingTime = $checkInAtFiveAm;
-        $answeredTime = null;
-        $feeling = null;
-        $accessCreatedAt = Carbon::parse($guestAccess->created_at);
+            //copy para el point respuesta
+            $iconStay = "Envío programado";
+            $shippingTime = $checkInAtFiveAm;
+            $answeredTime = null;
+            $feeling = null;
+            $accessCreatedAt = Carbon::parse($guestAccess->created_at);
 
-        if($period !== 'pre-stay'){
-            $iconStay = "Desactivado";
-            $shippingTime = $guestAccess->created_at;
-            if($queryStay){
-                if($queryStay->disabled){
-                    $iconStay = "Desactivado";
-                }else if($period == 'post-stay' || $period == 'invalid-stay'){
-                    if(!$queryStay->answered){
-                        $iconStay = "No respondido";
+            if($period !== 'pre-stay'){
+                $iconStay = "Desactivado";
+                $shippingTime = $guestAccess->created_at;
+                if($queryStay){
+                    if($queryStay->disabled){
+                        $iconStay = "Desactivado";
+                    }else if($period == 'post-stay' || $period == 'invalid-stay'){
+                        if(!$queryStay->answered){
+                            $iconStay = "No respondido";
+                            $shippingTime = $queryStay->created_at;
+                        }
+                    }else if(!$queryStay->answered){
+                        $iconStay = "Esperando respuesta";
                         $shippingTime = $queryStay->created_at;
                     }
-                }else if(!$queryStay->answered){
-                    $iconStay = "Esperando respuesta";
-                    $shippingTime = $queryStay->created_at;
-                }
 
-                if($queryStay->answered){
-                    $iconStay = "Respondido";
-                    $answeredTime = $queryStay->responded_at;
-                    $feeling = $queryStay->qualification;
-                }
+                    if($queryStay->answered){
+                        $iconStay = "Respondido";
+                        $answeredTime = $queryStay->responded_at;
+                        $feeling = $queryStay->qualification;
+                    }
 
-            }else{
-                if ($accessCreatedAt->greaterThan($checkOutDateTime)) {
-                    $iconStay = "No enviado";
                 }else{
-                    $iconStay = "Error";
+                    if ($accessCreatedAt->greaterThan($checkOutDateTime)) {
+                        $iconStay = "No enviado";
+                    }else{
+                        $iconStay = "Error";
+                    }
                 }
             }
+            return [
+                "icon" => $iconStay,
+                "shippingTime" => $shippingTime,
+                "answeredTime" => $answeredTime,
+                "feeling" => $feeling
+            ];
+        } catch (\Exception $e) {
+            return $e;
         }
-        return [
-            "icon" => $iconStay,
-            "shippingTime" => $shippingTime,
-            "answeredTime" => $answeredTime,
-            "feeling" => $feeling
-        ];
     }
 
     public function getPostStayStatus($guest, $stayId, $period, $stayCheckout, $guestAccess){
-        $queryPostStay =  $guest->queries()
-                ->where('stay_id',$stayId)
-                ->where('period','post-stay')
-                ->first();
+        try {
+            $queryPostStay =  $guest->queries()
+                    ->where('stay_id',$stayId)
+                    ->where('period','post-stay')
+                    ->first();
 
-        $checkOutDate = Carbon::parse($stayCheckout);
-        // Establece la hora de check-in al día de check-in
-        $checkOutDateTime = $checkOutDate->copy()->setTime('05', '00');
+            $checkOutDate = Carbon::parse($stayCheckout);
+            // Establece la hora de check-in al día de check-in
+            $checkOutDateTime = $checkOutDate->copy()->setTime('05', '00');
 
-        //copy para el point respuesta
-        $iconStay = "Envío programado";
-        $shippingTime = $checkOutDateTime;
-        $answeredTime = null;
-        $feeling = null;
-        $accessCreatedAt = Carbon::parse($guestAccess->created_at);
+            //copy para el point respuesta
+            $iconStay = "Envío programado";
+            $shippingTime = $checkOutDateTime;
+            $answeredTime = null;
+            $feeling = null;
+            $accessCreatedAt = Carbon::parse($guestAccess->created_at);
 
-        if($period !== 'pre-stay' && $period !== 'in-stay'){
-            $iconStay = "Esperando respuesta";
-            $shippingTime = $guestAccess->created_at;
+            if($period !== 'pre-stay' && $period !== 'in-stay'){
+                $iconStay = "Esperando respuesta";
+                $shippingTime = $guestAccess->created_at;
 
-            if($period == 'invalid-stay'){
-                if($queryPostStay && !$queryPostStay->answered){
-                    $iconStay = "No respondido";
+                if($period == 'invalid-stay'){
+                    if($queryPostStay && !$queryPostStay->answered){
+                        $iconStay = "No respondido";
+                        $shippingTime = $queryPostStay->created_at;
+                    }
+                }
+
+                if($queryPostStay && $queryPostStay->answered){
+                    $iconStay = "Respondido";
                     $shippingTime = $queryPostStay->created_at;
+                    $answeredTime = $queryPostStay->responded_at;
+                    $feeling = $queryPostStay->qualification;
                 }
             }
-
-            if($queryPostStay && $queryPostStay->answered){
-                $iconStay = "Respondido";
-                $shippingTime = $queryPostStay->created_at;
-                $answeredTime = $queryPostStay->responded_at;
-                $feeling = $queryPostStay->qualification;
-            }
+            return [
+                "icon" => $iconStay,
+                "shippingTime" => $shippingTime,
+                "answeredTime" => $answeredTime,
+                "feeling" => $feeling,
+            ];
+        } catch (\Exception $e) {
+            return $e;
         }
-        return [
-            "icon" => $iconStay,
-            "shippingTime" => $shippingTime,
-            "answeredTime" => $answeredTime,
-            "feeling" => $feeling,
-        ];
     }
-
-
     
 }

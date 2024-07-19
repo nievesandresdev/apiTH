@@ -4,6 +4,7 @@ namespace App\Services\Hoster\Stay;
 
 use App\Models\hotel;
 use App\Models\Stay;
+use App\Services\Hoster\Queries\QueryHosterServices;
 use App\Services\Hoster\UtilsHosterServices;
 use App\Services\QueryServices;
 use Illuminate\Support\Facades\DB;
@@ -14,14 +15,17 @@ class StayHosterServices {
     
     public $queryService;
     public $utilsServices;
+    public $queryHosterService;
 
     function __construct(
         QueryServices $_QueryServices,
-        UtilsHosterServices $_UtilsHosterServices
+        UtilsHosterServices $_UtilsHosterServices,
+        QueryHosterServices $_QueryHosterServices
     )
     {
         $this->queryService = $_QueryServices;
         $this->utilsServices = $_UtilsHosterServices;
+        $this->queryHosterService = $_QueryHosterServices;
     }
 
     // 'stays.pending_queries_seen',
@@ -283,7 +287,6 @@ class StayHosterServices {
     }
 
     //sessions
-
     public function createSession($data) {
         try {
             $stayId = $data->stayId;
@@ -359,6 +362,44 @@ class StayHosterServices {
         }
     }
     
-    
+    //guest 
+
+    public function getGuestListWithNoti($stay){
+        try {
+            //lista de huespedes de una estancia con conteo de consultas pendientes
+            $listGuests = $stay->guests()
+            ->withCount(['queries as queryCount' => function ($query) use($stay){
+                // Asumimos que 'attended' es un campo booleano y que '0' representa 'false'
+                $query->where('stay_id', $stay->id)
+                ->where('answered', '1')
+                ->where('attended', '0');
+            }])
+            ->get();
+
+            return $listGuests;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    //queries
+    // public function getDetailQueryByGuest($guestId, $stayId, $hotel){
+    //     try {
+    //         $stay = Stay::find($stayId);
+    //         $guestList = $this->getGuestListWithNoti($stay);
+
+    //         $timeline = $this->queryHosterService->getFeedbackTimelineByGuest($guestId, $stay, $hotel);
+
+    //         $queryByGuest = $this->queryHosterService->getDataByGuest($guestId, $stay->id);
+
+    //         return [
+    //             'guests' => $guestList,
+    //             'timeline' => $timeline,
+    //             'queryByGuest' => $queryByGuest
+    //         ];
+    //     } catch (\Exception $e) {
+    //         return $e;
+    //     }
+    // }
 
 }
