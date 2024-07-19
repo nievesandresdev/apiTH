@@ -122,10 +122,6 @@ class ChatSettingsController extends Controller
     public function updateAvailability(Request $request){
         $hotel = $request->attributes->get('hotel');
 
-       /*  return [
-            'hotel' => $hotel,
-            'request' => $request->hours
-        ]; */
         try {
             $availability = $request->hours;
             $model = $this->service->updateAvailability($availability,$hotel->id);
@@ -136,6 +132,35 @@ class ChatSettingsController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateAvailability');
         }
 
+    }
+
+    public function updateResponses(){
+        try {
+            $hotel = request()->attributes->get('hotel');
+
+            /* return [
+                'hotel' => $hotel,
+                'request' => request()->all()
+            ]; */
+            $model = $this->service->updateSettings($hotel->id,
+            [
+                'show_guest',
+                'not_available_msg',
+                'not_available_show',
+                'first_available_msg',
+                'first_available_show',
+                'second_available_msg',
+                'second_available_show',
+                'three_available_msg',
+                'three_available_show'
+
+            ], request());
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateResponses');
+        }
     }
 
 }
