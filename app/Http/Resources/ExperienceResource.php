@@ -21,8 +21,7 @@ class ExperienceResource extends JsonResource
             $distance = round($this->distance / 1000, 2);
         }
 
-        $isVisible = $this->toggleableHotels()->where('hotel_id', $hotel->id)->exists() &&
-        !$this->productHidden()->where('hotel_id', $hotel->id)->exists();
+        $isVisible = $this->toggleableHotels()->where('hotel_id', $modelHotel->id)->exists() && !$this->productHidden()->where('hotel_id', $modelHotel->id)->exists();
 
         return [
             'id' => $this->id,
