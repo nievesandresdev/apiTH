@@ -125,22 +125,22 @@ class ExperienceService {
             });
         }
 
-        if($dataFilter['featured']){
-                            
-        }else{
-            if($dataFilter['visibility'] == 'hidden'){
-                $query->whereAddExpInHoster($hotelModel->id);
-            }
-            if($dataFilter['visibility'] == 'visible'){
-                $query->whereVisibleByHoster($hotelModel->id);
-            }
-            if(!$dataFilter['visibility']){
-                $query->withVisibilityForProduct($hotelModel->id);
-            }
-            $query->orderByFeatured($hotelModel->ID);
-            $query->orderByWeighing($hotelModel->id);
-            $query->orderBy('distance','ASC');
+        if($dataFilter['visibility'] == 'hidden'){
+            $query->whereAddExpInHoster($hotelModel->id);
         }
+        if($dataFilter['visibility'] == 'visible'){
+            $query->whereVisibleByHoster($hotelModel->id);
+        }
+        if($dataFilter['visibility'] == 'recommendated'){
+            $query->whereFeaturedHotel($hotelModel->id)
+            ->whereVisibleByHoster($hotelModel->id);
+        }
+        if(!$dataFilter['visibility']){
+            $query->withVisibilityForProduct($hotelModel->id);
+        }
+        $query->orderByFeatured($hotelModel->ID);
+        $query->orderByWeighing($hotelModel->id);
+        $query->orderBy('distance','ASC');
         
         return $query;
     }

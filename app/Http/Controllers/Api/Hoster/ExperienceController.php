@@ -36,7 +36,7 @@ class ExperienceController extends Controller
         try {
 
             $hotelModel = $request->attributes->get('hotel');
-            
+
             $lengthAExpFeatured = 12;
             $hotelId = $hotelModel->id;
             $priceMin = $request->price_min ?? null;
@@ -82,7 +82,12 @@ class ExperienceController extends Controller
                 });
             })->count();
 
-            $productspaginate = $queryExperiences->paginate(20)->appends(request()->except('page'));
+            $limit = 20;
+            if (!empty($request->limit)) {
+                $limit = $request->limit;
+            }
+
+            $productspaginate = $queryExperiences->paginate($limit)->appends(request()->except('page'));
             
             // return $products->total();
             $countHidden = $productspaginate->total() - $countVisible;

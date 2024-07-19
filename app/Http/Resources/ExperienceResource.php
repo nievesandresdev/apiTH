@@ -20,6 +20,9 @@ class ExperienceResource extends JsonResource
         if($this->distance){
             $distance = round($this->distance / 1000, 2);
         }
+
+        $isVisible = $this->toggleableHotels()->where('hotel_id', $modelHotel->id)->exists() && !$this->productHidden()->where('hotel_id', $modelHotel->id)->exists();
+
         return [
             'id' => $this->id,
             'image' => $this->images()->orderBy('id','ASC')->first(),
@@ -31,8 +34,10 @@ class ExperienceResource extends JsonResource
             'select' => $this->select,
             'from_price' => $this->from_price,
             'reviews' => $this->reviews,
+            'is_visible' => boolval($isVisible),
             'recomendations' => $this->recomendations()->where('hotel_id', $modelHotel->id)->first(),
             'product_featured' => $this->productFeatured()->where('hotel_id', $modelHotel->id)->first(),
+            'featured' => !empty($this->productFeatured()->where('hotel_id', $modelHotel->id)->first()),
             // activities
             'title' => $this['translation']['title'],
             'cancellation_policy' => $this['translation']['cancellation_policy'], 
