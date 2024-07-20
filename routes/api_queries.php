@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\Hoster\QueryHosterController;
+use App\Http\Controllers\Api\Hoster\StayQueryHosterController;
 use App\Http\Controllers\Api\Hoster\QuerySettingsHosterController;
 use App\Http\Controllers\Api\QueryController;
 use App\Http\Controllers\Api\QuerySettingsController;
@@ -28,7 +28,8 @@ Route::group(['prefix' => 'query'], function () {
     Route::get('/existingPendingQuery', [QueryController::class, 'existingPendingQuery']);
     Route::post('/visited', [QueryController::class, 'visited']);
     Route::group(['prefix' => 'hoster'], function () {
-        Route::get('/getFeedbackSummaryByGuest', [QueryHosterController::class, 'getFeedbackSummaryByGuest']);
-        
+        Route::get('/getFeedbackSummaryByGuest', [StayQueryHosterController::class, 'getFeedbackSummaryByGuest']);
+        Route::get('/getDetailQueryByGuest', [StayQueryHosterController::class, 'getDetailQueryByGuest']);        
+        Route::post('/togglePendingState', [StayQueryHosterController::class, 'togglePendingState']);        
     });
 });
