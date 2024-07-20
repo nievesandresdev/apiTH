@@ -54,7 +54,7 @@ class Products extends Model
     }
 
     public function toggleableHotels(){
-        return $this->belongsToMany(hotel::class, 'toggle_products', 'products_id', 'hotel_id')->withPivot('order');;
+        return $this->belongsToMany(hotel::class, 'toggle_products', 'products_id', 'hotel_id')->withPivot('id', 'order', 'position');
     }
 
     public function productFeatured(){
@@ -142,10 +142,18 @@ class Products extends Model
 
     public function scopeOrderByWeighing($query, $hotelId)
     {
+        // if ($hotelId) {
+        //     $query->join('toggle_products', 'products.id', '=', 'toggle_products.products_id')
+        //         ->where('toggle_products.hotel_id', $hotelId)
+        //         ->orderBy('toggle_products.order', 'desc');
+        // }
         if ($hotelId) {
-            $query->join('toggle_products', 'products.id', '=', 'toggle_products.products_id')
-                ->where('toggle_products.hotel_id', $hotelId)
-                ->orderBy('toggle_products.order', 'desc');
+            $query->leftJoin('toggle_products', function ($join) use ($hotelId) {
+                $join->on('products.id', '=', 'toggle_products.products_id')
+                    ->where('toggle_products.hotel_id', '=', $hotelId);
+            })
+            ->orderByRaw('ISNULL(toggle_products.order) ASC')
+            ->orderBy('toggle_products.order', 'desc');
         }
     }
 
@@ -253,6 +261,17 @@ class Products extends Model
             $query->whereHas('productFeatured', function($query)use($hotelId){
                 $query->where('hotel_id', $hotelId);
             });
+        }
+    }
+
+    public function scopeOrderByPosition($query, $hotelId)
+    {
+        if ($hotelId) {
+            $query->leftJoin('toggle_products as tp', function ($join) use ($hotelId) {
+                $join->on('products.id', '=', 'tp.products_id')
+                    ->where('tp.hotel_id', '=', $hotelId);
+            })
+            ->orderByRaw('ISNULL(tp.position), tp.position ASC');
         }
     }
 

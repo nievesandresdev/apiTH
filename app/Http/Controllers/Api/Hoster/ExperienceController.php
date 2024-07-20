@@ -143,4 +143,78 @@ class ExperienceController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getNumbersByFilters');
         }
     }
+
+
+    // public function deleteByHoster (Request $request) {
+    //     try {
+    //         \DB::beginTransaction();
+    //         $modelHotel = loadHotel($request);
+    //         $modelPlace = Places::find($request->id);
+    //         $modelPlace->status = 0;
+    //         $modelPlace->save();
+    //         \DB::commit();
+    //         return bodyResponseRequest(EnumResponse::SUCCESS_OK);
+    //     } catch (\Exception $e) {
+    //         \DB::rollback();
+    //         return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteByHoster');
+    //     }
+    // }
+
+    public function updatePosition (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $citySlug = Str::slug($hotelModel->zone);
+            $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+            \DB::beginTransaction();
+            $this->service->updatePosition($request->position, $hotelModel);
+            $this->service->syncPosition($request, $cityModel, $hotelModel);
+            \DB::commit();
+            return bodyResponseRequest(EnumResponse::SUCCESS_OK);
+        } catch (\Exception $e) {
+            return $e;
+            \DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
+        }
+    }
+
+    public function updateVisibility (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $citySlug = Str::slug($hotelModel->zone);
+            $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+            \DB::beginTransaction();
+            $productId = $request->product_id;
+            $productModel = Products::find($productId);
+            $this->service->updateVisibility($request, $hotelModel, $productModel);
+            $this->service->syncPosition($request, $cityModel, $hotelModel);
+            \DB::commit();
+            $productModel->refresh();
+            $data = new ExperienceResource($productModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return $e;
+            \DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
+        }
+    }
+
+    public function updateRecommendation (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $citySlug = Str::slug($hotelModel->zone);
+            $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+            \DB::beginTransaction();
+            $productId = $request->product_id;
+            $productModel = Products::find($productId);
+            $featuredBool = $request->recommedation ?? false;
+            $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+            \DB::commit();
+            return bodyResponseRequest(EnumResponse::SUCCESS_OK);
+        } catch (\Exception $e) {
+            return $e;
+            \DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
+        }
+    }
+
 }
