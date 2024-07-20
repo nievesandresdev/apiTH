@@ -16,6 +16,7 @@ Route::group(['prefix' => 'experience'], function () {
     Route::get('/findSchedulesInVIator', [ExperienceController::class, 'findSchedulesInVIator']);
     Route::group(['prefix' => 'saas'], function () {
         Route::post('/getAll', [ExperienceSaasController::class, 'getAll']);
+        Route::get('/getNumbersByFilters', [ExperienceSaasController::class, 'getNumbersByFilters']);
         Route::post('/position', [ExperienceSaasController::class, 'updatePosition']);
         Route::post('/visibility', [ExperienceSaasController::class, 'updateVisibility']);
         Route::post('/recommendation', [ExperienceSaasController::class, 'updateRecommendation']);

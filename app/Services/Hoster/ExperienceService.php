@@ -24,6 +24,38 @@ class ExperienceService {
 
     }
 
+    public function getNumbersByFilters ($request, $modelHotel, $dataFilter, $cityModel) {
+        
+        $countByFilterDuration = [
+            '1' => ['name' =>'Hasta una hora', 'count' => $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'duration'=>['1']], $cityModel)->count() ],
+            '2' => ['name' =>'Entre 1 y 3 horas', 'count' => $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'duration'=>['2']], $cityModel)->count() ],
+            '3' => ['name' =>'Medio día', 'count' => $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'duration'=>['3']], $cityModel)->count() ],
+            '4' => ['name' =>'Día completo', 'count' => $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'duration'=>['4']], $cityModel)->count()]
+        ];
+
+        $countByFilterScore = [
+            '1' => ['name' =>'1 estrella', 'count' => $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'score'=>['1']], $cityModel)->count() ],
+            '2' => ['name' =>'2 estrellas', 'count' => $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'score'=>['2']], $cityModel)->count() ],
+            '3' => ['name' =>'3 estrellas', 'count' => $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'score'=>['3']], $cityModel)->count() ],
+            '4' => ['name' =>'4 estrellas', 'count' => $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'score'=>['4']], $cityModel)->count() ],
+            '5' => ['name' =>'5 estrellas', 'count' => $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'score'=>['5']], $cityModel)->count()]
+        ];
+
+        $freeCancelation = $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'free_cancelation'=> true], $cityModel)->count();
+
+        $city = $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'all_cities'=> false], $cityModel)->count();
+
+        $allCities = $this->queryGetAll($request, $modelHotel, [...$dataFilter, 'all_cities'=> true], $cityModel)->count();
+                        
+        return [
+            'duration' => $countByFilterDuration,
+            'score' => $countByFilterScore,
+            'freeCancelation' => $freeCancelation,
+            'city' => $city,
+            'allCities' => $allCities,
+        ];
+    }
+
     public function queryGetAll ($request, $hotelModel, $dataFilter, $cityModel) {
 
         $user = $hotelModel->user[0];
@@ -59,25 +91,6 @@ class ExperienceService {
         return $query;
     }
 
-    public function getNumbersByFilters ($request, $modelHotel, $dataFilter) {
-        try {
-            
-            $queryExperience = $this->filter($request, $modelHotel, $dataFilter);
-            
-            $countByFilterDuration = [
-                '1' => ['name' =>'Hasta una hora', 'count' => $this->filter($request, $modelHotel, [...$dataFilter, 'duration'=>['1']])->count() ],
-                '2' => ['name' =>'Entre 1 y 3 horas', 'count' => $this->filter($request, $modelHotel, [...$dataFilter, 'duration'=>['2']])->count() ],
-                '3' => ['name' =>'Medio día', 'count' => $this->filter($request, $modelHotel, [...$dataFilter, 'duration'=>['3']])->count() ],
-                '4' => ['name' =>'Día completo', 'count' => $this->filter($request, $modelHotel, [...$dataFilter, 'duration'=>['4']])->count()]
-            ];
-                            
-            return $countByFilterDuration;
-
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-
     public function filter ($query, $dataFilter, $hotelModel, $cityModel) {
         $user = $hotelModel->user[0];
 
@@ -100,6 +113,21 @@ class ExperienceService {
                     ->orWhere('description','like', ['%'.$dataFilter['search'].'%']);
             });
         }
+
+        if (!empty($dataFilter['price_min'])) {
+            $query->where('from_price', '>=', floatval($dataFilter['price_min']));
+        }
+        if (!empty($dataFilter['price_max'])) {
+            $query->where('from_price', '<=', floatval($dataFilter['price_max']));
+        } 
+
+        if (!empty($dataFilter['free_cancelation'])) {
+            $query->whereHas('translation', function($query) use($dataFilter){
+                $query->where(['cancellation_policy' => 'STANDARD']);
+            });
+        }
+
+
 
         // 1 hora [0, 1]
         // 1 y 3 horas [1.1, 3.99]
@@ -124,6 +152,22 @@ class ExperienceService {
                     }
                 }
             });
+        }
+
+        if (count($dataFilter['score']) > 0) {
+            foreach ($dataFilter['score'] as $key => $item) {
+                $durations =  [['i'=>0,'f'=>1],['i'=>1,'f'=>2],['i'=>2,'f'=>3],['i'=>3,'f'=>4],['i'=>4,'f'=>5]];
+                $d = intval($item) - 1;
+                $interval = $durations[$d];
+                if ($key == 0){
+                    $query->whereRaw("JSON_EXTRACT(reviews, '$.combined_average_rating') BETWEEN ? AND ?", [$interval['i'], $interval['f']]);
+                }else{
+                    $query->orWhereRaw("JSON_EXTRACT(reviews, '$.combined_average_rating') BETWEEN ? AND ?", [$interval['i'], $interval['f']]);
+                }
+                if ($interval['i'] == 0) {
+                    $query->orWhereNull('reviews');
+                }
+            }
         }
 
         if($dataFilter['visibility'] == 'hidden'){
