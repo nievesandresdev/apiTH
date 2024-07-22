@@ -239,4 +239,21 @@ class StayHosterController extends Controller
         }
     }
     
+    //guest
+    public function getGuestListWithNoti(Request $request){
+        try {
+            $model = $this->service->getGuestListWithNoti($request->stayId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getGuestListWithNoti');
+        }
+    }
+
 }
