@@ -283,7 +283,6 @@ class StayHosterServices {
     }
 
     //sessions
-
     public function createSession($data) {
         try {
             $stayId = $data->stayId;
@@ -359,6 +358,24 @@ class StayHosterServices {
         }
     }
     
-    
+    //guest 
+
+    public function getGuestListWithNoti($stay){
+        try {
+            //lista de huespedes de una estancia con conteo de consultas pendientes
+            $listGuests = $stay->guests()
+            ->withCount(['queries as queryCount' => function ($query) use($stay){
+                // Asumimos que 'attended' es un campo booleano y que '0' representa 'false'
+                $query->where('stay_id', $stay->id)
+                ->where('answered', '1')
+                ->where('attended', '0');
+            }])
+            ->get();
+
+            return $listGuests;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 
 }

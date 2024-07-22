@@ -34,7 +34,6 @@ class ExperienceController extends Controller
         try {
 
             $modelHotel = $request->attributes->get('hotel');
-
             $lengthAExpFeatured = 12;
             $hotelId = $modelHotel->id;
             $priceMin = $request->price_min ?? null;
