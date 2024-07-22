@@ -87,26 +87,24 @@ class QueryHosterServices {
 
     public function getDataByGuest ($guestId, $stayId) {
         try {
-            $dataQueries = Query::where('guest_id',$guestId)
+            // histories
+            $dataQueries = Query::with('histories')
+                ->where('guest_id',$guestId)
                 ->where('stay_id',$stayId)
                 ->orderBy('created_at','asc')
                     ->get();
             
             foreach ($dataQueries as $query) {
-                $languages = [];
-                if($query->comment){
-                    foreach ($query->comment as $languageCode => $commentText) {
-                        $languageName = EnumsLanguages::NAME[$languageCode] ?? 'Desconocido';
-                        $languageData = [
-                            'name' => $languageName,
-                            'code' => $languageCode,
-                        ];
-
-                        $languages[] = $languageData; // Agregar al array temporal
+                if ($query->comment) {
+                    $query['languages'] = $this->extractLanguages($query->comment);
+                }
+                foreach ($query->histories as $history) {
+                    if ($history->comment) {
+                        $history['languages'] = $this->extractLanguages($history->comment);
                     }
-                    $query['languages'] = collect($languages);
                 }
             }
+            
             return $dataQueries;
         } catch (\Exception $e) {
             return $e;
@@ -335,4 +333,18 @@ class QueryHosterServices {
             return $e;
         }
     }
+
+    private function extractLanguages($comment)
+    {
+        $languages = [];
+        foreach ($comment as $languageCode => $commentText) {
+            $languageName = EnumsLanguages::NAME[$languageCode] ?? 'Desconocido';
+            $languages[] = [
+                'name' => $languageName,
+                'code' => $languageCode,
+            ];
+        }
+        return collect($languages);
+    }
+
 }
