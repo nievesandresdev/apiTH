@@ -8,6 +8,7 @@ use App\Services\Hoster\Stay\StayHosterServices;
 use App\Services\QueryServices;
 use App\Utils\Enums\EnumsLanguages;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class QueryHosterServices {
 
@@ -326,9 +327,13 @@ class QueryHosterServices {
         }
     }
     
-    public function togglePendingState($queryId, $bool){
+    public function togglePendingState($queryId, $bool, $hotelId){
         try{
-            return Query::where('id',$queryId)->update(['attended' => $bool]);
+            $result = Query::where('id',$queryId)->update(['attended' => $bool]);
+            //evento para actualizar lista de estancias en front
+            sendEventPusher('private-create-stay.' . $hotelId, 'App\Events\CreateStayEvent', null);
+
+            return $result;
         } catch (\Exception $e) {
             return $e;
         }
@@ -346,5 +351,20 @@ class QueryHosterServices {
         }
         return collect($languages);
     }
+
+    public function countPendingByHotel($hotelId){
+        try{
+            $count = DB::table('queries')
+            ->join('stays', 'stays.id', '=', 'queries.stay_id')
+            ->select('stays.id as StayId','stays.hotel_id', 'queries.id', 'queries.answered', 'queries.attended')
+            ->where('answered', 1)->where('attended', 0)
+            ->where('hotel_id', $hotelId)->count();
+
+            return $count;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    
 
 }
