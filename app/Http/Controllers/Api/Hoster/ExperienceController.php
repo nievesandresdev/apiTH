@@ -77,14 +77,10 @@ class ExperienceController extends Controller
             ];
 
             $queryExperiences = $this->service->queryGetAll($request, $hotelModel, $dataFilter, $cityModel);
-
+            // return $queryExperiences;
             $queryExperiencesVisibles = clone $queryExperiences;
 
-            $countVisible = $queryExperiencesVisibles->where(function ($query) use ($hotelModel) {
-                $query->whereHas('toggleableHotels', function ($q) use ($hotelModel) {
-                    $q->where('hotel_id', $hotelModel->id);
-                });
-            })->count();
+            $countVisible = $queryExperiencesVisibles->whereVisibleByHoster($hotelModel->id)->count();
 
             $limit = 20;
             if (!empty($request->limit)) {

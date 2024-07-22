@@ -13,6 +13,7 @@ class ServiceHiddens extends Model
         'user_id',
         'activities_id',
         'hotel_id',
+        'is_deleted',
     ];
 
     public function user()

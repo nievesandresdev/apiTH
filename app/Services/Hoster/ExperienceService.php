@@ -83,6 +83,7 @@ class ExperienceService {
                         LIMIT 1
                     ) AS distance"),
                 )->addBinding([$cityModel->long, $cityModel->lag], 'select');
+                
     
         if($dataFilter['one_exp_id']){
             $query = $query->where('products.id', $dataFilter['one_exp_id']);
@@ -171,6 +172,10 @@ class ExperienceService {
             }
         }
 
+        $query->whereDoesntHave('productHidden', function($query)use($hotelModel){
+            $query->where(['hotel_id' => $hotelModel->id, 'is_deleted' => 1]);
+        });
+
         if($dataFilter['visibility'] == 'hidden'){
             $query->whereAddExpInHoster($hotelModel->id);
         }
@@ -184,10 +189,12 @@ class ExperienceService {
         if(!$dataFilter['visibility']){
             $query->withVisibilityForProduct($hotelModel->id);
         }
-        $query->orderByPosition($hotelModel->id);
-        $query->orderByFeatured($hotelModel->id);
-        $query->orderByWeighing($hotelModel->id);
-        $query->orderBy('distance','ASC');
+        // $c = $query->count();
+        // return $c;
+        // $query->orderByPosition($hotelModel->id);
+        // $query->orderByFeatured($hotelModel->id);
+        // $query->orderByWeighing($hotelModel->id);
+        // $query->orderBy('distance','ASC');
         
         return $query;
     }
@@ -227,7 +234,8 @@ class ExperienceService {
             ], [
                 'hotel_id' => $hotelModel->id,
                 'activities_id' => $productId,
-                'user_id' => $userId
+                'user_id' => $userId,
+                'is_deleted' => $request->is_deleted,
             ]);
         }else{
             ServiceHiddens::where([
