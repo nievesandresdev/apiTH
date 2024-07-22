@@ -41,7 +41,6 @@ class StayQueryHosterController extends Controller
         }
     }
 
-
     public function getDetailQueryByGuest(Request $request){
         try {
             $hotel = $request->attributes->get('hotel');
@@ -64,10 +63,11 @@ class StayQueryHosterController extends Controller
     
     public function togglePendingState(Request $request){
         try {
+            $hotel = $request->attributes->get('hotel');
             $queryId = $request->queryId;
             $bool = $request->bool;
 
-            $model = $this->service->togglePendingState($queryId, $bool);
+            $model = $this->service->togglePendingState($queryId, $bool, $hotel->id);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -79,6 +79,26 @@ class StayQueryHosterController extends Controller
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.togglePendingState');
         }
+    }
+
+    public function countPendingByHotel(Request $request){
+
+        try {
+            $hotel = $request->attributes->get('hotel');
+
+            $model = $this->service->countPendingByHotel($hotel->id);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.countPendingByHotel');
+        }
+        
     }
     
 }

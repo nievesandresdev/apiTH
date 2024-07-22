@@ -360,8 +360,9 @@ class StayHosterServices {
     
     //guest 
 
-    public function getGuestListWithNoti($stay){
+    public function getGuestListWithNoti($stayId){
         try {
+            $stay = Stay::select('id')->where('id', $stayId)->first();
             //lista de huespedes de una estancia con conteo de consultas pendientes
             $listGuests = $stay->guests()
             ->withCount(['queries as queryCount' => function ($query) use($stay){

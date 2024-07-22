@@ -206,6 +206,7 @@ class QueryServices {
             }
 
             $query->answered = true;
+            $query->attended = false;
             $query->qualification = $request->qualification;
             $query->response_lang = $responseLang;
             $query->responded_at= now();
