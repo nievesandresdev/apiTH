@@ -16,6 +16,8 @@ use Illuminate\Support\Str;
 use App\Utils\Enums\EnumResponse;
 use App\Services\CityService;
 
+use App\Jobs\TranslateModelJob;
+
 use App\Http\Resources\ExperiencePaginateResource;
 
 class ExperienceController extends Controller
@@ -191,7 +193,7 @@ class ExperienceController extends Controller
         } catch (\Exception $e) {
             return $e;
             \DB::rollback();
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updatePosition');
         }
     }
 
@@ -212,7 +214,7 @@ class ExperienceController extends Controller
         } catch (\Exception $e) {
             return $e;
             \DB::rollback();
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisibility');
         }
     }
 
@@ -231,7 +233,67 @@ class ExperienceController extends Controller
         } catch (\Exception $e) {
             return $e;
             \DB::rollback();
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateRecommendation');
+        }
+    }
+
+    public function featuredByHoster ($featuredBool, $hotelModel, $productModel) {
+        $modelPlaceFeatured = PlaceFeatured::where('place_id',$modelPlace->id)
+                                        ->where('hotel_id',$modelHotel->id)
+                                        ->first();
+        if(!$featuredBool && $modelPlaceFeatured){
+            $modelPlaceFeatured->delete();
+        }
+        if($featuredBool && !$modelPlaceFeatured){
+            $modelPlaceFeatured = new PlaceFeatured();
+            $modelPlaceFeatured->place_id = $modelPlace->id;
+            $modelPlaceFeatured->hotel_id = $modelHotel->id;
+            $modelPlaceFeatured->save();
+        }
+    }
+
+    public function update (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+
+            $productId = $request->product_id ?? null;
+            $messageRecomendation = $request->recommendation ?? null;
+            $messageHtml = strip_tags($messageRecomendation);
+            $messageRecomendation = $messageRecomendation && $messageHtml ? $messageRecomendation : null;
+            $featuredBool = $request->featured ?? false;
+
+            $inputsUpdateProduct = [
+                'recommendation' => $messageRecomendation,
+            ];
+
+            \DB::beginTransaction();
+
+            $productModel = Products::find($productId);
+
+            $recomendationModel = $this->service->findRecommendation($hotelModel, $productModel);
+
+            $translate =  $messageRecomendation != $recomendationModel?->message;
+
+            $recomendationModel = $this->service->updateRecommendation($messageRecomendation, $recomendationModel, $hotelModel, $productModel);
+
+            $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+            
+            if ($translate) {
+                $inputsTranslate = ['recommendation' => $inputsUpdateProduct['recommendation']];
+                $dirTemplateTranslate = 'translation/webapp/hotel_input/experience';
+                TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this->service, $recomendationModel);
+            }
+
+            \DB::commit();
+
+            $dataResponse = new ExperienceResource($productModel);
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $dataResponse);
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.update');
         }
     }
 

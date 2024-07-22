@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
 use App\Models\Products;
+use App\Models\Recomendation;
 use App\Models\ServiceHiddens;
 use App\Models\ToggleProduct;
 use App\Models\User;
@@ -291,6 +292,49 @@ class ExperienceService {
         foreach ($toggleProductsIdsOrded as $position => $id) {
             ToggleProduct::where(['id' => $id])->update(['position' => $position]);
         }
+    }
+
+    public function findRecommendation ($hotelModel, $productModel) {
+        $recomendationModel = Recomendation::where('recommendable_id',$productModel->id)
+        ->where('recommendable_type','App\Models\Products')
+        ->where('hotel_id',$hotelModel->id)
+        ->first();
+        return $recomendationModel;
+    }
+
+    public function updateRecommendation ($message, $recomendationModel, $hotelModel, $productModel) {
+        if($recomendationModel){
+            $recomendationModel->message = $message;
+            $recomendationModel->save();
+        }else{
+            $recomendationModel = Recomendation::create([
+                'message' => $message,
+                'recommendable_id' => $productModel->id,
+                'hotel_id' => $hotelModel->id,
+                'recommendable_type' => 'App\Models\Products',
+                'order' => 1,
+            ]);
+        }
+        return $recomendationModel;
+    }
+
+    public function updateTranslation ($model, $translation) {
+        try{
+            if (!$translation) return;
+            $translation = collect($translation);
+            $translation = $translation->mapWithKeys(function($value, $lg){
+                $message_translated = !isset($value->recommendation) || !$value->recommendation || ($value->recommendation == 'null') ? null : $value->recommendation;
+                return [$lg => $message_translated];
+            });
+
+            $model->update(['translate' => json_encode($translation, true)]);
+
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            Log::error('updateTranslation:'.' '. $message);
+            return $e;
+        }
+
     }
 
 
