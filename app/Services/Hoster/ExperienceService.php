@@ -235,7 +235,7 @@ class ExperienceService {
                 'hotel_id' => $hotelModel->id,
                 'activities_id' => $productId,
                 'user_id' => $userId,
-                'is_deleted' => $request->is_deleted,
+                'is_deleted' => $request->is_deleted ?? false,
             ]);
         }else{
             ServiceHiddens::where([
