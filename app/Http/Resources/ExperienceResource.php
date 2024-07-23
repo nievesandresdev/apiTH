@@ -25,6 +25,7 @@ class ExperienceResource extends JsonResource
         $productFeatured = $this->productFeatured()->where('hotel_id', $modelHotel->id)->first();
         $toggleProduct = $this->toggleableHotels()->where('hotel_id', $modelHotel->id)->first();
         $productHidden = $this->productHidden()->where('hotel_id', $modelHotel->id)->first();
+        $recommendacion = $this->recomendations()->where('hotel_id', $modelHotel->id)->first();
         return [
             'id' => $this->id,
             'image' => $this->images()->orderBy('id','ASC')->first(),
@@ -37,7 +38,7 @@ class ExperienceResource extends JsonResource
             'from_price' => $this->from_price,
             'reviews' => $this->reviews,
             'is_visible' => boolval($isVisible),
-            'recomendations' => $this->recomendations()->where('hotel_id', $modelHotel->id)->first(),
+            'recomendations' => $recommendacion,
             'product_featured' => $productFeatured,
             'product_hidden' => $productHidden,
             'featured' => !empty($productFeatured),
@@ -51,6 +52,7 @@ class ExperienceResource extends JsonResource
             'duration' => $this['translation']['duration'],
             'position' => $toggleProduct?->pivot->position,
             'toggle_product_id' => $toggleProduct?->pivot->id,
+            'recomendation_language_current' => $recommendacion ? $recommendacion->translationLanguageCurrent() : null,
         ];
     }
 }
