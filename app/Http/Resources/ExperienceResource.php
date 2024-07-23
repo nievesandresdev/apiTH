@@ -24,6 +24,7 @@ class ExperienceResource extends JsonResource
         $isVisible = $this->toggleableHotels()->where('hotel_id', $modelHotel->id)->exists() && !$this->productHidden()->where('hotel_id', $modelHotel->id)->exists();
         $productFeatured = $this->productFeatured()->where('hotel_id', $modelHotel->id)->first();
         $toggleProduct = $this->toggleableHotels()->where('hotel_id', $modelHotel->id)->first();
+        $productHidden = $this->productHidden()->where('hotel_id', $modelHotel->id)->first();
         return [
             'id' => $this->id,
             'image' => $this->images()->orderBy('id','ASC')->first(),
@@ -38,7 +39,7 @@ class ExperienceResource extends JsonResource
             'is_visible' => boolval($isVisible),
             'recomendations' => $this->recomendations()->where('hotel_id', $modelHotel->id)->first(),
             'product_featured' => $productFeatured,
-            'product_hidden' => $this->productHidden()->where('hotel_id', $modelHotel->id)->first(),
+            'product_hidden' => $productHidden,
             'featured' => !empty($productFeatured),
             // activities
             'title' => $this['translation']['title'],

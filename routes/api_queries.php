@@ -31,5 +31,6 @@ Route::group(['prefix' => 'query'], function () {
         Route::get('/getFeedbackSummaryByGuest', [StayQueryHosterController::class, 'getFeedbackSummaryByGuest']);
         Route::get('/getDetailQueryByGuest', [StayQueryHosterController::class, 'getDetailQueryByGuest']);        
         Route::post('/togglePendingState', [StayQueryHosterController::class, 'togglePendingState']);        
+        Route::get('/countPendingByHotel', [StayQueryHosterController::class, 'countPendingByHotel']);        
     });
 });

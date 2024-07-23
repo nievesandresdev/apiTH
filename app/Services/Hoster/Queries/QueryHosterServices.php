@@ -8,6 +8,7 @@ use App\Services\Hoster\Stay\StayHosterServices;
 use App\Services\QueryServices;
 use App\Utils\Enums\EnumsLanguages;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class QueryHosterServices {
 
@@ -87,26 +88,24 @@ class QueryHosterServices {
 
     public function getDataByGuest ($guestId, $stayId) {
         try {
-            $dataQueries = Query::where('guest_id',$guestId)
+            // histories
+            $dataQueries = Query::with('histories')
+                ->where('guest_id',$guestId)
                 ->where('stay_id',$stayId)
                 ->orderBy('created_at','asc')
                     ->get();
             
             foreach ($dataQueries as $query) {
-                $languages = [];
-                if($query->comment){
-                    foreach ($query->comment as $languageCode => $commentText) {
-                        $languageName = EnumsLanguages::NAME[$languageCode] ?? 'Desconocido';
-                        $languageData = [
-                            'name' => $languageName,
-                            'code' => $languageCode,
-                        ];
-
-                        $languages[] = $languageData; // Agregar al array temporal
+                if ($query->comment) {
+                    $query['languages'] = $this->extractLanguages($query->comment);
+                }
+                foreach ($query->histories as $history) {
+                    if ($history->comment) {
+                        $history['languages'] = $this->extractLanguages($history->comment);
                     }
-                    $query['languages'] = collect($languages);
                 }
             }
+            
             return $dataQueries;
         } catch (\Exception $e) {
             return $e;
@@ -328,11 +327,44 @@ class QueryHosterServices {
         }
     }
     
-    public function togglePendingState($queryId, $bool){
+    public function togglePendingState($queryId, $bool, $hotelId){
         try{
-            return Query::where('id',$queryId)->update(['attended' => $bool]);
+            $result = Query::where('id',$queryId)->update(['attended' => $bool]);
+            //evento para actualizar lista de estancias en front
+            sendEventPusher('private-create-stay.' . $hotelId, 'App\Events\CreateStayEvent', null);
+
+            return $result;
         } catch (\Exception $e) {
             return $e;
         }
     }
+
+    private function extractLanguages($comment)
+    {
+        $languages = [];
+        foreach ($comment as $languageCode => $commentText) {
+            $languageName = EnumsLanguages::NAME[$languageCode] ?? 'Desconocido';
+            $languages[] = [
+                'name' => $languageName,
+                'code' => $languageCode,
+            ];
+        }
+        return collect($languages);
+    }
+
+    public function countPendingByHotel($hotelId){
+        try{
+            $count = DB::table('queries')
+            ->join('stays', 'stays.id', '=', 'queries.stay_id')
+            ->select('stays.id as StayId','stays.hotel_id', 'queries.id', 'queries.answered', 'queries.attended')
+            ->where('answered', 1)->where('attended', 0)
+            ->where('hotel_id', $hotelId)->count();
+
+            return $count;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    
+
 }
