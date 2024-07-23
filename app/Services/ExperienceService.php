@@ -31,10 +31,11 @@ class ExperienceService {
             $productsCountOtherCities->get();
             $countOtherCities = $productsCountOtherCities->whereDiffLocaleCity($modelHotel->zone)->count();
             // ->scopeOrderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
-            $collectionExperiences = $queryExperience->orderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
+            $collectionExperiences = $queryExperience
+                ->orderByPosition($modelHotel->id)
+                ->orderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
                 // ->orderByASpecificCity($modelHotel->zone)
                 // ->orderByFeatured($modelHotel->id)
-                ->orderByPosition($modelHotel->id)
                 ->orderByWeighing($modelHotel->id)
                 ->orderBy('distance', 'asc')
                 ->paginate(20)
