@@ -192,10 +192,10 @@ class ExperienceService {
         }
         // $c = $query->count();
         // return $c;
-        // $query->orderByPosition($hotelModel->id);
-        // $query->orderByFeatured($hotelModel->id);
-        // $query->orderByWeighing($hotelModel->id);
-        // $query->orderBy('distance','ASC');
+        $query->orderByPosition($hotelModel->id);
+        $query->orderByFeatured($hotelModel->id);
+        $query->orderByWeighing($hotelModel->id);
+        $query->orderBy('distance','ASC');
         
         return $query;
     }
