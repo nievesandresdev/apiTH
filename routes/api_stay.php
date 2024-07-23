@@ -20,6 +20,7 @@ Route::group(['prefix' => 'stay'], function () {
         Route::get('/statisticsByHotel', [StayHosterController::class, 'statisticsByHotel']);
         Route::get('/getdetailData', [StayHosterController::class, 'getdetailData']);
         Route::post('/updateData', [StayHosterController::class, 'updateData']);
+        Route::get('/getSessions', [StayHosterController::class, 'getSessions']);
         //notes
         Route::get('/getAllNotesByStay', [StayHosterController::class, 'getAllNotesByStay']);
         Route::post('/createOrupdateStayNote', [StayHosterController::class, 'createOrupdateStayNote']);

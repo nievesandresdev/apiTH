@@ -311,7 +311,7 @@ class QueryHosterServices {
     public function getDetailByGuest($guestId, $stayId, $hotel){
         try {
             $stay = Stay::find($stayId);
-            $guestList = $this->stayHosterServices->getGuestListWithNoti($stay);
+            $guestList = $this->stayHosterServices->getGuestListWithNoti($stayId);
 
             $timeline = $this->getFeedbackTimelineByGuest($guestId, $stay, $hotel);
 
