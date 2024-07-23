@@ -52,7 +52,7 @@ class Recomendation extends Model
     {
         if ($this->translate) {
             $translation = gettype($this->translate) == 'string' ? json_decode($this->translate, true) : $this->translate;
-            return $translation ? $translation[localeCurrent()] : null;
+            return $translation ? $translation[localeCurrent()] ?? null : null;
         }
         return;
     }
