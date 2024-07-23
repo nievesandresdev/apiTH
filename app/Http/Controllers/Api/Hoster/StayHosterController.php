@@ -96,6 +96,21 @@ class StayHosterController extends Controller
         }
     }
 
+    public function getSessions(Request $request){
+        try {
+            $model = $this->service->getSessions($request->stayId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getSessions');
+        }
+    }
 
     //notes 
     
