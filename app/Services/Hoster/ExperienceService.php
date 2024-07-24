@@ -83,7 +83,6 @@ class ExperienceService {
                         LIMIT 1
                     ) AS distance"),
                 )->addBinding([$cityModel->long, $cityModel->lag], 'select');
-                
     
         if($dataFilter['one_exp_id']){
             $query = $query->where('products.id', $dataFilter['one_exp_id']);
@@ -94,6 +93,7 @@ class ExperienceService {
     }
 
     public function filter ($query, $dataFilter, $hotelModel, $cityModel) {
+        
         $user = $hotelModel->user[0];
 
         if($dataFilter['all_cities']){
@@ -104,10 +104,11 @@ class ExperienceService {
                 $query->where('city_experince', $dataFilter['city']);
             });
         }
-        $query->whereHas('translation', function($query) use($dataFilter){   
-            $query->whereNotNull('metting_point_longitude')
-            ->whereNotNull('metting_point_latitude');
-        });
+
+        // $query->whereHas('translation', function($query) use($dataFilter){   
+        //     $query->whereNotNull('metting_point_longitude')
+        //     ->whereNotNull('metting_point_latitude');
+        // });
 
         if (!empty($dataFilter['search'])) {
             $query->whereHas('translation', function($query) use($dataFilter){
@@ -191,10 +192,10 @@ class ExperienceService {
         }
         // $c = $query->count();
         // return $c;
-        // $query->orderByPosition($hotelModel->id);
-        // $query->orderByFeatured($hotelModel->id);
-        // $query->orderByWeighing($hotelModel->id);
-        // $query->orderBy('distance','ASC');
+        $query->orderByPosition($hotelModel->id);
+        $query->orderByFeatured($hotelModel->id);
+        $query->orderByWeighing($hotelModel->id);
+        $query->orderBy('distance','ASC');
         
         return $query;
     }

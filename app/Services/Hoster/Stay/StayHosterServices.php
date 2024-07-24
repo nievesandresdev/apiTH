@@ -262,7 +262,17 @@ class StayHosterServices {
             return null; // Return null if the current date is not within the stay period
         }
     }
-    
+
+    public function getSessions($stayId) {
+        try {
+            $stay = Stay::select('sessions')
+                    ->where('id',$stayId)
+                    ->first();
+            return $stay->sessions;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     //notes 
 
     public function getAllNotesByStay($stayId){

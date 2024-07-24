@@ -31,7 +31,9 @@ class ExperienceService {
             $productsCountOtherCities->get();
             $countOtherCities = $productsCountOtherCities->whereDiffLocaleCity($modelHotel->zone)->count();
             // ->scopeOrderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
-            $collectionExperiences = $queryExperience->orderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
+            $collectionExperiences = $queryExperience
+                ->orderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
+                // ->orderByPosition($modelHotel->id)
                 // ->orderByASpecificCity($modelHotel->zone)
                 // ->orderByFeatured($modelHotel->id)
                 ->orderByWeighing($modelHotel->id)
@@ -82,14 +84,14 @@ class ExperienceService {
             \DB::raw("(
                 SELECT ST_Distance_Sphere(
                     point(a.metting_point_longitude, a.metting_point_latitude),
-                    point(".$dataFilter['cityData']->long.", ".$dataFilter['cityData']->lat.")
+                    point(?, ?)
                 )
                 FROM activities a
                 WHERE a.products_id = products.id
                 ORDER BY a.id ASC
                 LIMIT 1
             ) AS distance"),
-        );
+        )->addBinding([$dataFilter['cityData']->long, $dataFilter['cityData']->lat], 'select');
         
         $queryExperience->whereVisibleByHoster($modelHotel->id);
         
