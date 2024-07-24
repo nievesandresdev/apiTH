@@ -107,6 +107,7 @@ class ChatService {
                     [
                         'showLoadPage' => false,
                         'stay_id' => $stay->id,
+                        'guest_id' => $guest->id,
                         'chat_id' => $chat->id,
                         'hotel_id' => $hotel->id,
                         'room' => $stay->room,

@@ -102,4 +102,54 @@ class StayChatHosterController extends Controller
         }
     }
 
+    public function pendingCountByHotel(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+
+            $model = $this->service->pendingCountByHotel($hotel);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.pendingCountByHotel');
+        }
+    }
+
+    public function pendingCountByStay($stayId){
+        try {
+            $model = $this->service->pendingCountByStay($stayId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.pendingCountByStay');
+        }
+    }
+
+    public function markGuesMsgstAsRead($stayId, $guestId){
+        try {
+            $model = $this->service->markGuesMsgstAsRead($stayId, $guestId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.markGuesMsgstAsRead');
+        }
+    }
+
 }

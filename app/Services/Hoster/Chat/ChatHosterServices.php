@@ -23,6 +23,16 @@ class ChatHosterServices {
         }
     }
 
+    public function pendingCountByStay($stayId){
+        try {
+            return Chat::where('stay_id',$stayId)
+                ->where('pending', 1)   
+                ->count();
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    
     public function getDataRoom($stayId, $guestId){
         try {
             $chat = Chat::where('stay_id',$stayId)
@@ -130,7 +140,17 @@ class ChatHosterServices {
                 ->where('stay_id', $stayId)->withCount(['messages' => function($query) {
                     $query->where('status', 'Entregado')->where('by','Guest');
                 }]);
-            }])->get();
+            }])->select('guests.name','guests.id')->get();
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function markGuesMsgstAsRead($stayId, $guestId){
+        try {
+            $chat = Chat::where('stay_id',$stayId)->where('guest_id',$guestId)->first();
+            $chat->messages()->where('by','Guest')->where('status','Entregado')->update(['status' => 'Leído']);
+            return $this->getGuestListWNoti($stayId);
         } catch (\Exception $e) {
             return $e;
         }
