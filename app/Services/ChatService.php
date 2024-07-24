@@ -105,6 +105,7 @@ class ChatService {
                 sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
                 sendEventPusher('private-noti-hotel.' . $hotel->id, 'App\Events\NotifyStayHotelEvent',
                     [
+                        'showLoadPage' => false,
                         'stay_id' => $stay->id,
                         'chat_id' => $chat->id,
                         'hotel_id' => $hotel->id,

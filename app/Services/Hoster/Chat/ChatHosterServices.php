@@ -57,12 +57,15 @@ class ChatHosterServices {
             ], [
                 'pending' => false,
             ]);
+            
             //save message
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
                 'text' => $text,
                 'status' => 'Entregado',
-                'by' => 'Hoster'
+                'by' => 'Hoster',
+                'messageable_id' => $hotelId,
+                'messageable_type' => 'App\Models\hotel'
             ]);
 
             $msg = $chat->messages()->save($chatMessage);
@@ -77,6 +80,7 @@ class ChatHosterServices {
             sendEventPusher('private-update-chat.' . $stayId, 'App\Events\UpdateChatEvent', ['message' => $msg]);
             sendEventPusher('private-noti-hotel.' . $hotelId, 'App\Events\NotifyStayHotelEvent',
                 [
+                    'showLoadPage' => false,
                     'stay_id' => $stayId,
                     'chat_id' => $chat->id,
                     'hotel_id' => $hotelId,
