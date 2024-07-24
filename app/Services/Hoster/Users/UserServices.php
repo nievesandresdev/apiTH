@@ -31,7 +31,7 @@ class UserServices
 
     public function getUsersBasedOnRequest(&$data_filter)
     {
-        $perPage = request()->get('per_page', 15);
+        $perPage = request()->get('per_page', 20);
         $page = request()->get('page', 1);
 
         $users = $this->getUserHotels($perPage, $page);

@@ -81,6 +81,7 @@ class ApiReviewServices {
             "googleMapCid" => $cid
         ];
 
+
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->KEY_API_REVIEW];
         $response_request = $http_client_service->make_request('get', "$URL_BASE_API_REVIEW/hotelOtas/getByParams", $params, $headers, 60);
@@ -98,5 +99,51 @@ class ApiReviewServices {
         return $this->convert_keys_to_snake_case($data);
 
     }
+
+    public function updateBulkOTAS($hotel,$request){
+        $URL_BASE_API_REVIEW = config('app.url_base_api_review');
+
+
+
+        $url = $hotel->url_google;
+        $cid = get_property_in_url($url, "cid");
+
+        $params = [
+            "googleMapCid" => $cid,
+            "urls" => $request
+
+        ];
+
+        /* return [
+            'params' => $params,
+            'url' => $URL_BASE_API_REVIEW.'/hotelOtas/updateBulk',
+            'key' => $this->KEY_API_REVIEW
+        ]; */
+
+        //return $params;
+
+        $http_client_service = new HttpClientService();
+        $headers = ['x-api-key' => $this->KEY_API_REVIEW];
+        $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/hotelOtas/updateBulk", $params, $headers, 60);
+
+        return [
+            'params' => $params,
+            'url' => $URL_BASE_API_REVIEW.'/hotelOtas/updateBulk',
+            'respojnse' => $response_request
+        ];
+
+        $data = null;
+        if (!isset($response_request['ok']) || !$response_request['ok']) {
+            \Log::error($response_request['message']??$response_request);
+            return;
+        } else {
+            $data = $response_request ?? null;
+        }
+        $data = $data['data'] ?? null;
+
+        return $this->convert_keys_to_snake_case($data);
+    }
+
+
 
 }
