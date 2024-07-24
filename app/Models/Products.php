@@ -208,14 +208,20 @@ class Products extends Model
             $join->on('products.id', '=', 'service_featured.product_id')
                 ->where('service_featured.hotel_id', '=', $hotelId);
         });
+        $query->leftJoin('toggle_products as tp', function ($join) use ($hotelId) {
+            $join->on('products.id', '=', 'tp.products_id')
+                ->where('tp.hotel_id', '=', $hotelId);
+        });
 
         // Ordenar por ciudad, y luego por recomendados y destacados
         $query->orderByRaw("CASE WHEN activities.city_experince = '$cityName' THEN 0 ELSE 1 END")
-            ->orderByRaw('CASE 
-                    WHEN recomendations.recommendable_id IS NOT NULL THEN 1
-                    WHEN service_featured.product_id IS NOT NULL THEN 2
-                    ELSE 3
-                END');
+        ->orderByRaw('CASE WHEN tp.position IS NOT NULL THEN 0 ELSE 1 END')
+        ->orderBy('tp.position')
+        ->orderByRaw('CASE 
+                WHEN recomendations.recommendable_id IS NOT NULL THEN 1
+                WHEN service_featured.product_id IS NOT NULL THEN 2
+                ELSE 3
+            END');
     }
 
     public function scopeWhereAddExpInHoster($query, $hotelId) {
