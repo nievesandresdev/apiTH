@@ -44,6 +44,7 @@ class HotelService {
             //         $query->where('subdomain', $subdomain);
             //     }
             // });
+
             $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
                 if ($subdomain) {
                     $query->where('name', $subdomain);
