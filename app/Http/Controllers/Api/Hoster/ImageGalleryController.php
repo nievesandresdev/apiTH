@@ -32,7 +32,7 @@ class ImageGalleryController extends Controller
             'images_gallery_places' => $imagesGalleryPlaces,
             'images_gallery_hotel' => $imagesGalleryHotel,
         ];
-        
+        //
         return $data;
 
     }
