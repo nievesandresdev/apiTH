@@ -28,7 +28,7 @@ class ExperienceService {
             
             $queryExperience = $this->filter($request, $modelHotel, $dataFilter);
             $productsCountOtherCities = clone $queryExperience;
-            $productsCountOtherCities->get();
+            // $productsCountOtherCities->get();
             $countOtherCities = $productsCountOtherCities->whereDiffLocaleCity($modelHotel->zone)->count();
             // ->scopeOrderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
             $collectionExperiences = $queryExperience
@@ -92,7 +92,7 @@ class ExperienceService {
                 LIMIT 1
             ) AS distance"),
         )->addBinding([$dataFilter['cityData']->long, $dataFilter['cityData']->lat], 'select');
-        
+
         $queryExperience->whereVisibleByHoster($modelHotel->id);
         
         // if(isset($dataFilter['cities'])){

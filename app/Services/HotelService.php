@@ -30,7 +30,7 @@ class HotelService {
 
         $user = $modelHotel->user[0];
 
-        $hotelsCollection = $user->hotel;
+        $hotelsCollection = $user->hotel()->where('del', 0)->get();
 
         return $hotelsCollection;
     }
@@ -44,6 +44,7 @@ class HotelService {
             //         $query->where('subdomain', $subdomain);
             //     }
             // });
+
             $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
                 if ($subdomain) {
                     $query->where('name', $subdomain);
