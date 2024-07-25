@@ -421,8 +421,8 @@ if (! function_exists('settingsNotyStayDefault')) {
 if (! function_exists('prepareMessage')) {
     //reemplaza las variables con datos para crear un mensaje personalizado para el huesped
     function prepareMessage($data,$hotel,$params_url = null){
-        $stayIdParam = $data['stay_id'] ? 'e='.$data['stay_id'].'&' : '';
-        $link = url('webapp?'.$stayIdParam.'g='.$data['guest_id'].'&lang='.$data['stay_lang']);
+
+        $link = url('webapp?e='.$data['stay_id'].'&g='.$data['guest_id'].'&lang='.$data['stay_lang']);
         $link =  includeSubdomainInUrlHuesped($link, $hotel);
         if($params_url){
             $link = $link.$params_url;
