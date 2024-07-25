@@ -77,7 +77,7 @@ class ExperienceController extends Controller
             ];
 
             $queryExperiences = $this->service->queryGetAll($request, $hotelModel, $dataFilter, $cityModel);
-            // return $queryExperiences;
+            // return $queryExperiences->count();
             $queryExperiencesVisibles = clone $queryExperiences;
 
             $countVisible = $queryExperiencesVisibles->whereVisibleByHoster($hotelModel->id)->count();

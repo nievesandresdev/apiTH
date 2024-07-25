@@ -30,7 +30,7 @@ class HotelService {
 
         $user = $modelHotel->user[0];
 
-        $hotelsCollection = $user->hotel;
+        $hotelsCollection = $user->hotel()->where('del', 0)->get();
 
         return $hotelsCollection;
     }
