@@ -34,16 +34,14 @@ class GuestHosterService {
             $settings =  $this->staySettingsServices->getAll($hotelId);
             
             $hotel = Hotel::find($hotelId);
-            $data = [
-                'guest_id' => $guest->id,
-                'stay_lang' => $guest->lang_web,
-                'msg_text' => $settings->guestcreate_msg_email[$guest->lang_web],
-                'guest_name' => $guest->name,
-                'hotel_name' => $hotel->name,
-                'hotel_id' => $hotel->id,
-            ];
-            $msg = prepareMessage($data,$hotel);
-            $link = prepareLink($data,$hotel);
+            
+            //prepare msg
+            $link = url('webapp?g='.$guest->id);
+            $link =  includeSubdomainInUrlHuesped($link, $hotel);
+            $msg = $settings->guestcreate_msg_email[$guest->lang_web];
+            $msg = str_replace('[nombre]', $guest->name, $msg);
+            $msg = str_replace('[nombre_del_hotel]', $hotel->name, $msg);
+            $msg = str_replace('[URL]', $link, $msg);
             $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link), $guest->email);
             return $guest;
         } catch (\Exception $e) {

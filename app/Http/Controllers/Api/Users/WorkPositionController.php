@@ -5,22 +5,27 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Controller;
 use App\Models\WorkPosition;
 use App\Utils\Enums\EnumResponse;
-use GuzzleHttp\Psr7\Request;
 
 class WorkPositionController extends Controller
 {
     public function getAllWorkPosition()
     {
+
         return bodyResponseRequest(EnumResponse::SUCCESS, [
-            'work_positions' => WorkPosition::active()->get()
+            'work_positions' => WorkPosition::active()->byHotel()->get()
         ]);
     }
 
     public function store()
     {
+        $hotel = request()->attributes->get('hotel');
         $data = request()->validate([
             'name' => 'required|string|unique:work_positions',
         ]);
+
+       /*  return [
+            'currentHotelis' => $hotel
+        ]; */
 
         try {
             $work_position = WorkPosition::create($data);

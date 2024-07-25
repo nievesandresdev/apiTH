@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Http;
 class ApiReviewServices {
 
     protected $KEY_API_REVIEW;
+    protected $X_KEY_API;
 
     public function __construct()
     {
         $this->KEY_API_REVIEW = config('app.key_api_review');
+        $this->X_KEY_API = config('app.x_key_api');
     }
 
 
@@ -83,8 +85,15 @@ class ApiReviewServices {
 
 
         $http_client_service = new HttpClientService();
-        $headers = ['x-api-key' => $this->KEY_API_REVIEW];
-        $response_request = $http_client_service->make_request('get', "$URL_BASE_API_REVIEW/hotelOtas/getByParams", $params, $headers, 60);
+        $headers = ['x-api-key' => $this->X_KEY_API];
+        $response_request = $http_client_service->make_request('GET', "$URL_BASE_API_REVIEW/hotelOtas/getByParams", $params, $headers, 60);
+
+        /* return [
+            'params' => $params,
+            'url' => $URL_BASE_API_REVIEW.'/hotelOtas/getByParams',
+            'key' => $this->X_KEY_API,
+            'response' => $response_request
+        ]; */
 
         // $response_request = null;
         $data = null;
@@ -123,13 +132,14 @@ class ApiReviewServices {
         //return $params;
 
         $http_client_service = new HttpClientService();
-        $headers = ['x-api-key' => $this->KEY_API_REVIEW];
+        $headers = ['x-api-key' => $this->X_KEY_API];
         $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/hotelOtas/updateBulk", $params, $headers, 60);
 
         return [
             'params' => $params,
             'url' => $URL_BASE_API_REVIEW.'/hotelOtas/updateBulk',
-            'respojnse' => $response_request
+            'respojnse' => $response_request,
+            'headers' => $headers
         ];
 
         $data = null;
