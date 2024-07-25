@@ -49,7 +49,7 @@ class UsersController extends Controller
     {
         $data_filter = $this->userServices->initializeDataFilter();
 
-        $data_filter['per_page'] = request()->get('per_page', 15); // default 15
+        $data_filter['per_page'] = request()->get('per_page', 20); // default 15
         $data_filter['page'] = request()->get('page', 1); // default 1
 
         $users = $this->userServices->getUsersBasedOnRequest($data_filter);
@@ -205,16 +205,6 @@ class UsersController extends Controller
                 'message' => $e->getMessage(),
             ],null,$e->getMessage());
         }
-    }
-
-    public function getDataOtas(Request $request){
-
-        $hotel = $request->attributes->get('hotel');
-        $summary_reviews = $this->api_review_service->getDataOta($hotel);
-
-        return bodyResponseRequest(EnumResponse::SUCCESS, [
-            'otas' => $summary_reviews,
-        ]);
     }
 
 
