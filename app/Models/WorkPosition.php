@@ -15,9 +15,25 @@ class WorkPosition extends Model
         'status',
     ];
 
+    //boot create
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($work_position) {
+            $work_position->hotel_id = request()->attributes->get('hotel')->id;
+        });
+    }
+
     //scope active where status 1
     public function scopeActive($query)
     {
         return $query->where('status', 1);
+    }
+
+    //scope by hotel
+    public function scopeByHotel($query)
+    {
+        return $query->where('hotel_id', request()->attributes->get('hotel')->id);
     }
 }
