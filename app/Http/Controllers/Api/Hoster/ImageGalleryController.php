@@ -12,28 +12,34 @@ use App\Models\hotel;
 class ImageGalleryController extends Controller
 {
     public function getAll(Request $request) {
-        ['search' => $search] = $request->all();
+        try {
 
-        $hotelModel = $request->attributes->get('hotel');
+            ['search' => $search] = $request->all();
 
-        $q = $hotelModel->gallery();
-        if ($search) {
-            $q = $q->where('name','like','%'.$search.'%');
+            $hotelModel = $request->attributes->get('hotel');
+
+            $q = $hotelModel->gallery();
+            if ($search) {
+                $q = $q->where('name','like','%'.$search.'%');
+            }
+
+            $imagesGallery = $q->orderBy('created_at', 'desc')->get();
+            $imagesGalleryPlaces = $imagesGallery->filter(function($img){
+                return $img['concept'] == 'image-place';
+            })->values();
+            $imagesGalleryHotel = $imagesGallery->filter(function($img){
+                return $img['concept'] == 'image-hotel';
+            })->values();
+            $data = [
+                'images_gallery_places' => $imagesGalleryPlaces,
+                'images_gallery_hotel' => $imagesGalleryHotel,
+            ];
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
         }
-
-        $imagesGallery = $q->orderBy('created_at', 'desc')->get();
-        $imagesGalleryPlaces = $imagesGallery->filter(function($img){
-            return $img['concept'] == 'image-place';
-        })->values();
-        $imagesGalleryHotel = $imagesGallery->filter(function($img){
-            return $img['concept'] == 'image-hotel';
-        })->values();
-        $data = [
-            'images_gallery_places' => $imagesGalleryPlaces,
-            'images_gallery_hotel' => $imagesGalleryHotel,
-        ];
-        //
-        return $data;
 
     }
 
