@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use App\Models\ImageGallery;
 use App\Models\hotel;
 
+use Illuminate\Support\Str;
+use App\Utils\Enums\EnumResponse;
+
 class ImageGalleryController extends Controller
 {
     public function getAll(Request $request) {
