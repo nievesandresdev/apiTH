@@ -64,11 +64,15 @@ class ImageGalleryController extends Controller
     //     return $path_img;
     // }
 
-    // public function delete_image(Request $request){
-    //     $ids_delete = $request->ids_delete ?? [];
-    //     if (!$ids_delete || count($ids_delete) == 0) return $ids_delete;
-    //     ImageGallery::whereIn('id',$request->ids_delete)->delete();
-    //     return $ids_delete;
-    // }
+    public function deleteBulk(Request $request){
+        try {
+            $ids_delete = $request->ids_delete ?? [];
+            if (!$ids_delete || count($ids_delete) == 0) return $ids_delete;
+            ImageGallery::whereIn('id',$request->ids_delete)->get();
+            return bodyResponseRequest(EnumResponse::SUCCESS_OK);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteBulk');
+        }
+    }
 
 }
