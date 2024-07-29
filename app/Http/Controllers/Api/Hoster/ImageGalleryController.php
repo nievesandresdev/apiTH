@@ -68,7 +68,7 @@ class ImageGalleryController extends Controller
         try {
             $ids_delete = $request->ids_delete ?? [];
             if (!$ids_delete || count($ids_delete) == 0) return $ids_delete;
-            ImageGallery::whereIn('id',$request->ids_delete)->get();
+            ImageGallery::whereIn('id',$request->ids_delete)->delete();
             return bodyResponseRequest(EnumResponse::SUCCESS_OK);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteBulk');
