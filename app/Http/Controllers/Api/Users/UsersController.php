@@ -110,7 +110,7 @@ class UsersController extends Controller
     {
         try {
             request()->validate([
-                'email' => 'required|email|unique:users,email,' . request()->user_id,
+                'email' => 'required|email|unique:users,email,' .auth()->id(),
             ],
             [
                 'email.required' => 'El campo email es requerido',
@@ -118,7 +118,7 @@ class UsersController extends Controller
                 'email.unique' => 'El correo electrónico ya está en uso',
             ]);
 
-            $user = $this->userServices->updateUserHoster(request(), request()->user_id);
+            $user = $this->userServices->updateUserHoster(request(),auth()->id());
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Usuario actualizado con éxito',
