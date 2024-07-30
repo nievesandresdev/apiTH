@@ -157,6 +157,8 @@ class HotelController extends Controller
             
             $hotelModel = $this->service->updateProfile($request, $hotelModel);
 
+            $this->service->asyncImages($request, $hotelModel);
+
             $hotelModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
         } catch (\Exception $e) {
