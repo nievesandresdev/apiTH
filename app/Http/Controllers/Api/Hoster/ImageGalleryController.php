@@ -27,6 +27,7 @@ class ImageGalleryController extends Controller
             }
 
             $imagesGallery = $q->orderBy('created_at', 'desc')->get();
+            // return $imagesGallery;
             $imagesGalleryPlaces = $imagesGallery->filter(function($img){
                 return $img['concept'] == 'image-place';
             })->values();
@@ -61,7 +62,7 @@ class ImageGalleryController extends Controller
                 }
             } 
             $pathImg = saveImage($request->file, "gallery", $hotelModel->id, $type, true, $customname);
-            $data = ["url" => $pathImg];
+            $data = ["url" => $pathImg, 'input' => $request->all()];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.upload');
