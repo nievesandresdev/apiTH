@@ -27,6 +27,7 @@ class ImageGalleryController extends Controller
             }
 
             $imagesGallery = $q->orderBy('created_at', 'desc')->get();
+            // return $imagesGallery;
             $imagesGalleryPlaces = $imagesGallery->filter(function($img){
                 return $img['concept'] == 'image-place';
             })->values();
@@ -46,23 +47,27 @@ class ImageGalleryController extends Controller
 
     }
 
-    // public function upload_image(Request $request){
-    //     ['hotel_id' => $hotel_id, 'type'=>$type, 'name_image'=>$name_image] = $request->all();
-    //     $hotel = hotel::find($hotel_id);
-    //     if (!$hotel) return;
-    //     $customname = $name_image;
-    //     if ($customname) {
-    //         $customname = \Str::slug($customname, "_");
-    //         $numbers_images_with_same_name = $hotel->gallery()->where('concept', $type)->where('name', 'like',  ['%' . $customname . '%'])->count();
-    //         if ($numbers_images_with_same_name > 0) {
-    //             $counter = $numbers_images_with_same_name > 1 ? $numbers_images_with_same_name + 1 : 1;
-    //             $customname = "$customname"."_"."$counter";
-    //         }
-    //     }
-    //     $path_img = saveImage($request->file, "gallery", $hotel->id, $type,true, $customname);
-        
-    //     return $path_img;
-    // }
+    public function upload(Request $request){
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            ['type'=>$type, 'name_image'=>$nameImage] = $request->all();
+            if (!$hotelModel) return;
+            $customname = $nameImage;
+            if ($customname) {
+                $customname = \Str::slug($customname, "_");
+                $numbersImagesWithSameName = $hotelModel->gallery()->where('concept', $type)->where('name', 'like',  ['%' . $customname . '%'])->count();
+                if ($numbersImagesWithSameName > 0) {
+                    $counter = $numbersImagesWithSameName > 1 ? $numbersImagesWithSameName + 1 : 1;
+                    $customname = "$customname"."_"."$counter";
+                }
+            } 
+            $pathImg = saveImage($request->file, "gallery", $hotelModel->id, $type, true, $customname);
+            $data = ["url" => $pathImg, 'input' => $request->all()];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.upload');
+        }
+    }
 
     public function deleteBulk(Request $request){
         try {

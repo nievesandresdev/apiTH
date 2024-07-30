@@ -58,6 +58,7 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
     'guest_path' => env('LOCAL_GUEST_URL', 'http://localhost'),
     'storage_image' => env('APP_IMAGE', 'https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/'),
+    'storage_env' => env('AWS_STORAGE_PATH', null),
     'asset_url' => env('ASSET_URL'),
     'hoster_url' => env('HOSTER_URL'),
     'url_base_api_review' => env('URL_BASE_API_REVIEW',null),
@@ -180,6 +181,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        // Intervention\Image\ImageServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -195,6 +197,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        // 'Image' => Intervention\Image\Facades\Image::class
     ])->toArray(),
 
 ];
