@@ -123,6 +123,12 @@ class Hotel extends Model
     {
         return $this->hasMany(Stay::class);
     }
+
+    public function gallery()
+    {
+        return $this->hasMany(ImageGallery::class, 'image_id');
+    }
+
     // AUXILIARIES
 
     public function toArray()

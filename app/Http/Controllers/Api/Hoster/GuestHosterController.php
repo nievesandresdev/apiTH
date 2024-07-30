@@ -20,8 +20,8 @@ class GuestHosterController extends Controller
 
     public function inviteToHotel(Request $request){
         try {
-            $hotel = $request->attributes->get('hotel');
-            $model = $this->service->inviteToHotel($request, $hotel->id);
+            // $hotel = $request->attributes->get('hotel');
+            return $model = $this->service->inviteToHotel($request, 191);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

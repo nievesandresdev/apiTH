@@ -2,6 +2,7 @@
 
 namespace App\Services\Hoster\RequestReviews;
 
+use App\Jobs\TranslateGenericMultipleJob;
 use App\Models\RequestSetting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -38,9 +39,40 @@ class RequestReviewsSettingsServices {
                     'request_to' => in_array('request_to', $keysToSave) ? $newdata->request_to : $default->request_to,
                 ]
             );
+            $this->processTranslateTexts($newdata, $save);
             return $save;
         } catch (\Exception $e) {
             return $e;
         }
+    }
+
+    public function processTranslateTexts ($request, $model){
+        
+        $msg_title = $request->msg_title['es'] ?? null;
+        $msg_text = $request->msg_text['es'] ?? null;
+        $arrToTranslate = ['msg_title' => $msg_title,'msg_text' => $msg_text];
+        
+        TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model);
+    }
+
+    public function updateTranslation($model, $translation) {
+        Log::info('execute updateTranslation'. json_encode($translation));
+        // Asegurarse de que $translation sea un arreglo
+        $translationFormat = json_decode(json_encode($translation), true);
+    
+        foreach ($translationFormat as $key => &$categories) {
+            foreach ($categories as $lang => &$details) {
+                // Asegurarse de que 'text' existe antes de intentar accederlo
+                if (isset($details['text'])) {
+                    $details = $details['text'];
+                }
+            }
+        }
+        
+        $model->msg_title = isset($translationFormat['msg_title']) ? $translationFormat['msg_title'] : $model->msg_title;
+        $model->msg_text = isset($translationFormat['msg_text']) ? $translationFormat['msg_text'] : $model->msg_text;
+        //
+        $model->save();
+        Log::info('nueva traduccion guardada');
     }
 }
