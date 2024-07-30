@@ -7,4 +7,5 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'gallery'], function () {
     Route::get('/getAll', [ImageGalleryController::class, 'getAll']);
     Route::post('/deleteBulk', [ImageGalleryController::class, 'deleteBulk']);
+    Route::post('/upload', [ImageGalleryController::class, 'upload']);
 });

@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Pusher\Pusher;
+use Intervention\Image\Facades\Image as ImageManager;
+use Intervention\Image\ImageManagerStatic as ImageManagerStatic;
+
+use App\Models\ImagesHotels;
+use App\Models\ImageGallery;
 
 if (!function_exists('bodyResponseRequest')) {
     /**
@@ -727,4 +732,95 @@ if (! function_exists('requestSettingsDefault')) {
         $requestSettings->request_to = json_encode(['GOOD','VERYGOOD']);
         return $requestSettings;
     }
+}
+
+// ===============================
+
+if (! function_exists('saveImage')) {
+    function saveImage($image, $model, $id, $type = null, $withname = false, $customname = null) {
+
+        $storage_env = config('app.storage_env');
+        $rand = mt_Rand(1000000, 9999999);
+        $ext = '.'.$image->extension();
+        $time = time();
+        if ($customname) {
+            $customname = $customname.$ext;
+        }
+        $name_file = generateImageName($image, $withname, $rand, $time);
+        $savePath = getImageSavePath($model, $name_file);
+        if($storage_env == "test" || $storage_env == "pro") {
+            if ($ext == '.svg') {
+                $content = file_get_contents($image->getRealPath());
+                Storage::disk('s3')->put($savePath, $content);
+            } else {
+                $imgFileOriginal = resizeImage($image->getRealPath());
+                saveImageToS3($imgFileOriginal, $savePath);
+            }
+        } else {
+            if ($ext == '.svg'){
+                $image->move(public_path('storage/'.$model.'/'), $name_file);
+            } else {
+                $imgFileOriginal = resizeImage($image->getRealPath());
+                saveImageToFilesystem($imgFileOriginal, public_path($savePath));
+            }
+        }
+        $savePath = '/'.$savePath;
+
+        //guardar en bd
+        switch ($model) {
+            case 'hotel':
+                $imageHotel = new ImagesHotels;
+                $imageHotel->hotel_id = $id;
+                $imageHotel->type = $type;
+                $imageHotel->name = $name_file;
+                $imageHotel->url = $savePath;
+                $imageHotel->save();
+                break;
+            case 'gallery':
+                $m_gallery = new ImageGallery();
+                $m_gallery->image_id = $id;
+                $m_gallery->concept = $type;
+                $m_gallery->url = $savePath;
+                $m_gallery->type = 'STORAGE';
+                $m_gallery->name = $customname ? $customname :  $name_file;
+                $m_gallery->save();
+                break;
+            default:
+                # code...
+                break;
+        }
+
+        return $savePath;
+    }
+}
+
+//IMAGE METHODS
+function generateImageName($image, $withname, $rand, $time) {
+    $ext = '.'.$image->extension();
+    if ($withname) {
+        return $time.'-'.$rand.'-'.$image->getClientOriginalName();
+    } else {
+        return $time.'-'.$rand.$ext;
+    }
+}
+function resizeImage($imagePath, $width = 1200) {
+    $imgFileOriginal = ImageManager::make($imagePath);
+    $currentWidth = $imgFileOriginal->width();
+    if ($currentWidth > $width) {
+        $imgFileOriginal->resize($width, null, function($constraint){
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+    }
+    return $imgFileOriginal;
+}
+function saveImageToFilesystem($imgFile, $path, $quality = 72) {
+    $imgFile->save($path, $quality);
+}
+function saveImageToS3($imgFile, $path) {
+    $imgFile->stream(); // Prepara la imagen para ser guardada en el stream
+    Storage::disk('s3')->put($path, $imgFile->__toString(), 'public');
+}
+function getImageSavePath($model, $name_file) {
+    return 'storage/'.$model.'/'.$name_file;
 }
