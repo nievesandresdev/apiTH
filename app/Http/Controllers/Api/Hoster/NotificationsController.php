@@ -3,25 +3,24 @@
 namespace App\Http\Controllers\Api\Hoster;
 
 use App\Http\Controllers\Controller;
-use App\Services\Hoster\GuestHosterService;
+use App\Services\Hoster\NotificationsServices;
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 
-class GuestHosterController extends Controller
+class NotificationsController extends Controller
 {
     public $service;
 
     function __construct(
-        GuestHosterService $_GuestHosterService
+        NotificationsServices $_NotificationsServices
     )
     {
-        $this->service = $_GuestHosterService;
+        $this->service = $_NotificationsServices;
     }
 
-    public function inviteToHotel(Request $request){
+    public function getNotificationsByUser(Request $request){
         try {
-            // $hotel = $request->attributes->get('hotel');
-            $model = $this->service->inviteToHotel($request, 191);
+            return $model = $this->service->getNotificationsByUser($request->userId);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -31,7 +30,7 @@ class GuestHosterController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.inviteToHotel');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getNotificationsByUser');
         }
     }
 
