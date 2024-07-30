@@ -18,9 +18,9 @@ class NotificationsController extends Controller
         $this->service = $_NotificationsServices;
     }
 
-    public function getNotificationsByUser(Request $request){
+    public function getNotificationsByUser($UserId){
         try {
-            return $model = $this->service->getNotificationsByUser($request->userId);
+            $model = $this->service->getNotificationsByUser($UserId);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
