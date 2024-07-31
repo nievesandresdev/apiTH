@@ -9,6 +9,7 @@ use Carbon\Carbon;
 
 use App\Models\Hotel;
 use App\Models\User;
+use App\Models\ImagesHotels;
 
 use App\Http\Resources\HotelResource;
 use App\Models\ChatHour;
@@ -123,6 +124,27 @@ class HotelService {
 
         $hotelModel->save();
         return $hotelModel;
+    }
+
+    public function asyncImages ($request, $hotelModel) {
+        $imgs = collect($request->images_hotel??[]);
+        $news_imgs = $imgs->filter(function($item){
+            return !isset($item['id']) || empty($item['id']);
+        });
+        foreach ($news_imgs as $img) {
+            ImagesHotels::create([
+                'hotel_id' => $hotelModel->id,
+                'name' => $img['name'],
+                'url' => $img['url'],
+                'type' => $img['type'],
+            ]);
+        }
+
+        if(is_array($request->delete_imgs) && count($request->delete_imgs)){
+            foreach ($request->delete_imgs as $img_id) {
+                ImagesHotels::where("hotel_id", $hotelModel->id)->where("id", $img_id)->delete();
+            }
+        }
     }
 
     public function updateTranslation ($model, $translation) {
