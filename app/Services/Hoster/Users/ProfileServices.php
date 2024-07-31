@@ -2,7 +2,7 @@
 
 namespace App\Services\Hoster\Users;
 
-use App\Models\profile as Profile;
+use App\Models\Profile;
 
 
 class ProfileServices
