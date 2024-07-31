@@ -71,7 +71,13 @@ class StayHosterServices {
                 });
             }
     
-            $stays = $query->orderBy('stays.updated_at', 'DESC')->get();
+            $stays = $query->orderByRaw('
+                CASE 
+                    WHEN has_pending_chats = 1 OR pending_queries_count > 0 THEN 0
+                    ELSE 1
+                END
+            ')->orderBy('stays.updated_at', 'DESC')->get();
+            // WHEN stays.room IS NULL OR stays.room = "" AND CURDATE() BETWEEN stays.check_in AND stays.check_out THEN 2
     
             // Counts for all, each period, and pending
             $totalCounts = $stays->count();
@@ -239,7 +245,12 @@ class StayHosterServices {
             $stay->room = $data->room ?? $stay->room;
             $stay->middle_reservation = $data->middle_reservation ?? $stay->middle_reservation;
             $stay->sessions = $data->sessions ?? $stay->sessions;
-            return $stay->save();
+
+            $save = $stay->save();
+            if($save){
+                sendEventPusher('private-update-stay-list-hotel.' . $stay->hotel_id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
+            }
+            return $save;
             // Cambios guardados con éxito
         } catch (\Exception $e) {
             return $e;

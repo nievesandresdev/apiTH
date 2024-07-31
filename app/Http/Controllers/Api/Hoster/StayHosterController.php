@@ -168,7 +168,7 @@ class StayHosterController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, 'Nota Eliminada');
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteStayNote');
@@ -183,10 +183,10 @@ class StayHosterController extends Controller
             $guestId = $request->guestId;
             $model = "Nota creada";
             if($noteId){
-                $model =$this->noteGuestService->update($noteId, $content);
-                // $model = "Nota actualizada";
+                $this->noteGuestService->update($noteId, $content);
+                $model = "Nota actualizada";
             }else{
-                $model =$this->noteGuestService->create($stayId, $guestId, $content);
+                $this->noteGuestService->create($stayId, $guestId, $content);
             }
             if(!$model){
                 $data = [
@@ -212,7 +212,7 @@ class StayHosterController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, 'Nota Eliminada');
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteGuestNote');
