@@ -130,7 +130,9 @@ class StayHosterServices {
 
             
             foreach(['es','en','fr'] as $lang){
-                $percentageLangs[$lang] = round(($langsTotal[$lang]/$totalGuests)*100);
+                if($langsTotal[$lang] > 0){
+                    $percentageLangs[$lang] = round(($langsTotal[$lang]/$totalGuests)*100);
+                }
             }
 
             return [
@@ -342,10 +344,8 @@ class StayHosterServices {
             
     }
 
-    public function deleteSession($data) {
+    public function deleteSession($stayId, $userEmail) {
         try {
-            $stayId = $data->stayId;
-            $userEmail = $data->userEmail;
             
             $stay = Stay::find($stayId);
     
