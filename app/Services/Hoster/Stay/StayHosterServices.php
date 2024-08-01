@@ -348,7 +348,6 @@ class StayHosterServices {
         try {
             
             $stay = Stay::find($stayId);
-    
             $sessions = $stay->sessions ?? [];
     
             // Filtra el array para eliminar el usuario con el email dado
