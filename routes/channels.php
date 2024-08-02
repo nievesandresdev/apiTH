@@ -26,6 +26,10 @@ Broadcast::channel('notify-send-query.{id}', function ($hotel, $id) {
 });
 
 //stay
+Broadcast::channel('update-stay-list-hotel.{id}', function ($hotel, $id) {
+    return (int) $hotel->id === (int) $id;
+});
+
 Broadcast::channel('create-stay.{id}', function ($hotel, $id) {
     return (int) $hotel->id === (int) $id;
 });

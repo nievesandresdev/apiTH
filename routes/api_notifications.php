@@ -6,4 +6,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'hoster/notifications'], function () {
     Route::get('/getNotificationsByUser/{UserId}', [NotificationsController::class, 'getNotificationsByUser']);
+    Route::post('/vote', [NotificationsController::class, 'vote']);
 });

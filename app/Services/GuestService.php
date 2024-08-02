@@ -141,10 +141,10 @@ class GuestService {
             $settingsArray = settingsNotyStayDefault();
             $settings = (object)$settingsArray;
         }
-        Log::info("inviteToStayByEmail settings".json_encode($settings));
-        Log::info("lang_web ".$guest->lang_web);
+        // Log::info("inviteToStayByEmail settings".json_encode($settings));
+        // Log::info("lang_web ".$guest->lang_web);
         if($settings->guestinvite_check_email){
-            Log::info("inviteToStayByEmail entro en envio");
+            // Log::info("inviteToStayByEmail entro en envio");
             $data = [
                 'stay_id' => $stayId,
                 'guest_id' => $guest->id,
@@ -156,8 +156,8 @@ class GuestService {
             ];
             $msg = prepareMessage($data,$hotel);
             $link = prepareLink($data,$hotel);
-            Log::info("inviteToStayByEmail prepareMessage".$msg);
-            Log::info("inviteToStayByEmail hotel".json_encode($hotel));
+            // Log::info("inviteToStayByEmail prepareMessage".$msg);
+            // Log::info("inviteToStayByEmail hotel".json_encode($hotel));
             // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
             $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name), $guest->email);
         }

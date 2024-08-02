@@ -9,6 +9,7 @@ use App\Services\Hoster\Stay\StayHosterServices;
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 use function Database\Seeders\run;
 
@@ -168,7 +169,7 @@ class StayHosterController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, 'Nota Eliminada');
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteStayNote');
@@ -183,10 +184,10 @@ class StayHosterController extends Controller
             $guestId = $request->guestId;
             $model = "Nota creada";
             if($noteId){
-                $model =$this->noteGuestService->update($noteId, $content);
-                // $model = "Nota actualizada";
+                $this->noteGuestService->update($noteId, $content);
+                $model = "Nota actualizada";
             }else{
-                $model =$this->noteGuestService->create($stayId, $guestId, $content);
+                $this->noteGuestService->create($stayId, $guestId, $content);
             }
             if(!$model){
                 $data = [
@@ -212,7 +213,7 @@ class StayHosterController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, 'Nota Eliminada');
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteGuestNote');
@@ -240,7 +241,17 @@ class StayHosterController extends Controller
 
     public function deleteSession(Request $request){
         try {
-            $model = $this->service->deleteSession($request);
+            $userEmail = $request->userEmail;
+            $field = $request->field;
+            $stayId = $request->stayId;
+
+            $request->validate([
+                'userEmail' => 'string',
+                'field' => 'string',
+                'stayId' => 'integer',
+            ]);
+            
+            $model = $this->service->deleteSession($stayId, $userEmail);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -251,6 +262,30 @@ class StayHosterController extends Controller
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteSession');
+        }
+    }
+
+    public function deleteSessionWithApiKey(Request $request){
+        try {
+            
+            $userEmail = $request->query('userEmail');
+            $stayId = $request->query('stayId');
+            $request->validate([
+                'xKeyApi' => 'string',
+                'userEmail' => 'string',
+                'field' => 'string',
+                'stayId' => 'string',
+            ]);
+
+            $xKeyApi = $request->query('xKeyApi');
+            $envApiKey = config('app.x_key_api');
+            if($xKeyApi !== $envApiKey){
+                    
+            }
+            $this->service->deleteSession($stayId, $userEmail);
+            Log::info('session de hoster estancia eliminada con existo stayId:'. $stayId);
+        } catch (\Exception $e) {
+            Log::error('error al eliminar session de hoster estancia '. json_encode($e));
         }
     }
     

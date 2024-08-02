@@ -30,6 +30,7 @@ Route::group(['prefix' => 'stay'], function () {
         //sessions
         Route::post('/createSession', [StayHosterController::class, 'createSession']);
         Route::post('/deleteSession', [StayHosterController::class, 'deleteSession']);
+        Route::post('/deleteSessionWithApiKey', [StayHosterController::class, 'deleteSessionWithApiKey']);
         //guest
         Route::get('/getGuestListWithNoti', [StayHosterController::class, 'getGuestListWithNoti']);
     });

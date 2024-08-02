@@ -60,7 +60,7 @@ class NotificationsServices {
         try {
             return NotificationUser::updateOrCreate(
                 [
-                    'user_id' => auth()->id(),
+                    'user_id' => $userId,
                     'notification_id' => $noticationId
                 ],
                 [
