@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -7,16 +6,29 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\Log;
 
 class VerifyApiKey
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $currentPath = $request->path();
+        // Rutas que no requieren verificación de API key
+        $excludedPaths = [
+            'api/stay/hoster/deleteSessionWithApiKey',
+        ];
+
+        // Verifica si la ruta actual está en la lista de exclusiones
+        if (in_array($currentPath, $excludedPaths)) {
+            return $next($request);
+        }
+
+        // Verificación de la API key
         $apiKey = $request->header('x-key-api');
         $envApiKey = config('app.x_key_api');
 
         if (!$apiKey || !$envApiKey || ($apiKey !== $envApiKey)) {
-           return bodyResponseRequest(EnumResponse::UNAUTHORIZED);
+            return bodyResponseRequest(EnumResponse::UNAUTHORIZED);
         }
 
         return $next($request);

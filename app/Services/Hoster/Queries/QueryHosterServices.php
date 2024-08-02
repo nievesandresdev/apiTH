@@ -331,8 +331,7 @@ class QueryHosterServices {
         try{
             $result = Query::where('id',$queryId)->update(['attended' => $bool]);
             //evento para actualizar lista de estancias en front
-            sendEventPusher('private-create-stay.' . $hotelId, 'App\Events\CreateStayEvent', null);
-
+            sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
             return $result;
         } catch (\Exception $e) {
             return $e;
