@@ -54,15 +54,18 @@ class StayHosterServices {
                 ])
                 ->where('hotel_id', $hotel->id);
     
-            if (!empty($filters['periods'])) {
-                $query->havingRaw("period IN ('" . implode("','", $filters['periods']) . "')");
-            }
-    
             if (!empty($filters['search'])) {
                 $query->whereHas('guests', function($q) use ($filters) {
                     $q->where('name', 'like', '%' . $filters['search'] . '%');
                 });
             }
+            
+            $allStays = (clone $query)->get();
+
+            if (!empty($filters['periods'])) {
+                $query->havingRaw("period IN ('" . implode("','", $filters['periods']) . "')");
+            }
+            
 
             if (isset($filters['pendings']) && $filters['pendings'] == 'pending') {
                 $query->where(function($q) {
@@ -80,19 +83,37 @@ class StayHosterServices {
             // WHEN stays.room IS NULL OR stays.room = "" AND CURDATE() BETWEEN stays.check_in AND stays.check_out THEN 2
     
             // Counts for all, each period, and pending
-            $totalCounts = $stays->count();
+            $totalValidCount = $stays->where('period','!=','post-stay')->count();
+
+            $totalCount = $stays->count();
             $countsByPeriod = $stays->groupBy('period')->mapWithKeys(function ($items, $period) {
                 return [$period => $items->count()];
             });
-            $pendingCounts = $stays->filter(function ($stay) {
-                return $stay->pending_queries_count > 0 || $stay->has_pending_chats > 0;
-            })->count();
+            
+            //conteos general
+            $countsGeneralByPeriod = $allStays->groupBy('period')->mapWithKeys(function ($items, $period) {
+                return [$period => $items->count()];
+            });
+
+            $pendingCountsByPeriod = $allStays->reduce(function ($carry, $stay) {
+                if ($stay->pending_queries_count > 0 || $stay->has_pending_chats > 0) {
+                    if (!isset($carry[$stay->period])) {
+                        $carry[$stay->period] = 0;
+                    }
+                    $carry[$stay->period]++;
+                }
+                return $carry;
+            }, []);
+
     
+            
             return [
                 'stays' => $stays,
-                'total_counts' => $totalCounts,
+                'total_count' => $totalCount,
+                'total_valid_count' => $totalValidCount,
                 'counts_by_period' => $countsByPeriod,
-                'pending_counts' => $pendingCounts
+                'counts_general_by_period' => $countsGeneralByPeriod,
+                'pending_counts_by_period' => $pendingCountsByPeriod
             ];
         } catch (\Exception $e) {
             return $e;
@@ -332,11 +353,6 @@ class StayHosterServices {
                 $stay->sessions = [['userColor'=>$userColor,'userEmail'=>$userEmail,'userName'=>$userName]];
             }
             $stay->save();
-            sendEventPusher(
-                'private-stay-sessions.' . $stay->id, 
-                'App\Events\SessionsStayEvent', 
-                [ 'stayId' => $stay->id, 'session' => $stay->sessions]
-            );
             return $stay->sessions;
         } catch (\Exception $e) {
             return $e;
@@ -362,14 +378,15 @@ class StayHosterServices {
             if (empty($filteredSessions)) {
                 $stay->sessions = null;
             } else {
-                $stay->sessions = array_values($filteredSessions); // reindexa el array para asegurar la integridad de los índices
+                $sessions = array_values($filteredSessions); // reindexa el array para asegurar la integridad de los índices
+                $stay->sessions = $sessions;
             }
     
             $stay->save();
             sendEventPusher(
                 'private-stay-sessions.' . $stay->id, 
                 'App\Events\SessionsStayEvent', 
-                [ 'stayId' => $stay->id, 'session' => $stay->sessions]
+                [ 'stayId' => $stay->id, 'session' => $sessions]
             );
             return $stay->sessions;
     
