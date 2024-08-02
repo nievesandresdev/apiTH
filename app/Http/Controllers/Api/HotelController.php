@@ -307,7 +307,7 @@ class HotelController extends Controller
         try {
             $environment = env('APP_ENV');
             $hotelModel = $request->attributes->get('hotel');
-
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
             \DB::beginTransaction();
 
             $subdomain = $request->subdomain;
