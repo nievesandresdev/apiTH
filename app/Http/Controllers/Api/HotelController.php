@@ -271,4 +271,71 @@ class HotelController extends Controller
         }
     }
 
+    public function verifySubdomainExist (Request $request) {
+        $hotel_id = $request->hotel_id;
+        $subdomain = $request->subdomain;
+        $hotel = hotel::find($hotel_id);
+        if (!$hotel || $hotel->subdomain == $subdomain) {
+            return  false;
+        }
+        $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
+        return $exist;
+    }
+
+    public function verifySubdomainExistPerHotel (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $subdomain = $request->subdomain;
+
+            $exist = $this->service->verifySubdomainExistPerHotel($subdomain, $hotelModel);
+            $data = [
+                "exist" => $exist
+            ];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.verifySubdomainExistPerHotel');
+        }
+    }
+
+    public function storeSubdomain (Request $request) {
+        $subdomain = $request->subdomain ?? null;
+        $response = createSubdomainHotelServe($request->subdomain);
+        return $response;
+    }
+
+    public function updateCustomization (Request $request) {
+        try {
+            $environment = env('APP_ENV');
+            $hotelModel = $request->attributes->get('hotel');
+
+            \DB::beginTransaction();
+
+            $subdomain = $request->subdomain;
+            $exitsSubdomain = $this->service->verifySubdomainExistPerHotel($subdomain, $hotelModel);
+            $subdomainIsNotNew = $this->service->verifySubdomainExist($subdomain, $hotelModel);
+            $newSubdomainParam = false;
+            if (!$exitsSubdomain && !$subdomainIsNotNew) {
+                if ($environment !== 'LOCAL') {
+                    $r_s = $this->service->createSubdomainInCloud($subdomain, $environment);
+                    $newSubdomainParam = true;
+                }
+            }
+            $this->service->updateSubdomain($subdomain, $hotelModel);
+
+            $this->service->updateCustomization($request, $hotelModel);
+
+
+            \DB::commit();
+
+            $hotelModel->refresh();
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.verifySubdomainExistPerHotel');
+        }
+    }
+
+
+
 }
