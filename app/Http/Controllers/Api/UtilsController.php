@@ -33,7 +33,7 @@ class UtilsController extends Controller
     
     public function test()
     {
-        sendEventPusher('private-stay-sessions.' . 67, 'App\Events\SessionsStayEvent', ['data' => 'qlq']);
+        // sendEventPusher('private-stay-sessions.' . 67, 'App\Events\SessionsStayEvent', ['data' => 'qlq']);
         return 'listo';
     }
 
