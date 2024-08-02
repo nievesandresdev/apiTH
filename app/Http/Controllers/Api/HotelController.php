@@ -303,4 +303,39 @@ class HotelController extends Controller
         return $response;
     }
 
+    public function updateCustomization (Request $request) {
+        try {
+            $environment = env('APP_ENV');
+            $hotelModel = $request->attributes->get('hotel');
+
+            \DB::beginTransaction();
+
+            $subdomain = $request->subdomain;
+            $exitsSubdomain = $this->service->verifySubdomainExistPerHotel($subdomain, $hotelModel);
+            $subdomainIsNotNew = $this->service->verifySubdomainExist($subdomain, $hotelModel);
+            $newSubdomainParam = false;
+            if (!$exitsSubdomain && !$subdomainIsNotNew) {
+                if ($environment !== 'LOCAL') {
+                    $r_s = $this->service->createSubdomainInCloud($subdomain, $environment);
+                    $newSubdomainParam = true;
+                }
+            }
+            $this->service->updateSubdomain($subdomain, $hotelModel);
+
+            $this->service->updateCustomization($request, $hotelModel);
+
+
+            \DB::commit();
+
+            $hotelModel->refresh();
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.verifySubdomainExistPerHotel');
+        }
+    }
+
+
+
 }

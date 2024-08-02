@@ -219,5 +219,101 @@ class HotelService {
         $exist = HotelSubdomain::where(['name' => $subdomain])->whereNot('hotel_id', $hotelModel->id)->exists();
         return $exist;
     }
+    public function verifySubdomainExist ($subdomain, $hotelModel) {
+        if ($hotelModel->subdomain == $subdomain) {
+            return  true;
+        }
+        $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
+        return $exist;
+    }
+    public function updateSubdomain ($subdomain, $hotelModel) {
+        if ($subdomain == $hotelModel->subdomain) {
+            return;
+        }
+        
+        HotelSubdomain::where([
+            'hotel_id' => $hotelModel->id,
+            'active' => true
+        ])->update(['active'=> false]);
+
+        $hotelSubdomain = HotelSubdomain::firstOrCreate([
+            'name' => $subdomain,
+        ],[
+            'name' => $subdomain,
+            'hotel_id' => $hotelModel->id,
+            'active' => true
+        ]);
+        $hotelSubdomain->active = true;
+        $hotelSubdomain->save();
+
+        $hotelModel->subdomain = $subdomain;
+
+        $hotelModel->save();
+    }
+    public function updateCustomization ($request, $hotelModel) {
+        [
+            'language_default_webapp' => $languageDefaultWebapp,
+            'img_selected_logo' => $imgSelectedLogo,
+            'img_selected_bg' => $imgSelectedBg,
+            'img_selected_fav' => $imgSelectedFav
+        ] = $request->all();
+        $hotelModel->language_default_webapp = $languageDefaultWebapp;
+        if (!isset($imgSelectedBg['default'])) {
+            $hotelModel->image = $imgSelectedBg['url'] ?? null;
+        }
+        if (!isset($imgSelectedLogo['default'])) {
+            $hotelModel->logo = $imgSelectedLogo['url'] ?? null;
+        }
+        if (!isset($imgSelectedFav['default'])) {
+            $hotelModel->favicon = $imgSelectedFav['url'] ?? null;
+        }
+
+        $hotelModel->save();
+    }
+
+    public function createSubdomainInCloud ($subdomain, $environment) {
+
+        $email = env('EMAIL_CLOUDFLARE');
+        $api_key = env('API_KEY_CLOUDFLARE');
+        $zone_id = env('ZONE_ID_CLOUDFLARE');
+        $ip_address = env('IP_ADDRESS');
+        
+        // Construye el nombre completo del subdominio
+        $full_domain = $subdomain . ($environment == "pro" ? '' : '.' . $environment) . '.thehoster.io';
+
+        // Inicializa cURL
+        $ch = curl_init("https://api.cloudflare.com/client/v4/zones/{$zone_id}/dns_records");
+
+        // Prepara el payload JSON
+        $payload = json_encode([
+            'type'    => 'A',
+            'name'    => $full_domain,
+            'content' => $ip_address,
+            'ttl'     => 1,
+            'proxied' => false,
+        ]);
+
+        // Configura las opciones de cURL
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'X-Auth-Email: ' . $email,
+            'X-Auth-Key: ' . $api_key,
+            'Content-Type: application/json',
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+        // Ejecuta la petición y guarda la respuesta
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        // Verifica si la respuesta es exitosa
+        $data = json_decode($response, true);
+        if (isset($data['success']) && $data['success']) {
+            return "success";
+        } else {
+            return "Error al crear el subdominio: " . $response;
+        }
+    }
 
 }
