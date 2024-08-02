@@ -331,8 +331,9 @@ class HotelController extends Controller
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
         } catch (\Exception $e) {
+            \DB::rollback();
             return $e;
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.verifySubdomainExistPerHotel');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateCustomization');
         }
     }
 
