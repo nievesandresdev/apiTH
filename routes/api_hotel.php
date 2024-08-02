@@ -17,4 +17,5 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::post('/experienceVisivility', [HotelController::class, 'updateVisivilityExperiences']);
     Route::post('/categoriVisivility', [HotelController::class, 'updateVisivilityCategory']);
     Route::post('/typePlaceVisivility', [HotelController::class, 'updateVisivilityTypePlace']);
+    Route::get('/verifySubdomainExistPerHotel', [HotelController::class, 'verifySubdomainExistPerHotel']);
 });

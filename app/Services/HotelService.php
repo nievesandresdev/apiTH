@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\Models\Hotel;
 use App\Models\User;
 use App\Models\ImagesHotels;
+use App\Models\HotelSubdomain;
 
 use App\Http\Resources\HotelResource;
 use App\Models\ChatHour;
@@ -210,4 +211,13 @@ class HotelService {
             $hotelModel->hiddenTypePlaces()->attach($request->type_places_id);
         }
     }
+
+    public function verifySubdomainExistPerHotel ($subdomain, $hotelModel) {
+        if (!$hotelModel || $hotelModel->subdomain == $subdomain) {
+            return  false;
+        }
+        $exist = HotelSubdomain::where(['name' => $subdomain])->whereNot('hotel_id', $hotelModel->id)->exists();
+        return $exist;
+    }
+
 }
