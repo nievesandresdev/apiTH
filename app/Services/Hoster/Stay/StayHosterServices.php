@@ -8,7 +8,7 @@ use App\Services\Hoster\UtilsHosterServices;
 use App\Services\QueryServices;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Log;
 
 class StayHosterServices {
     
@@ -362,8 +362,8 @@ class StayHosterServices {
 
     public function deleteSession($stayId, $userEmail) {
         try {
-            
             $stay = Stay::find($stayId);
+            Log::info('deleteSession hotel_id:'. $stay->hotel_id);
             $sessions = $stay->sessions ?? [];
     
             // Filtra el array para eliminar el usuario con el email dado
@@ -383,8 +383,9 @@ class StayHosterServices {
             }
     
             $stay->save();
+            Log::info('deleteSession $sessions:'. json_encode($sessions));
             sendEventPusher(
-                'private-stay-sessions.' . $stay->id, 
+                'private-stay-sessions-hotel.' . $stay->hotel_id, 
                 'App\Events\SessionsStayEvent', 
                 [ 'stayId' => $stay->id, 'session' => $sessions]
             );

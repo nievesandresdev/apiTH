@@ -38,6 +38,6 @@ Broadcast::channel('update-chat.{id}', function ($stay, $id) {
     return (int) $stay->id === (int) $id;
 });
 
-Broadcast::channel('stay-sessions.{id}', function ($stay, $id) {
-    return (int) $stay->id === (int) $id;
+Broadcast::channel('stay-sessions-hotel.{id}', function ($hotel, $id) {
+    return (int) $hotel->id === (int) $id;
 });
