@@ -166,7 +166,7 @@ class Products extends Model
                     ->where('service_featured.hotel_id', '=', $hotelId);
                 })
                 ->orderByRaw('CASE 
-                    WHEN recomendations.recommendable_id IS NOT NULL THEN 1
+                    WHEN service_featured.product_id IS NOT NULL THEN 1
                     ELSE 2
                 END');
         }
