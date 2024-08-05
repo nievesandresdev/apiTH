@@ -221,6 +221,7 @@ class ExperienceService {
             'hotel_id' => $hotelModel->id,
             'products_id' => $productModel->id,
             'position' => 0,
+            'order' => 1
         ]);
     }
 
@@ -257,6 +258,7 @@ class ExperienceService {
                 'hotel_id' => $hotelModel->id,
                 'products_id' => $productId,
                 'position' => 0,
+                'order' => 1,
             ]);
         }
     }
