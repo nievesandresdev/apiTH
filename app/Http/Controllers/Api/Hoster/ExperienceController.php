@@ -193,6 +193,22 @@ class ExperienceController extends Controller
         }
     }
 
+    public function resetPosition (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $citySlug = Str::slug($hotelModel->zone);
+            $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+            \DB::beginTransaction();
+            $this->service->resetPosition($request, $cityModel, $hotelModel);
+            \DB::commit();
+            return bodyResponseRequest(EnumResponse::SUCCESS_OK);
+        } catch (\Exception $e) {
+            return $e;
+            \DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updatePosition');
+        }
+    }
+
     public function updateVisibility (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
