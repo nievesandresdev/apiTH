@@ -213,6 +213,16 @@ class ExperienceService {
         }
     }
 
+    public function assignFirstPosition ($hotelModel, $productModel) {
+        $modelTogglePlace = ToggleProduct::updateOrCreate([
+            'hotel_id' => $hotelModel->id,
+            'products_id' => $productModel->id,
+        ], [
+            'hotel_id' => $hotelModel->id,
+            'products_id' => $productModel->id,
+            'position' => 0,
+        ]);
+    }
 
     public function updateVisibility ($request, $hotelModel, $productModel) {
         $productId = $productModel->id;
@@ -246,7 +256,6 @@ class ExperienceService {
             ], [
                 'hotel_id' => $hotelModel->id,
                 'products_id' => $productId,
-                'order' => 0,
                 'position' => 0,
             ]);
         }

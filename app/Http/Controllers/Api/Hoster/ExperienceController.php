@@ -239,6 +239,9 @@ class ExperienceController extends Controller
             $productModel = Products::find($productId);
             $featuredBool = $request->recommedation ?? false;
             $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+            if ($featuredBool) {
+                $this->service->assignFirstPosition($hotelModel, $productModel);
+            }
             \DB::commit();
             return bodyResponseRequest(EnumResponse::SUCCESS_OK);
         } catch (\Exception $e) {
