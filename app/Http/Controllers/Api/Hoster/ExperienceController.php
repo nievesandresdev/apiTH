@@ -36,7 +36,6 @@ class ExperienceController extends Controller
 
     public function getAll (Request $request) {
         try {
-            var_dump('entro');
             $hotelModel = $request->attributes->get('hotel');
 
             $lengthAExpFeatured = 12;
