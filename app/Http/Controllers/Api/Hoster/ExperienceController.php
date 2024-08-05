@@ -284,6 +284,12 @@ class ExperienceController extends Controller
 
             $productModel = Products::find($productId);
 
+            $toggleProduct = $productModel->toggleableHotels()->where('hotel_id', $hotelModel->id)->first();
+
+            if ($featuredBool && !$toggleProduct) {
+                $this->service->assignFirstPosition($hotelModel, $productModel);
+            }
+
             $recomendationModel = $this->service->findRecommendation($hotelModel, $productModel);
 
             $translate =  $messageRecomendation != $recomendationModel?->message;
