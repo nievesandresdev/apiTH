@@ -352,7 +352,11 @@ class StayHosterServices {
             }else{
                 $stay->sessions = [['userColor'=>$userColor,'userEmail'=>$userEmail,'userName'=>$userName]];
             }
+            
+            //evitar actualizacion del updated_at
+            $stay->timestamps = false;
             $stay->save();
+            $stay->timestamps = true;
             return $stay->sessions;
         } catch (\Exception $e) {
             return $e;
@@ -381,8 +385,12 @@ class StayHosterServices {
                 $sessions = array_values($filteredSessions); // reindexa el array para asegurar la integridad de los índices
                 $stay->sessions = $sessions;
             }
-    
+            
+            //evitar actualizacion del updated_at
+            $stay->timestamps = false;
             $stay->save();
+            $stay->timestamps = true;
+
             Log::info('deleteSession $sessions:'. json_encode($sessions));
             sendEventPusher(
                 'private-stay-sessions-hotel.' . $stay->hotel_id, 
