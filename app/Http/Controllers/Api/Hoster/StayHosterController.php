@@ -241,6 +241,7 @@ class StayHosterController extends Controller
 
     public function deleteSession(Request $request){
         try {
+            Log::info('deleteSession');
             $userEmail = $request->userEmail;
             $field = $request->field;
             $stayId = $request->stayId;
@@ -267,7 +268,7 @@ class StayHosterController extends Controller
 
     public function deleteSessionWithApiKey(Request $request){
         try {
-            
+            Log::info('deleteSessionWithApiKey');
             $userEmail = $request->query('userEmail');
             $stayId = $request->query('stayId');
             $request->validate([
@@ -288,7 +289,44 @@ class StayHosterController extends Controller
             Log::error('error al eliminar session de hoster estancia '. json_encode($e));
         }
     }
-    
+
+    public function deleteSessionByHotelAndEmail(Request $request){
+        try {
+            Log::info('deleteSessionByHotelAndEmail');
+            $userEmail = $request->userEmail;
+            $hotel = $request->attributes->get('hotel');
+            $request->validate([
+                'userEmail' => 'string|required',
+            ]);
+            
+            //encontrar stayId mediante userEmail
+            $model = null;
+            $stay = $this->service->findSessionByHotelAndEmail($hotel->id, $userEmail);
+            // Log para diagnosticar qué se está recibiendo
+            Log::info('Type of $stay: ' . gettype($stay));
+            Log::info('Content of $stay: ' . json_encode($stay));
+
+            if($stay){
+                Log::info('entro');
+                $stayId = $stay->id;
+                Log::info('llego?');
+                $model = $this->service->deleteSession($stayId, $userEmail);
+            }
+
+            if(!$model || !$stay){
+                $error = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $error);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteSessionByHotelAndEmail');
+        }
+    }
+
+
     //guest
     public function getGuestListWithNoti(Request $request){
         try {
