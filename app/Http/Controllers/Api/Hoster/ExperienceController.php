@@ -36,7 +36,6 @@ class ExperienceController extends Controller
 
     public function getAll (Request $request) {
         try {
-
             $hotelModel = $request->attributes->get('hotel');
 
             $lengthAExpFeatured = 12;
@@ -193,6 +192,22 @@ class ExperienceController extends Controller
         }
     }
 
+    public function resetPosition (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $citySlug = Str::slug($hotelModel->zone);
+            $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+            \DB::beginTransaction();
+            $this->service->resetPosition($request, $cityModel, $hotelModel);
+            \DB::commit();
+            return bodyResponseRequest(EnumResponse::SUCCESS_OK);
+        } catch (\Exception $e) {
+            return $e;
+            \DB::rollback();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updatePosition');
+        }
+    }
+
     public function updateVisibility (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
@@ -224,6 +239,9 @@ class ExperienceController extends Controller
             $productModel = Products::find($productId);
             $featuredBool = $request->recommedation ?? false;
             $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+            if ($featuredBool) {
+                $this->service->assignFirstPosition($hotelModel, $productModel);
+            }
             \DB::commit();
             return bodyResponseRequest(EnumResponse::SUCCESS_OK);
         } catch (\Exception $e) {
@@ -265,6 +283,12 @@ class ExperienceController extends Controller
             \DB::beginTransaction();
 
             $productModel = Products::find($productId);
+
+            $toggleProduct = $productModel->toggleableHotels()->where('hotel_id', $hotelModel->id)->first();
+
+            if ($featuredBool && !$toggleProduct) {
+                $this->service->assignFirstPosition($hotelModel, $productModel);
+            }
 
             $recomendationModel = $this->service->findRecommendation($hotelModel, $productModel);
 

@@ -189,10 +189,10 @@ class ExperienceService {
             $query->withVisibilityForProduct($hotelModel->id);
         }
 
-        // $query->orderByPosition($hotelModel->id);
-        // $query->orderByFeatured($hotelModel->id);
-        // $query->orderByWeighing($hotelModel->id);
-        // $query->orderBy('distance','ASC');
+        $query->orderByPosition($hotelModel->id);
+        $query->orderByFeatured($hotelModel->id);
+        $query->orderByWeighing($hotelModel->id);
+        $query->orderBy('distance','ASC');
         
         return $query;
     }
@@ -213,6 +213,17 @@ class ExperienceService {
         }
     }
 
+    public function assignFirstPosition ($hotelModel, $productModel) {
+        $modelTogglePlace = ToggleProduct::updateOrCreate([
+            'hotel_id' => $hotelModel->id,
+            'products_id' => $productModel->id,
+        ], [
+            'hotel_id' => $hotelModel->id,
+            'products_id' => $productModel->id,
+            'position' => 0,
+            'order' => 1
+        ]);
+    }
 
     public function updateVisibility ($request, $hotelModel, $productModel) {
         $productId = $productModel->id;
@@ -246,8 +257,8 @@ class ExperienceService {
             ], [
                 'hotel_id' => $hotelModel->id,
                 'products_id' => $productId,
-                'order' => 0,
                 'position' => 0,
+                'order' => 1,
             ]);
         }
     }
@@ -288,6 +299,26 @@ class ExperienceService {
                 }
                 // $product->toggleableHotels()->where('hotel_id', $hotelModel->id)->update(['position' => $position]);
                 $position++;
+            }
+        });
+
+    }
+
+    public function resetPosition ($request, $cityModel, $hotelModel) {
+        $hotelId = $hotelModel->id;
+        $productsQuery = Products::activeToShow()
+            ->whereVisibleByHoster($hotelModel->id)
+            ->whereCity($cityModel->name);
+
+        $productsQuery->chunk(100, function ($products) use (&$position, $hotelModel) {
+            foreach ($products as $product) {
+                $toggleProductModel = ToggleProduct::where([
+                    'hotel_id' => $hotelModel->id,
+                    'products_id' => $product->id,
+                ])->first();
+                if ($toggleProductModel) {
+                    $toggleProductModel->update(['position' => null]);
+                }
             }
         });
 

@@ -165,16 +165,9 @@ class Products extends Model
                     $join->on('products.id', '=', 'service_featured.product_id')
                     ->where('service_featured.hotel_id', '=', $hotelId);
                 })
-                ->leftJoin('recomendations', function ($join) use ($hotelId) {
-                    $join->on('products.id', '=', 'recomendations.recommendable_id')
-                        ->where('recomendations.hotel_id', '=', $hotelId)
-                        ->where('recommendable_type', 'App\Models\Products')
-                        ->where('recomendations.hotel_id', '=', $hotelId);
-                })
                 ->orderByRaw('CASE 
-                    WHEN recomendations.recommendable_id IS NOT NULL THEN 1
-                    WHEN service_featured.product_id IS NOT NULL THEN 2
-                    ELSE 3
+                    WHEN service_featured.product_id IS NOT NULL THEN 1
+                    ELSE 2
                 END');
         }
     }
@@ -199,12 +192,7 @@ class Products extends Model
         });
 
         // Unirse a la tabla recomendations y service_featured
-        $query->leftJoin('recomendations', function ($join) use ($hotelId) {
-            $join->on('products.id', '=', 'recomendations.recommendable_id')
-                ->where('recomendations.hotel_id', '=', $hotelId)
-                ->where('recommendable_type', 'App\Models\Products');
-        })
-        ->leftJoin('service_featured', function ($join) use ($hotelId) {
+        $query->leftJoin('service_featured', function ($join) use ($hotelId) {
             $join->on('products.id', '=', 'service_featured.product_id')
                 ->where('service_featured.hotel_id', '=', $hotelId);
         });
@@ -217,10 +205,9 @@ class Products extends Model
         $query->orderByRaw("CASE WHEN activities.city_experince = '$cityName' THEN 0 ELSE 1 END")
         ->orderByRaw('CASE WHEN tp.position IS NOT NULL THEN 0 ELSE 1 END')
         ->orderBy('tp.position')
-        ->orderByRaw('CASE 
-                WHEN recomendations.recommendable_id IS NOT NULL THEN 1
-                WHEN service_featured.product_id IS NOT NULL THEN 2
-                ELSE 3
+        ->orderByRaw('CASE
+                WHEN service_featured.product_id IS NOT NULL THEN 1
+                ELSE 2
             END');
     }
 
