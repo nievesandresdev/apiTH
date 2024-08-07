@@ -60,9 +60,9 @@
         <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding: 20px;">
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                    <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-size: 16px; font-style: normal; font-weight: 500;">
-                        <h1 style="margin: 0;">¡Bienvenido a TheHoster!</h1>
-                        <p style="margin: 10px 0;">{{$user->username}}</p> ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
+                    <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top;">
+                        <span style="margin: 0; font-size: 32px;font-style: normal;font-weight: 600;line-height: 110%;">¡Bienvenido a TheHoster!</span>
+                        <p style="margin: 10px 0;">{{$user->username}}</p> ha creado un usuario en la plataforma para que administres el Hotel</p>
                         <p style="margin: 10px 0; font-weight: 700;">¡Gracias por elegirnos!</p>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
