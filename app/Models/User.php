@@ -84,6 +84,13 @@ class User extends Authenticatable
         });
     }
 
+    public function getFullNameAttribute()
+    {
+        return $this->name.' '.$this->profile->lastname;
+    }
+
+
+
     public function profile()
     {
       return $this->hasOne(Profile::class);

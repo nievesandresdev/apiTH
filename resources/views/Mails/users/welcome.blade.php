@@ -62,8 +62,8 @@
                 <tr>
                     <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top;">
                         <span style="margin: 0; font-size: 32px;font-style: normal;font-weight: 600;line-height: 110%;margin-bottom:12px">¡Bienvenido a TheHoster!</span>
-                        <p style="margin: 10px 0; font-size: 16px;font-style: normal;font-weight: 500;line-height: 110%;">{{$user->username}}</p> ha creado un usuario en la plataforma para que administres el Hotel</p>
-                        <p style="margin: 10px 0; font-size: 16px;font-style: normal;font-weight: 500;line-height: 110%;">¡Gracias por elegirnos!</p>
+                        <p style="margin: 10px 0; font-size: 16px;font-style: normal;font-weight: 500;line-height: 110%;">{{$user->full_name}} ha creado un usuario en la plataforma para que administres el Hotel</p>
+                        <p style="margin: 10px 0; font-size: 16px;font-style: normal;font-weight: 700;line-height: 110%;">¡Gracias por elegirnos!</p>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
                         <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px;">
