@@ -57,6 +57,7 @@ class Hotel extends Model
         'language_default_webapp',
         'sender_for_sending_sms',
         'sender_for_sending_email',
+        'code',
     ];
 
     /* public function user()

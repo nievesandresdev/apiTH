@@ -69,8 +69,9 @@ class StayChatHosterController extends Controller
             $stayId = $request->stayId;
             $guestId = $request->guestId;
             $pendingBool = $request->pendingBool;
+            $hotel = $request->attributes->get('hotel');
 
-            $model = $this->service->togglePending($guestId, $stayId, $pendingBool);
+            $model = $this->service->togglePending($guestId, $stayId, $pendingBool, $hotel->id);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

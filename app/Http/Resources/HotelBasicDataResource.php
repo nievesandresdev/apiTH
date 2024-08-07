@@ -40,6 +40,7 @@ class HotelBasicDataResource extends JsonResource
             "del" => $this->del,
             "subscribed"=> $this->subscription_active ? $user->subscribed($this->subscription_active) : false,
             "with_notificartion" => $pending_chat_count + $pending_query_count,
+            "code"=>$this->code
         ];
         
     }
