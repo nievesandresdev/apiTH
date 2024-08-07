@@ -53,17 +53,17 @@
     </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
-    <div style="width: 100%; max-width: 600px; margin: 0 auto;">
-        <div style="background-color: white; padding: 20px; text-align: center;">
+    <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
+        <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
         </div>
-        <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding: 20px;">
+        <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding-top: 40px; padding-bottom:40px;padding-right:32px;padding-left:32px">
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                    <td class="text-content" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-size: 16px; font-style: normal; font-weight: 500;">
-                        <h1 style="margin: 0;">¡Bienvenido a TheHoster!</h1>
-                        <p style="margin: 10px 0;">{{$user->username}}</p> ha creado un usuario en la plataforma para que administres el [tipo de alojamiento] [nombre alojamiento]</p>
-                        <p style="margin: 10px 0; font-weight: 700;">¡Gracias por elegirnos!</p>
+                    <td class="text-content" style="color: white; padding-right: 32px; text-align: left; width: 50%; vertical-align: top; padding-top:22px">
+                        <span style="margin: 0; font-size: 32px;font-style: normal;font-weight: 600;line-height: 110%;">¡Bienvenido a TheHoster!</span>
+                        <p style="margin: 10px 0; font-size: 16px;font-style: normal;font-weight: 500;line-height: 110%;margin-top:12px !important">{{$user->full_name}} ha creado un usuario en la plataforma para que administres el Hotel</p>
+                        <p style="margin: 10px 0; font-size: 16px;font-style: normal;font-weight: 700;line-height: 110%;margin-top:24px !important">¡Gracias por elegirnos!</p>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
                         <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px;">
@@ -73,7 +73,7 @@
         </div>
 
         <!-- Nueva sección añadida aquí -->
-        <div style="background-color: white; padding: 20px; text-align: center; margin-top: 24px;" class="div-normal">
+        <div style="background-color: white; padding: 20px; text-align: center;" class="div-normal">
             <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
                 <tr>
                     <td style="width: 40%; vertical-align: top; padding-right: 20px;">
@@ -90,7 +90,7 @@
             </table>
         </div>
 
-        <div style="background-color: white; padding: 20px; text-align: center; margin-top: 24px;" class="div-responsive">
+        <div style="background-color: white; padding: 20px; text-align: center;" class="div-responsive">
             <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
                 <tr>
                     <td class="text-content order-1" style="width: 60%; vertical-align: top; text-align: left;">

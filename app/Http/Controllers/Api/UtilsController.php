@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Query;
+use App\Models\Stay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Pusher\Pusher;
@@ -33,8 +35,7 @@ class UtilsController extends Controller
     
     public function test()
     {
-        // sendEventPusher('private-stay-sessions.' . 67, 'App\Events\SessionsStayEvent', ['data' => 'qlq']);
-        return 'listo';
+        return Query::where('stay_id',99)->where('answered', 1)->where('attended', 0)->count();
     }
 
 
