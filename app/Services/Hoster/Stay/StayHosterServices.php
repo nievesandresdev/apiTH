@@ -407,10 +407,10 @@ class StayHosterServices {
     public function findSessionByHotelAndEmail($hotelId, $userEmail) {
         try {
             return Stay::where('hotel_id', $hotelId)
-            ->where('sessions','!=','')
-            ->whereNotNull('sessions')
-            ->whereJsonContains('sessions', ['userEmail' => $userEmail])
-            ->first();
+                ->where('sessions','!=','')
+                ->whereNotNull('sessions')
+                ->whereJsonContains('sessions', ['userEmail' => $userEmail])
+                ->first();
 
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

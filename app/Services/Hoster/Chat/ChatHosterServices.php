@@ -6,10 +6,20 @@ use App\Jobs\Chat\UnReadGuest;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Stay;
+use App\Services\Hoster\Queries\QueryHosterServices;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ChatHosterServices {
 
+    public $queryHosterServices;
+
+    function __construct(
+        QueryHosterServices $_QueryHosterServices
+    )
+    {
+        $this->queryHosterServices = $_QueryHosterServices;
+    }
 
     public function pendingCountByHotel($hotel){
         try {
@@ -104,29 +114,38 @@ class ChatHosterServices {
         }
     }
 
-    public function togglePending($guestId, $stayId, $pendingBool){
+    public function togglePending($guestId, $stayId, $pendingBool, $hotelId){
         try {
-            $stay = Stay::select('id','hotel_id')->first($stayId);
-            $stay->touch();    
-
-            $chat = Chat::updateOrCreate([
+            // $stay = Stay::select('id','hotel_id')->first($stayId);
+            // $stay->touch();    
+            Chat::updateOrCreate([
                 'stay_id' => $stayId,
                 'guest_id' => $guestId
             ], [
                 'pending' => $pendingBool,
             ]);
-
-            sendEventPusher('private-noti-hotel.' . $stay->hotel_id, 'App\Events\NotifyStayHotelEvent',
+            
+            $count = $this->pendingCountByStay($stayId);
+            // sendEventPusher('private-noti-hotel.' . $stay->hotel_id, 'App\Events\NotifyStayHotelEvent',
+            //     [
+            //         'showLoadPage' => false,
+            //         'stay_id' => $stay->id,
+            //         'chat_id' => $chat->id,
+            //         'automatic' => '0',
+            //         'hotel_id' => $stay->hotel_id,
+            //         'add' => boolval($pendingBool),
+            //         'pending' => !boolval($pendingBool)
+            //     ]
+            // );
+            sendEventPusher('private-noti-hotel.' . $hotelId, 'App\Events\NotifyStayHotelEvent',
                 [
                     'showLoadPage' => false,
-                    'stay_id' => $stay->id,
-                    'chat_id' => $chat->id,
-                    'automatic' => '0',
-                    'hotel_id' => $stay->hotel_id,
-                    'add' => boolval($pendingBool),
+                    'pendingCountChats' => $count,
+                    'stayId' => $stayId,
                     'pending' => !boolval($pendingBool)
                 ]
             );
+            sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
             return ['chatStatus'=>boolval($pendingBool)];
         } catch (\Exception $e) {
             return $e;

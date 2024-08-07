@@ -17,15 +17,13 @@ class NotifyStayHotelEvent  implements ShouldBroadcast
     
     public $hotel;
     public $stay_id;
-    public $add;
     /**
      * Create a new event instance.
      */
-    public function __construct(hotel $hotel, $stay_id, $add)
+    public function __construct(hotel $hotel, $stay_id)
     {
         $this->stay_id = $stay_id;
         $this->hotel = $hotel;
-        $this->add = $add;
     }
     /**
      * Get the channels the event should broadcast on.
@@ -41,7 +39,6 @@ class NotifyStayHotelEvent  implements ShouldBroadcast
     {
         return [
             'stay_id' => $this->stay_id,
-            'add' => $this->add,
         ];
     }
 }

@@ -100,5 +100,22 @@ class StayQueryHosterController extends Controller
         }
         
     }
-    
+
+    public function pendingCountByStay($stayId){
+
+        try {
+            $model = $this->service->pendingCountByStay($stayId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.pendingCountByStay');
+        }
+        
+    }
 }

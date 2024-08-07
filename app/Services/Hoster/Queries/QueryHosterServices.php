@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Hoster\Queries;
 
+use App\Models\Chat;
 use App\Models\Guest;
 use App\Models\Query;
 use App\Models\Stay;
@@ -9,16 +10,17 @@ use App\Services\QueryServices;
 use App\Utils\Enums\EnumsLanguages;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class QueryHosterServices {
 
     public $stayHosterServices;
     public $queryService;
-
+    public $chatHosterServices;
 
     function __construct(
         StayHosterServices $_StayHosterServices,
-        QueryServices $_QueryServices
+        QueryServices $_QueryServices,
     )
     {
         $this->stayHosterServices = $_StayHosterServices;
@@ -329,10 +331,21 @@ class QueryHosterServices {
     
     public function togglePendingState($queryId, $bool, $hotelId){
         try{
-            $result = Query::where('id',$queryId)->update(['attended' => $bool]);
+            // Log::info('togglePendingState');
+            $query = Query::findOrFail($queryId);
+            $query->attended = $bool;
+            $query->save();
             //evento para actualizar lista de estancias en front
             sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
-            return $result;
+            sendEventPusher('private-noti-hotel.' . $hotelId, 'App\Events\NotifyStayHotelEvent',
+                [
+                    'showLoadPage' => false,
+                    'pendingCountQueries' => $this->pendingCountByStay($query->stay_id),
+                    'stayId' => $query->stay_id,
+                    'hotel_id' => $hotelId,
+                ]
+            );
+            return $query;
         } catch (\Exception $e) {
             return $e;
         }
@@ -359,6 +372,15 @@ class QueryHosterServices {
             ->where('answered', 1)->where('attended', 0)
             ->where('hotel_id', $hotelId)->count();
 
+            return $count;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function pendingCountByStay($stayId){
+        try{
+            $count = Query::where('stay_id',$stayId)->where('answered', 1)->where('attended', 0)->count();
             return $count;
         } catch (\Exception $e) {
             return $e;

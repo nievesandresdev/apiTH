@@ -106,17 +106,26 @@ class ChatService {
                 sendEventPusher('private-noti-hotel.' . $hotel->id, 'App\Events\NotifyStayHotelEvent',
                     [
                         'showLoadPage' => false,
-                        'stay_id' => $stay->id,
-                        'guest_id' => $guest->id,
-                        'chat_id' => $chat->id,
-                        'hotel_id' => $hotel->id,
-                        'room' => $stay->room,
-                        'guest' => true,
-                        'text' => $msg->text,
-                        'automatic' => false,
-                        'add' => true,'pending' => false,//es falso en el input pero true en la bd
+                        'pendingCountChats' => 1,
+                        'stayId' => $stay->id,
+                        'add' => true,'pending' => false
                     ]
                 );
+                sendEventPusher('private-update-stay-list-hotel.' . $hotel->id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
+                // sendEventPusher('private-noti-hotel.' . $hotel->id, 'App\Events\NotifyStayHotelEvent',
+                //     [
+                //         'showLoadPage' => false,
+                //         'stay_id' => $stay->id,
+                //         'guest_id' => $guest->id,
+                //         'chat_id' => $chat->id,
+                //         'hotel_id' => $hotel->id,
+                //         'room' => $stay->room,
+                //         'guest' => true,
+                //         'text' => $msg->text,
+                //         'automatic' => false,
+                //         'add' => true,'pending' => false,//es falso en el input pero true en la bd
+                //     ]
+                // );
 
                 // Antes de encolar nuevos trabajos, elimina los trabajos antiguos.
                 DB::table('jobs')->where('payload', 'like', '%send-by' . $guest->id . '%')->delete();
