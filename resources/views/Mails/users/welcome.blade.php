@@ -84,7 +84,7 @@
                         <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
                         <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">{{ $user->email }}</span></p>
                         <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">{{ $password }}</span></p>
-                        <a href="{{ $url }}" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 31px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center;font-size: 16px;font-style: normal;line-height: 110%;">Entrar a Thehoster</a>
+                        <a href="{{ $url }}" style="display: inline-block; padding-top:13px;padding-bottom:13px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 31px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center;font-size: 16px;font-style: normal;line-height: 110%;">Entrar a Thehoster</a>
                     </td>
                 </tr>
             </table>
