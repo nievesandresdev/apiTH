@@ -142,7 +142,8 @@ class ChatHosterServices {
                     'showLoadPage' => false,
                     'pendingCountChats' => $count,
                     'stayId' => $stayId,
-                    'pending' => !boolval($pendingBool)
+                    'pending' => !boolval($pendingBool),
+                    'hotelId' => $hotelId,
                 ]
             );
             sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);

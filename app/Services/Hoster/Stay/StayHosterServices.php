@@ -28,7 +28,7 @@ class StayHosterServices {
     // DB::raw("(SELECT COUNT(*) FROM queries WHERE queries.stay_id = stays.id AND queries.answered = 1 AND queries.qualification = 'GOOD') as good_queries_count"),
     // DB::raw('(SELECT COUNT(*) FROM stay_accesses as sacc WHERE sacc.stay_id = stays.id) as accesses_count'),
     // DB::raw('(SELECT COUNT(*) FROM note_guests as ng WHERE ng.stay_id = stays.id) as guests_notes_count'),
-    public function getAllByHotel($hotel, $filters, $offset = 0, $limit = 8) {
+    public function getAllByHotel($hotel, $filters, $offset = 0, $limit = 10) {
         try {
             $now = Carbon::now()->format('Y-m-d H:i');
             $query = Stay::with([
@@ -83,7 +83,7 @@ class StayHosterServices {
                 END
             ')->orderBy('stays.updated_at', 'DESC')
             ->offset($filters['offset'] ?? $offset)
-            ->limit($limit)
+            ->limit($filters['limit'] ?? $limit)
             ->get();
             // WHEN stays.room IS NULL OR stays.room = "" AND CURDATE() BETWEEN stays.check_in AND stays.check_out THEN 2
     
