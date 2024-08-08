@@ -73,11 +73,11 @@
         </div>
 
         <!-- Nueva sección añadida aquí -->
-        <div style="background-color: white; padding-top: 32px; padding-bottom: 64px; text-align: center;" class="div-normal">
+        <div style="background-color: white; padding-top: 32px; padding-bottom: 64px; text-align: center; padding-right: 32px; padding-left: 32px;" class="div-normal">
             <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
                 <tr>
                     <td style="width: 40%; vertical-align: top; padding-right: 20px;">
-                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 187px; border-radius: 8px; max-height: 300px;" class="image-frame">
+                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 100%; border-radius: 8px; max-height: 300px;" class="image-frame">
                     </td>
                     <td class="text-content" style="width: 60%; vertical-align: top; text-align: left;">
                         <h2 style="margin: 0;">Datos de acceso</h2>
@@ -89,6 +89,7 @@
                 </tr>
             </table>
         </div>
+
 
         <div style="background-color: white; padding: 20px; text-align: center;" class="div-responsive">
             <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
