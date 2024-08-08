@@ -73,7 +73,7 @@
         </div>
 
         <!-- Nueva sección añadida aquí -->
-        <div style="background-color: white; padding-top: 32px; padding-bottom:64px; text-align: center;" class="div-normal">
+        <div style="background-color: white; padding-top: 32px; padding-bottom: 64px; text-align: center;" class="div-normal">
             <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
                 <tr>
                     <td style="width: 40%; vertical-align: top; padding-right: 20px;">
