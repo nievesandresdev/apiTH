@@ -28,7 +28,7 @@ class StayHosterServices {
     // DB::raw("(SELECT COUNT(*) FROM queries WHERE queries.stay_id = stays.id AND queries.answered = 1 AND queries.qualification = 'GOOD') as good_queries_count"),
     // DB::raw('(SELECT COUNT(*) FROM stay_accesses as sacc WHERE sacc.stay_id = stays.id) as accesses_count'),
     // DB::raw('(SELECT COUNT(*) FROM note_guests as ng WHERE ng.stay_id = stays.id) as guests_notes_count'),
-    public function getAllByHotel($hotel, $filters) {
+    public function getAllByHotel($hotel, $filters, $offset = 0, $limit = 8) {
         try {
             $now = Carbon::now()->format('Y-m-d H:i');
             $query = Stay::with([
@@ -73,19 +73,23 @@ class StayHosterServices {
                       ->orWhereRaw('(SELECT MAX(pending) FROM chats WHERE chats.stay_id = stays.id) > 0');
                 });
             }
-    
+            
+            $totalCount = (clone $query)->count();
+
             $stays = $query->orderByRaw('
                 CASE 
                     WHEN has_pending_chats = 1 OR pending_queries_count > 0 THEN 0
                     ELSE 1
                 END
-            ')->orderBy('stays.updated_at', 'DESC')->get();
+            ')->orderBy('stays.updated_at', 'DESC')
+            ->offset($filters['offset'] ?? $offset)
+            ->limit($limit)
+            ->get();
             // WHEN stays.room IS NULL OR stays.room = "" AND CURDATE() BETWEEN stays.check_in AND stays.check_out THEN 2
     
             // Counts for all, each period, and pending
             $totalValidCount = $stays->where('period','!=','post-stay')->count();
 
-            $totalCount = $stays->count();
             $countsByPeriod = $stays->groupBy('period')->mapWithKeys(function ($items, $period) {
                 return [$period => $items->count()];
             });
@@ -125,7 +129,7 @@ class StayHosterServices {
             $todayDay = Carbon::now()->format('d');
             $month = ucfirst(Carbon::now()->locale('es')->isoFormat('MMMM'));
             $today = Carbon::now()->format('Y-m-d');
-            $dataStays = $this->getAllByHotel($hotel, []);
+            $dataStays = $this->getAllByHotel($hotel, [], 0, 2000);
 
             $checkinToday = 0;
             $checkoutToday = 0;
