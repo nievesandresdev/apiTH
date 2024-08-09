@@ -101,7 +101,7 @@
             <span style="display: block; margin: 10px 0; font-weight: 600; font-size: 16px;">¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?</span>
             <div style="display: flex; align-items: center; margin: 10px 0;">
                 <img src="{{ asset('icons/reviews/'.$query->qualification.'.png') }}" alt="Satisfacción" style="width: 24px; height: 24px; margin-right: 10px;">
-                <span style="display: block; font-weight: 400; font-size: 16px; margin: 0;">{{ $query->comment ?? '--' }}</span>
+                <span style="display: block; font-weight: 400; font-size: 16px; margin: 0;">{{ $query->comment[$query->response_lang] ?? $query->comment['SinTraduccion'] ?? '--' }}</span>
             </div>
             <div style="text-align: center; margin-top: 22px;">
                 <a href="{{$url}}" class="full-width-button" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box;">Atender feedback</a>
