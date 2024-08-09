@@ -56,7 +56,7 @@
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
     <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
-        <div style="background-color: white; padding: 20px; text-align: center;">
+        <div style="background-color: white; text-align: center; padding-top: 16px; text-align: center; padding-bottom:24px">
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
         </div>
         <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding: 20px;">
