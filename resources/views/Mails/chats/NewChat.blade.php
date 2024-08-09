@@ -91,7 +91,7 @@
         </div>
 
         <!-- Nueva sección añadida aquí -->
-        <div style="background-color: white; padding: 20px; text-align: left; margin-top: 24px;">
+        <div style="background-color: white; padding: 20px; text-align: left;">
             <h2 style="margin: 0; font-weight: 600;">Mensaje</h2>
             @if(empty($unansweredMessagesData))
                 @php
