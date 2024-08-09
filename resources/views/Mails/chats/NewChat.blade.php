@@ -95,6 +95,7 @@
             <h2 style="margin: 0; font-weight: 600;">Mensaje</h2>
             {{-- @if(empty($unansweredMessagesData))
                 @php
+                $message->created_at->format('d M - H:i')
                     $unansweredMessagesData = [
                         ['guest_name' => 'Juan Pérez', 'message_text' => 'Hola, me gustaría saber más sobre su hotel.', 'sent_at' => '10:30 AM'],
                         ['guest_name' => 'Ana Gómez', 'message_text' => '¿Tienen habitaciones disponibles para este fin de semana?', 'sent_at' => '11:15 AM'],

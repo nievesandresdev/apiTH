@@ -13,9 +13,13 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use App\Services\MailService;
 use App\Mail\User\WelcomeUser;
+use App\Mail\Queries\NewFeedback;
 use App\Models\Guest;
+use App\Models\Stay;
+use App\Models\Query;
 use App\Models\User;
 use App\Mail\Chats\ChatEmail;
+use Illuminate\Support\Facades\Mail;
 
 
 class UsersController extends Controller
@@ -211,10 +215,23 @@ class UsersController extends Controller
     public function testMail(Request $request){
         try {
             $url = config('app.hoster_url');
+            $hotel = $request->attributes->get('hotel');
+            $query = Query::find(245);
+            $guest = Guest::select('id','phone','email','name')->where('id',171)->first();
+            $stay = Stay::find(46);
+            $periodUrl = $query->period_id;
+            $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id;
+            //url para atender chat $url/estancias/{stayId}/chat?g=guestId
             $user = User::findOrFail(1);
+
+            $checkinFormat = date('d/m/Y', strtotime($stay->check_in));
+            $checkoutFormat = date('d/m/Y', strtotime($stay->check_out));
+
+            $dates = "$checkinFormat - $checkoutFormat";
             //$this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
             //$this->mailService->sendEmail(new WelcomeUser($user,$url,'12345'), "francisco20990@gmail.com");
-            $this->mailService->sendEmail(new ChatEmail([],'new'), 'francisco20990@gmail.com');
+            //$this->mailService->sendEmail(new ChatEmail([],$url,'new'), 'francisco20990@gmail.com');
+            Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
