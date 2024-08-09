@@ -59,7 +59,7 @@
         <div style="background-color: white; padding: 20px; text-align: center;">
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
         </div>
-        <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding-top: 40px; padding-bottom:40px;padding-right:32px;padding-left:32px">
+        <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding-top: 40px; padding-bottom:10px;padding-right:32px;padding-left:32px">
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
                     <td class="text-content order-1" style="color: white; padding-right: 40px; text-align: left; width: 70%; vertical-align: top;">
@@ -95,12 +95,12 @@
             <span style="font-size: 24px; font-style: normal; font-weight: 600; line-height: 110%; margin: 0;">Feedback en Stay</span>
             <span style="display: block; margin: 10px 0; font-weight: 600; font-size: 16px;">{{ $guest->name }}</span>
             <span style="display: block; margin: 10px 0; font-weight: 400; font-size: 16px;">
-                <img src="{{ asset('icons/flags/'.$query->response_lang.'.svg') }}" alt="Idioma original" style="vertical-align: middle; margin-right: 5px;">
+                <img src="{{ asset('icons/flags/png/'.$query->response_lang.'.png') }}" alt="Idioma original" style="vertical-align: middle; margin-right: 5px;">
                 Idioma original: <span style="font-weight: 400;">{{ $languageName }}</span>
             </span>
             <span style="display: block; margin: 10px 0; font-weight: 600; font-size: 16px;">¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?</span>
             <div style="display: flex; align-items: center; margin: 10px 0;">
-                <img src="{{ asset('icons/reviews/'.$query->qualification.'.svg') }}" alt="Satisfacción" style="width: 24px; height: 24px; margin-right: 10px;">
+                <img src="{{ asset('icons/reviews/'.$query->qualification.'.png') }}" alt="Satisfacción" style="width: 24px; height: 24px; margin-right: 10px;">
                 <span style="display: block; font-weight: 400; font-size: 16px; margin: 0;">{{ $query->comment ?? '--' }}</span>
             </div>
             <div style="text-align: center; margin-top: 22px;">
