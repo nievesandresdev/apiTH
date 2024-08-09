@@ -55,23 +55,23 @@
     </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
-    <div style="width: 100%; max-width: 600px; margin: 0 auto;">
+    <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
         <div style="background-color: white; padding: 20px; text-align: center;">
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
         </div>
         <div style="border-radius: 0px 72px 0px 0px; background: linear-gradient(90deg, #0B6357 -17.99%, #34A98F 118.23%); padding: 20px;">
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                    <td class="text-content order-1" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top; font-size: 16px; font-weight: 500;">
+                    <td class="text-content order-1" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top;">
                         @if($type == 'pending')
-                            <h1 style="margin: 0; font-weight: 600;">¡Tienes un chat pendiente!</h1>
-                            <p style="margin: 10px 0; font-weight: 400;">Han transcurrido <span style="color: #FFD453;">10 minutos</span> desde que un huésped te ha escrito un mensaje desde el chat</p>
+                            <span style="font-size: 32px; font-style: normal; font-weight: 600; line-height: 110%; margin: 0;">¡Tienes un chat pendiente!</span>
+                            <span style="display: block; margin: 10px 0 22px 0; font-size: 16px; font-style: normal; font-weight: 500; line-height: 130%;">Han transcurrido <span style="color: #FFD453;">10 minutos</span> desde que un huésped te ha escrito un mensaje desde el chat</span>
                         @else
-                            <h1 style="margin: 0; font-weight: 600;">Tienes un nuevo mensaje en el chat</h1>
-                            <p style="margin: 10px 0; font-weight: 400;">Has recibido un nuevo mensaje de un huésped. Puedes ir al mensaje dando click al botón de abajo.</p>
+                            <span style="font-size: 32px; font-style: normal; font-weight: 600; line-height: 110%; margin: 0;">Tienes un nuevo mensaje en el chat</span>
+                            <span style="display: block; margin: 10px 0 22px 0; font-size: 16px; font-style: normal; font-weight: 500; line-height: 130%;">Has recibido un nuevo mensaje de un huésped. Puedes ir al mensaje dando click al botón de abajo.</span>
                         @endif
                         <!-- Botón que se muestra en el modo no responsive -->
-                        <a href="#" class="full-width-button order-3" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Chat</a>
+                        <a href="#" class="full-width-button order-3" style="display: flex; align-items: center; justify-content: center; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box; text-align: center; margin-top: 22px;">Atender Chat</a>
                     </td>
                     <td class="order-2" style="text-align: center; width: 50%; vertical-align: top;">
                         @if($type == 'pending')
@@ -80,7 +80,7 @@
                             <img src="{{ asset('mails/chat.png') }}" alt="Chat Image" style="width: 227px; height: 240px;">
                         @endif
                         <!-- Botón que se muestra en el modo responsive -->
-                        <a href="#" class="full-width-button order-4" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Chat</a>
+                        <a href="#" class="full-width-button order-4" style="display: flex; align-items: center; justify-content: center; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box; text-align: center; margin-top: 22px;">Atender Chat</a>
                     </td>
                 </tr>
             </table>
@@ -103,14 +103,16 @@
             @endif
 
             @foreach($unansweredMessagesData as $chat)
-                <p style="margin-top: 20px; font-weight: 600; font-size: 16px;">{{ $chat['guest_name'] }}</p>
-                <div style="border-radius: 6px 6px 0px 6px; padding: 12px; margin: 10px 0; background-color: #ffffff; border: 1px solid #E0E0E0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 150%;">
-                    <p style="margin: 0;">{{ $chat['message_text'] }}</p>
-                </div>
-                <p style="text-align: right; font-size: 16px; font-weight: 400; color: #A0A0A0; margin-top: 8px;">{{ $chat['sent_at'] }}</p>
+                <section style="margin-bottom: 20px;">
+                    <p style="margin-top: 20px; font-weight: 600; font-size: 16px;">{{ $chat['guest_name'] }}</p>
+                    <div style="border-radius: 6px 6px 0px 6px; padding: 12px; margin: 10px 0; background-color: #ffffff; border: 1px solid #E0E0E0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 150%;">
+                        <p style="margin: 0;">{{ $chat['message_text'] }}</p>
+                    </div>
+                    <p style="text-align: right; font-size: 16px; font-weight: 400; color: #A0A0A0; margin-top: 8px;">{{ $chat['sent_at'] }}</p>
+                </section>
             @endforeach
 
-            <a href="#" class="full-width-button" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Chat</a>
+            <a href="#" class="full-width-button" style="display: flex; align-items: center; justify-content: center; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box; text-align: center; margin-top: 22px;">Atender Chat</a>
         </div>
 
         <!-- Footer -->
