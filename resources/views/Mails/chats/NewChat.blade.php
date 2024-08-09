@@ -55,7 +55,7 @@
     </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
-    <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
+    <div style="width: 100%; max-width: 600px; margin: 0 auto;">
         <div style="background-color: white; padding: 20px; text-align: center;">
             <img src="{{ asset('mails/users/logo.png') }}" alt="Thehoster Logo" style="display: block; margin: 0 auto;">
         </div>
@@ -71,7 +71,9 @@
                             <span style="display: block; margin: 10px 0 22px 0; font-size: 16px; font-style: normal; font-weight: 500; line-height: 130%;">Has recibido un nuevo mensaje de un huésped. Puedes ir al mensaje dando click al botón de abajo.</span>
                         @endif
                         <!-- Botón que se muestra en el modo no responsive -->
-                        <a href="#" class="full-width-button order-3" style="display: flex; align-items: center; justify-content: center; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box; text-align: center; margin-top: 22px;">Atender Chat</a>
+                        <div style="text-align: center; margin-top: 22px;">
+                            <a href="#" class="full-width-button order-3" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box;">Atender Chat</a>
+                        </div>
                     </td>
                     <td class="order-2" style="text-align: center; width: 50%; vertical-align: top;">
                         @if($type == 'pending')
@@ -80,7 +82,9 @@
                             <img src="{{ asset('mails/chat.png') }}" alt="Chat Image" style="width: 227px; height: 240px;">
                         @endif
                         <!-- Botón que se muestra en el modo responsive -->
-                        <a href="#" class="full-width-button order-4" style="display: flex; align-items: center; justify-content: center; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box; text-align: center; margin-top: 22px;">Atender Chat</a>
+                        <div style="text-align: center; margin-top: 22px;">
+                            <a href="#" class="full-width-button order-4" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box;">Atender Chat</a>
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -112,7 +116,9 @@
                 </section>
             @endforeach
 
-            <a href="#" class="full-width-button" style="display: flex; align-items: center; justify-content: center; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box; text-align: center; margin-top: 22px;">Atender Chat</a>
+            <div style="text-align: center; margin-top: 22px;">
+                <a href="#" class="full-width-button" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box;">Atender Chat</a>
+            </div>
         </div>
 
         <!-- Footer -->
