@@ -110,7 +110,19 @@
         <!-- Nueva sección añadida aquí -->
         <div style="background-color: white; padding: 20px; text-align: left; margin-top: 24px;">
             <h2 style="margin: 0; font-weight: 600;">Mensaje</h2>
-            {{-- <pre>{{ $unansweredMessagesData }}</pre> --}}
+            @if(empty($unansweredMessagesData))
+                @php
+                    $unansweredMessagesData = [
+                        ['guest_name' => 'Juan Pérez', 'message_text' => 'Hola, me gustaría saber más sobre su hotel.', 'sent_at' => '10:30 AM'],
+                        ['guest_name' => 'Ana Gómez', 'message_text' => '¿Tienen habitaciones disponibles para este fin de semana?', 'sent_at' => '11:15 AM'],
+                        ['guest_name' => 'Carlos López', 'message_text' => '¿Puedo llevar a mi mascota?', 'sent_at' => '12:00 PM'],
+                        ['guest_name' => 'Laura Martínez', 'message_text' => '¿Cuáles son sus tarifas?', 'sent_at' => '1:45 PM'],
+                        ['guest_name' => 'Laura Martínez', 'message_text' => '¿Cuáles son sus tarifas?', 'sent_at' => '1:45 PM'],
+                        ['guest_name' => 'Laura Martínez', 'message_text' => '¿Cuáles son sus tarifas?', 'sent_at' => '1:45 PM'],
+                    ];
+                @endphp
+            @endif
+
             @foreach($unansweredMessagesData as $chat)
                 <p style=" margin-top: 20px; font-weight: 600;">{{ $chat['guest_name'] }}</p>
                 <div class="message-container">

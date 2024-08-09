@@ -21,7 +21,7 @@ class ChatEmail extends Mailable
      */
     public function __construct($unansweredMessagesData,$type)
     {
-        $this->unansweredMessagesData = $unansweredMessagesData;
+        $this->unansweredMessagesData = $unansweredMessagesData ?? [];
         $this->type = $type;
         //$this->hotel = $hotel;
     }

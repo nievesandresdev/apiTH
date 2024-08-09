@@ -213,7 +213,8 @@ class UsersController extends Controller
             $url = config('app.hoster_url');
             $user = User::findOrFail(1);
             //$this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
-            $this->mailService->sendEmail(new WelcomeUser($user,$url,'12345'), "francisco20990@gmail.com");
+            //$this->mailService->sendEmail(new WelcomeUser($user,$url,'12345'), "francisco20990@gmail.com");
+            $this->mailService->sendEmail(new ChatEmail([],'new'), 'francisco@gmail.com');
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
