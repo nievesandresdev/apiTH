@@ -230,11 +230,18 @@ class UsersController extends Controller
             $dates = "$checkinFormat - $checkoutFormat";
             //$this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
             //$this->mailService->sendEmail(new WelcomeUser($user,$url,'12345'), "francisco20990@gmail.com");
-            //$this->mailService->sendEmail(new ChatEmail([],$url,'new'), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new ChatEmail([],$url,'new'), 'francisco20990@gmail.com');
             Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
+                'data' => [
+                    'query' => $query,
+                    'guest' => $guest,
+                    'stay' => $stay,
+                    'hotel' => $hotel,
+                    'url' => $urlQuery,
+                ]
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [
