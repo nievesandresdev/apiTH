@@ -11,7 +11,7 @@ Route::group(['prefix' => 'chat'], function () {
     Route::post('/loadMessages', [ChatController::class, 'loadMessages']);
     Route::post('/markMsgsAsRead', [ChatController::class, 'markMsgsAsRead']);
     Route::get('/unreadMsgs', [ChatController::class, 'unreadMsgs']);
-
+    Route::get('/getAvailavilityByHotel/', [ChatController::class, 'getAvailavilityByHotel']);
     //hoster endpoints
     Route::group(['prefix' => 'hoster'], function () {
 

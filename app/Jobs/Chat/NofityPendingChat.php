@@ -22,6 +22,7 @@ class NofityPendingChat implements ShouldQueue
     public $nameJob;
     public $guestId;
     protected $stay;
+    protected $withAvailability;
     protected $userToNotify;
     protected $chatService;
     protected $mailService;
@@ -30,12 +31,13 @@ class NofityPendingChat implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($nameJob, $guestId, $stay, $userToNotify)
+    public function __construct($nameJob, $guestId, $stay, $userToNotify, $withAvailability = false)
     {
         $this->nameJob = $nameJob;
         $this->guestId = $guestId;
         $this->stay = $stay;
         $this->userToNotify = $userToNotify;
+        $this->withAvailability = $withAvailability;
     }
 
     /**
@@ -47,6 +49,14 @@ class NofityPendingChat implements ShouldQueue
     {
         $this->chatService = $_ChatService;
         $this->mailService = $_MailService;
+
+        if($this->withAvailability){
+            $isHosterAvailable = $this->chatService->getAvailavilityByHotel($this->stay->hotel_id);
+            if(!$isHosterAvailable){
+                Log::info("Hoster no disponible, no se envia la notificacion");
+                return; // Detiene la ejecución del job de forma controlada.
+            }
+        }
 
         Log::info("NofityPendingChat");
         $chat = Chat::where('stay_id',$this->stay->id)->where('guest_id',$this->guestId)->first();
@@ -63,10 +73,11 @@ class NofityPendingChat implements ShouldQueue
                     'add' => false,'pending' => false,//es falso en el input pero true en la bd
                 ]
             );
+
             $unansweredMessagesData = $this->chatService->unansweredMessagesData($chat->id);
             Log::info("NofityPendingChat". json_encode($unansweredMessagesData));
             foreach ($this->userToNotify as $user) {
-                $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), $user['email']);
+                $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'ss','new'), $user['email']);
             }
         }
     }

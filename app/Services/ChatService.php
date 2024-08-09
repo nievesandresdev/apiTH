@@ -23,8 +23,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\Chats\ChatEmail;
 use App\Services\MailService;
 use App\Jobs\Chat\NofityPendingChat;
-
-
+use App\Models\ChatHour;
 
 class ChatService {
 
@@ -91,7 +90,21 @@ class ChatService {
                     ]
                 );
                 sendEventPusher('private-update-stay-list-hotel.' . $hotel->id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
-
+                //notificacion push para el navegador del hoster(nuevo mensaje)
+                sendEventPusher('private-notify-unread-msg-hotel.' . $hotel->id, 'App\Events\NotifyUnreadMsg',
+                [
+                    'showLoadPage' => false,
+                    'stay_id' => $stay->id,
+                    'guest_id' => $guest->id,
+                    'chat_id' => $chat->id,
+                    'hotel_id' => $hotel->id,
+                    'room' => $stay->room,
+                    'guest' => true,
+                    'text' => $msg->text,
+                    'automatic' => false,
+                    'add' => true,'pending' => false,//es falso en el input pero true en la bd
+                ]
+            );
                 /**
                  * cola de mensajes automaticos para el huesped
                  *
@@ -204,31 +217,18 @@ class ChatService {
                     $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'ss','new'), $user['email']);
                 });
             }
-            //notificacion push para el navegador del hoster
-            sendEventPusher('private-notify-unread-msg-hotel.' . $hotel->id, 'App\Events\NotifyUnreadMsg',
-                [
-                    'showLoadPage' => false,
-                    'stay_id' => $stay->id,
-                    'guest_id' => $guest->id,
-                    'chat_id' => $chat->id,
-                    'hotel_id' => $hotel->id,
-                    'room' => $stay->room,
-                    'guest' => true,
-                    'text' => $msg->text,
-                    'automatic' => false,
-                    'add' => true,'pending' => false,//es falso en el input pero true en la bd
-                ]
-            );
             $guestId = $guest->id;
             /**
              * notificacion a enviarse a los 10min si el chat aun esta pendiente
              *
              */
-            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min)->delay(now()->addMinutes(10));
+            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min)->delay(now()->addMinutes(2));
             /**
              * notificacion a enviarse a los 30min si el chat aun esta pendiente y hay personal disponible
              *
              */
+            $withAvailability = true;
+            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min, $withAvailability)->delay(now()->addMinutes(3));
             //aqui va
         } catch (\Exception $e) {
             return $e;
@@ -268,6 +268,7 @@ class ChatService {
         }
 
     }
+
     public function loadMessages ($request) {
         try{
         $chat = $this->findByGuestStay($request->guestId, $request->stayId);
@@ -315,5 +316,52 @@ class ChatService {
                         ->first();
     }
 
+    public function getAvailavilityByHotel($hotelId) {
+        $now = Carbon::now();
+        $dayOfWeekEnglish = $now->format('l'); // Día de la semana en inglés
+
+        // Mapeo de días de la semana del inglés al español
+        $daysMap = [
+            'Monday'    => 'Lunes',
+            'Tuesday'   => 'Martes',
+            'Wednesday' => 'Miércoles',
+            'Thursday'  => 'Jueves',
+            'Friday'    => 'Viernes',
+            'Saturday'  => 'Sábado',
+            'Sunday'    => 'Domingo'
+        ];
+
+        // Convertir el día de la semana a español
+        $dayOfWeek = $daysMap[$dayOfWeekEnglish] ?? null;
+        
+        if (!$dayOfWeek) {
+            // Si no se encuentra el día, retorna false (esto no debería suceder normalmente)
+            return false;
+        }
+
+        try {
+            // Busca los horarios disponibles para el hotel y el día de la semana actual en español
+            $availability = ChatHour::where('hotel_id', $hotelId)
+                                    ->where('day', $dayOfWeek)
+                                    ->where('active', true)
+                                    ->get();
+
+            foreach ($availability as $day) {
+                foreach ($day->horary as $horary) {
+                    $startTime = Carbon::createFromTimeString($horary['start']);
+                    $endTime = Carbon::createFromTimeString($horary['end']); 
+                    // Verifica si la hora actual está dentro de alguno de los rangos horarios
+                    if ($now->between($startTime, $endTime)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            // Considera manejar la excepción de manera más específica o registrarla
+            return false;
+        }
+    }
 
 }
