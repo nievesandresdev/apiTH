@@ -93,7 +93,7 @@
         <!-- Nueva sección añadida aquí -->
         <div style="background-color: white; padding: 20px; text-align: left;">
             <h2 style="margin: 0; font-weight: 600;">Mensaje</h2>
-            @if(empty($unansweredMessagesData))
+            {{-- @if(empty($unansweredMessagesData))
                 @php
                     $unansweredMessagesData = [
                         ['guest_name' => 'Juan Pérez', 'message_text' => 'Hola, me gustaría saber más sobre su hotel.', 'sent_at' => '10:30 AM'],
@@ -104,7 +104,7 @@
                         ['guest_name' => 'Laura Martínez', 'message_text' => '¿Cuáles son sus tarifas?', 'sent_at' => '1:45 PM'],
                     ];
                 @endphp
-            @endif
+            @endif --}}
 
             @foreach($unansweredMessagesData as $chat)
                 <section style="margin-bottom: 20px;">
