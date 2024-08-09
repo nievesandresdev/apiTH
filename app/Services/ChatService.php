@@ -50,7 +50,7 @@ class ChatService {
              */
             $hotel = $request->attributes->get('hotel');
             $settings = $this->settings->getAll($hotel->id);
-            
+
             DB::beginTransaction();
             $langPage = $request->langWeb;
             $guestId = $request->guestId;
@@ -75,7 +75,7 @@ class ChatService {
             ]);
             /**
              * actualizacion de notificaciones en el saas
-             * 
+             *
              */
 
             $msg = $guest->chatMessages()->save($chatMessage);
@@ -94,7 +94,7 @@ class ChatService {
 
                 /**
                  * cola de mensajes automaticos para el huesped
-                 * 
+                 *
                 */
                 // Antes de encolar nuevos trabajos, elimina los trabajos antiguos guardados para el mismo huesped.
                 DB::table('jobs')->where('payload', 'like', '%send-by' . $guest->id . '%')->delete();
@@ -141,7 +141,7 @@ class ChatService {
 
             /**
              * notificaciones push y por email para el hoster
-             * 
+             *
              */
             $this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
             /* return [
@@ -195,13 +195,13 @@ class ChatService {
 
             /**
              * notificacion para cuando el hoster reciba un nuevo mensaje
-             * 
+             *
              */
             $unansweredMessagesData = $this->unansweredMessagesData($chat->id);
             if ($getUsersRoleNewMsg->isNotEmpty()) {
                 $getUsersRoleNewMsg->each(function ($user) use ($unansweredMessagesData) {
                     //Mail::to($user['email'])->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
-                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), $user['email']);
+                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'ss','new'), $user['email']);
                 });
             }
             //notificacion push para el navegador del hoster
@@ -222,12 +222,12 @@ class ChatService {
             $guestId = $guest->id;
             /**
              * notificacion a enviarse a los 10min si el chat aun esta pendiente
-             * 
+             *
              */
             NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min)->delay(now()->addMinutes(10));
             /**
              * notificacion a enviarse a los 30min si el chat aun esta pendiente y hay personal disponible
-             * 
+             *
              */
             //aqui va
         } catch (\Exception $e) {
