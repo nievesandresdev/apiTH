@@ -52,27 +52,6 @@
         .order-4 {
             display: none !important;
         }
-
-        .message-container {
-            border-radius: 8px;
-            padding: 12px;
-            margin: 10px 0;
-            background-color: #ffffff;
-            box-shadow: 0px 2px 11.2px 0px rgba(55, 55, 55, 0.20);
-        }
-
-        .message-text {
-            font-weight: 400;
-            margin: 0;
-        }
-
-        .message-time {
-            text-align: right;
-            font-size: 16px;
-            font-weight: 400;
-            color: #A0A0A0;
-            margin-top: 8px;
-        }
     </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
@@ -124,11 +103,11 @@
             @endif
 
             @foreach($unansweredMessagesData as $chat)
-                <p style=" margin-top: 20px; font-weight: 600;">{{ $chat['guest_name'] }}</p>
-                <div class="message-container">
-                    <p class="message-text">{{$chat['message_text']}}</p>
+                <p style="margin-top: 20px; font-weight: 600; font-size: 16px;">{{ $chat['guest_name'] }}</p>
+                <div style="border-radius: 8px; padding: 12px; margin: 10px 0; background-color: #ffffff; box-shadow: 0px 2px 11.2px 0px rgba(55, 55, 55, 0.20); font-size: 16px; font-style: normal; font-weight: 400; line-height: 150%;">
+                    <p style="margin: 0;">{{ $chat['message_text'] }}</p>
                 </div>
-                <p class="message-time">{{ $chat['sent_at'] }}</p>
+                <p style="text-align: right; font-size: 16px; font-weight: 400; color: #A0A0A0; margin-top: 8px;">{{ $chat['sent_at'] }}</p>
             @endforeach
 
             <a href="#" class="full-width-button" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; box-sizing: border-box; text-align: center; margin-top: 10px;">Atender Chat</a>
