@@ -157,23 +157,7 @@ class ChatService {
              *
              */
             $this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
-            /* return [
 
-                });
-            }
-            $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), "francisco20990@gmail.com");
-            /* return [
-                'response' => 'successReturn',
-                'guest' => $guest,
-                'stay' => $stay,
-                'chat' => $chat,
-                'chatMessage' => $chatMessage,
-                'filteredUsers' => $filteredUsers,
-                'settingsPermissions' => $settingsPermissions,
-                'hotel' => $hotel,
-                'unanswered' => $unansweredMessages,
-                'unansweredMessagesData' => $unansweredMessagesData,
-            ]; */
             DB::commit();
             return true;
         } catch (\Exception $e) {
@@ -213,8 +197,8 @@ class ChatService {
             $unansweredMessagesData = $this->unansweredMessagesData($chat->id);
             if ($getUsersRoleNewMsg->isNotEmpty()) {
                 $getUsersRoleNewMsg->each(function ($user) use ($unansweredMessagesData) {
-                    //Mail::to($user['email'])->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
-                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'ss','new'), $user['email']);
+                    //http://localhost:82/estancias/{stayId}/chat?g=guestId
+                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), $user['email']); //email new message chat
                 });
             }
             $guestId = $guest->id;
@@ -239,17 +223,18 @@ class ChatService {
     public function unansweredMessagesData($chatId){
 
         try{
+            $url = config('app.hoster_url');
             $unansweredMessages = ChatMessage::whereHas('chat', function ($query) use ($chatId) { //los mensajes del ultimo chat pendiung 1
                 $query->where('id', $chatId)
                     ->where('pending', 1);
             })
             ->where('automatic', 0)
             ->where('by', '!=', 'Hoster')
-            ->with('messageable')
+            ->with(['chat','messageable'])
             ->latest()
             ->get();
 
-            $unansweredMessagesData = $unansweredMessages->map(function ($message) { //map
+            $unansweredMessagesData = $unansweredMessages->map(function ($message) use ($url) { //map
                 $guestName = null;
                 if ($message->messageable_type === 'App\Models\Guest') {
                     $guestName = $message->messageable->name;
@@ -258,7 +243,8 @@ class ChatService {
                 return [
                     'guest_name' => $guestName,
                     'message_text' => $message->text,
-                    'sent_at' => $message->created_at->toDateTimeString()
+                    'sent_at' => $message->created_at->format('d M - H:i'),
+                    'url' => $url.'estancias/'.$message->chat->stay_id.'/chat?g='.$message->chat->guest_id,
                 ];
             });
 
@@ -333,7 +319,7 @@ class ChatService {
 
         // Convertir el día de la semana a español
         $dayOfWeek = $daysMap[$dayOfWeekEnglish] ?? null;
-        
+
         if (!$dayOfWeek) {
             // Si no se encuentra el día, retorna false (esto no debería suceder normalmente)
             return false;
@@ -349,7 +335,7 @@ class ChatService {
             foreach ($availability as $day) {
                 foreach ($day->horary as $horary) {
                     $startTime = Carbon::createFromTimeString($horary['start']);
-                    $endTime = Carbon::createFromTimeString($horary['end']); 
+                    $endTime = Carbon::createFromTimeString($horary['end']);
                     // Verifica si la hora actual está dentro de alguno de los rangos horarios
                     if ($now->between($startTime, $endTime)) {
                         return true;

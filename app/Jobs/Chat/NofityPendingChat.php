@@ -61,7 +61,7 @@ class NofityPendingChat implements ShouldQueue
         Log::info("NofityPendingChat");
         $chat = Chat::where('stay_id',$this->stay->id)->where('guest_id',$this->guestId)->first();
         if($chat->pending){
-            sendEventPusher('private-notify-unread-msg-hotel.' . $this->stay->hotel_id, 'App\Events\NotifyUnreadMsg', 
+            sendEventPusher('private-notify-unread-msg-hotel.' . $this->stay->hotel_id, 'App\Events\NotifyUnreadMsg',
                 [
                     'showLoadPage' => false,
                     'guest_id' => $this->guestId,
@@ -77,7 +77,7 @@ class NofityPendingChat implements ShouldQueue
             $unansweredMessagesData = $this->chatService->unansweredMessagesData($chat->id);
             Log::info("NofityPendingChat". json_encode($unansweredMessagesData));
             foreach ($this->userToNotify as $user) {
-                $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'ss','new'), $user['email']);
+                $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'pending'), $user['email']);
             }
         }
     }

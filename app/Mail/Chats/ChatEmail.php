@@ -13,17 +13,15 @@ class ChatEmail extends Mailable
 {
     use Queueable, SerializesModels;
     public $unansweredMessagesData;
-    public $url;
     public $type;
     //public $hotel;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($unansweredMessagesData,$url,$type)
+    public function __construct($unansweredMessagesData,$type)
     {
         $this->unansweredMessagesData = $unansweredMessagesData ?? [];
-        $this->url = $url;
         $this->type = $type;
         //$this->hotel = $hotel;
     }
