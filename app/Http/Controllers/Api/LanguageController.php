@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LanguageResource;
 // use App\Services\LanguageServices;
 use Illuminate\Http\Request;
 
@@ -32,9 +33,9 @@ class LanguageController extends Controller
                 return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
             }
             
-            $languages = Language::all();
-
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $languages);
+            $languagesModel = Language::all();
+            $languagesCollection = LanguageResource::collection($languagesModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $languagesCollection);
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
