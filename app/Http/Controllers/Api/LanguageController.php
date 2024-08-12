@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 use App\Utils\Enums\EnumResponse;
 
+use App\Models\Language;
+
 class LanguageController extends Controller
 {
     public $service;
@@ -24,13 +26,21 @@ class LanguageController extends Controller
     public function getAll(Request $request){
         
         try {
-            $data = ['es', 'en', 'fr'];
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+            $isWebapp = isset($request->isWebapp) ? intval($request->isWebapp) : true;
+            if ($isWebapp) {
+                $data = ['es', 'en', 'fr'];
+                return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+            }
+            
+            $languages = Language::all();
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $languages);
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
         }
     }
+
 
     
 
