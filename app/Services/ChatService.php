@@ -13,6 +13,7 @@ use App\Models\ChatMessage;
 use App\Models\Guest;
 use App\Models\Stay;
 use App\Http\Resources\StayResource;
+use App\Jobs\Queries\NotifyPendingQuery;
 use App\Models\Chat;
 use App\Models\ChatSetting;
 use App\Services\Hoster\Chat\ChatSettingsServices;
@@ -21,8 +22,8 @@ use App\Models\hotel;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Chats\ChatEmail;
 use App\Services\MailService;
-
-
+use App\Jobs\Chat\NofityPendingChat;
+use App\Models\ChatHour;
 
 class ChatService {
 
@@ -43,32 +44,19 @@ class ChatService {
 
     public function sendMsgToHoster ($request) {
         try{
-            $hotel = $request->attributes->get('hotel');
-            $settingsPermissions = $this->settings->getAll($hotel->id);
             /**
-             * trae los ususarios y sus roles asociados al hotel en cuestion
+             * enviar mensaje
              */
-                $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
+            $hotel = $request->attributes->get('hotel');
+            $settings = $this->settings->getAll($hotel->id);
 
-                // Extraer los roles de email_notify_new_feedback_to
-                $rolesToNotify = collect($settingsPermissions['email_notify_new_message_to']);
-
-                // Filtrar los usuarios que tengan uno de esos roles
-                $filteredUsers = $queryUsers->filter(function ($user) use ($rolesToNotify) {
-                    return $rolesToNotify->contains($user['role']);
-                });
-
-            /** fin traer user asociados y permisos */
             DB::beginTransaction();
             $langPage = $request->langWeb;
-
             $guestId = $request->guestId;
             $stayId = $request->stayId;
 
             $guest = new GuestResource(Guest::find($guestId));
             $stay = new StayResource(Stay::find($stayId));
-
-
 
             $chat = $guest->chats()
                 ->updateOrCreate([
@@ -77,7 +65,6 @@ class ChatService {
                     'pending' => true,
             ]);
 
-
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
                 'text' => $request->text,
@@ -85,23 +72,14 @@ class ChatService {
                 'by' => 'Guest',
                 'automatic' => false
             ]);
-
-           /*  return [
-                'permisos' => $filteredUsers,
-                '$queryUsers' => $queryUsers,
-                'settingsPermissions' => $settingsPermissions,
-            ]; */
-
-
-            //Mail::to($filteredUsers->pluck('email'))->send(new ChatEmail('pending', $hotel));
-
+            /**
+             * actualizacion de notificaciones en el saas
+             *
+             */
 
             $msg = $guest->chatMessages()->save($chatMessage);
             $msg->load('messageable');
             if($msg){
-                $hotel = $request->attributes->get('hotel');
-                $defaultChatSettingsArray  = defaultChatSettings();
-                $settings = ChatSetting::where('hotel_id',$hotel->id)->first() ?? $defaultChatSettingsArray;
                 sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
                 sendEventPusher('private-noti-hotel.' . $hotel->id, 'App\Events\NotifyStayHotelEvent',
                     [
@@ -112,26 +90,27 @@ class ChatService {
                     ]
                 );
                 sendEventPusher('private-update-stay-list-hotel.' . $hotel->id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
-                // sendEventPusher('private-noti-hotel.' . $hotel->id, 'App\Events\NotifyStayHotelEvent',
-                //     [
-                //         'showLoadPage' => false,
-                //         'stay_id' => $stay->id,
-                //         'guest_id' => $guest->id,
-                //         'chat_id' => $chat->id,
-                //         'hotel_id' => $hotel->id,
-                //         'room' => $stay->room,
-                //         'guest' => true,
-                //         'text' => $msg->text,
-                //         'automatic' => false,
-                //         'add' => true,'pending' => false,//es falso en el input pero true en la bd
-                //     ]
-                // );
-
-                // Antes de encolar nuevos trabajos, elimina los trabajos antiguos.
+                //notificacion push para el navegador del hoster(nuevo mensaje)
+                sendEventPusher('private-notify-unread-msg-hotel.' . $hotel->id, 'App\Events\NotifyUnreadMsg',
+                [
+                    'showLoadPage' => false,
+                    'stay_id' => $stay->id,
+                    'guest_id' => $guest->id,
+                    'chat_id' => $chat->id,
+                    'hotel_id' => $hotel->id,
+                    'room' => $stay->room,
+                    'guest' => true,
+                    'text' => $msg->text,
+                    'automatic' => false,
+                    'add' => true,'pending' => false,//es falso en el input pero true en la bd
+                ]
+            );
+                /**
+                 * cola de mensajes automaticos para el huesped
+                 *
+                */
+                // Antes de encolar nuevos trabajos, elimina los trabajos antiguos guardados para el mismo huesped.
                 DB::table('jobs')->where('payload', 'like', '%send-by' . $guest->id . '%')->delete();
-
-                //se envia la notificacion si el hoster no responde en 2 min
-                NotifyUnreadMsg::dispatch('send-by'.$guest->id,$msg->id,$stay->hotel_id,$stay->id,$stay->room)->delay(now()->addMinutes(2));
 
                 //se envia el mensaje si el hoster no responde en 1 min
                 if($request->isAvailable && $settings->first_available_show){
@@ -173,17 +152,89 @@ class ChatService {
                 }
             }
 
-            $unansweredMessages = ChatMessage::whereHas('chat', function ($query) use ($chat) { //los mensajes del ultimo chat pendiung 1
-                $query->where('id', $chat->id)
-                      ->where('pending', 1);
+            /**
+             * notificaciones push y por email para el hoster
+             *
+             */
+            $this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
+
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+    }
+
+    public function notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg){
+
+        try{
+            /**
+             * trae los ususarios y sus roles asociados al hotel en cuestion
+             */
+            $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
+
+            // Extraer los roles de usuario a notificar para un nuevo mensaje
+            $rolesToNotifyNewMsg = collect($settings['email_notify_new_message_to']);
+            $getUsersRoleNewMsg = $queryUsers->filter(function ($user) use ($rolesToNotifyNewMsg) {
+                return $rolesToNotifyNewMsg->contains($user['role']);
+            });
+            // Extraer los roles de usuario a notificar para chat pendiente luego de 10 min
+            $rolesToNotifyPending10Min = collect($settings['email_notify_pending_chat_to']);
+            $getUsersRolePending10Min = $queryUsers->filter(function ($user) use ($rolesToNotifyPending10Min) {
+                return $rolesToNotifyPending10Min->contains($user['role']);
+            });
+            // Extraer los roles de usuario a notificar para chat pendiente luego de 30 min
+            $rolesToNotifyPending30Min = collect($settings['email_notify_not_answered_chat_to']);
+            $getUsersRolePending30Min = $queryUsers->filter(function ($user) use ($rolesToNotifyPending30Min) {
+                return $rolesToNotifyPending30Min->contains($user['role']);
+            });
+
+            /**
+             * notificacion para cuando el hoster reciba un nuevo mensaje
+             *
+             */
+            $unansweredMessagesData = $this->unansweredMessagesData($chat->id);
+            if ($getUsersRoleNewMsg->isNotEmpty()) {
+                $getUsersRoleNewMsg->each(function ($user) use ($unansweredMessagesData) {
+                    //http://localhost:82/estancias/{stayId}/chat?g=guestId
+                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), $user['email']); //email new message chat
+                });
+            }
+            $guestId = $guest->id;
+            /**
+             * notificacion a enviarse a los 10min si el chat aun esta pendiente
+             *
+             */
+            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min)->delay(now()->addMinutes(10));
+            /**
+             * notificacion a enviarse a los 30min si el chat aun esta pendiente y hay personal disponible
+             *
+             */
+            $withAvailability = true;
+            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min, $withAvailability)->delay(now()->addMinutes(30));
+            //aqui va
+        } catch (\Exception $e) {
+            return $e;
+        }
+
+    }
+
+    public function unansweredMessagesData($chatId){
+
+        try{
+            $url = config('app.hoster_url');
+            $unansweredMessages = ChatMessage::whereHas('chat', function ($query) use ($chatId) { //los mensajes del ultimo chat pendiung 1
+                $query->where('id', $chatId)
+                    ->where('pending', 1);
             })
             ->where('automatic', 0)
             ->where('by', '!=', 'Hoster')
-            ->with('messageable')
+            ->with(['chat','messageable'])
             ->latest()
             ->get();
 
-            $unansweredMessagesData = $unansweredMessages->map(function ($message) { //map
+            $unansweredMessagesData = $unansweredMessages->map(function ($message) use ($url) { //map
                 $guestName = null;
                 if ($message->messageable_type === 'App\Models\Guest') {
                     $guestName = $message->messageable->name;
@@ -192,38 +243,16 @@ class ChatService {
                 return [
                     'guest_name' => $guestName,
                     'message_text' => $message->text,
-                    'sent_at' => $message->created_at->toDateTimeString()
+                    'sent_at' => $message->created_at->format('d M - H:i'),
+                    'url' => $url.'estancias/'.$message->chat->stay_id.'/chat?g='.$message->chat->guest_id,
                 ];
             });
-            if ($filteredUsers->isNotEmpty()) {
-                $filteredUsers->each(function ($user) use ($unansweredMessagesData) {
-                    //Mail::to($user['email'])->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
-                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), $user['email']);
-                });
-            }
-            /* return [
 
-                });
-            }
-            $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), "francisco20990@gmail.com");
-            /* return [
-                'response' => 'successReturn',
-                'guest' => $guest,
-                'stay' => $stay,
-                'chat' => $chat,
-                'chatMessage' => $chatMessage,
-                'filteredUsers' => $filteredUsers,
-                'settingsPermissions' => $settingsPermissions,
-                'hotel' => $hotel,
-                'unanswered' => $unansweredMessages,
-                'unansweredMessagesData' => $unansweredMessagesData,
-            ]; */
-            DB::commit();
-            return true;
+            return $unansweredMessagesData;
         } catch (\Exception $e) {
-            DB::rollback();
             return $e;
         }
+
     }
 
     public function loadMessages ($request) {
@@ -273,5 +302,52 @@ class ChatService {
                         ->first();
     }
 
+    public function getAvailavilityByHotel($hotelId) {
+        $now = Carbon::now();
+        $dayOfWeekEnglish = $now->format('l'); // Día de la semana en inglés
+
+        // Mapeo de días de la semana del inglés al español
+        $daysMap = [
+            'Monday'    => 'Lunes',
+            'Tuesday'   => 'Martes',
+            'Wednesday' => 'Miércoles',
+            'Thursday'  => 'Jueves',
+            'Friday'    => 'Viernes',
+            'Saturday'  => 'Sábado',
+            'Sunday'    => 'Domingo'
+        ];
+
+        // Convertir el día de la semana a español
+        $dayOfWeek = $daysMap[$dayOfWeekEnglish] ?? null;
+
+        if (!$dayOfWeek) {
+            // Si no se encuentra el día, retorna false (esto no debería suceder normalmente)
+            return false;
+        }
+
+        try {
+            // Busca los horarios disponibles para el hotel y el día de la semana actual en español
+            $availability = ChatHour::where('hotel_id', $hotelId)
+                                    ->where('day', $dayOfWeek)
+                                    ->where('active', true)
+                                    ->get();
+
+            foreach ($availability as $day) {
+                foreach ($day->horary as $horary) {
+                    $startTime = Carbon::createFromTimeString($horary['start']);
+                    $endTime = Carbon::createFromTimeString($horary['end']);
+                    // Verifica si la hora actual está dentro de alguno de los rangos horarios
+                    if ($now->between($startTime, $endTime)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            // Considera manejar la excepción de manera más específica o registrarla
+            return false;
+        }
+    }
 
 }

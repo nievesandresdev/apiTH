@@ -94,4 +94,21 @@ class ChatController extends Controller
         }
     }
 
+    public function getAvailavilityByHotel(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            return $model = $this->service->getAvailavilityByHotel(191);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAvailavilityByHotel');
+        }
+    }
+
 }
