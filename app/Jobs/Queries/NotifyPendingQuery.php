@@ -59,6 +59,9 @@ class NotifyPendingQuery implements ShouldQueue
                     ->first();
         Log::info('$query '.json_encode($query));
         if($query){
+            // Log::info('$this->hotel->id '. $this->hotel->id);
+            // Log::info('$this->stay->id '. $this->stay->id);
+            // Log::info('$this->guest->id '. $this->guest->id);
             sendEventPusher('notify-send-query.' . $this->hotel->id, 'App\Events\NotifySendQueryEvent',
                 [
                     "stayId" => $this->stay->id,
@@ -68,7 +71,6 @@ class NotifyPendingQuery implements ShouldQueue
                     "countPendingQueries" => 1
                 ]
             );
-            Log::info('ENVIADA NOTIFICACION PUSH');
             $this->usersList->each(function ($user) {
                 Log::info('ENVIADO EMAIL A '.$user['email']);
                 Mail::to($user['email'])->send(new NewFeedback($this->dates, $this->urlQuery, $this->hotel ,$this->query,$this->guest,$this->stay, 'pending'));

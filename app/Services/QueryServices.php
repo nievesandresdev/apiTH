@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use App\Jobs\Queries\FeedbackMsg;
 use Carbon\Carbon;
 use App\Services\ChatGPTService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -253,6 +254,9 @@ class QueryServices {
              * notificar al hoster del nuevo feedback
              */
             //noticacion via push y plataforma
+            // Log::info('$hotel->id '. $hotel->id);
+            // Log::info('$stay->id '. $stay->id);
+            // Log::info('$guest->id '. $guest->id);
             sendEventPusher('notify-send-query.' . $hotel->id, 'App\Events\NotifySendQueryEvent',
             [
                 "stayId" => $stay->id,
