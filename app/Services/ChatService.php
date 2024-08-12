@@ -206,13 +206,13 @@ class ChatService {
              * notificacion a enviarse a los 10min si el chat aun esta pendiente
              *
              */
-            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min)->delay(now()->addMinutes(2));
+            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min)->delay(now()->addMinutes(10));
             /**
              * notificacion a enviarse a los 30min si el chat aun esta pendiente y hay personal disponible
              *
              */
             $withAvailability = true;
-            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min, $withAvailability)->delay(now()->addMinutes(3));
+            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min, $withAvailability)->delay(now()->addMinutes(30));
             //aqui va
         } catch (\Exception $e) {
             return $e;

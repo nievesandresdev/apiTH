@@ -11,6 +11,7 @@ use App\Models\Stay;
 use App\Services\ChatService;
 use App\Services\Hoster\Chat\ChatSettingsServices;
 use App\Services\Hoster\Users\UserServices;
+use App\Services\QuerySettingsServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -24,12 +25,12 @@ class UtilsController extends Controller
     public $chatService;
 
     function __construct(
-        ChatSettingsServices $_ChatSettingsServices,
+        QuerySettingsServices $_QuerySettingsServices,
         UserServices $userServices,
         ChatService $_ChatService
     )
     {
-        $this->settings = $_ChatSettingsServices;
+        $this->settings = $_QuerySettingsServices;
         $this->userServices = $userServices;
         $this->chatService = $_ChatService;
     }
@@ -59,31 +60,22 @@ class UtilsController extends Controller
     public function test()
     {
         DB::table('jobs')->where('payload', 'like', '%send-by9%')->delete();
-        $settings = $this->settings->getAll(191);
+        $settings = $this->settings->notifications(191);
         /**
          * trae los ususarios y sus roles asociados al hotel en cuestion
          */
         $queryUsers = $this->userServices->getUsersHotelBasicData(191);
 
         // Extraer los roles de usuario a notificar para un nuevo mensaje
-        $rolesToNotifyNewMsg = collect($settings['email_notify_new_message_to']);
-        $getUsersRoleNewMsg = $queryUsers->filter(function ($user) use ($rolesToNotifyNewMsg) {
-            return $rolesToNotifyNewMsg->contains($user['role']);
+        $rolesToNotifyNewFeddback = collect($settings->email_notify_new_feedback_to);
+        $getUsersRoleNewFeedback = $queryUsers->filter(function ($user) use ($rolesToNotifyNewFeddback) {
+            return $rolesToNotifyNewFeddback->contains($user['role']);
         });
         // Extraer los roles de usuario a notificar para chat pendiente luego de 10 min
-        $rolesToNotifyPending10Min = collect($settings['email_notify_pending_chat_to']);
-        $getUsersRolePending10Min = $queryUsers->filter(function ($user) use ($rolesToNotifyPending10Min) {
-            return $rolesToNotifyPending10Min->contains($user['role']);
+        $rolesToNotifyPendingFeedback = collect($settings->email_notify_pending_feedback_to);
+        $getUsersRolePendingFeedback = $queryUsers->filter(function ($user) use ($rolesToNotifyPendingFeedback) {
+            return $rolesToNotifyPendingFeedback->contains($user['role']);
         });
-        // Extraer los roles de usuario a notificar para chat pendiente luego de 30 min
-        $rolesToNotifyPending30Min = collect($settings['email_notify_not_answered_chat_to']);
-        $getUsersRolePending30Min = $queryUsers->filter(function ($user) use ($rolesToNotifyPending30Min) {
-            return $rolesToNotifyPending30Min->contains($user['role']);
-        });
-
-        $stay = Stay::find(92);
-        $guestId = 9;
-        NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min)->delay(now()->addMinutes(1));
 
     }
 
