@@ -302,7 +302,7 @@ class QueryServices {
                     $query, $guest, $stay,
                     $getUsersRolePendingFeedback
                 )
-                ->delay(now()->addMinutes(1));
+                ->delay(now()->addMinutes(10));
             }
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getResponses');
