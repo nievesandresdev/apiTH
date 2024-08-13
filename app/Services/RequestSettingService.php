@@ -56,6 +56,11 @@ class RequestSettingService {
             }
             
             $text = preg_replace('/>\s+</', '><', $settings->msg_text[$localLang]);
+            // Verificar si $linkText está contenido dentro de $text
+            $buttonAnchor = false;
+            if (strpos($text, $linkText) !== false) {
+                $buttonAnchor = true;
+            }
             $parts = explode("<p><strong>$linkText</strong></p><p><br></p>", $text);
 
             $text1 = $parts[0] ?? null;
@@ -66,7 +71,8 @@ class RequestSettingService {
                 "text1" => $text1,
                 "text2" => $text2,
                 "otas_enabled" => $settings->otas_enabled,
-                "request_to" => $settings->request_to
+                "request_to" => $settings->request_to,
+                "buttonAnchor" => $buttonAnchor
             ];
         } catch (\Exception $e) {
             return $e;
