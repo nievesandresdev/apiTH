@@ -48,8 +48,9 @@ class GuestService {
             $lang = $data->language ?? 'es';
 
             $guest = Guest::where('email',$email)->first();
+            
+            $acronym = $this->generateInitialsName($name ?? $email);
             if(!$guest){
-                $acronym = $this->generateInitialsName($email);
                 $guest = Guest::create([
                     'name' =>$name,
                     'email' => $email,
@@ -57,11 +58,10 @@ class GuestService {
                     'acronym' => $acronym,
                 ]);
             }else{
-                $acronym = $this->generateInitialsName($name);
                 $guest->name = $name;
                 $guest->lang_web = $lang;
                 if($acronym){
-                    $guest->acronym = $acronym;   
+                    $guest->acronym = $acronym;
                 }
                 $guest->save();
             }
