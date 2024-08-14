@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UtilsController;
 use App\Http\Controllers\Api\StayController;
+use App\Http\Controllers\Api\UtilityController;
 
 Route::group(['prefix' => 'utils'], function () {
     Route::post('/authPusher', [UtilsController::class, 'authPusher']);
@@ -13,6 +14,7 @@ Route::group(['prefix' => 'utils'], function () {
 Route::group(['prefix' => 'utils'], function () {
     Route::get('/test', [UtilsController::class, 'test']);
     Route::get('/stayTest', [StayController::class, 'testMail']);
+    Route::get('/updateGuestsAcronyms', [UtilityController::class, 'updateGuestsAcronyms']);
 });
 
 //test

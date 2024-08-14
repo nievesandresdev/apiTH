@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
+use App\Models\Guest;
 use App\Models\hotel;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,7 @@ use App\Models\TypePlaces;
 
 use App\Services\UtilityService;
 use App\Services\ExperienceService;
+use App\Services\GuestService;
 use App\Services\PlaceService;
 
 // use App\Http\Resources\AutocompleteResource;
@@ -21,15 +23,22 @@ use Illuminate\Support\Facades\Storage;
 
 class UtilityController extends Controller
 {
+    protected $service;
+    protected $experienceService;
+    protected $placeService;
+    protected $guestServices;
+
     function __construct(
         UtilityService $_UtilityService,
         ExperienceService $_ExperienceService,
-        PlaceService $_PlaceService
+        PlaceService $_PlaceService,
+        GuestService $_GuestService
     )
     {
         $this->service = $_UtilityService;
         $this->experienceService = $_ExperienceService;
         $this->placeService = $_PlaceService;
+        $this->guestServices = $_GuestService;
     }
 
     public function getExpAndPlace (Request $request) {
@@ -69,7 +78,16 @@ class UtilityController extends Controller
         
     }
 
-    
+    public function updateGuestsAcronyms(Request $request){
+        
+        $guests = Guest::select('id','name','email','phone','lang_web','acronym')->get();
+        // return $gi= $guests->where('id',70)->first();
+        // return $this->guestService->updateById($gi);
+        foreach ($guests as $guest) {
+            $this->guestServices->updateById($guest);
+        }
+        return 'terminado con exito!';
+     }
 
 
 }
