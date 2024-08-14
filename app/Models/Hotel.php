@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Cashier\Billable;
+use App\Models\Legal\LegalGeneral;
 
 class Hotel extends Model
 {
@@ -103,6 +104,11 @@ class Hotel extends Model
 
     public function chatSettings() {
         return $this->hasOne(ChatSetting::class);
+    }
+
+    public function generalLegal()
+    {
+        return $this->hasOne(LegalGeneral::class);
     }
 
     public function chatMessages()
