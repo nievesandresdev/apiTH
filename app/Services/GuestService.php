@@ -173,7 +173,13 @@ class GuestService {
             if($data->name){
                 $name = $data->name;
             }
-            $acronym = $this->generateInitialsName($name);
+
+            $email = $guest->email;
+            if($data->email){
+                $email = $data->email;
+            }
+
+            $acronym = $this->generateInitialsName($name ?? $email);
 
             $guest->name = $name;
             $guest->email = $data->email ?? $guest->email;
@@ -223,6 +229,9 @@ class GuestService {
     {
         try{
             if(!$name) return null;
+            // Elimina espacios adicionales
+            $name = preg_replace('/\s+/', ' ', trim($name));
+
             // Divide el nombre en partes
             $parts = explode(' ', trim($name));
             $initials = null;
@@ -230,10 +239,10 @@ class GuestService {
             // Verifica si el nombre tiene más de una parte
             if (count($parts) > 1) {
                 // Si tiene nombre y apellido, toma la primera letra de cada uno
-                $initials = strtoupper(substr($parts[0], 0, 1) . substr($parts[1], 0, 1));
+                $initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . mb_substr($parts[1], 0, 1));
             } else {
                 // Si solo tiene un nombre, toma las primeras dos letras
-                $initials = strtoupper(substr($name, 0, 2));
+                $initials = mb_strtoupper(mb_substr($name, 0, 2));
             }
 
             return $initials;
