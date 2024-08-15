@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Http\Controllers\Api\Legal;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Utils\Enums\EnumResponse;
+use App\Services\LegalServices;
+
+class LegalPolicyController extends Controller
+{
+    protected $legalServices;
+
+    public function __construct(
+        LegalServices $legalServices
+    )
+    {
+        $this->legalServices = $legalServices;
+    }
+
+    public function getPolicyLegal() {
+        $hotel = request()->attributes->get('hotel');
+        $perPage = request()->get('per_page', 2); // número predeterminado de elementos por página
+        $page = request()->get('page', 1); // página predeterminada
+
+        $data = $this->legalServices->getPolicyLegal($hotel, $perPage, $page);
+
+        return bodyResponseRequest(EnumResponse::SUCCESS, [
+            'total' => $data->total(),
+            'per_page' => $data->perPage(),
+            'current_page' => $data->currentPage(),
+            'last_page' => $data->lastPage(),
+            'policies' => $data->items(),
+            //'hotel' => $hotel
+        ]);
+    }
+
+
+    public function storePolicylLegal()
+    {
+        $hotel = request()->attributes->get('hotel');
+
+        try {
+            $data = $this->legalServices->storeLegalPolicies($hotel, request()->all());
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'policies' => $data,
+            ]);
+        } catch (\Exception $e) {
+
+            return bodyResponseRequest(EnumResponse::INTERNAL_SERVER_ERROR, $e->getMessage(), 'Se encontró un error durante la operación', get_class($e));
+        }
+    }
+
+    public function updatePolicylLegal()
+    {
+        try {
+            $data = $this->legalServices->updateLegalPolicies(request()->all());
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'policies' => $data,
+            ]);
+        } catch (\Exception $e) {
+
+            return bodyResponseRequest(EnumResponse::INTERNAL_SERVER_ERROR, $e->getMessage(), 'Se encontró un error durante la operación', get_class($e));
+        }
+    }
+
+    public function deletePolicylLegal()
+    {
+        try {
+            $data = $this->legalServices->deleteLegalPolicies(request()->all());
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'policies' => $data,
+            ]);
+        } catch (\Exception $e) {
+
+            return bodyResponseRequest(EnumResponse::INTERNAL_SERVER_ERROR, $e->getMessage(), 'Se encontró un error durante la operación', get_class($e));
+        }
+    }
+}
