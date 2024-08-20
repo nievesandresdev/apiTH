@@ -64,7 +64,6 @@ class StaySettingsServices {
                 // Paso 3: Crear registros de acceso
                 //relacionar huesped a estancia
                 $relation = $guest->stays()->syncWithoutDetaching([$stay->id]);
-                return $relation;
                 //crear acesso
                 $access = new StayAccess();
                 $access->stay_id = $stay->id;
