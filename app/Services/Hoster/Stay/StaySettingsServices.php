@@ -60,11 +60,11 @@ class StaySettingsServices {
                 $stay->check_in = Carbon::now()->subDays(5)->toDateString();
                 $stay->check_out = Carbon::now()->subDay()->toDateString();
                 $stay->save();
-                return $stay;
+                
                 // Paso 3: Crear registros de acceso
                 //relacionar huesped a estancia
-                $guest->stays()->syncWithoutDetaching([$stay->id]);
-                
+                $relation = $guest->stays()->syncWithoutDetaching([$stay->id]);
+                return $relation;
                 //crear acesso
                 $access = new StayAccess();
                 $access->stay_id = $stay->id;
