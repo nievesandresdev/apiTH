@@ -34,12 +34,12 @@ class StaySettingsServices {
     }
 
     public function createMultipleStays(){
-        DB::beginTransaction();
         $now = Carbon::now()->format('dm');
         try {
             $guestName = "Huesped";
             
             for ($i=1; $i < 51; $i++) { 
+                DB::beginTransaction();
                 // Paso 1: Crear o actualizar huésped
                 $userName = $guestName.$i.$now;
                 $guest = Guest::updateOrCreate(
@@ -64,6 +64,7 @@ class StaySettingsServices {
                 // Paso 3: Crear registros de acceso
                 //relacionar huesped a estancia
                 $relation = $guest->stays()->syncWithoutDetaching([$stay->id]);
+                DB::commit();
                 //crear acesso
                 $access = new StayAccess();
                 $access->stay_id = $stay->id;
@@ -71,7 +72,6 @@ class StaySettingsServices {
                 $access->device = 'Movil';
                 $access->save();
             }
-            DB::commit();
             return response()->json(['message' => 'Han sido creadas 50 estancias con su respectivo huesped.']);
         } catch (\Exception $e) {
             DB::rollback();
