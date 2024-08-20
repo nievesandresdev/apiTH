@@ -63,6 +63,7 @@ class UtilsController extends Controller
     
     public function test()
     {
+        return 'aqi';
         return $this->staySettings->createMultipleStays();
     }
 
