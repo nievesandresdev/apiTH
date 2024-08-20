@@ -51,7 +51,7 @@ class StaySettingsServices {
                         'acronym' => 'HU',
                     ]
                 );
-                return $guest;
+                
                  // Paso 2: Crear la estancia
                 $stay = new Stay();
                 $stay->hotel_id = 225;  
@@ -60,7 +60,7 @@ class StaySettingsServices {
                 $stay->check_in = Carbon::now()->subDays(5)->toDateString();
                 $stay->check_out = Carbon::now()->subDay()->toDateString();
                 $stay->save();
-
+                return $stay;
                 // Paso 3: Crear registros de acceso
                 //relacionar huesped a estancia
                 $guest->stays()->syncWithoutDetaching([$stay->id]);
