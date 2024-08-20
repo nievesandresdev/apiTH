@@ -54,7 +54,7 @@ class StaySettingsServices {
 
                  // Paso 2: Crear la estancia
                 $stay = new Stay();
-                $stay->hotel_id = 191;
+                $stay->hotel_id = 225;  
                 $stay->number_guests = 3;
                 $stay->language = 'Español';
                 $stay->check_in = Carbon::now()->subDays(5)->toDateString();
