@@ -51,7 +51,7 @@ class StaySettingsServices {
                         'acronym' => 'HU',
                     ]
                 );
-
+                return $guest;
                  // Paso 2: Crear la estancia
                 $stay = new Stay();
                 $stay->hotel_id = 225;  
