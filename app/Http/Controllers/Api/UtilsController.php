@@ -10,6 +10,7 @@ use App\Models\Query;
 use App\Models\Stay;
 use App\Services\ChatService;
 use App\Services\Hoster\Chat\ChatSettingsServices;
+use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\Hoster\Users\UserServices;
 use App\Services\QuerySettingsServices;
 use Illuminate\Http\Request;
@@ -21,18 +22,21 @@ class UtilsController extends Controller
 {   
 
     public $settings;
+    public $staySettings;
     public $userServices;
     public $chatService;
 
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
         UserServices $userServices,
-        ChatService $_ChatService
+        ChatService $_ChatService,
+        StaySettingsServices $_StaySettingsServices
     )
     {
         $this->settings = $_QuerySettingsServices;
         $this->userServices = $userServices;
         $this->chatService = $_ChatService;
+        $this->staySettings = $_StaySettingsServices;
     }
 
     public function authPusher(Request $request)
@@ -59,7 +63,7 @@ class UtilsController extends Controller
     
     public function test()
     {
-        return 'testing services';
+        return $this->staySettings->createMultipleStays();
     }
 
 
