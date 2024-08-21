@@ -98,9 +98,9 @@ class StayHosterController extends Controller
         }
     }
 
-    public function getSessions(Request $request){
+    public function getDefaultGuestIdAndSessions($stayId){
         try {
-            $model = $this->service->getSessions($request->stayId);
+            $model = $this->service->getDefaultGuestIdAndSessions($stayId);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -110,9 +110,10 @@ class StayHosterController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getSessions');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getDefaultGuestIdAndSessions');
         }
     }
+
 
     //notes 
     
@@ -223,7 +224,22 @@ class StayHosterController extends Controller
 
 
     //sessions
+    public function getSessions(Request $request){
+        try {
+            $model = $this->service->getSessions($request->stayId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getSessions');
+        }
+    }
+    
     public function createSession(Request $request){
         try {
             $model = $this->service->createSession($request);
