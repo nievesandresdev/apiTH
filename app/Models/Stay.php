@@ -34,7 +34,7 @@ class Stay extends Model
 
     public function hotel()
     {
-        return $this->belongsTo(hotel::class);
+        return $this->belongsTo(Hotel::class);
     }
 
     public function accesses()

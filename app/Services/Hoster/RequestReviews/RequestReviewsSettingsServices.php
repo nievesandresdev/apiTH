@@ -56,22 +56,45 @@ class RequestReviewsSettingsServices {
     }
 
     public function updateTranslation($model, $translation) {
-        Log::info('execute updateTranslation'. json_encode($translation));
+        Log::info('execute updateTranslation RequestReviewsSettingsServices '. json_encode($translation));
         // Asegurarse de que $translation sea un arreglo
         $translationFormat = json_decode(json_encode($translation), true);
+        
     
         foreach ($translationFormat as $key => &$categories) {
+            // Log::info('$lang '. json_encode($key));
+            $currentTranslations = $model->msg_text;
+            $anchor="[Link a las OTAs]";
+            if($key == 'msg_title'){
+                $currentTranslations = $model->msg_title;
+                $anchor="[nombre del hotel]";
+            }
             foreach ($categories as $lang => &$details) {
                 // Asegurarse de que 'text' existe antes de intentar accederlo
                 if (isset($details['text'])) {
                     $details = $details['text'];
+                    Log::info('$details1 '. json_encode($details));
+                    if ($lang == 'es') {
+                        // Para español, conservar la traducción original
+                        $details = isset($currentTranslations['es']) ? $currentTranslations['es'] : $details;
+                    } else {
+                        preg_match('/\[(.*?)\]/', $details, $matches);
+                        Log::info('$details2 '. json_encode($details));
+                        if (!empty($matches)) {
+                            $foundText = $matches[0];  // Texto encontrado entre corchetes
+                            // Log::info('$foundText '. json_encode($foundText));
+                            // Sustituir el texto encontrado por el ancla correspondiente
+                            $details = str_replace($foundText, $anchor, $details);
+                            Log::info('$details3 '. json_encode($details));
+                        }
+                    }
                 }
             }
         }
-        
-        $model->msg_title = isset($translationFormat['msg_title']) ? $translationFormat['msg_title'] : $model->msg_title;
-        $model->msg_text = isset($translationFormat['msg_text']) ? $translationFormat['msg_text'] : $model->msg_text;
-        //
+        // Log::info('msg_text traducido '. json_encode($translationFormat['msg_text']));
+        $model->msg_title = isset($translationFormat['msg_title']) && $translationFormat['msg_title'] ? $translationFormat['msg_title'] : $model->msg_title;
+        $model->msg_text = isset($translationFormat['msg_text']) && $translationFormat['msg_text'] ? $translationFormat['msg_text'] : $model->msg_text;
+        // //
         $model->save();
         Log::info('nueva traduccion guardada');
     }

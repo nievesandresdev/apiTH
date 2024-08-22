@@ -86,7 +86,7 @@ class QueryController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }else{
-                $collection = $collection->sortByDesc('created_at');
+                $collection = $collection->sortByDesc('updated_at');
                 $collection = $collection->values();
             }
             
