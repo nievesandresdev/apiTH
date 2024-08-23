@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Legal;
 
 use App\Http\Controllers\Controller;
+use App\Models\Hotel;
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use App\Services\LegalServices;
@@ -22,11 +23,13 @@ class LegalGeneralController extends Controller
 
         $hotel = request()->attributes->get('hotel');
 
+        $dataHotel = Hotel::findOrFail($hotel->id);
+
         $data = $this->legalServices->getGeneralLegal($hotel);
 
         return bodyResponseRequest(EnumResponse::SUCCESS, [
             'legal' => $data,
-            'hotel' => $hotel
+            'hotel' => $dataHotel
         ]);
 
     }
