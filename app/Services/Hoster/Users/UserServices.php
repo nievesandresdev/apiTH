@@ -407,7 +407,7 @@ class UserServices
         return $user ?? false;
     }
 
-    function getParentId() {
+    /* function getParentId() {
         $userRole = auth()->user()->getRoleNames()->first();
 
         switch ($userRole) {
@@ -418,7 +418,26 @@ class UserServices
             default:
                 return auth()->user()->parent_id;
         }
+    } */
+
+    function getParentId() {
+        $user = auth()->user();
+        $userRole = $user->getRoleNames()->first();
+
+        switch ($userRole) {
+            case 'Admin':
+                return $user->parent_id;
+            case 'Associate':
+                if ($user->owner != null) {
+                    return $user->id;
+                } else {
+                    return $user->parent_id;
+                }
+            default:
+                return $user->parent_id;
+        }
     }
+
 
     function getUserId() {
         return User::findOrFail(auth()->id());
