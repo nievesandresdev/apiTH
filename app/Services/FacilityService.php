@@ -98,6 +98,7 @@ class FacilityService {
                 // 'schedule' =>  $request->schedule,
                 'schedules' => $request->schedules ? json_encode($request->schedules) : null,
                 'ad_tag' => $request->ad_tag ?? null,
+                'always_open' => $request->always_open ?? false,
             ]);
         }else{
             $facilityHosterModel  = FacilityHoster::create([
@@ -111,6 +112,7 @@ class FacilityService {
                 'schedules' => $request->schedules ? json_encode($request->schedules) : null,
                 'ad_tag' => $request->ad_tag ?? null,
                 'order' => 0,
+                'always_open' => $request->always_open ?? false,
             ]);
         }
         $facilityHosterModel = $facilityHosterModel->refresh();
