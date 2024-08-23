@@ -115,7 +115,7 @@ class FacilityService {
                 'always_open' => $request->always_open ?? false,
             ]);
         }
-        //
+        ////
         $facilityHosterModel = $facilityHosterModel->refresh();
         return $facilityHosterModel;
     }
