@@ -182,8 +182,8 @@ class ExperienceService {
             $query->whereVisibleByHoster($hotelModel->id);
         }
         if($dataFilter['visibility'] == 'recommendated'){
-            $query->whereFeaturedHotel($hotelModel->id)
-            ->whereVisibleByHoster($hotelModel->id);
+            $query->whereFeaturedHotel($hotelModel->id);
+            // ->whereVisibleByHoster($hotelModel->id);
         }
         if(!$dataFilter['visibility']){
             $query->withVisibilityForProduct($hotelModel->id);

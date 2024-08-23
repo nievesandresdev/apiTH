@@ -217,7 +217,7 @@ class StayHosterServices {
                 "room" => $stay->room,
                 "id" => $stay->id,
                 "middle_reservation" => $stay->middle_reservation,
-                "sessions" => $stay->sessions,
+                // "sessions" => $stay->sessions,
                 "guests" => $guests,
                 'optionsListNote' => $optionsListNote
             ];
@@ -301,16 +301,19 @@ class StayHosterServices {
         }
     }
 
-    public function getSessions($stayId) {
+    public function getDefaultGuestIdAndSessions($stayId) {
         try {
-            $stay = Stay::select('sessions')
+            $stay = Stay::with(['guests' => function($query){
+                $query->select('guests.id as guestId')->first();
+            }])->select('sessions','id')
                     ->where('id',$stayId)
                     ->first();
-            return $stay->sessions;
+            return $stay;
         } catch (\Exception $e) {
             return $e;
         }
     }
+    
     //notes 
 
     public function getAllNotesByStay($stayId){
@@ -331,6 +334,17 @@ class StayHosterServices {
     }
 
     //sessions
+    public function getSessions($stayId) {
+        try {
+            $stay = Stay::select('sessions')
+                    ->where('id',$stayId)
+                    ->first();
+            return $stay->sessions;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
     public function createSession($data) {
         try {
             $stayId = $data->stayId;

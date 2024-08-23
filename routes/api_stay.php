@@ -20,7 +20,7 @@ Route::group(['prefix' => 'stay'], function () {
         Route::get('/statisticsByHotel', [StayHosterController::class, 'statisticsByHotel']);
         Route::get('/getdetailData', [StayHosterController::class, 'getdetailData']);
         Route::post('/updateData', [StayHosterController::class, 'updateData']);
-        Route::get('/getSessions', [StayHosterController::class, 'getSessions']);
+        Route::get('/getDefaultGuestIdAndSessions/{stayId}', [StayHosterController::class, 'getDefaultGuestIdAndSessions']);
         //notes
         Route::get('/getAllNotesByStay', [StayHosterController::class, 'getAllNotesByStay']);
         Route::post('/createOrupdateStayNote', [StayHosterController::class, 'createOrupdateStayNote']);
@@ -28,6 +28,7 @@ Route::group(['prefix' => 'stay'], function () {
         Route::post('/createOrupdateGuestNote', [StayHosterController::class, 'createOrupdateGuestNote']);
         Route::post('/deleteGuestNote', [StayHosterController::class, 'deleteGuestNote']);
         //sessions
+        Route::get('/getSessions', [StayHosterController::class, 'getSessions']);
         Route::post('/createSession', [StayHosterController::class, 'createSession']);
         Route::post('/deleteSession', [StayHosterController::class, 'deleteSession']);
         Route::post('/deleteSessionWithApiKey', [StayHosterController::class, 'deleteSessionWithApiKey']);

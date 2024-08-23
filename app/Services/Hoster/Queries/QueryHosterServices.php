@@ -91,11 +91,14 @@ class QueryHosterServices {
     public function getDataByGuest ($guestId, $stayId) {
         try {
             // histories
-            $dataQueries = Query::with('histories')
-                ->where('guest_id',$guestId)
-                ->where('stay_id',$stayId)
-                ->orderBy('created_at','asc')
-                    ->get();
+            $dataQueries = Query::with(['histories' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            }])
+            ->where('guest_id', $guestId)
+            ->where('stay_id', $stayId)
+            ->orderBy('created_at', 'asc')
+            ->get();
+            
             
             foreach ($dataQueries as $query) {
                 if ($query->comment) {
@@ -118,12 +121,14 @@ class QueryHosterServices {
 
         $icon = "Pendiente";
         $answeredTime = null;
+        $goodAnswers = ['GOOD','VERYGOOD'];
+        $goodFeedback = $queryPostStay ? in_array($queryPostStay->qualification, $goodAnswers) : false;
         if($currentPeriod == 'post-stay' || $currentPeriod == 'invalid-stay'){
-            if($queryPostStay && $queryPostStay->qualification == "GOOD"){
+            if($goodFeedback && $queryPostStay->answered){
                 $icon = "Solicitado";
                 $answeredTime = $queryPostStay->responded_at;
             }
-            if($queryPostStay && $queryPostStay->answered && $queryPostStay->qualification !== "GOOD"){
+            if(!$goodFeedback && $queryPostStay && $queryPostStay->answered){
                 $icon = "No solicitado";
             }
         }

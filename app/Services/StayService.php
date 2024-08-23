@@ -194,7 +194,8 @@ class StayService {
                 $stay->save();
             }
 
-            sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
+            // sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
+            sendEventPusher('private-update-stay-list-hotel.' . $hotel->id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
             return $stay;
 
         } catch (\Exception $e) {
