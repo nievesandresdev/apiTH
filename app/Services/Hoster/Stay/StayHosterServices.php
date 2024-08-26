@@ -31,6 +31,8 @@ class StayHosterServices {
     public function getAllByHotel($hotel, $filters, $offset = 0, $limit = 10) {
         try {
             $now = Carbon::now()->format('Y-m-d H:i');
+            $limit = $filters['limit'] ?? $limit;
+            $offset = $filters['offset'] ?? $offset;
             $query = Stay::with([
                     'chats:id,stay_id,pending',
                     'chats.messages:by,chat_id,status',
@@ -60,46 +62,51 @@ class StayHosterServices {
                 });
             }
             
-            $allStays = (clone $query)->get();
+            $allStaysOnlySearch = (clone $query)->get();
 
-            if (!empty($filters['periods'])) {
+            $periodCondition = !empty($filters['periods']);
+            if ($periodCondition) {
                 $query->havingRaw("period IN ('" . implode("','", $filters['periods']) . "')");
             }
             
-
-            if (isset($filters['pendings']) && $filters['pendings'] == 'pending') {
+            $pendingCondition = isset($filters['pendings']) && $filters['pendings'] == 'pending';
+            if ($pendingCondition) {
                 $query->where(function($q) {
                     $q->whereRaw('(SELECT COUNT(*) FROM queries WHERE queries.stay_id = stays.id AND queries.attended = 0 AND queries.answered = 1) > 0')
                       ->orWhereRaw('(SELECT MAX(pending) FROM chats WHERE chats.stay_id = stays.id) > 0');
                 });
             }
             
-            $totalCount = (clone $query)->count();
-
+            // $totalCount = (clone $query)->count();
+            $allStays = (clone $query)->get();
+            $totalCount = count($allStays);
             $stays = $query->orderByRaw('
                 CASE 
                     WHEN has_pending_chats = 1 OR pending_queries_count > 0 THEN 0
                     ELSE 1
-                END
-            ')->orderBy('stays.updated_at', 'DESC')
-            ->offset($filters['offset'] ?? $offset)
-            ->limit($filters['limit'] ?? $limit)
+                END ASC, 
+                stays.updated_at DESC, 
+                stays.id DESC
+            ')
+            ->offset($offset)
+            ->limit($limit)
             ->get();
+            // ->paginate($limit, ['*'], 'page', $page);
             // WHEN stays.room IS NULL OR stays.room = "" AND CURDATE() BETWEEN stays.check_in AND stays.check_out THEN 2
     
             // Counts for all, each period, and pending
-            $totalValidCount = $stays->where('period','!=','post-stay')->count();
+            $totalValidCount = $allStays->where('period','!=','post-stay')->count();
 
-            $countsByPeriod = $stays->groupBy('period')->mapWithKeys(function ($items, $period) {
+            $countsByPeriod = $allStays->groupBy('period')->mapWithKeys(function ($items, $period) {
                 return [$period => $items->count()];
             });
             
             //conteos general
-            $countsGeneralByPeriod = $allStays->groupBy('period')->mapWithKeys(function ($items, $period) {
+            $countsGeneralByPeriod = $allStaysOnlySearch->groupBy('period')->mapWithKeys(function ($items, $period) {
                 return [$period => $items->count()];
             });
 
-            $pendingCountsByPeriod = $allStays->reduce(function ($carry, $stay) {
+            $pendingCountsByPeriod = $allStaysOnlySearch->reduce(function ($carry, $stay) {
                 if ($stay->pending_queries_count > 0 || $stay->has_pending_chats > 0) {
                     if (!isset($carry[$stay->period])) {
                         $carry[$stay->period] = 0;
@@ -129,7 +136,7 @@ class StayHosterServices {
             $todayDay = Carbon::now()->format('d');
             $month = ucfirst(Carbon::now()->locale('es')->isoFormat('MMMM'));
             $today = Carbon::now()->format('Y-m-d');
-            $dataStays = $this->getAllByHotel($hotel, [], 0, 2000);
+            $dataStays = $this->getAllByHotel($hotel, [], 1, 2000);
 
             $checkinToday = 0;
             $checkoutToday = 0;
