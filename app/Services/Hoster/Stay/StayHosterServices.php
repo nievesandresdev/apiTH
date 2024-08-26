@@ -136,7 +136,7 @@ class StayHosterServices {
             $todayDay = Carbon::now()->format('d');
             $month = ucfirst(Carbon::now()->locale('es')->isoFormat('MMMM'));
             $today = Carbon::now()->format('Y-m-d');
-            $dataStays = $this->getAllByHotel($hotel, [], 1, 2000);
+            $dataStays = $this->getAllByHotel($hotel, [], 0, 2000);
 
             $checkinToday = 0;
             $checkoutToday = 0;
@@ -392,7 +392,7 @@ class StayHosterServices {
     public function deleteSession($stayId, $userEmail) {
         try {
             $stay = Stay::find($stayId);
-            Log::info('deleteSession hotel_id:'. $stay->hotel_id);
+            // Log::info('deleteSession hotel_id:'. $stay->hotel_id);
             $sessions = $stay->sessions ?? [];
     
             // Filtra el array para eliminar el usuario con el email dado
@@ -416,7 +416,7 @@ class StayHosterServices {
             $stay->save();
             $stay->timestamps = true;
 
-            Log::info('deleteSession $sessions:'. json_encode($sessions));
+            // Log::info('deleteSession $sessions:'. json_encode($sessions));
             sendEventPusher(
                 'private-stay-sessions-hotel.' . $stay->hotel_id, 
                 'App\Events\SessionsStayEvent', 
