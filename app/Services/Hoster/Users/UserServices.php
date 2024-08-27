@@ -130,7 +130,7 @@ class UserServices
         return $users;
     }
 
-    function getUserFilters($filter)
+    function getUserFiltersOLD($filter)
     {
         $hotelIds = $this->getIdsHotels();
         $query = User::myHotels($hotelIds);
@@ -161,6 +161,71 @@ class UserServices
                     $query->whereHas('roles', function ($subQuery) {
                         $subQuery->where('name', 'Associate');
                     });
+                    break;
+                case 2:
+                    $query->whereHas('roles', function ($subQuery) {
+                        $subQuery->where('name', 'Administrator');
+                    });
+                    break;
+                case 3:
+                    $query->whereHas('roles', function ($subQuery) {
+                        $subQuery->where('name', 'Operator');
+                    });
+                    break;
+                case 4:
+                    $query->where('del', 1);
+                    break;
+                default:
+                    $query->where('del', 0);
+                    break;
+            }
+        });
+
+        $perPage = $filter['per_page'] ?? 15; // Default 15
+        $page = $filter['page'] ?? 1;
+
+        $paginatedUsers = $query->paginate($perPage, ['*'], 'page', $page);
+
+        // Mapeo de usuarios
+        $mappedUsers = $paginatedUsers->getCollection()->map(function ($user) {
+            return $this->arrayMapUser($user);
+        });
+
+        // Crear una nueva instancia de LengthAwarePaginator con los datos mapeados
+        $paginatedUsers->setCollection($mappedUsers);
+
+        return $paginatedUsers;
+    }
+
+    function getUserFilters($filter)
+    {
+        $hotelIds = $this->getIdsHotels();
+        $query = User::myHotels($hotelIds);
+        /* where(function ($query) use ($filter) {
+            $query->where('name', 'like', '%' . $filter['search_terms'] . '%');
+        })
+        ->orWhereHas('profile.workPosition', function ($query) use ($filter) {
+            $query->where('name', 'like', '%' . $filter['search_terms'] . '%');
+        }); */
+
+        $query->when(isset($filter['search_terms']) ? $filter['search_terms'] : null, function ($query) use ($filter) {
+            $query->where('name', 'like', '%' . $filter['search_terms'] . '%')
+                ->orWhereHas('profile.workPosition', function ($subQuery) use ($filter) {
+                    $subQuery->where('name', 'like', '%' . $filter['search_terms'] . '%');
+                });
+        })->orderBy('created_at', 'desc');
+
+
+
+        $query->when(isset($filter['type']), function ($query) use ($filter, $hotelIds) {
+            /* $query->whereHas('hotel', function ($query) use ($hotelIds) {
+                $query->whereIn('hotel_id', $hotelIds);
+            }); */
+            switch ($filter['type']) {
+                case 0:
+                    break;
+                case 1:
+                    $query->where('del', 0);
                     break;
                 case 2:
                     $query->whereHas('roles', function ($subQuery) {
