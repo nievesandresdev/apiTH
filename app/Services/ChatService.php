@@ -44,12 +44,13 @@ class ChatService {
 
     public function sendMsgToHoster ($request) {
         try{
+            Log::info('sendMsgToHoster');
             /**
              * enviar mensaje
              */
             $hotel = $request->attributes->get('hotel');
             $settings = $this->settings->getAll($hotel->id);
-
+            Log::info('sendMsgToHoster $hotel'. json_encode($hotel));
             DB::beginTransaction();
             $langPage = $request->langWeb;
             $guestId = $request->guestId;
@@ -57,14 +58,14 @@ class ChatService {
 
             $guest = new GuestResource(Guest::find($guestId));
             $stay = new StayResource(Stay::find($stayId));
-
+            Log::info('sendMsgToHoster $guest'. json_encode($guest));
             $chat = $guest->chats()
                 ->updateOrCreate([
                     'stay_id' => $stayId
                 ], [
                     'pending' => true,
             ]);
-
+            Log::info('sendMsgToHoster $chat'. json_encode($chat));
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
                 'text' => $request->text,
@@ -175,17 +176,17 @@ class ChatService {
             $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
 
             // Extraer los roles de usuario a notificar para un nuevo mensaje
-            $rolesToNotifyNewMsg = collect($settings['email_notify_new_message_to']);
+            $rolesToNotifyNewMsg = collect($settings->email_notify_new_message_to);
             $getUsersRoleNewMsg = $queryUsers->filter(function ($user) use ($rolesToNotifyNewMsg) {
                 return $rolesToNotifyNewMsg->contains($user['role']);
             });
             // Extraer los roles de usuario a notificar para chat pendiente luego de 10 min
-            $rolesToNotifyPending10Min = collect($settings['email_notify_pending_chat_to']);
+            $rolesToNotifyPending10Min = collect($settings->email_notify_pending_chat_to);
             $getUsersRolePending10Min = $queryUsers->filter(function ($user) use ($rolesToNotifyPending10Min) {
                 return $rolesToNotifyPending10Min->contains($user['role']);
             });
             // Extraer los roles de usuario a notificar para chat pendiente luego de 30 min
-            $rolesToNotifyPending30Min = collect($settings['email_notify_not_answered_chat_to']);
+            $rolesToNotifyPending30Min = collect($settings->email_notify_not_answered_chat_to);
             $getUsersRolePending30Min = $queryUsers->filter(function ($user) use ($rolesToNotifyPending30Min) {
                 return $rolesToNotifyPending30Min->contains($user['role']);
             });
