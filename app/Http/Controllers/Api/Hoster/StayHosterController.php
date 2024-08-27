@@ -258,7 +258,7 @@ class StayHosterController extends Controller
 
     public function deleteSession(Request $request){
         try {
-            Log::info('deleteSession');
+            // Log::info('deleteSession');
             $userEmail = $request->userEmail;
             $field = $request->field;
             $stayId = $request->stayId;
@@ -285,7 +285,7 @@ class StayHosterController extends Controller
 
     public function deleteSessionWithApiKey(Request $request){
         try {
-            Log::info('deleteSessionWithApiKey');
+            // Log::info('deleteSessionWithApiKey');
             $userEmail = $request->query('userEmail');
             $stayId = $request->query('stayId');
             $request->validate([
