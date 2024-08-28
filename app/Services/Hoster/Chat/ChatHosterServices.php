@@ -96,18 +96,24 @@ class ChatHosterServices {
                 UnReadGuest::dispatch('by-hoster'.$chat->id, $stayId, $chatMessage->id)->delay(now()->addMinutes(10));
             }
             DB::commit();
+            $count = $this->pendingCountByStay($stayId);
             //send message
-            sendEventPusher('private-update-chat.' . $stayId, 'App\Events\UpdateChatEvent', ['message' => $msg]);
+            sendEventPusher('private-update-chat.' . $stayId, 'App\Events\UpdateChatEvent', [
+                'message' => $msg,
+                'chatData' => $chat,
+            ]);
             sendEventPusher('private-noti-hotel.' . $hotelId, 'App\Events\NotifyStayHotelEvent',
                 [
                     'showLoadPage' => false,
                     'stay_id' => $stayId,
                     'chat_id' => $chat->id,
                     'hotel_id' => $hotelId,
+                    'pendingCountChats' => $count,
                     'automatic' => '0',
                     'add' => false,'pending' => true,  //es true en el input pero false en la bd
                 ]
             );
+            sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
         } catch (\Exception $e) {
             DB::rollback();
             return $e;

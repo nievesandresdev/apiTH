@@ -44,13 +44,12 @@ class ChatService {
 
     public function sendMsgToHoster ($request) {
         try{
-            Log::info('sendMsgToHoster');
             /**
              * enviar mensaje
              */
             $hotel = $request->attributes->get('hotel');
             $settings = $this->settings->getAll($hotel->id);
-            Log::info('sendMsgToHoster $hotel'. json_encode($hotel));
+            
             DB::beginTransaction();
             $langPage = $request->langWeb;
             $guestId = $request->guestId;
@@ -58,7 +57,6 @@ class ChatService {
 
             $guest = new GuestResource(Guest::find($guestId));
             $stay = new StayResource(Stay::find($stayId));
-            Log::info('sendMsgToHoster $guest'. json_encode($guest));
             $chat = $guest->chats()
                 ->updateOrCreate([
                     'stay_id' => $stayId
@@ -81,7 +79,10 @@ class ChatService {
             $msg = $guest->chatMessages()->save($chatMessage);
             $msg->load('messageable');
             if($msg){
-                sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
+                sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', [
+                    'message' => $msg,
+                    'chatData' => $chat,
+                ]);
                 sendEventPusher('private-noti-hotel.' . $hotel->id, 'App\Events\NotifyStayHotelEvent',
                     [
                         'showLoadPage' => false,
@@ -149,7 +150,10 @@ class ChatService {
 
                     $msg = $guest->chatMessages()->save($chatMessage);
                     $msg->load('messageable');
-                    sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
+                    sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', [
+                        'message' => $msg,
+                        'chatData' => $chat,
+                    ]);
                 }
             }
 
