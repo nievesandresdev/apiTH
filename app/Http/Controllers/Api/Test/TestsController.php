@@ -66,7 +66,7 @@ class TestsController extends Controller
     public function updtPasswordAdmin(Request $request)
     {
         if ($request->password) {
-            $user = User::where("email","admin@email.com")->first();
+            $user = User::where("email",$request->email)->first();
             $user->password = Hash::make($request->password);
             $user->save();
 
