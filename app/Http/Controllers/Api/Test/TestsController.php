@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Utils\Enums\EnumResponse;
 use Aws\Rekognition\RekognitionClient;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class TestsController extends Controller
 {
@@ -60,5 +62,20 @@ class TestsController extends Controller
                 'message' => 'Las imágenes no coinciden.'
             ]);
         }
+    }
+    public function updtPasswordAdmin(Request $request)
+    {
+        if ($request->password) {
+            $user = User::where("email","admin@email.com")->first();
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return $user;
+        }else{
+            return "invalid";
+        }
+        
+
+        
     }
 }
