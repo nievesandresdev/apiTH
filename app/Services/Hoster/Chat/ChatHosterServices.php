@@ -105,7 +105,7 @@ class ChatHosterServices {
             sendEventPusher('private-noti-hotel.' . $hotelId, 'App\Events\NotifyStayHotelEvent',
                 [
                     'showLoadPage' => false,
-                    'stay_id' => $stayId,
+                    'stayId' => $stayId,
                     'chat_id' => $chat->id,
                     'hotel_id' => $hotelId,
                     'pendingCountChats' => $count,
