@@ -12,6 +12,10 @@ class WorkPosition extends Model
     protected $fillable = [
         'name',
         'description',
+        'permissions', //json
+        'notifications', //json
+        'periodicity_chat',
+        'periodicity_stay',
         'status',
     ];
 
