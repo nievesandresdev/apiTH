@@ -122,6 +122,11 @@ class UsersController extends Controller
                 'email.unique' => 'El correo electrónico ya está en uso',
             ]);
 
+            /* return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario actualizado con éxito',
+                'user' => request()->all()
+            ]); */
+
             $user = $this->userServices->updateUserHoster(request(),request()->user_id);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [

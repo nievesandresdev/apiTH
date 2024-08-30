@@ -7,7 +7,9 @@
     "require": {
         "php": "^8.1",
         "aws/aws-sdk-php": "^3.315",
+        "barryvdh/laravel-dompdf": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
+        "intervention/image": "^2.7",
         "jenssegers/agent": "^2.6",
         "laravel/cashier": "^15.4",
         "laravel/framework": "^10.10",
@@ -16,8 +18,7 @@
         "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "3.0",
         "pusher/pusher-php-server": "^7.2",
-        "spatie/laravel-permission": "^6.9",
-        "intervention/image": "^2.7"
+        "spatie/laravel-permission": "^6.9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

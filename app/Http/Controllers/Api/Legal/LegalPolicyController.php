@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use App\Services\LegalServices;
+use PDF;
 
 class LegalPolicyController extends Controller
 {
@@ -78,5 +79,25 @@ class LegalPolicyController extends Controller
 
             return bodyResponseRequest(EnumResponse::INTERNAL_SERVER_ERROR, $e->getMessage(), 'Se encontró un error durante la operación', get_class($e));
         }
+    }
+
+    public function generatePDF()
+    {
+        // Datos dinámicos que serán reemplazados en la vista del PDF
+        /* $data = [
+            'hotel' => $request->input('hotel', 'Hotel Example'),
+            'direccion' => $request->input('direccion', '123 Example Street, City, Country'),
+            'nif' => $request->input('nif', 'A12345678'),
+            'email' => $request->input('email', 'contact@example.com'),
+        ]; */
+
+        // Cargar la vista y pasarle los datos
+        $pdf = PDF::loadView('Legal.policy');
+
+        // Retornar el PDF para descarga
+        return $pdf->download('Politica_de_Privacidad.pdf');
+
+        // Alternativamente, si solo quieres abrir el PDF en una nueva pestaña:
+        // return $pdf->stream('Politica_de_Privacidad.pdf');
     }
 }
