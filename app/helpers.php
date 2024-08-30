@@ -12,6 +12,9 @@ use Intervention\Image\ImageManagerStatic as ImageManagerStatic;
 
 use App\Models\ImagesHotels;
 use App\Models\ImageGallery;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+
 
 if (!function_exists('bodyResponseRequest')) {
     /**
@@ -351,7 +354,7 @@ if (! function_exists('getAllLanguages')) {
 
 if (! function_exists('settingsNotyStayDefault')) {
     function settingsNotyStayDefault(){
-        
+
             $settings = new stdClass();
             $settings->unfilled_check_platform = true;
             $settings->unfilled_check_email = true;
@@ -440,6 +443,30 @@ if (! function_exists('prepareMessage')) {
         return $msg;
     }
 }
+
+if (! function_exists('formatTimeDifference')) {
+    function formatTimeDifference($date)
+    {
+        $timeDiff = $date;
+
+        if ($timeDiff->diffInYears() > 0) {
+            return $timeDiff->diffInYears() . ' ' . Str::plural('año', $timeDiff->diffInYears());
+        } elseif ($timeDiff->diffInMonths() > 0) {
+            return $timeDiff->diffInMonths() . ' ' . Str::plural('mes', $timeDiff->diffInMonths());
+        } elseif ($timeDiff->diffInDays() > 0) {
+            return $timeDiff->diffInDays() . ' ' . Str::plural('día', $timeDiff->diffInDays());
+        } elseif ($timeDiff->diffInHours() > 0) {
+            return $timeDiff->diffInHours() . ' ' . Str::plural('hora', $timeDiff->diffInHours());
+        } elseif ($timeDiff->diffInMinutes() > 0) {
+            return $timeDiff->diffInMinutes() . ' ' . Str::plural('minuto', $timeDiff->diffInMinutes());
+        } else {
+            return $timeDiff->diffInSeconds() . ' ' . Str::plural('segundo', $timeDiff->diffInSeconds());
+        }
+    }
+
+}
+
+
 
 //preparelink
 if (! function_exists('prepareLink')) {

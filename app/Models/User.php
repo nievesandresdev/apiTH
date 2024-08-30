@@ -30,6 +30,12 @@ class User extends Authenticatable
         'del',
         'google_url',
 
+        //settings
+        'permissions', //json
+        'notifications', //json
+        'periodicity_chat',
+        'periodicity_stay',
+
         // STRIPE
         'stripe_id',
         'pm_type',
