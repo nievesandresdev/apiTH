@@ -49,7 +49,7 @@ class StaySessionServices {
             DB::table('jobs')->where('payload', 'like', '%sendToUser' . $userEmail . '%')->delete();
             //si se renueva el job luego de 45min se eliminara la session
             Log::info('createSession create new job '. $userEmail);
-            DeleteStaySessionUser::dispatch('sendToUser'.$userEmail, $userEmail, $stayId)->delay(now()->addMinutes(2));
+            DeleteStaySessionUser::dispatch('sendToUser'.$userEmail, $userEmail, $stayId)->delay(now()->addMinutes(45));
 
             $stay = Stay::find($stayId);
             if($stay->sessions){
@@ -96,7 +96,7 @@ class StaySessionServices {
             DB::table('jobs')->where('payload', 'like', '%sendToUser' . $userEmail . '%')->delete();
             //si se renueva el job luego de 45min se eliminara la session
             Log::info('updateOrcreateSession create new job '. $userEmail);
-            DeleteStaySessionUser::dispatch('sendToUser'.$userEmail, $userEmail, $stayId)->delay(now()->addMinutes(2));
+            DeleteStaySessionUser::dispatch('sendToUser'.$userEmail, $userEmail, $stayId)->delay(now()->addMinutes(45));
 
             $stay = Stay::find($stayId);
             if($stay->sessions){
