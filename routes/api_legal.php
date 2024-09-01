@@ -15,4 +15,6 @@ Route::group(['prefix' => 'legal'], function () {
     Route::post('/policies', [LegalPolicyController::class, 'storePolicylLegal']);
     Route::post('/updatePolicies', [LegalPolicyController::class, 'updatePolicylLegal']);
     Route::post('/deletePolicy', [LegalPolicyController::class, 'deletePolicylLegal']);
+
+    Route::post('/generate-pdf', [LegalPolicyController::class, 'generatePDF']);
 });

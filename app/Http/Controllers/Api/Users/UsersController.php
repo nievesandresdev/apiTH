@@ -95,6 +95,11 @@ class UsersController extends Controller
                 'email.unique' => 'El correo electrónico ya está en uso',
             ]);
 
+            /* return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario creado con éxito',
+                'user' => request()->all()
+            ]); */
+
             // Si la validación pasa, proceder a crear el usuario
             $user = $this->userServices->storeUserHoster(request());
 
@@ -121,6 +126,11 @@ class UsersController extends Controller
                 'email.email' => 'El campo email debe ser un correo electrónico válido',
                 'email.unique' => 'El correo electrónico ya está en uso',
             ]);
+
+            /* return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario actualizado con éxito',
+                'user' => request()->all()
+            ]); */
 
             $user = $this->userServices->updateUserHoster(request(),request()->user_id);
 

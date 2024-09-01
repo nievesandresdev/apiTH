@@ -417,6 +417,12 @@ class UserServices
             }),
             //'access' => $user->getAllPermissions()->pluck('name'),
             'firstHotelId' => $firstHotel->id ?? null,
+            'time' => formatTimeDifference($user->created_at),
+            'notifications' => json_decode($user->notifications),
+            'periodicity_chat' => $user->periodicity_chat,
+            'periodicity_stay' => $user->periodicity_stay,
+            'permissions' => json_decode($user->permissions),
+            //'time' => $user->created_at->diffForHumans(),
         ];
     }
 
@@ -457,11 +463,15 @@ class UserServices
             'email' => $request->email,
             'parent_id' => $this->getParentId(),
             'password' => Hash::make($request->password),
+            'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
+            'notifications' => json_encode($request->notifications), // Guarda el JSON de notificaciones
+            'periodicity_chat' => $request->periodicityChat,
+            'periodicity_stay' => $request->periodicityStay,
         ]);
 
-        $role = $request->role == 1 ? 'Associate' : ($request->role == 2 ? 'Administrator' : 'Operator');
+       /*  $role = $request->role == 1 ? 'Associate' : ($request->role == 2 ? 'Administrator' : 'Operator');
 
-        $user->assignRole($role);
+        $user->assignRole($role); */
 
         $this->profileServices->handleProfileHoster($request, $user);
 
@@ -528,12 +538,16 @@ class UserServices
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
+            'notifications' => json_encode($request->notifications), // Guarda el JSON de notificaciones
+            'periodicity_chat' => $request->periodicityChat,
+            'periodicity_stay' => $request->periodicityStay,
         ]);
 
-        if ($request->filled('role')) {
+        /* if ($request->filled('role')) {
             $role = $request->role == 1 ? 'Associate' : ($request->role == 2 ? 'Administrator' : 'Operator');
             $user->syncRoles([$role]);
-        }
+        } */
 
         $this->profileServices->handleProfileHoster($request, $user);
 
