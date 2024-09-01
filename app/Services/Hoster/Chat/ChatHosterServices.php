@@ -7,18 +7,22 @@ use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Stay;
 use App\Services\Hoster\Queries\QueryHosterServices;
+use App\Services\Hoster\Stay\StaySessionServices;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ChatHosterServices {
 
     public $queryHosterServices;
+    public $staySessionServices;
 
     function __construct(
-        QueryHosterServices $_QueryHosterServices
+        QueryHosterServices $_QueryHosterServices,
+        StaySessionServices $_StaySessionServices
     )
     {
         $this->queryHosterServices = $_QueryHosterServices;
+        $this->staySessionServices = $_StaySessionServices;
     }
 
     public function pendingCountByHotel($hotel){
@@ -67,8 +71,9 @@ class ChatHosterServices {
         }
     }
 
-    public function sendMsg($guestId, $stayId, $text, $hotelId){
+    public function sendMsg($guestId, $stayId, $text, $hotelId, $data) {
         try {
+            $this->staySessionServices->updateActionOrcreateSession($data);
             DB::beginTransaction();
 
             $chat = Chat::updateOrCreate([
@@ -120,8 +125,9 @@ class ChatHosterServices {
         }
     }
 
-    public function togglePending($guestId, $stayId, $pendingBool, $hotelId){
+    public function togglePending($guestId, $stayId, $pendingBool, $hotelId, $data) {
         try {
+            $this->staySessionServices->updateActionOrcreateSession($data);
             // $stay = Stay::select('id','hotel_id')->first($stayId);
             // $stay->touch();    
             Chat::updateOrCreate([
