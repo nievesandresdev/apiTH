@@ -6,6 +6,7 @@ use App\Models\Guest;
 use App\Models\Query;
 use App\Models\Stay;
 use App\Services\Hoster\Stay\StayHosterServices;
+use App\Services\Hoster\Stay\StaySessionServices;
 use App\Services\QueryServices;
 use App\Utils\Enums\EnumsLanguages;
 use Carbon\Carbon;
@@ -17,14 +18,18 @@ class QueryHosterServices {
     public $stayHosterServices;
     public $queryService;
     public $chatHosterServices;
+    public $staySessionServices;
+    
 
     function __construct(
         StayHosterServices $_StayHosterServices,
         QueryServices $_QueryServices,
+        StaySessionServices $_StaySessionServices
     )
     {
         $this->stayHosterServices = $_StayHosterServices;
         $this->queryService = $_QueryServices;
+        $this->staySessionServices = $_StaySessionServices;
     }
 
     public function getFeedbackSummaryByGuest ($stayId, $guestId, $hotel) {
@@ -334,8 +339,9 @@ class QueryHosterServices {
         }
     }
     
-    public function togglePendingState($queryId, $bool, $hotelId){
-        try{
+    public function togglePendingState($queryId, $bool, $hotelId, $data) {
+        try {
+            $this->staySessionServices->updateActionOrcreateSession($data);
             // Log::info('togglePendingState');
             $query = Query::findOrFail($queryId);
             $query->attended = $bool;
