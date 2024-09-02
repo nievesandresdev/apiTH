@@ -11,7 +11,6 @@ class WorkPosition extends Model
 
     protected $fillable = [
         'name',
-        'description',
         'permissions', //json
         'notifications', //json
         'periodicity_chat',
@@ -40,4 +39,10 @@ class WorkPosition extends Model
     {
         return $query->where('hotel_id', request()->attributes->get('hotel')->id);
     }
+
+    public function profiles()
+    {
+        return $this->hasMany(Profile::class, 'work_position_id');
+    }
+
 }
