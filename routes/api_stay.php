@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Hoster\StayHosterController;
+use App\Http\Controllers\Api\Hoster\StaySessionsHosterController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\StayController;
@@ -27,14 +28,14 @@ Route::group(['prefix' => 'stay'], function () {
         Route::post('/deleteStayNote', [StayHosterController::class, 'deleteStayNote']);
         Route::post('/createOrupdateGuestNote', [StayHosterController::class, 'createOrupdateGuestNote']);
         Route::post('/deleteGuestNote', [StayHosterController::class, 'deleteGuestNote']);
-        //sessions
-        Route::get('/getSessions', [StayHosterController::class, 'getSessions']);
-        Route::post('/createSession', [StayHosterController::class, 'createSession']);
-        Route::post('/deleteSession', [StayHosterController::class, 'deleteSession']);
-        Route::post('/deleteSessionWithApiKey', [StayHosterController::class, 'deleteSessionWithApiKey']);
-        Route::post('/deleteSessionByHotelAndEmail', [StayHosterController::class, 'deleteSessionByHotelAndEmail']);
         //guest
         Route::get('/getGuestListWithNoti', [StayHosterController::class, 'getGuestListWithNoti']);
+        //sessions
+        Route::get('/getSessions', [StaySessionsHosterController::class, 'getSessions']);
+        Route::post('/createSession', [StaySessionsHosterController::class, 'createSession']);
+        Route::post('/deleteSession', [StaySessionsHosterController::class, 'deleteSession']);
+        Route::post('/deleteSessionWithApiKey', [StaySessionsHosterController::class, 'deleteSessionWithApiKey']);
+        Route::post('/deleteSessionByHotelAndEmail', [StaySessionsHosterController::class, 'deleteSessionByHotelAndEmail']);
     });
 });
 

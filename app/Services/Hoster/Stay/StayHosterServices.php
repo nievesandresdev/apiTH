@@ -14,14 +14,17 @@ class StayHosterServices {
     
     public $queryService;
     public $utilsServices;
+    public $staySessionServices;
 
     function __construct(
         QueryServices $_QueryServices,
-        UtilsHosterServices $_UtilsHosterServices
+        UtilsHosterServices $_UtilsHosterServices,
+        StaySessionServices $_StaySessionServices
     )
     {
         $this->queryService = $_QueryServices;
         $this->utilsServices = $_UtilsHosterServices;
+        $this->staySessionServices = $_StaySessionServices;
     }
 
     // 'stays.pending_queries_seen',
@@ -274,7 +277,7 @@ class StayHosterServices {
 
     public function updateData($stayId, $data) {
         try {
-            
+            $this->staySessionServices->updateActionOrcreateSession($data);
             $stay = Stay::find($stayId);
             $stay->room = $data->room ?? $stay->room;
             $stay->middle_reservation = $data->middle_reservation ?? $stay->middle_reservation;
@@ -338,108 +341,6 @@ class StayHosterServices {
 
             ORDER BY created_at DESC
         ", ['stayId1' => $stayId, 'stayId2' => $stayId]);
-    }
-
-    //sessions
-    public function getSessions($stayId) {
-        try {
-            $stay = Stay::select('sessions')
-                    ->where('id',$stayId)
-                    ->first();
-            return $stay->sessions;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
-
-    public function createSession($data) {
-        try {
-            $stayId = $data->stayId;
-            $field = $data->field;
-            $userColor = $data->userColor;
-            $userEmail = $data->userEmail;
-            $userName = $data->userName;
-            
-            $stay = Stay::find($stayId);
-            if($stay->sessions){
-                $sessions = $stay->sessions ?? []; 
-                // Verifica si el email ya existe en los arrays guardados
-                foreach ($sessions as $session) {
-                    if ($session['userEmail'] === $userEmail) {
-                        return $stay->sessions;
-                    }
-                }
-                // Si el email no existe, agrega el nuevo usuario a la lista
-                $sessions[] = ['userColor' => $userColor, 'userEmail' => $userEmail, 'userName' => $userName];
-        
-                $stay->sessions = $sessions;
-                $stay->save();
-            }else{
-                $stay->sessions = [['userColor'=>$userColor,'userEmail'=>$userEmail,'userName'=>$userName]];
-            }
-            
-            //evitar actualizacion del updated_at
-            $stay->timestamps = false;
-            $stay->save();
-            $stay->timestamps = true;
-            return $stay->sessions;
-        } catch (\Exception $e) {
-            return $e;
-        }
-            
-    }
-
-    public function deleteSession($stayId, $userEmail) {
-        try {
-            $stay = Stay::find($stayId);
-            // Log::info('deleteSession hotel_id:'. $stay->hotel_id);
-            $sessions = $stay->sessions ?? [];
-    
-            // Filtra el array para eliminar el usuario con el email dado
-            $filteredSessions = array_filter($sessions, function ($session) use ($userEmail) {
-                return $session['userEmail'] !== $userEmail;
-            });
-    
-            // Comprobar si el número de sesiones ha cambiado después del filtrado
-            if (count($filteredSessions) === count($sessions)) return;
-    
-            // Si el array filtrado está vacío, establece sessions como null
-            if (empty($filteredSessions)) {
-                $stay->sessions = null;
-            } else {
-                $sessions = array_values($filteredSessions); // reindexa el array para asegurar la integridad de los índices
-                $stay->sessions = $sessions;
-            }
-            
-            //evitar actualizacion del updated_at
-            $stay->timestamps = false;
-            $stay->save();
-            $stay->timestamps = true;
-
-            // Log::info('deleteSession $sessions:'. json_encode($sessions));
-            sendEventPusher(
-                'private-stay-sessions-hotel.' . $stay->hotel_id, 
-                'App\Events\SessionsStayEvent', 
-                [ 'stayId' => $stay->id, 'session' => $sessions]
-            );
-            return $stay->sessions;
-    
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-    
-    public function findSessionByHotelAndEmail($hotelId, $userEmail) {
-        try {
-            return Stay::where('hotel_id', $hotelId)
-                ->where('sessions','!=','')
-                ->whereNotNull('sessions')
-                ->whereJsonContains('sessions', ['userEmail' => $userEmail])
-                ->first();
-
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
     }
     
     //guest 

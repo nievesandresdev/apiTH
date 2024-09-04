@@ -4,20 +4,23 @@ namespace App\Services\Hoster\Notes;
 
 use App\Models\NoteStay;
 use App\Models\Stay;
+use App\Services\Hoster\Stay\StaySessionServices;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class NoteStayHosterServices {
     
+    protected $staySessionServices;
     
-    function __construct()
+    function __construct(StaySessionServices $_StaySessionServices)
     {
-        // $this->settings = $_QuerySetting;
+        $this->staySessionServices = $_StaySessionServices;
     }
 
-    public function create($stayId, $content){
+    public function create($stayId, $content, $data){
         try {
+            $this->staySessionServices->updateActionOrcreateSession($data);
             $stay = Stay::find($stayId);
             return $stay->notes()->create([
                 'content' => $content,
@@ -27,8 +30,9 @@ class NoteStayHosterServices {
         }
     }
 
-    public function update($noteId, $content){
+    public function update($noteId, $content, $data){
         try {
+            $this->staySessionServices->updateActionOrcreateSession($data);
             $note = NoteStay::find($noteId);
             $note->content = $content;
             $note->edited = 1;
@@ -38,8 +42,9 @@ class NoteStayHosterServices {
         }
     }
 
-    public function delete($noteId){
+    public function delete($noteId, $data){
         try {
+            $this->staySessionServices->updateActionOrcreateSession($data);
             $note = NoteStay::find($noteId);
             $note->delete();
         } catch (\Exception $e) {
