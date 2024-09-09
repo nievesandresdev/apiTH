@@ -130,7 +130,7 @@ class UserServices
         return $users;
     }
 
-    function getUserFilters($filter)
+    function getUserFiltersOLD($filter)
     {
         $hotelIds = $this->getIdsHotels();
         $query = User::myHotels($hotelIds);
@@ -174,6 +174,71 @@ class UserServices
                     break;
                 case 4:
                     $query->where('del', 1);
+                    break;
+                default:
+                    $query->where('del', 0);
+                    break;
+            }
+        });
+
+        $perPage = $filter['per_page'] ?? 15; // Default 15
+        $page = $filter['page'] ?? 1;
+
+        $paginatedUsers = $query->paginate($perPage, ['*'], 'page', $page);
+
+        // Mapeo de usuarios
+        $mappedUsers = $paginatedUsers->getCollection()->map(function ($user) {
+            return $this->arrayMapUser($user);
+        });
+
+        // Crear una nueva instancia de LengthAwarePaginator con los datos mapeados
+        $paginatedUsers->setCollection($mappedUsers);
+
+        return $paginatedUsers;
+    }
+
+    function getUserFilters($filter)
+    {
+        $hotelIds = $this->getIdsHotels();
+        $query = User::myHotels($hotelIds);
+        /* where(function ($query) use ($filter) {
+            $query->where('name', 'like', '%' . $filter['search_terms'] . '%');
+        })
+        ->orWhereHas('profile.workPosition', function ($query) use ($filter) {
+            $query->where('name', 'like', '%' . $filter['search_terms'] . '%');
+        }); */
+
+        $query->when(isset($filter['search_terms']) ? $filter['search_terms'] : null, function ($query) use ($filter) {
+            $query->where('name', 'like', '%' . $filter['search_terms'] . '%')
+                ->orWhereHas('profile.workPosition', function ($subQuery) use ($filter) {
+                    $subQuery->where('name', 'like', '%' . $filter['search_terms'] . '%');
+                });
+        })->orderBy('created_at', 'desc');
+
+
+
+        $query->when(isset($filter['type']), function ($query) use ($filter, $hotelIds) {
+            /* $query->whereHas('hotel', function ($query) use ($hotelIds) {
+                $query->whereIn('hotel_id', $hotelIds);
+            }); */
+            switch ($filter['type']) {
+                case 0:
+                    break;
+                case 1:
+                    $query->where('status', 1);
+                    break;
+                case 2:
+                    $query->whereHas('roles', function ($subQuery) {
+                        $subQuery->where('name', 'Administrator');
+                    });
+                    break;
+                case 3:
+                    $query->whereHas('roles', function ($subQuery) {
+                        $subQuery->where('name', 'Operator');
+                    });
+                    break;
+                case 4:
+                    $query->where('status', 0);
                     break;
                 default:
                     $query->where('del', 0);
@@ -352,6 +417,13 @@ class UserServices
             }),
             //'access' => $user->getAllPermissions()->pluck('name'),
             'firstHotelId' => $firstHotel->id ?? null,
+            'time' => formatTimeDifference($user->created_at),
+            'notifications' => json_decode($user->notifications),
+            'periodicity_chat' => $user->periodicity_chat,
+            'periodicity_stay' => $user->periodicity_stay,
+            'permissions' => json_decode($user->permissions),
+            'status' => $user->status,
+            //'time' => $user->created_at->diffForHumans(),
         ];
     }
 
@@ -392,11 +464,15 @@ class UserServices
             'email' => $request->email,
             'parent_id' => $this->getParentId(),
             'password' => Hash::make($request->password),
+            'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
+            'notifications' => json_encode($request->notifications), // Guarda el JSON de notificaciones
+            'periodicity_chat' => $request->periodicityChat,
+            'periodicity_stay' => $request->periodicityStay,
         ]);
 
-        $role = $request->role == 1 ? 'Associate' : ($request->role == 2 ? 'Administrator' : 'Operator');
+       /*  $role = $request->role == 1 ? 'Associate' : ($request->role == 2 ? 'Administrator' : 'Operator');
 
-        $user->assignRole($role);
+        $user->assignRole($role); */
 
         $this->profileServices->handleProfileHoster($request, $user);
 
@@ -407,7 +483,7 @@ class UserServices
         return $user ?? false;
     }
 
-    function getParentId() {
+    /* function getParentId() {
         $userRole = auth()->user()->getRoleNames()->first();
 
         switch ($userRole) {
@@ -418,7 +494,26 @@ class UserServices
             default:
                 return auth()->user()->parent_id;
         }
+    } */
+
+    function getParentId() {
+        $user = auth()->user();
+        $userRole = $user->getRoleNames()->first();
+
+        switch ($userRole) {
+            case 'Admin':
+                return $user->parent_id;
+            case 'Associate':
+                if ($user->owner != null) {
+                    return $user->id;
+                } else {
+                    return $user->parent_id;
+                }
+            default:
+                return $user->parent_id;
+        }
     }
+
 
     function getUserId() {
         return User::findOrFail(auth()->id());
@@ -444,12 +539,16 @@ class UserServices
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
+            'notifications' => json_encode($request->notifications), // Guarda el JSON de notificaciones
+            'periodicity_chat' => $request->periodicityChat,
+            'periodicity_stay' => $request->periodicityStay,
         ]);
 
-        if ($request->filled('role')) {
+        /* if ($request->filled('role')) {
             $role = $request->role == 1 ? 'Associate' : ($request->role == 2 ? 'Administrator' : 'Operator');
             $user->syncRoles([$role]);
-        }
+        } */
 
         $this->profileServices->handleProfileHoster($request, $user);
 
@@ -493,6 +592,26 @@ class UserServices
         $user = User::findOrFail($userId);
 
         $user->del = 1;
+        $user->save();
+
+        return $user;
+    }
+
+    public function disabledUserHoster($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        $user->status = 0;
+        $user->save();
+
+        return $user;
+    }
+
+    public function enabledUserHoster($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        $user->status = 1;
         $user->save();
 
         return $user;

@@ -25,18 +25,20 @@ class UtilsController extends Controller
     public $staySettings;
     public $userServices;
     public $chatService;
-
+    public $chatSettingsServices;
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
         UserServices $userServices,
         ChatService $_ChatService,
-        StaySettingsServices $_StaySettingsServices
+        StaySettingsServices $_StaySettingsServices,
+        ChatSettingsServices $_ChatSettingsServices
     )
     {
         $this->settings = $_QuerySettingsServices;
         $this->userServices = $userServices;
         $this->chatService = $_ChatService;
         $this->staySettings = $_StaySettingsServices;
+        $this->chatSettingsServices = $_ChatSettingsServices;
     }
 
     public function authPusher(Request $request)
@@ -63,7 +65,8 @@ class UtilsController extends Controller
     
     public function test()
     {
-        return $this->staySettings->createMultipleStays();
+        $settings = $this->chatSettingsServices->getAll(217);
+        return $rolesToNotifyNewMsg = collect($settings->email_notify_new_message_to);
     }
 
 

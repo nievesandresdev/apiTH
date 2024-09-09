@@ -67,7 +67,7 @@ class StayQueryHosterController extends Controller
             $queryId = $request->queryId;
             $bool = $request->bool;
 
-            $model = $this->service->togglePendingState($queryId, $bool, $hotel->id);
+            $model = $this->service->togglePendingState($queryId, $bool, $hotel->id, $request);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

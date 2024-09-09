@@ -7,18 +7,22 @@ use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Stay;
 use App\Services\Hoster\Queries\QueryHosterServices;
+use App\Services\Hoster\Stay\StaySessionServices;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ChatHosterServices {
 
     public $queryHosterServices;
+    public $staySessionServices;
 
     function __construct(
-        QueryHosterServices $_QueryHosterServices
+        QueryHosterServices $_QueryHosterServices,
+        StaySessionServices $_StaySessionServices
     )
     {
         $this->queryHosterServices = $_QueryHosterServices;
+        $this->staySessionServices = $_StaySessionServices;
     }
 
     public function pendingCountByHotel($hotel){
@@ -67,8 +71,9 @@ class ChatHosterServices {
         }
     }
 
-    public function sendMsg($guestId, $stayId, $text, $hotelId){
+    public function sendMsg($guestId, $stayId, $text, $hotelId, $data) {
         try {
+            $this->staySessionServices->updateActionOrcreateSession($data);
             DB::beginTransaction();
 
             $chat = Chat::updateOrCreate([
@@ -96,26 +101,33 @@ class ChatHosterServices {
                 UnReadGuest::dispatch('by-hoster'.$chat->id, $stayId, $chatMessage->id)->delay(now()->addMinutes(10));
             }
             DB::commit();
+            $count = $this->pendingCountByStay($stayId);
             //send message
-            sendEventPusher('private-update-chat.' . $stayId, 'App\Events\UpdateChatEvent', ['message' => $msg]);
+            sendEventPusher('private-update-chat.' . $stayId, 'App\Events\UpdateChatEvent', [
+                'message' => $msg,
+                'chatData' => $chat,
+            ]);
             sendEventPusher('private-noti-hotel.' . $hotelId, 'App\Events\NotifyStayHotelEvent',
                 [
                     'showLoadPage' => false,
-                    'stay_id' => $stayId,
+                    'stayId' => $stayId,
                     'chat_id' => $chat->id,
                     'hotel_id' => $hotelId,
+                    'pendingCountChats' => $count,
                     'automatic' => '0',
                     'add' => false,'pending' => true,  //es true en el input pero false en la bd
                 ]
             );
+            sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
         } catch (\Exception $e) {
             DB::rollback();
             return $e;
         }
     }
 
-    public function togglePending($guestId, $stayId, $pendingBool, $hotelId){
+    public function togglePending($guestId, $stayId, $pendingBool, $hotelId, $data) {
         try {
+            $this->staySessionServices->updateActionOrcreateSession($data);
             // $stay = Stay::select('id','hotel_id')->first($stayId);
             // $stay->touch();    
             Chat::updateOrCreate([

@@ -95,6 +95,11 @@ class UsersController extends Controller
                 'email.unique' => 'El correo electrónico ya está en uso',
             ]);
 
+            /* return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario creado con éxito',
+                'user' => request()->all()
+            ]); */
+
             // Si la validación pasa, proceder a crear el usuario
             $user = $this->userServices->storeUserHoster(request());
 
@@ -121,6 +126,11 @@ class UsersController extends Controller
                 'email.email' => 'El campo email debe ser un correo electrónico válido',
                 'email.unique' => 'El correo electrónico ya está en uso',
             ]);
+
+            /* return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario actualizado con éxito',
+                'user' => request()->all()
+            ]); */
 
             $user = $this->userServices->updateUserHoster(request(),request()->user_id);
 
@@ -196,6 +206,38 @@ class UsersController extends Controller
         }
     }
 
+    public function disabled(){
+        try {
+            $user = $this->userServices->disabledUserHoster(request()->user_id);
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario deshabilitado con éxito',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
+
+    public function enabled(){
+        try {
+            $user = $this->userServices->enabledUserHoster(request()->user_id);
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario habilitado con éxito',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
+
+
+
     public function getStatusSubscription(Request $request){
         try{
             $user = $this->userServices->getUserId();
@@ -229,9 +271,9 @@ class UsersController extends Controller
 
             $dates = "$checkinFormat - $checkoutFormat";
             //$this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
-            //$this->mailService->sendEmail(new WelcomeUser($user,$url,'12345'), "francisco20990@gmail.com");
-            $this->mailService->sendEmail(new ChatEmail([],$url,'new'), 'francisco20990@gmail.com');
-            Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
+            $this->mailService->sendEmail(new WelcomeUser($user,$url,'12345'), "francisco20990@gmail.com");
+            //$this->mailService->sendEmail(new ChatEmail([],$url,'new'), 'francisco20990@gmail.com');
+            //Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',

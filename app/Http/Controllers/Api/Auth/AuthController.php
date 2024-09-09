@@ -17,30 +17,31 @@ use Illuminate\Support\Facades\Session;
 class AuthController extends Controller
 {
     public function login(Request $request)
-    {
+{
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
 
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
-
-        if (!Auth::guard('web')->attempt($credentials)) {
-
-            return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Failed to authenticate']);
-        }
-
-        $user = Auth::guard('web')->user();
-
-        //$user->load('hotels');
-
-        $token = $user->createToken('appToken')->accessToken;
-
-        return bodyResponseRequest(EnumResponse::SUCCESS, [
-            'token' => $token,
-            'user' => new UserResource($user),
-            'tyest' => auth()->user()
-        ]);
+    if (!Auth::guard('web')->attempt($credentials)) {
+        return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Introduzca credenciales válidas']);
     }
+
+    $user = Auth::guard('web')->user();
+
+    // Verificar si el usuario tiene status = 1
+    if ($user->status == 0) {
+        return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Su cuenta ha sido inactivada. Solicita acceso a tu responsable o superior para poder entrar.']);
+    }
+
+    $token = $user->createToken('appToken')->accessToken;
+
+    return bodyResponseRequest(EnumResponse::SUCCESS, [
+        'token' => $token,
+        'user' => new UserResource($user),
+    ]);
+}
+
 
     public function loginAdmin(Request $request)
     {
