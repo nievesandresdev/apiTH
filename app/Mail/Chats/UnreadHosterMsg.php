@@ -36,6 +36,6 @@ class UnreadHosterMsg extends Mailable
             $senderEmail = $this->hotel['sender_mail_mask'];
         }
         return $this->from($senderEmail, $senderName)
-                    ->subject("Mensaje sin leer")->view('Mails.guest.unreadMsg');
+                    ->subject("Chant pendiente")->view('Mails.guest.unreadMsg');
     }
 }

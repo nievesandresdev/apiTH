@@ -49,14 +49,14 @@ class UnReadGuest implements ShouldQueue
         Log::info('UnReadGuest ');
         $this->chatServices = $_ChatService;
         $unansweredMessagesDataToGuest =  $this->chatServices->unansweredMessagesData($this->chatId,'ToGuest');
-        Log::info('$unansweredMessagesDataToGuest '.json_encode($unansweredMessagesDataToGuest));
+        // Log::info('$unansweredMessagesDataToGuest '.json_encode($unansweredMessagesDataToGuest));
 
         $link = url('webapp?g='.$this->guestId);
         $webappLink =  includeSubdomainInUrlHuesped($link, $this->hotel);
-        Log::info('$link '.json_encode($webappLink));
-        Log::info('$this->hotel '.json_encode($this->hotel));
+        // Log::info('$link '.json_encode($webappLink));
+        // Log::info('$this->hotel '.json_encode($this->hotel));
         $guest = Guest::find($this->guestId);
-        Log::info('$guest '. json_encode($guest));
+        // Log::info('$guest '. json_encode($guest));
         Mail::to($guest->email)->send(new UnreadHosterMsg($unansweredMessagesDataToGuest, $this->hotel, $webappLink));
 
         // $settings =  StayNotificationSetting::where('hotel_id',$this->hotel->id)->first();

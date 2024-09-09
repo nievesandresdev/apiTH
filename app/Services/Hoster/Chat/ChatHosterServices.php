@@ -98,8 +98,7 @@ class ChatHosterServices {
             DB::commit();
             //si existe algun job para notificacion no se acumularan jobs duplicados
             DB::table('jobs')->where('payload', 'like', '%by-hoster' . $chat->id . '%')->delete();
-            UnReadGuest::dispatch('by-hoster'.$chat->id, $hotel, $chat->id, $guestId);
-            // ->delay(now()->addMinutes(10))
+            UnReadGuest::dispatch('by-hoster'.$chat->id, $hotel, $chat->id, $guestId)->delay(now()->addMinutes(10));
             $hotelId = $hotel->id;
             $count = $this->pendingCountByStay($stayId);
             //send message
