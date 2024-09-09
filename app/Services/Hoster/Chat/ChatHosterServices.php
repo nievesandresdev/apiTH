@@ -94,7 +94,6 @@ class ChatHosterServices {
             ]);
 
             $msg = $chat->messages()->save($chatMessage);
-
             DB::commit();
             //si existe algun job para notificacion no se acumularan jobs duplicados
             DB::table('jobs')->where('payload', 'like', '%by-hoster' . $chat->id . '%')->delete();
