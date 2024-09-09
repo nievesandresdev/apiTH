@@ -23,7 +23,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 
 # Install PHP extensions required at runtime
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
-    install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip
+    install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
