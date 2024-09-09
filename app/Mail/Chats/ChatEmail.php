@@ -40,7 +40,7 @@ class ChatEmail extends Mailable
                         'languageName' => $this->languageName,
                     ]); */
 
-                    return $this->from("no-reply@thehoster.es", 'ssss@gmail.com')
+                    return $this->from("no-reply@thehoster.es", 'Nuevo Chat')
                     ->subject($typeTitle)
                     ->view('Mails.chats.NewChat');
     }

@@ -74,6 +74,7 @@ class HotelResource extends JsonResource
             "hidden_categories" => $this->hiddenCategories->pluck('id'),
             "hidden_type_places" => $this->hiddenTypePlaces->pluck('id'),
             "code" => $this->code,
+            "sender_mail_mask" => $this->sender_mail_mask
         ];
     }
 }

@@ -16,6 +16,7 @@ class VerifyApiKey
         // Rutas que no requieren verificación de API key
         $excludedPaths = [
             'api/stay/hoster/deleteSessionWithApiKey',
+            'test',
         ];
 
         // Verifica si la ruta actual está en la lista de exclusiones

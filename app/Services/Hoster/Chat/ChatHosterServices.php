@@ -71,7 +71,7 @@ class ChatHosterServices {
         }
     }
 
-    public function sendMsg($guestId, $stayId, $text, $hotelId, $data) {
+    public function sendMsg($guestId, $stayId, $text, $hotel, $data) {
         try {
             $this->staySessionServices->updateActionOrcreateSession($data);
             DB::beginTransaction();
@@ -89,18 +89,18 @@ class ChatHosterServices {
                 'text' => $text,
                 'status' => 'Entregado',
                 'by' => 'Hoster',
-                'messageable_id' => $hotelId,
+                'messageable_id' => $hotel->id,
                 'messageable_type' => 'App\Models\hotel'
             ]);
 
             $msg = $chat->messages()->save($chatMessage);
 
-            //si existe algun job para notificacion no se acumularan jobs duplicados
-            $exists_job = DB::table('jobs')->where('payload', 'like', '%by-hoster' . $chat->id . '%')->count();
-            if(!$exists_job){
-                UnReadGuest::dispatch('by-hoster'.$chat->id, $stayId, $chatMessage->id)->delay(now()->addMinutes(10));
-            }
             DB::commit();
+            //si existe algun job para notificacion no se acumularan jobs duplicados
+            DB::table('jobs')->where('payload', 'like', '%by-hoster' . $chat->id . '%')->delete();
+            UnReadGuest::dispatch('by-hoster'.$chat->id, $hotel, $chat->id, $guestId);
+            // ->delay(now()->addMinutes(10))
+            $hotelId = $hotel->id;
             $count = $this->pendingCountByStay($stayId);
             //send message
             sendEventPusher('private-update-chat.' . $stayId, 'App\Events\UpdateChatEvent', [

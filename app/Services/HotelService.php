@@ -196,6 +196,11 @@ class HotelService {
         return $hotelModel;
     }
 
+    public function updateSenderMailMask ($hotelModel, $email) {
+        $hotelModel = $hotelModel->update(['sender_mail_mask' => $email]);
+        return $hotelModel;
+    }
+
     public function updateVisivilityCategory ($request, $hotelModel) {
         if ($hotelModel->hiddenCategories()->where('categori_places_id', $request->categori_places_id)->exists()) {
             $hotelModel->hiddenCategories()->detach($request->categori_places_id);
