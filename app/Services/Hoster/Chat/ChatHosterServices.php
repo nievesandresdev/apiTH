@@ -46,6 +46,17 @@ class ChatHosterServices {
             return $e;
         }
     }
+
+    public function countUnreadMsgsByGuest($chatId){
+        try {
+            return ChatMessage::where('chat_id',$chatId)
+                    ->where('status','Entregado')
+                    ->where('by','Hoster')
+                    ->count();
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     
     public function getDataRoom($stayId, $guestId){
         try {
@@ -100,11 +111,19 @@ class ChatHosterServices {
             UnReadGuest::dispatch('by-hoster'.$chat->id, $hotel, $chat->id, $guestId)->delay(now()->addMinutes(10));
             $hotelId = $hotel->id;
             $count = $this->pendingCountByStay($stayId);
+            $countUnreadMsgsByGuest = $this->countUnreadMsgsByGuest($chat->id);
+            Log::info('$countUnreadMsgsByGuest '. json_encode($countUnreadMsgsByGuest));
             //send message
             sendEventPusher('private-update-chat.' . $stayId, 'App\Events\UpdateChatEvent', [
                 'message' => $msg,
                 'chatData' => $chat,
+                'countUnreadMsgsByGuest' => $countUnreadMsgsByGuest
             ]);
+
+            sendEventPusher('private-notify-unread-msg-guest.' . $guestId, 'App\Events\NotifyUnreadMsgGuest', [
+                'countUnreadMsgsByGuest' => $countUnreadMsgsByGuest
+            ]);
+            Log::info('$countUnreadMsgsByGuest luego ');
             sendEventPusher('private-noti-hotel.' . $hotelId, 'App\Events\NotifyStayHotelEvent',
                 [
                     'showLoadPage' => false,
@@ -136,6 +155,10 @@ class ChatHosterServices {
             ]);
             
             $count = $this->pendingCountByStay($stayId);
+
+            // Obtener la estancia y actualizar el campo updated_at.
+            $stay = Stay::find($stayId);
+            $stay->touch();    
             // sendEventPusher('private-noti-hotel.' . $stay->hotel_id, 'App\Events\NotifyStayHotelEvent',
             //     [
             //         'showLoadPage' => false,

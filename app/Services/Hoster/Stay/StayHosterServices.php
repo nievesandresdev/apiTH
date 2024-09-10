@@ -51,6 +51,7 @@ class StayHosterServices {
                     DB::raw('(SELECT COUNT(*) FROM queries WHERE queries.stay_id = stays.id AND queries.attended = 0 AND queries.answered = 1) as pending_queries_count'),
                     DB::raw('(SELECT COUNT(*) FROM queries WHERE queries.stay_id = stays.id AND queries.answered = 1) as answered_queries_count'),
                     DB::raw('(SELECT MAX(pending) FROM chats WHERE chats.stay_id = stays.id) as has_pending_chats'),
+                    DB::raw('(SELECT COUNT(*) FROM chats WHERE chats.stay_id = stays.id) as has_chats'),
                     DB::raw("CASE 
                                 WHEN '$now' < DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) THEN 'pre-stay'
                                 WHEN '$now' >= DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) AND '$now' < stays.check_out THEN 'in-stay'
@@ -86,7 +87,9 @@ class StayHosterServices {
             $stays = $query->orderByRaw('
                 CASE 
                     WHEN has_pending_chats = 1 OR pending_queries_count > 0 THEN 0
-                    ELSE 1
+                    WHEN has_chats > 0 THEN 1
+                    WHEN answered_queries_count > 0 THEN 2
+                    ELSE 3
                 END ASC, 
                 stays.updated_at DESC, 
                 stays.id DESC
