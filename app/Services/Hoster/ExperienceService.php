@@ -157,7 +157,7 @@ class ExperienceService {
 
         if (count($dataFilter['score']) > 0) {
             foreach ($dataFilter['score'] as $key => $item) {
-                $durations =  [['i'=>0,'f'=>1],['i'=>1,'f'=>2],['i'=>2,'f'=>3],['i'=>3,'f'=>4],['i'=>4,'f'=>5]];
+                $durations =  [['i'=>0,'f'=>1.99],['i'=>2,'f'=>2.99],['i'=>3,'f'=>3.99],['i'=>4,'f'=>4.99],['i'=>5,'f'=>5]];
                 $d = intval($item) - 1;
                 $interval = $durations[$d];
                 if ($key == 0){
