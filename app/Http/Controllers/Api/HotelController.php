@@ -227,6 +227,27 @@ class HotelController extends Controller
         }
     }
 
+    public function updateSenderMailMask (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $this->service->updateSenderMailMask($hotelModel, $request->email);
+            $hotelModel->refresh();
+            $data = new HotelResource($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateSenderMailMask');
+        }
+    }
+
     public function updateVisivilityCategory (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');

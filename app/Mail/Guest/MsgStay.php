@@ -46,9 +46,13 @@ class MsgStay extends Mailable
         }else{
             $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
         }
-
-
-        return $this->from("no-reply@thehoster.es", $this->hotel['sender_for_sending_email'])
+        
+        $senderName = $this->hotel['sender_for_sending_email'];
+        $senderEmail = "no-reply@thehoster.es";
+        if($this->hotel['sender_mail_mask']){
+            $senderEmail = $this->hotel['sender_mail_mask'];
+        }
+        return $this->from($senderEmail, $senderName)
                     ->subject($subject)->view('Mails.guest.msgStay');
 
     }

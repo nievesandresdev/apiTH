@@ -225,20 +225,28 @@ class ChatService {
 
     }
 
-    public function unansweredMessagesData($chatId){
+    public function unansweredMessagesData($chatId, $model = 'ToHoster'){
 
         try{
+            
+            $diff = 'Hoster';
+            $pedding = 1;
+            if($model == 'ToGuest'){
+                $diff = 'Guest';
+                $pedding = 0;
+            }
+            // Log::info('unansweredMessagesData '.json_encode([$chatId,$diff]));
             $url = config('app.hoster_url');
-            $unansweredMessages = ChatMessage::whereHas('chat', function ($query) use ($chatId) { //los mensajes del ultimo chat pendiung 1
+            $unansweredMessages = ChatMessage::whereHas('chat', function ($query) use ($chatId,$pedding) { //los mensajes del ultimo chat pendiung 1
                 $query->where('id', $chatId)
-                    ->where('pending', 1);
+                    ->where('pending', $pedding);
             })
             ->where('automatic', 0)
-            ->where('by', '!=', 'Hoster')
+            ->where('by', '!=', $diff)
             ->with(['chat','messageable'])
             ->latest()
             ->get();
-
+            
             $unansweredMessagesData = $unansweredMessages->map(function ($message) use ($url) { //map
                 $guestName = null;
                 if ($message->messageable_type === 'App\Models\Guest') {
