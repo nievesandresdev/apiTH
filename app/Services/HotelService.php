@@ -30,7 +30,7 @@ class HotelService {
 
     public function getAll ($request, $modelHotel) {
 
-        $user = $modelHotel->user[0];
+        $user = \Auth::user();
 
         $hotelsCollection = $user->hotel()->where('del', 0)->get();
 
