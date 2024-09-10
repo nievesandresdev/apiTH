@@ -46,3 +46,7 @@ Broadcast::channel('stay-sessions-hotel.{id}', function ($hotel, $id) {
 Broadcast::channel('notify-unread-msg-hotel.{id}', function ($hotel, $id) {
     return (int) $hotel->id === (int) $id;
 });
+
+Broadcast::channel('notify-unread-msg-guest.{id}', function ($guest, $id) {
+    return (int) $guest->id === (int) $id;
+});
