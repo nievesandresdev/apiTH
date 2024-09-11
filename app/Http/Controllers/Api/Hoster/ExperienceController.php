@@ -241,15 +241,17 @@ class ExperienceController extends Controller
             $featuredBool = $request->recommedation ?? false;
             $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
             $toggleProductModel = ToggleProduct::where(['products_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
+
             if ($featuredBool) {
-                $this->service->assignFirstPosition($hotelModel, $productModel);
+                $this->service->assignFirstPosition($toggleProductModel);
             } else {
                 // $position = $this->service->getPositionFirtNonRecommendated($hotelModel, $cityModel);
                 // $position = $this->service->getPositionOld($toggleProductModel->order, $hotelModel, $cityModel);
                 // $position = ExperienceResource::collection($position);
                 // $position = new ExperienceResource($position);
                 // return $position;
-                // $this->service->updatePosition($position, $toggleProductModel);
+                // $toggleProductModel->refresh();
+                // $this->service->updatePosition($toggleProductModel->position_old, $toggleProductModel);
             }
             $this->service->syncPosition($request, $cityModel, $hotelModel);
             \DB::commit();

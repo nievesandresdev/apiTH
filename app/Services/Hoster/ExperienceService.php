@@ -213,16 +213,21 @@ class ExperienceService {
         }
     }
 
-    public function assignFirstPosition ($hotelModel, $productModel) {
-        $modelTogglePlace = ToggleProduct::updateOrCreate([
-            'hotel_id' => $hotelModel->id,
-            'products_id' => $productModel->id,
-        ], [
-            'hotel_id' => $hotelModel->id,
-            'products_id' => $productModel->id,
+    public function assignFirstPosition ($toggleProductModel) {
+        $toggleProductModel->update([
             'position' => 0,
+            'position_old' => $toggleProductModel->position,
             'order' => 1
         ]);
+        // $modelTogglePlace = ToggleProduct::updateOrCreate([
+        //     'hotel_id' => $hotelModel->id,
+        //     'products_id' => $productModel->id,
+        // ], [
+        //     'hotel_id' => $hotelModel->id,
+        //     'products_id' => $productModel->id,
+        //     'position' => 0,
+        //     'order' => 1
+        // ]);
     }
 
     public function deletePositionCurrent ($hotelModel, $productModel) {
