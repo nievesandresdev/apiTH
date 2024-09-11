@@ -244,11 +244,12 @@ class ExperienceController extends Controller
             if ($featuredBool) {
                 $this->service->assignFirstPosition($position, $hotelModel, $productModel);
             } else {
+                $position = $this->service->getPositionFirtNonRecommendated($hotelModel, $cityModel);
                 // $position = $this->service->getPositionOld($toggleProductModel->order, $hotelModel, $cityModel);
                 // $position = ExperienceResource::collection($position);
                 // $position = new ExperienceResource($position);
                 // return $position;
-                // $this->service->updatePosition($position, $toggleProductModel);
+                $this->service->updatePosition($position, $toggleProductModel);
             }
             $this->service->syncPosition($request, $cityModel, $hotelModel);
             \DB::commit();

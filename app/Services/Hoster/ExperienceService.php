@@ -342,6 +342,45 @@ class ExperienceService {
     public function updatePosition ($position, $toggleProductModel) {
         $toggleProductModel->update(['position' => $position]);
     }
+    public function getPositionFirtNonRecommendated ($hotelModel, $cityModel) {
+        $newPosition = null;
+        $productsQuery = Products::activeToShow()
+            ->select(
+                'products.id',
+                \DB::raw("(
+                    SELECT ST_Distance_Sphere(
+                        point(a.metting_point_longitude, a.metting_point_latitude),
+                        point(?, ?)
+                    )
+                    FROM activities a
+                    WHERE a.products_id = products.id
+                    ORDER BY a.id ASC
+                    LIMIT 1
+                ) AS distance"),
+            )->addBinding([$cityModel->long, $cityModel->lag], 'select')
+            ->whereVisibleByHoster($hotelModel->id)
+            ->orderByPosition($hotelModel->id)
+            ->orderByFeatured($hotelModel->id)
+            ->orderByWeighing($hotelModel->id)
+            ->orderBy('distance','ASC')
+            ->whereCity($cityModel->name);
+
+        $productsQuery->chunk(100, function ($products) use (&$newPosition, $hotelModel) {
+            foreach ($products as $productModal) {
+                $productFeatured = $productModal->productFeatured()->where('hotel_id', $hotelModel->id)->first();
+                
+                if (!$productFeatured) {
+                    $toggleProduct = ToggleProduct::where(['hotel_id' => $hotelModel->id, 'products_id' => $productModal->id])->first();
+                    $newPosition = $toggleProduct->position;
+                    // var_dump($newPosition);
+                    return false;
+                }
+            }
+        });
+
+        return $newPosition;
+        
+    }
     public function getPositionOld ($order, $hotelModel, $cityModel) {
 
         $order = (float) $order;
