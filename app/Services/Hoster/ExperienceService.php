@@ -225,6 +225,15 @@ class ExperienceService {
         ]);
     }
 
+    public function deletePositionCurrent ($hotelModel, $productModel) {
+        $modelTogglePlace = ToggleProduct::updateOrCreate([
+            'hotel_id' => $hotelModel->id,
+            'products_id' => $productModel->id,
+        ], [
+            'position' => null,
+        ]);
+    }
+
     public function updateVisibility ($request, $hotelModel, $productModel) {
         $productId = $productModel->id;
         $isVisible = $request->visivility;
@@ -324,11 +333,56 @@ class ExperienceService {
 
     }
 
-    public function updatePosition ($position, $hotelModel) {
+    public function updatePositionBulk ($position, $hotelModel) {
         $toggleProductsIdsOrded = collect($position??[]);
         foreach ($toggleProductsIdsOrded as $position => $id) {
             ToggleProduct::where(['id' => $id])->update(['position' => $position]);
         }
+    }
+    public function updatePosition ($position, $toggleProductModel) {
+        $toggleProductModel->update(['position' => $position]);
+    }
+    public function getPositionOld ($order, $hotelModel, $cityModel) {
+
+        $order = (float) $order;
+        $productsQuery = Products::activeToShow()
+            ->select(
+                'products.id',
+                \DB::raw("(
+                    SELECT ST_Distance_Sphere(
+                        point(a.metting_point_longitude, a.metting_point_latitude),
+                        point(?, ?)
+                    )
+                    FROM activities a
+                    WHERE a.products_id = products.id
+                    ORDER BY a.id ASC
+                    LIMIT 1
+                ) AS distance"),
+            )->addBinding([$cityModel->long, $cityModel->lag], 'select')
+            ->whereVisibleByHoster($hotelModel->id)
+            ->orderByPosition($hotelModel->id)
+            ->orderByFeatured($hotelModel->id)
+            ->orderByWeighing($hotelModel->id)
+            // ->orderBy('distance','ASC')
+            ->whereCity($cityModel->name);
+
+        $shouldContinue = true;
+
+        $newOrder = null;
+
+        $productsQuery->chunk(100, function ($products) use (&$newOrder, $order, $hotelModel) {
+            foreach ($products as $productModal) {
+                $toggleProduct = ToggleProduct::where(['hotel_id' => $hotelModel->id, 'products_id' => $productModal->id])->first();
+                $orderProductCurrent = (float) $toggleProduct->order;
+                if ($orderProductCurrent < $order) {
+                    return false;
+                }
+                $newOrder = $orderProductCurrent;
+            }
+        });
+
+        return $newOrder;
+        
     }
 
     public function findRecommendation ($hotelModel, $productModel) {

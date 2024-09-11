@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Products;
+use App\Models\ToggleProduct;
 
 use App\Services\Hoster\ExperienceService;
 
@@ -181,7 +182,7 @@ class ExperienceController extends Controller
             $citySlug = Str::slug($hotelModel->zone);
             $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
             \DB::beginTransaction();
-            $this->service->updatePosition($request->position, $hotelModel);
+            $this->service->updatePositionBulk($request->position, $hotelModel);
             $this->service->syncPosition($request, $cityModel, $hotelModel);
             \DB::commit();
             return bodyResponseRequest(EnumResponse::SUCCESS_OK);
@@ -239,9 +240,17 @@ class ExperienceController extends Controller
             $productModel = Products::find($productId);
             $featuredBool = $request->recommedation ?? false;
             $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+            $toggleProductModel = ToggleProduct::where(['products_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
             if ($featuredBool) {
-                $this->service->assignFirstPosition($hotelModel, $productModel);
+                $this->service->assignFirstPosition($position, $hotelModel, $productModel);
+            } else {
+                // $position = $this->service->getPositionOld($toggleProductModel->order, $hotelModel, $cityModel);
+                // $position = ExperienceResource::collection($position);
+                // $position = new ExperienceResource($position);
+                // return $position;
+                // $this->service->updatePosition($position, $toggleProductModel);
             }
+            $this->service->syncPosition($request, $cityModel, $hotelModel);
             \DB::commit();
             return bodyResponseRequest(EnumResponse::SUCCESS_OK);
         } catch (\Exception $e) {

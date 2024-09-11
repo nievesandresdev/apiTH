@@ -51,6 +51,7 @@ class ExperienceResource extends JsonResource
             'slug_city' => Str::slug($this['translation']['city_experince']),
             'duration' => $this['translation']['duration'],
             'position' => $toggleProduct?->pivot->position,
+            'order' => $toggleProduct?->pivot->order,
             'toggle_product_id' => $toggleProduct?->pivot->id,
             'recomendation_language_current' => $recommendacion ? $recommendacion->translationLanguageCurrent() : null,
         ];
