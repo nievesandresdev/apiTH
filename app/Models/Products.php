@@ -54,7 +54,7 @@ class Products extends Model
     }
 
     public function toggleableHotels(){
-        return $this->belongsToMany(hotel::class, 'toggle_products', 'products_id', 'hotel_id')->withPivot('id', 'order', 'position');
+        return $this->belongsToMany(hotel::class, 'toggle_products', 'products_id', 'hotel_id')->withPivot('id', 'order', 'position', 'position_old');
     }
 
     public function productFeatured(){

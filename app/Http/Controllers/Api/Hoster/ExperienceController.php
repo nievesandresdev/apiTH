@@ -240,10 +240,11 @@ class ExperienceController extends Controller
             $productModel = Products::find($productId);
             $featuredBool = $request->recommedation ?? false;
             $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+            // $updatePositionOld = $featuredBool ? true : false;
+            // $c = $this->service->syncPosition($request, $cityModel, $hotelModel, $updatePositionOld);
             $toggleProductModel = ToggleProduct::where(['products_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
-
             if ($featuredBool) {
-                $this->service->assignFirstPosition($toggleProductModel);
+                $this->service->assignFirstPosition($hotelModel, $productModel);
             } else {
                 // $position = $this->service->getPositionFirtNonRecommendated($hotelModel, $cityModel);
                 // $position = $this->service->getPositionOld($toggleProductModel->order, $hotelModel, $cityModel);
@@ -251,11 +252,12 @@ class ExperienceController extends Controller
                 // $position = new ExperienceResource($position);
                 // return $position;
                 // $toggleProductModel->refresh();
-                // $this->service->updatePosition($toggleProductModel->position_old, $toggleProductModel);
+                // $this->service->updatePosition($hotelModel, $productModel);
             }
-            $this->service->syncPosition($request, $cityModel, $hotelModel);
+            $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             \DB::commit();
-            return bodyResponseRequest(EnumResponse::SUCCESS_OK);
+            $toggleProductModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $toggleProductModel);
         } catch (\Exception $e) {
             return $e;
             \DB::rollback();

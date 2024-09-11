@@ -213,12 +213,17 @@ class ExperienceService {
         }
     }
 
-    public function assignFirstPosition ($toggleProductModel) {
-        $toggleProductModel->update([
-            'position' => 0,
-            'position_old' => $toggleProductModel->position,
-            'order' => 1
-        ]);
+    public function assignFirstPosition ($hotelModel, $productModel) {
+        $toggleProductModel = ToggleProduct::where([
+            'hotel_id' => $hotelModel->id,
+            'products_id' => $productModel->id,
+        ])->first();
+        if ($toggleProductModel) {
+            $toggleProductModel->update([
+                'position' => 0,
+                'order' => 1
+            ]);
+        }
         // $modelTogglePlace = ToggleProduct::updateOrCreate([
         //     'hotel_id' => $hotelModel->id,
         //     'products_id' => $productModel->id,
@@ -277,7 +282,7 @@ class ExperienceService {
         }
     }
 
-    public function syncPosition ($request, $cityModel, $hotelModel) {
+    public function syncPosition ($request, $cityModel, $hotelModel, $update_position_old = true) {
         $hotelId = $hotelModel->id;
         $productsQuery = Products::activeToShow()
             ->select(
@@ -302,20 +307,24 @@ class ExperienceService {
 
         $position = 0;
 
-        $productsQuery->chunk(100, function ($products) use (&$position, $hotelModel) {
+        $productsQuery->chunk(100, function ($products) use (&$position, $hotelModel, $update_position_old) {
             foreach ($products as $product) {
                 $toggleProductModel = ToggleProduct::where([
                     'hotel_id' => $hotelModel->id,
                     'products_id' => $product->id,
                 ])->first();
                 if ($toggleProductModel) {
-                    $toggleProductModel->update(['position' => $position]);
+                    $toggleProductModel->position = $position;
+                    if ($update_position_old) {
+                        $toggleProductModel->position_old = $position;
+                    }
+                    $toggleProductModel->save();
                 }
                 // $product->toggleableHotels()->where('hotel_id', $hotelModel->id)->update(['position' => $position]);
                 $position++;
             }
         });
-
+        return true;
     }
 
     public function resetPosition ($request, $cityModel, $hotelModel) {
@@ -344,8 +353,12 @@ class ExperienceService {
             ToggleProduct::where(['id' => $id])->update(['position' => $position]);
         }
     }
-    public function updatePosition ($position, $toggleProductModel) {
-        $toggleProductModel->update(['position' => $position]);
+    public function updatePosition ($hotelModel, $productModel) {
+        $toggleProductModel = ToggleProduct::where(['products_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
+        if ($toggleProductModel && $toggleProductModel->position_old) {
+            var_dump('entro');
+            $toggleProductModel->update(['position' => $toggleProductModel->position_old, 'position_old' => $toggleProductModel->position_old]);
+        }
     }
     public function getPositionFirtNonRecommendated ($hotelModel, $cityModel) {
         $newPosition = null;
