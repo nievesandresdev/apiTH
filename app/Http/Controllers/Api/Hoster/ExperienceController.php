@@ -303,7 +303,9 @@ class ExperienceController extends Controller
 
             $toggleProductOld = $productModel->toggleableHotels()->where('hotel_id', $hotelModel->id)->first();
 
-            if ($featuredBool && !$toggleProduct) {
+            $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+
+            if ($featuredBool && !$toggleProductOld) {
                 $this->service->assignFirstPosition($hotelModel, $productModel);
                 $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             }
@@ -314,7 +316,7 @@ class ExperienceController extends Controller
 
             $recomendationModel = $this->service->updateRecommendation($messageRecomendation, $recomendationModel, $hotelModel, $productModel);
 
-            $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+            // $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
             
             if ($translate) {
                 $inputsTranslate = ['recommendation' => $inputsUpdateProduct['recommendation']];
