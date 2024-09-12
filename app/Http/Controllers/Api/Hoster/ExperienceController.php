@@ -298,10 +298,14 @@ class ExperienceController extends Controller
 
             $productModel = Products::find($productId);
 
-            $toggleProduct = $productModel->toggleableHotels()->where('hotel_id', $hotelModel->id)->first();
+            $citySlug = Str::slug($hotelModel->zone);
+            $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+
+            $toggleProductOld = $productModel->toggleableHotels()->where('hotel_id', $hotelModel->id)->first();
 
             if ($featuredBool && !$toggleProduct) {
                 $this->service->assignFirstPosition($hotelModel, $productModel);
+                $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             }
 
             $recomendationModel = $this->service->findRecommendation($hotelModel, $productModel);
