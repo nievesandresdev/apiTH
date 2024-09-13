@@ -259,7 +259,6 @@ class ExperienceController extends Controller
             $toggleProductModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $toggleProductModel);
         } catch (\Exception $e) {
-            return $e;
             \DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateRecommendation');
         }
@@ -298,10 +297,16 @@ class ExperienceController extends Controller
 
             $productModel = Products::find($productId);
 
-            $toggleProduct = $productModel->toggleableHotels()->where('hotel_id', $hotelModel->id)->first();
+            $citySlug = Str::slug($hotelModel->zone);
+            $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
 
-            if ($featuredBool && !$toggleProduct) {
+            $toggleProductOld = $productModel->toggleableHotels()->where('hotel_id', $hotelModel->id)->first();
+
+            $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+
+            if ($featuredBool && !$toggleProductOld) {
                 $this->service->assignFirstPosition($hotelModel, $productModel);
+                $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             }
 
             $recomendationModel = $this->service->findRecommendation($hotelModel, $productModel);
@@ -310,7 +315,7 @@ class ExperienceController extends Controller
 
             $recomendationModel = $this->service->updateRecommendation($messageRecomendation, $recomendationModel, $hotelModel, $productModel);
 
-            $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
+            // $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
             
             if ($translate) {
                 $inputsTranslate = ['recommendation' => $inputsUpdateProduct['recommendation']];
