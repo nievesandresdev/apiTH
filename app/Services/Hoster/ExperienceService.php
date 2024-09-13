@@ -218,9 +218,10 @@ class ExperienceService {
             'hotel_id' => $hotelModel->id,
             'position' => 0,
         ])->first();
-        return $toggleProductModelFirstOld;
         if ($toggleProductModelFirstOld) {
             $toggleProductModelFirstOld->update(['position' => 0.5]);
+            $toggleProductModelFirstOld->refresh();
+            return $toggleProductModelFirstOld;
         }
         $modelToggleProductFirstNew = ToggleProduct::updateOrCreate([
             'hotel_id' => $hotelModel->id,
