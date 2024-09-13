@@ -245,7 +245,6 @@ class ExperienceController extends Controller
             $toggleProductModel = ToggleProduct::where(['products_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
             if ($featuredBool) {
                 $r = $this->service->assignFirstPosition($hotelModel, $productModel);
-                return $r;
             } else {
                 // $position = $this->service->getPositionFirtNonRecommendated($hotelModel, $cityModel);
                 // $position = $this->service->getPositionOld($toggleProductModel->order, $hotelModel, $cityModel);
