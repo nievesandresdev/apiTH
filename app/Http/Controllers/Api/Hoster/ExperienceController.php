@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Products;
+use App\Models\ServiceFeatured;
 use App\Models\ToggleProduct;
 
 use App\Services\Hoster\ExperienceService;
@@ -244,7 +245,7 @@ class ExperienceController extends Controller
             // $c = $this->service->syncPosition($request, $cityModel, $hotelModel, $updatePositionOld);
             $toggleProductModel = ToggleProduct::where(['products_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
             if ($featuredBool) {
-                $this->service->assignFirstPosition($hotelModel, $productModel);
+                $r = $this->service->assignFirstPosition($hotelModel, $productModel);
             } else {
                 // $position = $this->service->getPositionFirtNonRecommendated($hotelModel, $cityModel);
                 // $position = $this->service->getPositionOld($toggleProductModel->order, $hotelModel, $cityModel);
@@ -254,9 +255,9 @@ class ExperienceController extends Controller
                 // $toggleProductModel->refresh();
                 // $this->service->updatePosition($hotelModel, $productModel);
             }
-            // $this->service->syncPosition($request, $cityModel, $hotelModel, false);
+            $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             \DB::commit();
-            $toggleProductModel->refresh();
+            $toggleProductModel->refresh();  
             return bodyResponseRequest(EnumResponse::ACCEPTED, $toggleProductModel);
         } catch (\Exception $e) {
             \DB::rollback();
@@ -300,14 +301,14 @@ class ExperienceController extends Controller
             $citySlug = Str::slug($hotelModel->zone);
             $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
 
-            $toggleProductOld = $productModel->toggleableHotels()->where('hotel_id', $hotelModel->id)->first();
+            $productFeaturedModel = ServiceFeatured::where(['product_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
 
             $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
 
-            if ($featuredBool && !$toggleProductOld) {
+            if ($featuredBool && !$productFeaturedModel) {
                 $this->service->assignFirstPosition($hotelModel, $productModel);
-                $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             }
+            $this->service->syncPosition($request, $cityModel, $hotelModel, false);
 
             $recomendationModel = $this->service->findRecommendation($hotelModel, $productModel);
 
@@ -324,7 +325,7 @@ class ExperienceController extends Controller
             }
 
             \DB::commit();
-
+// 
             $dataResponse = new ExperienceResource($productModel);
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $dataResponse);

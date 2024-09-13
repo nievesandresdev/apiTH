@@ -304,19 +304,19 @@ class ExperienceService {
 
         $productsQuery->chunk(100, function ($products) use (&$position, $hotelModel, $update_position_old) {
             foreach ($products as $product) {
-                // $toggleProductModel = ToggleProduct::where([
-                //     'hotel_id' => $hotelModel->id,
-                //     'products_id' => $product->id,
-                // ])->first();
-                // if ($toggleProductModel) {
-                //     $toggleProductModel->position = $position;
-                //     if ($update_position_old) {
-                //         $toggleProductModel->position_old = $position;
-                //     }
-                //     $toggleProductModel->save();
-                // }
-                //
-                $product->toggleableHotels()->where('hotel_id', $hotelModel->id)->update(['position' => $position]);
+                $toggleProductModel = ToggleProduct::where([
+                    'hotel_id' => $hotelModel->id,
+                    'products_id' => $product->id,
+                ])->first();
+                if ($toggleProductModel) {
+                    $toggleProductModel->position = $position;
+                    if ($update_position_old) {
+                        $toggleProductModel->position_old = $position;
+                    }
+                    $toggleProductModel->save();
+                }
+                
+                // $product->toggleableHotels()->where('hotel_id', $hotelModel->id)->update(['position' => $position]);
                 $position++;
             }
         });

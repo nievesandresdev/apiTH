@@ -264,7 +264,8 @@ class Products extends Model
                 $join->on('products.id', '=', 'tp.products_id')
                     ->where('tp.hotel_id', '=', $hotelId);
             })
-            ->orderByRaw('ISNULL(tp.position), tp.position ASC');
+            ->orderByRaw('ISNULL(tp.position), tp.position ASC')
+            ->orderBy('tp.updated_at', 'DESC');
         }
     }
 
