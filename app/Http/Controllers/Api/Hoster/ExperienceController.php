@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Products;
+use App\Models\ServiceFeatured;
 use App\Models\ToggleProduct;
 
 use App\Services\Hoster\ExperienceService;
@@ -293,21 +294,21 @@ class ExperienceController extends Controller
                 'recommendation' => $messageRecomendation,
             ];
 
-            // \DB::beginTransaction();
+            \DB::beginTransaction();
 
             $productModel = Products::find($productId);
 
             $citySlug = Str::slug($hotelModel->zone);
             $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
 
-            $toggleProductOld = $productModel->toggleableHotels()->where('hotel_id', $hotelModel->id)->first();
+            $productFeaturedModel = ServiceFeatured::where(['product_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
 
             $r = $this->service->featuredByHoster($featuredBool, $hotelModel, $productModel);
 
-            if ($featuredBool && !$toggleProductOld) {
+            if ($featuredBool && !$productFeaturedModel) {
                 $this->service->assignFirstPosition($hotelModel, $productModel);
-                $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             }
+            $this->service->syncPosition($request, $cityModel, $hotelModel, false);
 
             $recomendationModel = $this->service->findRecommendation($hotelModel, $productModel);
 
@@ -323,14 +324,14 @@ class ExperienceController extends Controller
                 TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this->service, $recomendationModel);
             }
 
-            // \DB::commit();
-
+            \DB::commit();
+// 
             $dataResponse = new ExperienceResource($productModel);
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $dataResponse);
 
         } catch (\Exception $e) {
-            // \DB::rollback();
+            \DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.update');
         }
     }
