@@ -254,8 +254,8 @@ class ExperienceController extends Controller
                 // $toggleProductModel->refresh();
                 // $this->service->updatePosition($hotelModel, $productModel);
             }
-            // $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             \DB::commit();
+            $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             $toggleProductModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $toggleProductModel);
         } catch (\Exception $e) {
