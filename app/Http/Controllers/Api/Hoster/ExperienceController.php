@@ -293,7 +293,7 @@ class ExperienceController extends Controller
                 'recommendation' => $messageRecomendation,
             ];
 
-            \DB::beginTransaction();
+            // \DB::beginTransaction();
 
             $productModel = Products::find($productId);
 
@@ -323,14 +323,14 @@ class ExperienceController extends Controller
                 TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this->service, $recomendationModel);
             }
 
-            \DB::commit();
+            // \DB::commit();
 
             $dataResponse = new ExperienceResource($productModel);
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $dataResponse);
 
         } catch (\Exception $e) {
-            \DB::rollback();
+            // \DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.update');
         }
     }
