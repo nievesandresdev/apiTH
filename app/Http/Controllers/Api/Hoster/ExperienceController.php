@@ -256,7 +256,7 @@ class ExperienceController extends Controller
             }
             $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             \DB::commit();
-            $toggleProductModel->refresh();
+            $toggleProductModel->refresh();  
             return bodyResponseRequest(EnumResponse::ACCEPTED, $toggleProductModel);
         } catch (\Exception $e) {
             \DB::rollback();
