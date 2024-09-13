@@ -114,6 +114,22 @@ class StayHosterController extends Controller
         }
     }
 
+    public function deleteTestStays(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->deleteTestStays($hotel->id);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteTestStays');
+        }
+    }
 
     //notes 
     

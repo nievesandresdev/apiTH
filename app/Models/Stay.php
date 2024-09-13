@@ -20,7 +20,8 @@ class Stay extends Model
         'hour_checkin',
         'hour_checkout',
         'pending_queries_seen',
-        'sessions'
+        'sessions',
+        'trial'
     ];
 
     protected $casts = [
@@ -65,6 +66,12 @@ class Stay extends Model
     public function guestNotes()
     {
         return $this->hasMany(NoteGuest::class);
+    }
+
+    //attr
+    public function getTrialAttribute($value)
+    {
+        return boolval($value);
     }
 
 }

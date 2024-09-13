@@ -21,6 +21,7 @@ Route::group(['prefix' => 'stay'], function () {
         Route::get('/statisticsByHotel', [StayHosterController::class, 'statisticsByHotel']);
         Route::get('/getdetailData', [StayHosterController::class, 'getdetailData']);
         Route::post('/updateData', [StayHosterController::class, 'updateData']);
+        Route::post('/deleteTestStays', [StayHosterController::class, 'deleteTestStays']);
         Route::get('/getDefaultGuestIdAndSessions/{stayId}', [StayHosterController::class, 'getDefaultGuestIdAndSessions']);
         //notes
         Route::get('/getAllNotesByStay', [StayHosterController::class, 'getAllNotesByStay']);

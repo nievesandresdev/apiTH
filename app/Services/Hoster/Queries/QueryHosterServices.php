@@ -49,9 +49,11 @@ class QueryHosterServices {
             $preStayQuery = $this->getPrestayStatus($guestData, $stayId, $dataDetail['period'], $dataDetail['stayCheckin'], $guestAccess);
             $stayQuery  = $this->geStayStatus($guestData, $stayId, $dataDetail['period'], $dataDetail['stayCheckin'], $dataDetail['stayCheckout'], $guestAccess);
             $postStayQuery  = $this->getPostStayStatus($guestData, $stayId, $dataDetail['period'], $dataDetail['stayCheckout'], $guestAccess);
-            
+
+            $countStayTest = $guestData->stays()->where('trial',true)->where('hotel_id',$hotel->id)->count();
             return [
                 'guest' => $guestData,
+                'countStayTest' => $countStayTest,
                 'queries' => [
                     'preStay' => $preStayQuery,
                     'stay' => $stayQuery,
