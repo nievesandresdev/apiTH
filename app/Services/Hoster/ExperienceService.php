@@ -315,6 +315,7 @@ class ExperienceService {
                 //     }
                 //     $toggleProductModel->save();
                 // }
+                //
                 $product->toggleableHotels()->where('hotel_id', $hotelModel->id)->update(['position' => $position]);
                 $position++;
             }
