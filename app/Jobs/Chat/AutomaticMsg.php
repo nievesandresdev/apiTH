@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use App\Models\hotel;
 use App\Models\User;
+use App\Services\Hoster\Chat\ChatHosterServices;
 
 class AutomaticMsg implements ShouldQueue
 {
@@ -21,6 +22,7 @@ class AutomaticMsg implements ShouldQueue
     protected $stay_id;
     protected $hotel_id;
     protected $text;
+    protected $chatHosterServices;
 
     /**
      * Create a new job instance.
@@ -42,10 +44,15 @@ class AutomaticMsg implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(ChatHosterServices $_ChatHosterServices)
     {
+        Log::info('Automatic MSG $chat_id '.json_encode($this->chat_id));
+        $this->chatHosterServices = $_ChatHosterServices;
         $message = ChatMessage::with('chat')->find($this->msg_id);
-        Log::info('Automatic MSG '.$message->chat->pending);
+
+        $explode = explode("send-by", $this->guestId);
+        $guestId = $explode[1];
+        
         if($message->chat->pending){
             $chatMessage = new ChatMessage([
                 'chat_id' => $this->chat_id,
@@ -54,11 +61,21 @@ class AutomaticMsg implements ShouldQueue
                 'by' => 'Hoster',
                 'automatic' => true
             ]);
-
+            
             $hotel = hotel::find($this->hotel_id);
             $msg = $hotel->chatMessages()->save($chatMessage);
             $msg->load('messageable');
-            sendEventPusher('private-update-chat.' . $this->stay_id, 'App\Events\UpdateChatEvent', ['message' => $msg]);
+            
+            $countUnreadMsgsByGuest = $this->chatHosterServices->countUnreadMsgsByGuest($this->chat_id);
+            sendEventPusher('private-update-chat.' . $guestId, 'App\Events\UpdateChatEvent', [
+                'message' => $msg,
+                'chatData' => $message->chat,
+                'countUnreadMsgsByGuest' => $countUnreadMsgsByGuest
+            ]);
+            // sendEventPusher('private-update-chat.' . $guestId, 'App\Events\UpdateChatEvent', ['message' => $msg]);
+            sendEventPusher('private-notify-unread-msg-guest.' . $guestId, 'App\Events\NotifyUnreadMsgGuest', [
+                'countUnreadMsgsByGuest' => $countUnreadMsgsByGuest
+            ]);
         }
     }
 }
