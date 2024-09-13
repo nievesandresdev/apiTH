@@ -120,11 +120,11 @@ class ChatService {
                 }
                 //se envia el mensaje si el hoster no responde en 5 min
                 if($request->isAvailable && $settings->second_available_show){
-                    AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->second_available_msg[$langPage])->delay(now()->addMinutes(2));//5
+                    AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->second_available_msg[$langPage])->delay(now()->addMinutes(5));//5
                 }
                 //se envia el mensaje si el hoster no responde en 10 min
                 if($request->isAvailable && $settings->three_available_show){
-                    AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(3));//10
+                    AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(10));//10
 
                     /** enviar Mail */
                         $mailData = [
