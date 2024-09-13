@@ -10,7 +10,9 @@ class NoteGuest extends Model
         'stay_id',
         'guest_id',
         'content',
-        'edited'
+        'edited',
+        'created_at',
+        'updated_at',
     ];
 
     public function stay()
