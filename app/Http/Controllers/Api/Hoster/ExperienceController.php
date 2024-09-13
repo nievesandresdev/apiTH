@@ -331,7 +331,6 @@ class ExperienceController extends Controller
 
         } catch (\Exception $e) {
             \DB::rollback();
-            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.update');
         }
     }
