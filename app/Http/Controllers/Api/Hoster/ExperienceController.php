@@ -244,7 +244,8 @@ class ExperienceController extends Controller
             // $c = $this->service->syncPosition($request, $cityModel, $hotelModel, $updatePositionOld);
             $toggleProductModel = ToggleProduct::where(['products_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
             if ($featuredBool) {
-                $this->service->assignFirstPosition($hotelModel, $productModel);
+                $r = $this->service->assignFirstPosition($hotelModel, $productModel);
+                return $r;
             } else {
                 // $position = $this->service->getPositionFirtNonRecommendated($hotelModel, $cityModel);
                 // $position = $this->service->getPositionOld($toggleProductModel->order, $hotelModel, $cityModel);
