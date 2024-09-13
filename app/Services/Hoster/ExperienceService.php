@@ -198,45 +198,40 @@ class ExperienceService {
     }
 
     public function featuredByHoster ($featuredBool, $modelHotel, $modelProduct) {
-        $modelPlaceFeatured = ServiceFeatured::where('product_id',$modelProduct->id)
+        $modelProductFeatured = ServiceFeatured::where('product_id',$modelProduct->id)
                                         ->where('hotel_id',$modelHotel->id)
                                         ->first();
-        if(!$featuredBool && $modelPlaceFeatured){
-            $modelPlaceFeatured->delete();
+        if(!$featuredBool && $modelProductFeatured){
+            $modelProductFeatured->delete();
         }
-        if($featuredBool && !$modelPlaceFeatured){
-            $modelPlaceFeatured = new ServiceFeatured();
-            $modelPlaceFeatured->product_id = $modelProduct->id;
-            $modelPlaceFeatured->hotel_id = $modelHotel->id;
-            $modelPlaceFeatured->user_id = $modelHotel->user[0]->id;
-            $modelPlaceFeatured->save();
+        if($featuredBool && !$modelProductFeatured){
+            $modelProductFeatured = new ServiceFeatured();
+            $modelProductFeatured->product_id = $modelProduct->id;
+            $modelProductFeatured->hotel_id = $modelHotel->id;
+            $modelProductFeatured->user_id = $modelHotel->user[0]->id;
+            $modelProductFeatured->save();
         }
     }
 
     public function assignFirstPosition ($hotelModel, $productModel) {
-        $toggleProductModel = ToggleProduct::where([
+        $toggleProductModelFirstOld = ToggleProduct::where([
             'hotel_id' => $hotelModel->id,
-            'products_id' => $productModel->id,
+            'position' => 0,
         ])->first();
-        if ($toggleProductModel) {
-            $toggleProductModel->update([
-                'position' => 0,
-                'order' => 1
-            ]);
+        if ($toggleProductModelFirstOld) {
+            $toggleProductModelFirstOld->update(['position' => 0.5]);
         }
-        // $modelTogglePlace = ToggleProduct::updateOrCreate([
-        //     'hotel_id' => $hotelModel->id,
-        //     'products_id' => $productModel->id,
-        // ], [
-        //     'hotel_id' => $hotelModel->id,
-        //     'products_id' => $productModel->id,
-        //     'position' => 0,
-        //     'order' => 1
-        // ]);
+        $modelToggleProductFirstNew = ToggleProduct::updateOrCreate([
+            'hotel_id' => $hotelModel->id,
+            'Products_id' => $productModel->id,
+        ], [
+            'position' => 0,
+        ]);
+        return $modelToggleProductFirstNew;
     }
 
     public function deletePositionCurrent ($hotelModel, $productModel) {
-        $modelTogglePlace = ToggleProduct::updateOrCreate([
+        $modelToggleProduct = ToggleProduct::updateOrCreate([
             'hotel_id' => $hotelModel->id,
             'products_id' => $productModel->id,
         ], [
@@ -270,7 +265,7 @@ class ExperienceService {
                 'hotel_id' => $hotelModel->id,
                 'activities_id' => $productId,
             ])->delete();
-            $modelTogglePlace = ToggleProduct::updateOrCreate([
+            $modelToggleProduct = ToggleProduct::updateOrCreate([
                 'hotel_id' => $hotelModel->id,
                 'products_id' => $productId,
             ], [
