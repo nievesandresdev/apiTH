@@ -2,7 +2,8 @@
 
 namespace App\Mail\Chats;
 
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -28,19 +29,8 @@ class UnreadHosterMsg extends Mailable
         $this->unansweredMessagesData = $unansweredMessagesData ?? [];
         $this->hotel = $hotel;
         $this->webappLink = $webappLink;
-        $qrImage = null;
-        try {
-            $qrImage = base64_encode(
-                QrCode::format('png')->size(200)->generate($this->webappLink)
-            );
-        } catch (\Exception $e) {
-            // Manejar la excepción o registrar el error
-            Log::error('Error generando el código QR: ' . $e->getMessage());
-            $qrImage = null; // O algún valor predeterminado
-        }
+        $qrImage = 'https://quickchart.io/qr?text=' . urlencode($this->webappLink) . '&size=200';
         $this->qrImage = $qrImage;
-        // $qrImage = base64_encode(QrCode::format('png')->size(200)->generate($this->webappLink));
-        // $this->qrImage = $qrImage;
         
     }
 
@@ -52,7 +42,7 @@ class UnreadHosterMsg extends Mailable
         if($this->hotel['sender_mail_mask']){
             $senderEmail = $this->hotel['sender_mail_mask'];
         }
-        Log::info('qrimage '.json_decode($this->qrImage));
+        // Log::info('qrimage '.json_decode($this->qrImage));
         return $this->from($senderEmail, $senderName)
                     ->subject("Mensaje pendiente en Chat")->view('Mails.guest.unreadMsg');
     }

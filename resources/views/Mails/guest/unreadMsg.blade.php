@@ -90,7 +90,9 @@
             <p style="margin:0;color: #000;text-align: center;font-size: 14px;font-weight: 500;line-height: 150%; ">Escanea el código QR o dale al botón</p>
             
             {{-- <img style="width: 170px;height: 170px;margin:auto;display:block" src="{{ asset('mails/qr_url_generica 2.png') }}" alt=""> --}}
-            <img style="width: 170px; height: 170px; margin: auto; display: block;" src="data:image/svg+xml;base64,{{ $qrImage }}" alt="Código QR">
+            
+            <img style="width: 170px; height: 170px; margin: auto; display: block;" src="{{ $qrImage }}" alt="Código QR">
+       
 
             <div style="text-align: center; margin-top:40px;">
                 <a href="{{$webappLink}}" style="padding: 12px 0;border-radius: 6px;background-color: #333;color: #FFF;text-align: center;font-size: 18px;font-weight: 600;line-height: 110%;display: block;box-sizing: border-box;text-decoration:none;">

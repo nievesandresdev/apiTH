@@ -2,7 +2,6 @@
 
 namespace App\Services\Hoster;
 
-use App\Mail\Chats\UnreadHosterMsg;
 use App\Mail\Guest\MsgStay;
 use App\Models\Hotel;
 use App\Models\StayNotificationSetting;
@@ -10,7 +9,6 @@ use App\Services\GuestService;
 use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class GuestHosterService {
 
@@ -37,15 +35,14 @@ class GuestHosterService {
             
             $hotel = Hotel::find($hotelId);
             
-            Mail::to("andresdreamerf@gmail.com")->send(new UnreadHosterMsg([], $hotel, "https://www.youtube.com/"));
             //prepare msg
-            // $link = url('webapp?g='.$guest->id);
-            // $link =  includeSubdomainInUrlHuesped($link, $hotel);
-            // $msg = $settings->guestcreate_msg_email[$guest->lang_web];
-            // $msg = str_replace('[nombre]', $guest->name, $msg);
-            // $msg = str_replace('[nombre_del_hotel]', $hotel->name, $msg);
-            // $msg = str_replace('[URL]', $link, $msg);
-            // $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link), $guest->email);
+            $link = url('webapp?g='.$guest->id);
+            $link =  includeSubdomainInUrlHuesped($link, $hotel);
+            $msg = $settings->guestcreate_msg_email[$guest->lang_web];
+            $msg = str_replace('[nombre]', $guest->name, $msg);
+            $msg = str_replace('[nombre_del_hotel]', $hotel->name, $msg);
+            $msg = str_replace('[URL]', $link, $msg);
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link), $guest->email);
             return $guest;
         } catch (\Exception $e) {
             return $e;

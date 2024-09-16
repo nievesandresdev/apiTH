@@ -241,10 +241,12 @@ class ChatService {
                 $query->where('id', $chatId)
                     ->where('pending', $pedding);
             })
+            ->where('status', 'Entregado')
             ->where('automatic', 0)
             ->where('by', '!=', $diff)
             ->with(['chat','messageable'])
-            ->latest()
+            ->orderBy('id','asc')
+            // ->latest()
             ->get();
             
             $unansweredMessagesData = $unansweredMessages->map(function ($message) use ($url) { //map
