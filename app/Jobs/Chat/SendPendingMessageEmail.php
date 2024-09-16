@@ -36,14 +36,14 @@ class SendPendingMessageEmail implements ShouldQueue
         /* $stay = $this->mailData['stay'];
         $msg = $this->mailData['msg']; */
         $messageContent = $this->mailData['messageContent'];
-
-        Mail::send('emails.chat.pending-message', [
+        
+        Mail::send('mail.chat.pending-message', [
             'messageContent' => $messageContent,
             //'messageUrl' => url('/messages/'.$msg->id)
         ], function($message) use ($guest) {
             $message->to($guest->email)
                     ->subject('Tienes un mensaje pendiente');
         });
-        Log::info('Pending message email sent',$guest->email);
+        Log::info('Pending message email sent',json_encode($guest->email));
     }
 }
