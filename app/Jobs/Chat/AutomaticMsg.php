@@ -2,13 +2,13 @@
 namespace App\Jobs\Chat;
 
 use App\Models\ChatMessage;
+use App\Models\Hotel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
-use App\Models\hotel;
 use App\Models\User;
 use App\Services\Hoster\Chat\ChatHosterServices;
 
@@ -62,7 +62,7 @@ class AutomaticMsg implements ShouldQueue
                 'automatic' => true
             ]);
             
-            $hotel = hotel::find($this->hotel_id);
+            $hotel = Hotel::find($this->hotel_id);
             $msg = $hotel->chatMessages()->save($chatMessage);
             $msg->load('messageable');
             
