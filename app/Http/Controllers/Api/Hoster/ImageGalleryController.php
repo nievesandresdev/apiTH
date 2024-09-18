@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api\Hoster;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\Hotel;
 use Illuminate\Http\Request;
 
 use App\Models\ImageGallery;
-use App\Models\hotel;
 
 use Illuminate\Support\Str;
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\Log;
 
 class ImageGalleryController extends Controller
 {
@@ -49,7 +49,12 @@ class ImageGalleryController extends Controller
 
     public function upload(Request $request){
         try {
-            $hotelModel = $request->attributes->get('hotel');
+            Log::info('upload gallery');
+            $hotel = $request->attributes->get('hotel');
+            Log::info('upload gallery hotelid'. $hotel->id);
+            $hotelModel = Hotel::find($hotel->id);
+            Log::info('upload gallery $hotelModel '. json_encode($hotelModel));
+
             ['type'=>$type, 'name_image'=>$nameImage] = $request->all();
             if (!$hotelModel) return;
             $customname = $nameImage;
@@ -65,6 +70,7 @@ class ImageGalleryController extends Controller
             $data = ["url" => $pathImg, 'input' => $request->all()];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
+            Log::error('upload gallery error:'. json_encode($e));
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.upload');
         }
     }

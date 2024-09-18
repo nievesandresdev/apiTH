@@ -19,11 +19,15 @@ class HotelResource extends JsonResource
         $defaultChatSettingsArray  = defaultChatSettings();
         $chatSettings = ChatSetting::with('languages')->where('hotel_id',$this->id)->first() ?? $defaultChatSettingsArray;
 
-        if (localeCurrent() == 'es') {
-            $description = $this->description;
-        } else {
-            $description = $this->translate->description ?? null;
-        }
+        //ya hay una key translate para la traduccion 
+        //dejo el descripcion normal para tener a la mano el original 
+        //guardado en el perfil del hotel en el sass
+
+        // if (localeCurrent() == 'es') {
+        //     $description = $this->description;
+        // } else {
+        //     $description = $this->translate->description ?? null;
+        // }
 
 
         return [
@@ -41,7 +45,7 @@ class HotelResource extends JsonResource
             "longitude"=> $this->longitude,
             "checkin"=> $this->checkin,
             "checkout"=> $this->checkout,
-            "description"=> $description,
+            "description"=> $this->description,
             "instagram_url"=> $this->instagram_url,
             "facebook_url"=> $this->facebook_url,
             "pinterest_url"=> $this->pinterest_url,
