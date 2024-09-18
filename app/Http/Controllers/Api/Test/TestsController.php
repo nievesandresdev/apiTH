@@ -83,24 +83,4 @@ class TestsController extends Controller
 
         
     }
-
-    public function sendMessage(Request $request)
-    {
-        $this->validate($request, [
-            'from' => 'required|string',   // Número remitente
-            'to' => 'required|string',     // Número destinatario
-            'message' => 'required|string' // Mensaje a enviar
-        ]);
-
-        $from = $request->input('from');
-        $to = $request->input('to');
-        $message = $request->input('message');
-
-        try {
-            $this->twilio->sendWhatsAppMessage($from, $to, $message);
-            return response()->json(['status' => 'Message sent successfully'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'Error sending message', 'error' => $e->getMessage()], 500);
-        }
-    }
 }
