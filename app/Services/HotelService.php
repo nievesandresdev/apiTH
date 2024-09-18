@@ -176,15 +176,15 @@ class HotelService {
 
     public function processTranslateProfile ($request, $hotelModel) {
         $description = $request->description;
-        Log::info('processTranslateProfile $description'. json_encode($description));
-        Log::info('processTranslateProfile $hotelModel'. json_encode($hotelModel));
-        Log::info('processTranslateProfile $hotelModel->description'. json_encode($hotelModel->description));
-        Log::info('processTranslateProfile boolean'. json_encode($description != $hotelModel->description));
-        if ($description != $hotelModel->description) {
+        // Log::info('processTranslateProfile $description'. !$description);
+        if ($description && $description != $hotelModel->description) {
             $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
             $inputsTranslate = ['description' => $description];
             TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
+        }else{
+            $hotelModel->translations()->update(['description' => null]);
         }
+
     }
 
     public function updateVisivilityFacilities ($hotelModel) {

@@ -49,11 +49,11 @@ class ImageGalleryController extends Controller
 
     public function upload(Request $request){
         try {
-            Log::info('upload gallery');
+            // Log::info('upload gallery');
             $hotel = $request->attributes->get('hotel');
-            Log::info('upload gallery hotelid'. $hotel->id);
+            // Log::info('upload gallery hotelid'. $hotel->id);
             $hotelModel = Hotel::find($hotel->id);
-            Log::info('upload gallery $hotelModel '. json_encode($hotelModel));
+            // Log::info('upload gallery $hotelModel '. json_encode($hotelModel));
 
             ['type'=>$type, 'name_image'=>$nameImage] = $request->all();
             if (!$hotelModel) return;
