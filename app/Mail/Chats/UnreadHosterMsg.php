@@ -2,12 +2,15 @@
 
 namespace App\Mail\Chats;
 
+
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class UnreadHosterMsg extends Mailable
 {
@@ -15,6 +18,7 @@ class UnreadHosterMsg extends Mailable
     public $unansweredMessagesData;
     public $hotel;
     public $webappLink;
+    public $qrImage;
     //public $hotel;
 
     /**
@@ -25,6 +29,9 @@ class UnreadHosterMsg extends Mailable
         $this->unansweredMessagesData = $unansweredMessagesData ?? [];
         $this->hotel = $hotel;
         $this->webappLink = $webappLink;
+        $qrImage = 'https://quickchart.io/qr?text=' . urlencode($this->webappLink) . '&size=200';
+        $this->qrImage = $qrImage;
+        
     }
 
     public function build()
@@ -35,7 +42,8 @@ class UnreadHosterMsg extends Mailable
         if($this->hotel['sender_mail_mask']){
             $senderEmail = $this->hotel['sender_mail_mask'];
         }
+        // Log::info('qrimage '.json_decode($this->qrImage));
         return $this->from($senderEmail, $senderName)
-                    ->subject("Chant pendiente")->view('Mails.guest.unreadMsg');
+                    ->subject("Mensaje pendiente en Chat")->view('Mails.guest.unreadMsg');
     }
 }

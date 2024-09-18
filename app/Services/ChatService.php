@@ -126,16 +126,16 @@ class ChatService {
                 if($request->isAvailable && $settings->three_available_show){
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(10));//10
 
-                    /** enviar Mail */
-                        $mailData = [
-                            'guest' => $guest,
-                            'stay' => $stay,
-                            'msg' => $msg,
-                            'messageContent' => $settings->three_available_msg[$langPage]
-                        ];
-                        // evento
-                        SendPendingMessageEmail::dispatch($mailData)->delay(now()->addMinutes(10));
-                    /** fin enviar mail */
+                    // /** enviar Mail */
+                    //     $mailData = [
+                    //         'guest' => $guest,
+                    //         'stay' => $stay,
+                    //         'msg' => $msg,
+                    //         'messageContent' => $settings->three_available_msg[$langPage]
+                    //     ];
+                    //     // evento
+                    //     SendPendingMessageEmail::dispatch($mailData)->delay(now()->addMinutes(10));
+                    // /** fin enviar mail */
                 }
 
                 //se envia el mensaje si no hay agente disponible
@@ -241,10 +241,12 @@ class ChatService {
                 $query->where('id', $chatId)
                     ->where('pending', $pedding);
             })
+            ->where('status', 'Entregado')
             ->where('automatic', 0)
             ->where('by', '!=', $diff)
             ->with(['chat','messageable'])
-            ->latest()
+            ->orderBy('id','asc')
+            // ->latest()
             ->get();
             
             $unansweredMessagesData = $unansweredMessages->map(function ($message) use ($url) { //map

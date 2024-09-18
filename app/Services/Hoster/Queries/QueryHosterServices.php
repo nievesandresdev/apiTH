@@ -103,10 +103,9 @@ class QueryHosterServices {
             }])
             ->where('guest_id', $guestId)
             ->where('stay_id', $stayId)
-            ->orderBy('created_at', 'asc')
+            ->orderByRaw("FIELD(period, 'pre-stay', 'in-stay', 'post-stay')")
             ->get();
-            
-            
+        
             foreach ($dataQueries as $query) {
                 if ($query->comment) {
                     $query['languages'] = $this->extractLanguages($query->comment);
