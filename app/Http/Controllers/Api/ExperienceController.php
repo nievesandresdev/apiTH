@@ -39,8 +39,10 @@ class ExperienceController extends Controller
             $priceMin = $request->price_min ?? null;
             $priceMax = $request->price_max ?? null;
             $search = $request->search ?? null;
-            $cityName = $request->city ?? $modelHotel->zone;       
-            $featured = $request->featured && $request->featured != 'false' && $request->featured != '0';   
+            $cityName = $request->city ?? $modelHotel->zone;
+            $all_cities = boolval($request->all_cities) ?? false;
+            $featured = $request->featured && $request->featured != 'false' && $request->featured != '0';
+            $one_exp_id = $request->one_exp_id ?? null;
             $duration = [];
             if (!empty($request->duration)) {
                 $duration = gettype($request->duration) == 'string' ? json_decode($request->duration, true) : $request->duration;
@@ -53,10 +55,14 @@ class ExperienceController extends Controller
             $dataFilter = [
                 'city' => $cityName,
                 'cityData' => $cityData,
+                'all_cities' => $all_cities,
+                'free_cancelation' => $request->free_cancelation ?? null,
                 'search' => $search,
                 'price_min' => $priceMin,
                 'price_max' => $priceMax,
                 'duration' => $duration,
+                'score' => $request->score ?? [],
+                'one_exp_id' => $one_exp_id,
                 'featured' => $featured,
             ];
 

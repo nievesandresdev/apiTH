@@ -44,8 +44,6 @@ class ExperienceController extends Controller
             $hotelId = $hotelModel->id;
             $priceMin = $request->price_min ?? null;
             $priceMax = $request->price_max ?? null;
-            $priceMax = $request->price_max ?? null;
-            $priceMax = $request->price_max ?? null;
             $search = $request->search ?? null;
             $cityName = $request->city ?? $hotelModel->zone;       
             $featured = $request->featured && $request->featured != 'false' && $request->featured != '0';
@@ -289,7 +287,7 @@ class ExperienceController extends Controller
             $messageHtml = strip_tags($messageRecomendation);
             $messageRecomendation = $messageRecomendation && $messageHtml ? $messageRecomendation : null;
             $featuredBool = $request->featured ?? false;
-
+            &duration=1&duration=4
             $inputsUpdateProduct = [
                 'recommendation' => $messageRecomendation,
             ];

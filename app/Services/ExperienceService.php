@@ -94,17 +94,35 @@ class ExperienceService {
         )->addBinding([$dataFilter['cityData']->long, $dataFilter['cityData']->lat], 'select');
 
         $queryExperience->whereVisibleByHoster($modelHotel->id);
+
+        if($dataFilter['one_exp_id']){
+            $queryExperience = $queryExperience->where('products.id', $dataFilter['one_exp_id']);
+            return $queryExperience;
+        }
         
         // if(isset($dataFilter['cities'])){
         //     $queryExperience->whereCities($dataFilter['cities']);
         // }else{
         //     $queryExperience->whereCity($dataFilter['city']);
         // }
+
+        if($dataFilter['all_cities']){
+        }else{
+            $queryExperience->whereHas('translation', function($query) use($dataFilter){
+                $query->where('city_experince', $dataFilter['city']);
+            });
+        }
         
 
-        if($dataFilter['search']){
-            $queryExperience->whereHas('activities', function($query) use($dataFilter){
-                $query->where('title','like',  ['%'.$dataFilter['search'].'%']);
+        // if($dataFilter['search']){
+        //     $queryExperience->whereHas('activities', function($query) use($dataFilter){
+        //         $query->where('title','like',  ['%'.$dataFilter['search'].'%']);
+        //     });
+        // }
+        if (!empty($dataFilter['search'])) {
+            $query->whereHas('translation', function($query) use($dataFilter){
+                $query->where('title','like', ['%'.$dataFilter['search'].'%'])
+                    ->orWhere('description','like', ['%'.$dataFilter['search'].'%']);
             });
         }
         
@@ -113,7 +131,13 @@ class ExperienceService {
         }
         if (!empty($dataFilter['price_max'])) {
             $queryExperience->where('from_price', '<=', floatval($dataFilter['price_max']));
-        }    
+        }  
+        
+        if (!empty($dataFilter['free_cancelation'])) {
+            $queryExperience->whereHas('translation', function($query) use($dataFilter){
+                $query->where(['cancellation_policy' => 'STANDARD']);
+            });
+        }
 
         if (count($dataFilter['duration']) > 0) {
             $queryExperience->whereHas('translation', function($query) use($dataFilter, $durations){
