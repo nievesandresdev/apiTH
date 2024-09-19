@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Utils\Enums\EnumResponse;
 use Aws\Rekognition\RekognitionClient;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
-use App\Services\TwilioService;
 use Illuminate\Http\Request;
 use App\Models\User;
 use SoapClient;
@@ -83,4 +83,78 @@ class TestsController extends Controller
 
         
     }
+
+    /*PROCESO PARA WHATSAPP BUSINESS*/
+    /* INICIO DE SESION */
+    public function getShortLivedAccessToken()
+    {
+        $response = Http::retry(3, 100)->withQueryParameters([
+            'client_id' => env('FB_CLIENT_ID'),
+            'client_secret' => env('FB_CLIENT_SECRET'),
+            'grant_type' => 'client_credentials',
+        ])->get('https://graph.facebook.com/oauth/access_token');
+
+        if ($response->successful()) {
+            $data = $response->json(); 
+            return $data;
+        } else {
+            return response()->json(['error' => 'Error al obtener el token de acceso', 'details' => $response->body()], 500);
+        }
+    }
+
+    /* ENVIAR MENSAJE */
+
+    public function sendWhatsAppMessage(Request $request)
+{
+    $request->validate([
+        'phone_number_id' => 'required|string',    // El ID del número de WhatsApp Business
+        'to' => 'required|string',                 // El número de teléfono destinatario en formato internacional
+        'message' => 'required|string'             // El mensaje a enviar
+    ]);
+
+    $accessToken = env('WHATSAPP_PERMANENT_TOKEN');
+    
+    if (!$accessToken) {
+        return response()->json(['error' => 'El token permanente no está configurado.'], 500);
+    }
+    
+    // URL del endpoint de WhatsApp Business API
+    $url = "https://graph.facebook.com/v20.0/{$request->input('phone_number_id')}/messages";
+    
+    // Llamada a la API para enviar el mensaje
+    /*$response = Http::withHeaders([
+        'Authorization' => "Bearer {$accessToken}",  // Token de acceso corto
+        'Content-Type' => 'application/json'
+    ])->withQueryParameters([
+        'access_token' => $accessToken
+    ])->asForm()->post($url, [
+        'messaging_product' => 'whatsapp',
+        'to' => $request->input('to'),
+        'type' => 'text', 
+        'text' => [
+            'body' => $request->input('message') // El mensaje que envías
+        ]
+    ]);*/
+    $response = Http::withHeaders([
+        'Authorization' => "Bearer {$accessToken}",  // Usar el token permanente
+        'Content-Type' => 'application/json'
+    ])->post($url, [
+        'messaging_product' => 'whatsapp',
+        'to' => $request->input('to'),             // Número de teléfono destinatario
+        'type' => 'template',                      // Tipo de mensaje: plantilla
+        'template' => [
+            'name' => "hello_world",  // Nombre de la plantilla
+            'language' => [
+                'code' => "en_US" // Código de idioma (e.g., 'en_US')
+            ]
+        ]
+    ]);
+
+    // Verificar si la solicitud fue exitosa
+    if ($response->successful()) {
+        return response()->json(['message' => 'Mensaje enviado con éxito', 'response' => $response->json()], 200);
+    } else {
+        return response()->json(['error' => 'Error al enviar el mensaje', 'details' => $response->body()], 500);
+    }
+}
 }
