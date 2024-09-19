@@ -26,6 +26,12 @@ use App\Http\Requests\Hotel\UpdateProfileRequest;
 
 class HotelController extends Controller
 {
+    protected $service;
+    protected $serviceFacility;
+    protected $serviceExperience;
+    protected $servicePlace;
+    protected $cityService;
+
     function __construct(
         HotelService $_HotelService,
         FacilityService $_FacilityService,

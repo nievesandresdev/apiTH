@@ -288,7 +288,7 @@ class StayHosterServices {
         try {
             $this->staySessionServices->updateActionOrcreateSession($data);
             $stay = Stay::find($stayId);
-            $stay->room = $data->room ?? $stay->room;
+            $stay->room = $data->room ?? null;
             $stay->middle_reservation = $data->middle_reservation ?? $stay->middle_reservation;
             $stay->sessions = $data->sessions ?? $stay->sessions;
 

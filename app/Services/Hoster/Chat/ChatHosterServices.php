@@ -108,13 +108,13 @@ class ChatHosterServices {
             DB::commit();
             //si existe algun job para notificacion no se acumularan jobs duplicados
             DB::table('jobs')->where('payload', 'like', '%by-hoster' . $chat->id . '%')->delete();
-            UnReadGuest::dispatch('by-hoster'.$chat->id, $hotel, $chat->id, $guestId)->delay(now()->addMinutes(10));
+            UnReadGuest::dispatch('by-hoster'.$chat->id, $hotel, $chat->id, $guestId)->delay(now()->addMinutes(30));
             $hotelId = $hotel->id;
             $count = $this->pendingCountByStay($stayId);
             $countUnreadMsgsByGuest = $this->countUnreadMsgsByGuest($chat->id);
-            Log::info('$countUnreadMsgsByGuest '. json_encode($countUnreadMsgsByGuest));
+            
             //send message
-            sendEventPusher('private-update-chat.' . $stayId, 'App\Events\UpdateChatEvent', [
+            sendEventPusher('private-update-chat.' . $guestId, 'App\Events\UpdateChatEvent', [
                 'message' => $msg,
                 'chatData' => $chat,
                 'countUnreadMsgsByGuest' => $countUnreadMsgsByGuest
@@ -123,7 +123,7 @@ class ChatHosterServices {
             sendEventPusher('private-notify-unread-msg-guest.' . $guestId, 'App\Events\NotifyUnreadMsgGuest', [
                 'countUnreadMsgsByGuest' => $countUnreadMsgsByGuest
             ]);
-            Log::info('$countUnreadMsgsByGuest luego ');
+            
             sendEventPusher('private-noti-hotel.' . $hotelId, 'App\Events\NotifyStayHotelEvent',
                 [
                     'showLoadPage' => false,
