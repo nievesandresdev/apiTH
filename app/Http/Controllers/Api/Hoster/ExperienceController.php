@@ -287,7 +287,6 @@ class ExperienceController extends Controller
             $messageHtml = strip_tags($messageRecomendation);
             $messageRecomendation = $messageRecomendation && $messageHtml ? $messageRecomendation : null;
             $featuredBool = $request->featured ?? false;
-            &duration=1&duration=4
             $inputsUpdateProduct = [
                 'recommendation' => $messageRecomendation,
             ];
