@@ -41,8 +41,10 @@ class ExperienceController extends Controller
             $search = $request->search ?? null;
             $cityName = $request->city ?? $modelHotel->zone;
             $all_cities = boolval($request->all_cities) ?? false;
-            $featured = $request->featured && $request->featured != 'false' && $request->featured != '0';
-            $free_cancelation = $request->free_cancelation && $request->free_cancelation != 'false' && $request->free_cancelation != '0';
+            // $featured = $request->featured && $request->featured != 'false' && $request->featured != '0';
+            $featured = boolval($request->featured) ?? false;
+            // $free_cancelation = $request->free_cancelation && $request->free_cancelation != 'false' && $request->free_cancelation != '0';
+            $free_cancelation = boolval($request->free_cancelation) ?? false;
             $one_exp_id = $request->one_exp_id ?? null;
             $duration = [];
             if (!empty($request->duration)) {
@@ -51,7 +53,6 @@ class ExperienceController extends Controller
             //crear array de ciudades para la consulta
             $citySlug = Str::slug($modelHotel->zone);
             $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
-            
             $dataFilter = [
                 'city' => $cityName,
                 'cityData' => $cityData,
@@ -65,6 +66,7 @@ class ExperienceController extends Controller
                 'one_exp_id' => $one_exp_id,
                 'featured' => $featured,
             ];
+            return $dataFilter;
 
         $response = $this->service->getAll($request, $modelHotel, $dataFilter);
         
