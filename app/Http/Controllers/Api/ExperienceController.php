@@ -42,6 +42,7 @@ class ExperienceController extends Controller
             $cityName = $request->city ?? $modelHotel->zone;
             $all_cities = boolval($request->all_cities) ?? false;
             $featured = $request->featured && $request->featured != 'false' && $request->featured != '0';
+            $free_cancelation = $request->free_cancelation && $request->free_cancelation != 'false' && $request->free_cancelation != '0';
             $one_exp_id = $request->one_exp_id ?? null;
             $duration = [];
             if (!empty($request->duration)) {
@@ -56,7 +57,7 @@ class ExperienceController extends Controller
                 'city' => $cityName,
                 'cityData' => $cityData,
                 'all_cities' => $all_cities,
-                'free_cancelation' => $request->free_cancelation ?? null,
+                'free_cancelation' => $free_cancelation,
                 'search' => $search,
                 'price_min' => $priceMin,
                 'price_max' => $priceMax,
