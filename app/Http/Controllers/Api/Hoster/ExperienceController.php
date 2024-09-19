@@ -56,7 +56,6 @@ class ExperienceController extends Controller
             if (!empty($request->duration)) {
                 $duration = gettype($request->duration) == 'string' ? json_decode($request->duration, true) : $request->duration;
             }
-            return $duration;
             //crear array de ciudades para la consulta
             $citySlug = Str::slug($hotelModel->zone);
             $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
