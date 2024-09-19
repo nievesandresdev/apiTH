@@ -168,19 +168,19 @@ class ExperienceService {
                 }
             });
         }
-
         if (count($dataFilter['score']) > 0) {
             foreach ($dataFilter['score'] as $key => $item) {
                 $durations =  [['i'=>0,'f'=>1.99],['i'=>2,'f'=>2.99],['i'=>3,'f'=>3.99],['i'=>4,'f'=>4.99],['i'=>5,'f'=>5]];
                 $d = intval($item) - 1;
+                
                 $interval = $durations[$d];
                 if ($key == 0){
-                    $queryExperience->whereRaw("JSON_EXTRACT(reviews, '$.combined_average_rating') BETWEEN ? AND ?", [$interval['i'], $interval['f']]);
+                    $queryExperience = $queryExperience->whereRaw("JSON_EXTRACT(reviews, '$.combined_average_rating') BETWEEN ? AND ?", [$interval['i'], $interval['f']]);
                 }else{
-                    $queryExperience->orWhereRaw("JSON_EXTRACT(reviews, '$.combined_average_rating') BETWEEN ? AND ?", [$interval['i'], $interval['f']]);
+                    $queryExperience = $queryExperience->orWhereRaw("JSON_EXTRACT(reviews, '$.combined_average_rating') BETWEEN ? AND ?", [$interval['i'], $interval['f']]);
                 }
                 if ($interval['i'] == 0) {
-                    $queryExperience->orWhereNull('reviews');
+                    $queryExperience = $queryExperience->orWhereNull('reviews');
                 }
             }
         }
