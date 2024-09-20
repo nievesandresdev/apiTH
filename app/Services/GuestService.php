@@ -50,8 +50,6 @@ class GuestService {
             $guest = Guest::where('email',$email)->first();
             
             $acronym = $this->generateInitialsName($name ?? $email);
-            
-            $acronym = $this->generateInitialsName($name ?? $email);
             if(!$guest){
                 $guest = Guest::create([
                     'name' =>$name,
@@ -181,13 +179,7 @@ class GuestService {
                 $email = $data->email;
             }
 
-
-            $email = $guest->email;
-            if($data->email){
-                $email = $data->email;
-            }
-
-            $acronym = $this->generateInitialsName($name ?? $email ?? $email);
+            $acronym = $this->generateInitialsName($name ?? $email);
 
             $guest->name = $name;
             $guest->email = $data->email ?? $guest->email;
@@ -240,9 +232,6 @@ class GuestService {
             // Elimina espacios adicionales
             $name = preg_replace('/\s+/', ' ', trim($name));
 
-            // Elimina espacios adicionales
-            $name = preg_replace('/\s+/', ' ', trim($name));
-
             // Divide el nombre en partes
             $parts = explode(' ', trim($name));
             $initials = null;
@@ -250,7 +239,6 @@ class GuestService {
             // Verifica si el nombre tiene más de una parte
             if (count($parts) > 1) {
                 // Si tiene nombre y apellido, toma la primera letra de cada uno
-                $initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . mb_substr($parts[1], 0, 1));
                 $initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . mb_substr($parts[1], 0, 1));
             } else {
                 // Si solo tiene un nombre, toma las primeras dos letras
