@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\TypePlaces;
+use App\Models\Hotel;
 
 use App\Services\HotelService;
 use App\Services\FacilityService;
@@ -17,11 +18,20 @@ use App\Http\Resources\HotelResource;
 use App\Http\Resources\FacilityResource;
 use App\Http\Resources\ExperienceResource;
 use App\Http\Resources\PlaceResource;
+use App\Http\Resources\HotelBasicDataResource;
 
 use App\Utils\Enums\EnumResponse;
 
+use App\Http\Requests\Hotel\UpdateProfileRequest;
+
 class HotelController extends Controller
 {
+    protected $service;
+    protected $serviceFacility;
+    protected $serviceExperience;
+    protected $servicePlace;
+    protected $cityService;
+
     function __construct(
         HotelService $_HotelService,
         FacilityService $_FacilityService,
@@ -35,6 +45,18 @@ class HotelController extends Controller
         $this->serviceExperience = $_ExperienceService;
         $this->servicePlace = $_PlaceService;
         $this->cityService = $_CityService;
+    }
+
+    public function getAll (Request $request) {
+        try {
+            $modelHotel = $request->attributes->get('hotel');
+            $hotelsCollection = $this->service->getAll($request, $modelHotel);
+            $data = HotelBasicDataResource::collection($hotelsCollection);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
+        }
     }
 
     public function findByParams (Request $request) {
@@ -125,4 +147,223 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getChatHours');
         }
     }
+
+    public function updateProfile (UpdateProfileRequest $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $traslationProfile = $this->service->processTranslateProfile($request, $hotelModel);
+            
+            $hotelModel = $this->service->updateProfile($request, $hotelModel);
+
+            $this->service->asyncImages($request, $hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+        }
+    }
+
+    public function updateVisivilityFacilities (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $this->service->updateVisivilityFacilities($hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityFacilities');
+        }
+    }
+    
+    public function updateVisivilityExperiences (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $this->service->updateVisivilityExperiences($hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityFacilities');
+        }
+    }
+
+    public function updateVisivilityPlaces (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $this->service->updateVisivilityPlaces($hotelModel);
+            $hotelModel->refresh();
+            $data = new HotelResource($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityPlaces');
+        }
+    }
+
+    public function updateSenderMailMask (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $this->service->updateSenderMailMask($hotelModel, $request->email);
+            $hotelModel->refresh();
+            $data = new HotelResource($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateSenderMailMask');
+        }
+    }
+
+    public function updateVisivilityCategory (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            
+            $this->service->updateVisivilityCategory($request, $hotelModel);
+
+            $hotelModel->refresh();
+            $data = new HotelResource($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityCategory');
+        }
+    }
+
+    public function updateVisivilityTypePlace (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+            $this->service->updateVisivilityTypePlace($request, $hotelModel);
+
+            $hotelModel->refresh();
+            $data = new HotelResource($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityTypePlace');
+        }
+    }
+
+    public function verifySubdomainExist (Request $request) {
+        $hotel_id = $request->hotel_id;
+        $subdomain = $request->subdomain;
+        $hotel = hotel::find($hotel_id);
+        if (!$hotel || $hotel->subdomain == $subdomain) {
+            return  false;
+        }
+        $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
+        return $exist;
+    }
+
+    public function verifySubdomainExistPerHotel (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $subdomain = $request->subdomain;
+
+            $exist = $this->service->verifySubdomainExistPerHotel($subdomain, $hotelModel);
+            $data = [
+                "exist" => $exist
+            ];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.verifySubdomainExistPerHotel');
+        }
+    }
+
+    public function storeSubdomain (Request $request) {
+        $subdomain = $request->subdomain ?? null;
+        $response = createSubdomainHotelServe($request->subdomain);
+        return $response;
+    }
+
+    public function updateCustomization (Request $request) {
+        try {
+            $environment = env('APP_ENV');
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            \DB::beginTransaction();
+
+            $subdomain = $request->subdomain;
+            $exitsSubdomain = $this->service->verifySubdomainExistPerHotel($subdomain, $hotelModel);
+            $subdomainIsNotNew = $this->service->verifySubdomainExist($subdomain, $hotelModel);
+            $newSubdomainParam = false;
+            if (!$exitsSubdomain && !$subdomainIsNotNew) {
+                if ($environment !== 'LOCAL') {
+                    $r_s = $this->service->createSubdomainInCloud($subdomain, $environment);
+                    $newSubdomainParam = true;
+                }
+            }
+            $this->service->updateSubdomain($subdomain, $hotelModel);
+
+            $this->service->updateCustomization($request, $hotelModel);
+
+
+            \DB::commit();
+
+            $hotelModel->refresh();
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateCustomization');
+        }
+    }
+
+
+
 }

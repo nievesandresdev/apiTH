@@ -19,7 +19,13 @@ class Stay extends Model
         'check_out',
         'hour_checkin',
         'hour_checkout',
-        'pending_queries_seen'
+        'pending_queries_seen',
+        'sessions',
+        'trial'
+    ];
+
+    protected $casts = [
+        'sessions' => 'array',
     ];
 
     public function staySurvey()
@@ -29,7 +35,7 @@ class Stay extends Model
 
     public function hotel()
     {
-        return $this->belongsTo(hotel::class);
+        return $this->belongsTo(Hotel::class);
     }
 
     public function accesses()
@@ -60,6 +66,12 @@ class Stay extends Model
     public function guestNotes()
     {
         return $this->hasMany(NoteGuest::class);
+    }
+
+    //attr
+    public function getTrialAttribute($value)
+    {
+        return boolval($value);
     }
 
 }

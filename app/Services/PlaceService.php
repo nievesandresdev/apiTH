@@ -96,7 +96,7 @@ class PlaceService {
             })->collect();
 
             $orderNategoryNames = [
-                'Monumentos' => 1, 'Museos' => 2, 'Zonas verdes' => 3,
+                'Monumentos' => 1, 'Museos' => 2, 'Naturaleza' => 3,
                 'Restaurantes' => 4, 'Cafeterías y postres' => 5, 'Heladerías' => 6,
                 'Vida nocturna' => 7, 'Compras' => 8, 'Otros' => 9, 'Copas' => 10
             ];
@@ -377,4 +377,5 @@ class PlaceService {
             ], 500); // Puedes cambiar el código de estado HTTP según corresponda
         }
     }
+
 }

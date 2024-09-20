@@ -18,7 +18,7 @@ use App\Utils\Enums\GuestEnum;
 
 class GuestService {
 
-    public $stayAccessService; 
+    public $stayAccessService;
     public $mailService;
     public $colors;
 
@@ -48,6 +48,8 @@ class GuestService {
             $lang = $data->language ?? 'es';
 
             $guest = Guest::where('email',$email)->first();
+            
+            $acronym = $this->generateInitialsName($name ?? $email);
             
             $acronym = $this->generateInitialsName($name ?? $email);
             if(!$guest){
@@ -93,13 +95,16 @@ class GuestService {
             $last_stay = $guest->stays()
                         ->where('hotel_id',$hotel->id)
                         ->orderBy('check_out','DESC')->first();
+
             if($last_stay){
                 $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
                 // Verifica si han pasado más de 10 días desde el checkout
 
+
                 if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
                     //si no han pasado retorna la estancia
                     $this->stayAccessService->save($last_stay->id,$guest->id);
+
                     return $last_stay;
                 }
             }
@@ -138,10 +143,10 @@ class GuestService {
             $settingsArray = settingsNotyStayDefault();
             $settings = (object)$settingsArray;
         }
-        Log::info("inviteToStayByEmail settings".json_encode($settings));
-        Log::info("lang_web ".$guest->lang_web);
+        // Log::info("inviteToStayByEmail settings".json_encode($settings));
+        // Log::info("lang_web ".$guest->lang_web);
         if($settings->guestinvite_check_email){
-            Log::info("inviteToStayByEmail entro en envio");
+            // Log::info("inviteToStayByEmail entro en envio");
             $data = [
                 'stay_id' => $stayId,
                 'guest_id' => $guest->id,
@@ -153,8 +158,8 @@ class GuestService {
             ];
             $msg = prepareMessage($data,$hotel);
             $link = prepareLink($data,$hotel);
-            Log::info("inviteToStayByEmail prepareMessage".$msg);
-            Log::info("inviteToStayByEmail hotel".json_encode($hotel));
+            // Log::info("inviteToStayByEmail prepareMessage".$msg);
+            // Log::info("inviteToStayByEmail hotel".json_encode($hotel));
             // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
             $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name), $guest->email);
         }
@@ -176,8 +181,14 @@ class GuestService {
                 $email = $data->email;
             }
 
-            $acronym = $this->generateInitialsName($name ?? $email);
-            
+
+            $email = $guest->email;
+            if($data->email){
+                $email = $data->email;
+            }
+
+            $acronym = $this->generateInitialsName($name ?? $email ?? $email);
+
             $guest->name = $name;
             $guest->email = $data->email ?? $guest->email;
             $guest->phone = $data->phone ?? $guest->phone;
@@ -229,6 +240,9 @@ class GuestService {
             // Elimina espacios adicionales
             $name = preg_replace('/\s+/', ' ', trim($name));
 
+            // Elimina espacios adicionales
+            $name = preg_replace('/\s+/', ' ', trim($name));
+
             // Divide el nombre en partes
             $parts = explode(' ', trim($name));
             $initials = null;
@@ -236,6 +250,7 @@ class GuestService {
             // Verifica si el nombre tiene más de una parte
             if (count($parts) > 1) {
                 // Si tiene nombre y apellido, toma la primera letra de cada uno
+                $initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . mb_substr($parts[1], 0, 1));
                 $initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . mb_substr($parts[1], 0, 1));
             } else {
                 // Si solo tiene un nombre, toma las primeras dos letras
@@ -251,18 +266,18 @@ class GuestService {
     public function updateColorGuestForStay($colorsExists) {
         // Obtener los colores definidos
         $colors = GuestEnum::COLORS;
-    
+
         // Asegurarse de que $colorsExists es un array
         $colorsExistsArray = $colorsExists->toArray();
-    
+
         // Log para ver qué contiene $colorsExistsArray
         Log::info('$colors '.json_encode($colors));
         Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
-    
+
         // Filtrar colores para encontrar aquellos que no están en $colorsExistsArray
         $availableColors = array_diff($colors, $colorsExistsArray);
         Log::info('$availableColors '.json_encode($availableColors));
-    
+
         // Verificar si hay colores disponibles
         if (!empty($availableColors)) {
             Log::info('if');
@@ -276,6 +291,6 @@ class GuestService {
             return $colors[array_rand($colors)];
         }
     }
-    
-    
+
+
 }

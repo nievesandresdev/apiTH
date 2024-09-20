@@ -28,12 +28,21 @@ class Profile extends Model
         'goal_achieved',
         'image',
         'logo',
-        'name_hoster'
+        'name_hoster',
+        'work_position_id'
     ];
+
+    protected $guard_name ='api';
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    public function workPosition()
+    {
+        return $this->belongsTo(WorkPosition::class);
+    }
+
 
 }

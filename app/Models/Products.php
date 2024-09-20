@@ -54,7 +54,7 @@ class Products extends Model
     }
 
     public function toggleableHotels(){
-        return $this->belongsToMany(hotel::class, 'toggle_products', 'products_id', 'hotel_id')->withPivot('order');;
+        return $this->belongsToMany(hotel::class, 'toggle_products', 'products_id', 'hotel_id')->withPivot('id', 'order', 'position', 'position_old');
     }
 
     public function productFeatured(){
@@ -142,10 +142,18 @@ class Products extends Model
 
     public function scopeOrderByWeighing($query, $hotelId)
     {
+        // if ($hotelId) {
+        //     $query->join('toggle_products', 'products.id', '=', 'toggle_products.products_id')
+        //         ->where('toggle_products.hotel_id', $hotelId)
+        //         ->orderBy('toggle_products.order', 'desc');
+        // }
         if ($hotelId) {
-            $query->join('toggle_products', 'products.id', '=', 'toggle_products.products_id')
-                ->where('toggle_products.hotel_id', $hotelId)
-                ->orderBy('toggle_products.order', 'desc');
+            $query->leftJoin('toggle_products', function ($join) use ($hotelId) {
+                $join->on('products.id', '=', 'toggle_products.products_id')
+                    ->where('toggle_products.hotel_id', '=', $hotelId);
+            })
+            ->orderByRaw('ISNULL(toggle_products.order) ASC')
+            ->orderBy('toggle_products.order', 'desc');
         }
     }
 
@@ -157,16 +165,9 @@ class Products extends Model
                     $join->on('products.id', '=', 'service_featured.product_id')
                     ->where('service_featured.hotel_id', '=', $hotelId);
                 })
-                ->leftJoin('recomendations', function ($join) use ($hotelId) {
-                    $join->on('products.id', '=', 'recomendations.recommendable_id')
-                        ->where('recomendations.hotel_id', '=', $hotelId)
-                        ->where('recommendable_type', 'App\Models\Products')
-                        ->where('recomendations.hotel_id', '=', $hotelId);
-                })
                 ->orderByRaw('CASE 
-                    WHEN recomendations.recommendable_id IS NOT NULL THEN 1
-                    WHEN service_featured.product_id IS NOT NULL THEN 2
-                    ELSE 3
+                    WHEN service_featured.product_id IS NOT NULL THEN 1
+                    ELSE 2
                 END');
         }
     }
@@ -191,23 +192,81 @@ class Products extends Model
         });
 
         // Unirse a la tabla recomendations y service_featured
-        $query->leftJoin('recomendations', function ($join) use ($hotelId) {
-            $join->on('products.id', '=', 'recomendations.recommendable_id')
-                ->where('recomendations.hotel_id', '=', $hotelId)
-                ->where('recommendable_type', 'App\Models\Products');
-        })
-        ->leftJoin('service_featured', function ($join) use ($hotelId) {
+        $query->leftJoin('service_featured', function ($join) use ($hotelId) {
             $join->on('products.id', '=', 'service_featured.product_id')
                 ->where('service_featured.hotel_id', '=', $hotelId);
+        });
+        $query->leftJoin('toggle_products as tp', function ($join) use ($hotelId) {
+            $join->on('products.id', '=', 'tp.products_id')
+                ->where('tp.hotel_id', '=', $hotelId);
         });
 
         // Ordenar por ciudad, y luego por recomendados y destacados
         $query->orderByRaw("CASE WHEN activities.city_experince = '$cityName' THEN 0 ELSE 1 END")
-            ->orderByRaw('CASE 
-                    WHEN recomendations.recommendable_id IS NOT NULL THEN 1
-                    WHEN service_featured.product_id IS NOT NULL THEN 2
-                    ELSE 3
-                END');
+        ->orderByRaw('CASE WHEN tp.position IS NOT NULL THEN 0 ELSE 1 END')
+        ->orderBy('tp.position')
+        ->orderByRaw('CASE
+                WHEN service_featured.product_id IS NOT NULL THEN 1
+                ELSE 2
+            END');
+    }
+
+    public function scopeWhereAddExpInHoster($query, $hotelId) {
+        if ($hotelId){
+            $query->whereDoesntHave('toggleableHotels', function($q)use($hotelId){
+                    $q->where('hotel_id', $hotelId);
+                })
+                ->OrWhereHas('productHidden', function($query)use($hotelId){
+                    $query->where('hotel_id', $hotelId);
+                });
+        }
+    }
+
+    public function scopeWithVisibilityForProduct($query, $hotelId)
+    {
+        $query->where(function ($query) use ($hotelId) {
+            $query->whereHas('toggleableHotels', function ($q) use ($hotelId) {
+                $q->where('hotel_id', $hotelId);
+            })->orWhereDoesntHave('productHidden', function ($q) use ($hotelId) {
+                $q->where('hotel_id', $hotelId);
+            });
+        })->orWhere(function ($query) use ($hotelId) {
+            $query->whereDoesntHave('toggleableHotels', function ($q) use ($hotelId) {
+                $q->where('hotel_id', $hotelId);
+            })->orWhereHas('productHidden', function ($q) use ($hotelId) {
+                $q->where('hotel_id', $hotelId);
+            });
+        });
+
+        $query->orderByRaw("
+            CASE WHEN EXISTS (
+                SELECT 1
+                FROM toggle_products
+                WHERE toggle_products.products_id = products.id
+                AND hotel_id = ?
+            ) THEN 0 ELSE 1 END ASC
+        ", [$hotelId]);
+    }
+
+    public function scopeWhereFeaturedHotel($query, $hotelId)
+    {
+        if ($hotelId){
+            $query->whereHas('productFeatured', function($query)use($hotelId){
+                $query->where('hotel_id', $hotelId);
+            });
+        }
+    }
+
+    public function scopeOrderByPosition($query, $hotelId)
+    {
+        if ($hotelId) {
+            $query->leftJoin('toggle_products as tp', function ($join) use ($hotelId) {
+                $join->on('products.id', '=', 'tp.products_id')
+                    ->where('tp.hotel_id', '=', $hotelId);
+            })
+            ->orderByRaw('ISNULL(tp.position), tp.position ASC')
+            ->orderBy('tp.updated_at', 'DESC');
+        }
     }
 
 }

@@ -20,6 +20,12 @@ class ExperienceResource extends JsonResource
         if($this->distance){
             $distance = round($this->distance / 1000, 2);
         }
+
+        $isVisible = $this->toggleableHotels()->where('hotel_id', $modelHotel->id)->exists() && !$this->productHidden()->where('hotel_id', $modelHotel->id)->exists();
+        $productFeatured = $this->productFeatured()->where('hotel_id', $modelHotel->id)->first();
+        $toggleProduct = $this->toggleableHotels()->where('hotel_id', $modelHotel->id)->first();
+        $productHidden = $this->productHidden()->where('hotel_id', $modelHotel->id)->first();
+        $recommendacion = $this->recomendations()->where('hotel_id', $modelHotel->id)->first();
         return [
             'id' => $this->id,
             'image' => $this->images()->orderBy('id','ASC')->first(),
@@ -31,8 +37,11 @@ class ExperienceResource extends JsonResource
             'select' => $this->select,
             'from_price' => $this->from_price,
             'reviews' => $this->reviews,
-            'recomendations' => $this->recomendations()->where('hotel_id', $modelHotel->id)->first(),
-            'product_featured' => $this->productFeatured()->where('hotel_id', $modelHotel->id)->first(),
+            'is_visible' => boolval($isVisible),
+            'recomendations' => $recommendacion,
+            'product_featured' => $productFeatured,
+            'product_hidden' => $productHidden,
+            'featured' => !empty($productFeatured),
             // activities
             'title' => $this['translation']['title'],
             'cancellation_policy' => $this['translation']['cancellation_policy'], 
@@ -41,6 +50,11 @@ class ExperienceResource extends JsonResource
             'city_experince' => $this['translation']['city_experince'],
             'slug_city' => Str::slug($this['translation']['city_experince']),
             'duration' => $this['translation']['duration'],
+            'position_old' => $toggleProduct?->pivot->position_old,
+            'position' => $toggleProduct?->pivot->position,
+            'order' => $toggleProduct?->pivot->order,
+            'toggle_product_id' => $toggleProduct?->pivot->id,
+            'recomendation_language_current' => $recommendacion ? $recommendacion->translationLanguageCurrent() : null,
         ];
     }
 }

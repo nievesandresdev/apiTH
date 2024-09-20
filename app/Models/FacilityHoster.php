@@ -17,7 +17,12 @@ class FacilityHoster extends Model
         'user_id',
         'facility_id',
         'select',
+        'visible',
         'hotel_id',
+        'schedules',
+        'always_open',
+        'ad_tag',
+        'order',
     ];
 
     public function facilities()
@@ -38,6 +43,10 @@ class FacilityHoster extends Model
     {
         //
         return $this->hasMany('App\Models\FacilityHosterLanguage', 'facility_hoster_id');
+    }
+
+    public function scopeWhereVisible ($query) {
+        $query->where(['select' => 1, 'status' => 1, 'visible' => 1]);
     }
 
 }

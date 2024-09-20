@@ -33,29 +33,34 @@ class RequestSettingService {
 
             //titulo
             $nameHotelText = "[nombre del hotel]";
-            switch ($nameHotelText) {
-                case $localLang == "fr":
-                    $nameHotelText = "[nom de l'hôtel]";
-                    break;
-                case $localLang == "en":
-                    $nameHotelText = "[hotel name]";
-                    break;
-            }
+            // switch ($nameHotelText) {
+            //     case $localLang == "fr":
+            //         $nameHotelText = "[nom de l'hôtel]";
+            //         break;
+            //     case $localLang == "en":
+            //         $nameHotelText = "[hotel name]";
+            //         break;
+            // }
             $title = $settings->msg_title[$localLang];
             $title = str_replace($nameHotelText, $hotel->name, $title);
             
             //mensaje
             $linkText = "[Link a las OTAs]";
-            switch ($linkText) {
-                case $localLang == "fr":
-                    $linkText = "[Lien vers les OTA]";
-                    break;
-                case $localLang == "en":
-                    $linkText = "[Link to OTAs]";
-                    break;
-            }
+            // switch ($linkText) {
+            //     case $localLang == "fr":
+            //         $linkText = "[Lien vers les OTA]";
+            //         break;
+            //     case $localLang == "en":
+            //         $linkText = "[Link to OTAs]";
+            //         break;
+            // }
             
             $text = preg_replace('/>\s+</', '><', $settings->msg_text[$localLang]);
+            // Verificar si $linkText está contenido dentro de $text
+            $buttonAnchor = false;
+            if (strpos($text, $linkText) !== false) {
+                $buttonAnchor = true;
+            }
             $parts = explode("<p><strong>$linkText</strong></p><p><br></p>", $text);
 
             $text1 = $parts[0] ?? null;
@@ -66,7 +71,8 @@ class RequestSettingService {
                 "text1" => $text1,
                 "text2" => $text2,
                 "otas_enabled" => $settings->otas_enabled,
-                "request_to" => $settings->request_to
+                "request_to" => $settings->request_to,
+                "buttonAnchor" => $buttonAnchor
             ];
         } catch (\Exception $e) {
             return $e;

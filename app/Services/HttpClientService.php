@@ -9,7 +9,10 @@ class HttpClientService
     public function make_request($method, $url, $data = [], $headers = [], $timeout = 960)
     {
         try {
-            $response = Http::timeout($timeout)->withHeaders($headers)->{$method}($url, $data);
+            $response = Http::timeout($timeout)
+            ->withHeaders($headers)
+            ->withoutVerifying()
+            ->{$method}($url, $data);
             if ($response->successful()) {
                 return $response->json();
             }

@@ -43,6 +43,8 @@ class NotifyUnreadMsg implements ShouldQueue
         if($message->status == 'Entregado'){
             sendEventPusher('private-noti-hotel.' . $this->hotel_id, 'App\Events\NotifyStayHotelEvent', 
                 [
+                    'showLoadPage' => false,
+                    'guest_id' => $this->guestId,
                     'stay_id' => $this->stay_id,
                     'room' => $this->room,
                     'guest' => true,

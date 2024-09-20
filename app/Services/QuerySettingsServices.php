@@ -28,7 +28,7 @@ class QuerySettingsServices {
 
     public function notifications ($hotelId) {
         try {
-            $default = QuerySetting::select('notify_to_hoster')
+            $default = QuerySetting::select('email_notify_new_feedback_to','email_notify_pending_feedback_to')
                         ->where('hotel_id',$hotelId)->first();
             if(!$default){
                 $default = queryNotifyDefault();

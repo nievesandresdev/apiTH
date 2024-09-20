@@ -51,7 +51,8 @@ class Recomendation extends Model
     public function translationLanguageCurrent()
     {
         if ($this->translate) {
-            return $this->translate[localeCurrent()] ?? null;
+            $translation = gettype($this->translate) == 'string' ? json_decode($this->translate, true) : $this->translate;
+            return $translation ? $translation[localeCurrent()] ?? null : null;
         }
         return;
     }
