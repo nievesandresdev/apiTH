@@ -92,7 +92,6 @@ class ExperienceService {
                 LIMIT 1
             ) AS distance"),
         )->addBinding([$dataFilter['cityData']->long, $dataFilter['cityData']->lat], 'select');
-
         $queryExperience->whereVisibleByHoster($modelHotel->id);
         if($dataFilter['one_exp_id']){
             $queryExperience = $queryExperience->where('products.id', $dataFilter['one_exp_id']);
@@ -103,14 +102,12 @@ class ExperienceService {
         // }else{
         //     $queryExperience->whereCity($dataFilter['city']);
         // }
-
         if($dataFilter['all_cities']){
         }else{
-            $queryExperience->whereHas('translation', function($query) use($dataFilter){
+            $queryExperience->whereHas('translationEs', function($query) use($dataFilter){
                 $query->where('city_experince', $dataFilter['city']);
             });
         }
-        
         // if($dataFilter['search']){
         //     $queryExperience->whereHas('activities', function($query) use($dataFilter){
         //         $query->where('title','like',  ['%'.$dataFilter['search'].'%']);
