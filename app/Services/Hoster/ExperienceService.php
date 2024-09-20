@@ -93,7 +93,6 @@ class ExperienceService {
     }
 
     public function filter ($query, $dataFilter, $hotelModel, $cityModel) {
-        
         $user = $hotelModel->user[0];
 
         if($dataFilter['all_cities']){
@@ -102,7 +101,6 @@ class ExperienceService {
                 $query->where('city_experince', $dataFilter['city']);
             });
         }
-        
         // $query->whereHas('translation', function($query) use($dataFilter){   
         //     $query->whereNotNull('metting_point_longitude')
         //     ->whereNotNull('metting_point_latitude');
@@ -127,7 +125,6 @@ class ExperienceService {
                 $query->where(['cancellation_policy' => 'STANDARD']);
             });
         }
-
 
 
         // 1 hora [0, 1]

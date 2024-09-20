@@ -9,9 +9,9 @@ use App\Http\Controllers\Api\Hoster\ExperienceController as ExperienceSaasContro
 //     Route::get('/findByAutocomplete', [HotelOtaController::class, 'getAll']);
 // });
 Route::group(['prefix' => 'experience'], function () {
-    Route::get('/getAll', [ExperienceController::class, 'getAll']);
+    Route::post('/getAll', [ExperienceController::class, 'getAll']);
     Route::get('/findBySlug', [ExperienceController::class, 'findBySlug']);
-    Route::get('/getNumbersByFilters', [ExperienceController::class, 'getNumbersByFilters']);
+    Route::post('/getNumbersByFilters', [ExperienceController::class, 'getNumbersByFilters']);
     Route::get('/findInVIatorByShortId', [ExperienceController::class, 'findInVIatorByShortId']);
     Route::get('/findSchedulesInVIator', [ExperienceController::class, 'findSchedulesInVIator']);
     Route::group(['prefix' => 'saas'], function () {
