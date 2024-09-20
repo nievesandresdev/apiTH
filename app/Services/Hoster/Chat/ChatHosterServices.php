@@ -46,6 +46,17 @@ class ChatHosterServices {
             return $e;
         }
     }
+
+    public function countUnreadMsgsByGuest($chatId){
+        try {
+            return ChatMessage::where('chat_id',$chatId)
+                    ->where('status','Entregado')
+                    ->where('by','Hoster')
+                    ->count();
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     
     public function getDataRoom($stayId, $guestId){
         try {
@@ -71,7 +82,7 @@ class ChatHosterServices {
         }
     }
 
-    public function sendMsg($guestId, $stayId, $text, $hotelId, $data) {
+    public function sendMsg($guestId, $stayId, $text, $hotel, $data) {
         try {
             $this->staySessionServices->updateActionOrcreateSession($data);
             DB::beginTransaction();
@@ -89,24 +100,30 @@ class ChatHosterServices {
                 'text' => $text,
                 'status' => 'Entregado',
                 'by' => 'Hoster',
-                'messageable_id' => $hotelId,
+                'messageable_id' => $hotel->id,
                 'messageable_type' => 'App\Models\hotel'
             ]);
 
             $msg = $chat->messages()->save($chatMessage);
-
-            //si existe algun job para notificacion no se acumularan jobs duplicados
-            $exists_job = DB::table('jobs')->where('payload', 'like', '%by-hoster' . $chat->id . '%')->count();
-            if(!$exists_job){
-                UnReadGuest::dispatch('by-hoster'.$chat->id, $stayId, $chatMessage->id)->delay(now()->addMinutes(10));
-            }
             DB::commit();
+            //si existe algun job para notificacion no se acumularan jobs duplicados
+            DB::table('jobs')->where('payload', 'like', '%by-hoster' . $chat->id . '%')->delete();
+            UnReadGuest::dispatch('by-hoster'.$chat->id, $hotel, $chat->id, $guestId)->delay(now()->addMinutes(30));
+            $hotelId = $hotel->id;
             $count = $this->pendingCountByStay($stayId);
+            $countUnreadMsgsByGuest = $this->countUnreadMsgsByGuest($chat->id);
+            
             //send message
-            sendEventPusher('private-update-chat.' . $stayId, 'App\Events\UpdateChatEvent', [
+            sendEventPusher('private-update-chat.' . $guestId, 'App\Events\UpdateChatEvent', [
                 'message' => $msg,
                 'chatData' => $chat,
+                'countUnreadMsgsByGuest' => $countUnreadMsgsByGuest
             ]);
+
+            sendEventPusher('private-notify-unread-msg-guest.' . $guestId, 'App\Events\NotifyUnreadMsgGuest', [
+                'countUnreadMsgsByGuest' => $countUnreadMsgsByGuest
+            ]);
+            
             sendEventPusher('private-noti-hotel.' . $hotelId, 'App\Events\NotifyStayHotelEvent',
                 [
                     'showLoadPage' => false,
@@ -138,6 +155,10 @@ class ChatHosterServices {
             ]);
             
             $count = $this->pendingCountByStay($stayId);
+
+            // Obtener la estancia y actualizar el campo updated_at.
+            $stay = Stay::find($stayId);
+            $stay->touch();    
             // sendEventPusher('private-noti-hotel.' . $stay->hotel_id, 'App\Events\NotifyStayHotelEvent',
             //     [
             //         'showLoadPage' => false,

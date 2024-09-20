@@ -206,6 +206,38 @@ class UsersController extends Controller
         }
     }
 
+    public function disabled(){
+        try {
+            $user = $this->userServices->disabledUserHoster(request()->user_id);
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario deshabilitado con éxito',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
+
+    public function enabled(){
+        try {
+            $user = $this->userServices->enabledUserHoster(request()->user_id);
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Usuario habilitado con éxito',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
+
+
+
     public function getStatusSubscription(Request $request){
         try{
             $user = $this->userServices->getUserId();

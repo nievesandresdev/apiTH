@@ -33,6 +33,7 @@ class User extends Authenticatable
         //settings
         'permissions', //json
         'notifications', //json
+        'status',
         'periodicity_chat',
         'periodicity_stay',
 

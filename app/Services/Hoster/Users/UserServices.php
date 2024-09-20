@@ -225,7 +225,7 @@ class UserServices
                 case 0:
                     break;
                 case 1:
-                    $query->where('del', 0);
+                    $query->where('status', 1);
                     break;
                 case 2:
                     $query->whereHas('roles', function ($subQuery) {
@@ -238,7 +238,7 @@ class UserServices
                     });
                     break;
                 case 4:
-                    $query->where('del', 1);
+                    $query->where('status', 0);
                     break;
                 default:
                     $query->where('del', 0);
@@ -422,6 +422,7 @@ class UserServices
             'periodicity_chat' => $user->periodicity_chat,
             'periodicity_stay' => $user->periodicity_stay,
             'permissions' => json_decode($user->permissions),
+            'status' => $user->status,
             //'time' => $user->created_at->diffForHumans(),
         ];
     }
@@ -591,6 +592,26 @@ class UserServices
         $user = User::findOrFail($userId);
 
         $user->del = 1;
+        $user->save();
+
+        return $user;
+    }
+
+    public function disabledUserHoster($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        $user->status = 0;
+        $user->save();
+
+        return $user;
+    }
+
+    public function enabledUserHoster($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        $user->status = 1;
         $user->save();
 
         return $user;

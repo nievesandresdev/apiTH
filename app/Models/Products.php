@@ -44,6 +44,10 @@ class Products extends Model
         return $this->belongsTo(City::class, 'city_id');
     }
 
+    public function translationEs()
+    {
+        return $this->hasOne(Activity::class)->where('language', 'es');
+    }
     public function translation()
     {
         return $this->hasOne(Activity::class)->where('language', localeCurrent());
@@ -54,7 +58,7 @@ class Products extends Model
     }
 
     public function toggleableHotels(){
-        return $this->belongsToMany(hotel::class, 'toggle_products', 'products_id', 'hotel_id')->withPivot('id', 'order', 'position');
+        return $this->belongsToMany(hotel::class, 'toggle_products', 'products_id', 'hotel_id')->withPivot('id', 'order', 'position', 'position_old');
     }
 
     public function productFeatured(){
@@ -264,7 +268,8 @@ class Products extends Model
                 $join->on('products.id', '=', 'tp.products_id')
                     ->where('tp.hotel_id', '=', $hotelId);
             })
-            ->orderByRaw('ISNULL(tp.position), tp.position ASC');
+            ->orderByRaw('ISNULL(tp.position), tp.position ASC')
+            ->orderBy('tp.updated_at', 'DESC');
         }
     }
 

@@ -93,7 +93,6 @@ class ExperienceService {
     }
 
     public function filter ($query, $dataFilter, $hotelModel, $cityModel) {
-        
         $user = $hotelModel->user[0];
 
         if($dataFilter['all_cities']){
@@ -102,7 +101,6 @@ class ExperienceService {
                 $query->where('city_experince', $dataFilter['city']);
             });
         }
-        
         // $query->whereHas('translation', function($query) use($dataFilter){   
         //     $query->whereNotNull('metting_point_longitude')
         //     ->whereNotNull('metting_point_latitude');
@@ -127,7 +125,6 @@ class ExperienceService {
                 $query->where(['cancellation_policy' => 'STANDARD']);
             });
         }
-
 
 
         // 1 hora [0, 1]
@@ -157,7 +154,7 @@ class ExperienceService {
 
         if (count($dataFilter['score']) > 0) {
             foreach ($dataFilter['score'] as $key => $item) {
-                $durations =  [['i'=>0,'f'=>1],['i'=>1,'f'=>2],['i'=>2,'f'=>3],['i'=>3,'f'=>4],['i'=>4,'f'=>5]];
+                $durations =  [['i'=>0,'f'=>1.99],['i'=>2,'f'=>2.99],['i'=>3,'f'=>3.99],['i'=>4,'f'=>4.99],['i'=>5,'f'=>5]];
                 $d = intval($item) - 1;
                 $interval = $durations[$d];
                 if ($key == 0){
@@ -198,30 +195,44 @@ class ExperienceService {
     }
 
     public function featuredByHoster ($featuredBool, $modelHotel, $modelProduct) {
-        $modelPlaceFeatured = ServiceFeatured::where('product_id',$modelProduct->id)
+        $modelProductFeatured = ServiceFeatured::where('product_id',$modelProduct->id)
                                         ->where('hotel_id',$modelHotel->id)
                                         ->first();
-        if(!$featuredBool && $modelPlaceFeatured){
-            $modelPlaceFeatured->delete();
+        if(!$featuredBool && $modelProductFeatured){
+            $modelProductFeatured->delete();
         }
-        if($featuredBool && !$modelPlaceFeatured){
-            $modelPlaceFeatured = new ServiceFeatured();
-            $modelPlaceFeatured->product_id = $modelProduct->id;
-            $modelPlaceFeatured->hotel_id = $modelHotel->id;
-            $modelPlaceFeatured->user_id = $modelHotel->user[0]->id;
-            $modelPlaceFeatured->save();
+        if($featuredBool && !$modelProductFeatured){
+            $modelProductFeatured = new ServiceFeatured();
+            $modelProductFeatured->product_id = $modelProduct->id;
+            $modelProductFeatured->hotel_id = $modelHotel->id;
+            $modelProductFeatured->user_id = $modelHotel->user[0]->id;
+            $modelProductFeatured->save();
         }
     }
 
     public function assignFirstPosition ($hotelModel, $productModel) {
-        $modelTogglePlace = ToggleProduct::updateOrCreate([
+        $toggleProductModelFirstOld = ToggleProduct::where([
+            'hotel_id' => $hotelModel->id,
+            'position' => 0,
+        ])->first();
+        if ($toggleProductModelFirstOld) {
+            $toggleProductModelFirstOld->update(['position' => 0.5]);
+        }
+        $modelToggleProductFirstNew = ToggleProduct::updateOrCreate([
+            'hotel_id' => $hotelModel->id,
+            'Products_id' => $productModel->id,
+        ], [
+            'position' => 0,
+        ]);
+        return $modelToggleProductFirstNew;
+    }
+
+    public function deletePositionCurrent ($hotelModel, $productModel) {
+        $modelToggleProduct = ToggleProduct::updateOrCreate([
             'hotel_id' => $hotelModel->id,
             'products_id' => $productModel->id,
         ], [
-            'hotel_id' => $hotelModel->id,
-            'products_id' => $productModel->id,
-            'position' => 0,
-            'order' => 1
+            'position' => null,
         ]);
     }
 
@@ -251,7 +262,7 @@ class ExperienceService {
                 'hotel_id' => $hotelModel->id,
                 'activities_id' => $productId,
             ])->delete();
-            $modelTogglePlace = ToggleProduct::updateOrCreate([
+            $modelToggleProduct = ToggleProduct::updateOrCreate([
                 'hotel_id' => $hotelModel->id,
                 'products_id' => $productId,
             ], [
@@ -263,7 +274,7 @@ class ExperienceService {
         }
     }
 
-    public function syncPosition ($request, $cityModel, $hotelModel) {
+    public function syncPosition ($request, $cityModel, $hotelModel, $update_position_old = true) {
         $hotelId = $hotelModel->id;
         $productsQuery = Products::activeToShow()
             ->select(
@@ -288,20 +299,25 @@ class ExperienceService {
 
         $position = 0;
 
-        $productsQuery->chunk(100, function ($products) use (&$position, $hotelModel) {
+        $productsQuery->chunk(100, function ($products) use (&$position, $hotelModel, $update_position_old) {
             foreach ($products as $product) {
                 $toggleProductModel = ToggleProduct::where([
                     'hotel_id' => $hotelModel->id,
                     'products_id' => $product->id,
                 ])->first();
                 if ($toggleProductModel) {
-                    $toggleProductModel->update(['position' => $position]);
+                    $toggleProductModel->position = $position;
+                    if ($update_position_old) {
+                        $toggleProductModel->position_old = $position;
+                    }
+                    $toggleProductModel->save();
                 }
+                
                 // $product->toggleableHotels()->where('hotel_id', $hotelModel->id)->update(['position' => $position]);
                 $position++;
             }
         });
-
+        return true;
     }
 
     public function resetPosition ($request, $cityModel, $hotelModel) {
@@ -324,11 +340,99 @@ class ExperienceService {
 
     }
 
-    public function updatePosition ($position, $hotelModel) {
+    public function updatePositionBulk ($position, $hotelModel) {
         $toggleProductsIdsOrded = collect($position??[]);
         foreach ($toggleProductsIdsOrded as $position => $id) {
             ToggleProduct::where(['id' => $id])->update(['position' => $position]);
         }
+    }
+    public function updatePosition ($hotelModel, $productModel) {
+        $toggleProductModel = ToggleProduct::where(['products_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
+        if ($toggleProductModel && $toggleProductModel->position_old) {
+            var_dump('entro');
+            $toggleProductModel->update(['position' => $toggleProductModel->position_old, 'position_old' => $toggleProductModel->position_old]);
+        }
+    }
+    public function getPositionFirtNonRecommendated ($hotelModel, $cityModel) {
+        $newPosition = null;
+        $productsQuery = Products::activeToShow()
+            ->select(
+                'products.id',
+                \DB::raw("(
+                    SELECT ST_Distance_Sphere(
+                        point(a.metting_point_longitude, a.metting_point_latitude),
+                        point(?, ?)
+                    )
+                    FROM activities a
+                    WHERE a.products_id = products.id
+                    ORDER BY a.id ASC
+                    LIMIT 1
+                ) AS distance"),
+            )->addBinding([$cityModel->long, $cityModel->lag], 'select')
+            ->whereVisibleByHoster($hotelModel->id)
+            ->orderByPosition($hotelModel->id)
+            ->orderByFeatured($hotelModel->id)
+            ->orderByWeighing($hotelModel->id)
+            ->orderBy('distance','ASC')
+            ->whereCity($cityModel->name);
+
+        $productsQuery->chunk(100, function ($products) use (&$newPosition, $hotelModel) {
+            foreach ($products as $productModal) {
+                $productFeatured = $productModal->productFeatured()->where('hotel_id', $hotelModel->id)->first();
+                
+                if (!$productFeatured) {
+                    $toggleProduct = ToggleProduct::where(['hotel_id' => $hotelModel->id, 'products_id' => $productModal->id])->first();
+                    $newPosition = $toggleProduct->position;
+                    // var_dump($newPosition);
+                    return false;
+                }
+            }
+        });
+
+        return $newPosition;
+        
+    }
+    public function getPositionOld ($order, $hotelModel, $cityModel) {
+
+        $order = (float) $order;
+        $productsQuery = Products::activeToShow()
+            ->select(
+                'products.id',
+                \DB::raw("(
+                    SELECT ST_Distance_Sphere(
+                        point(a.metting_point_longitude, a.metting_point_latitude),
+                        point(?, ?)
+                    )
+                    FROM activities a
+                    WHERE a.products_id = products.id
+                    ORDER BY a.id ASC
+                    LIMIT 1
+                ) AS distance"),
+            )->addBinding([$cityModel->long, $cityModel->lag], 'select')
+            ->whereVisibleByHoster($hotelModel->id)
+            ->orderByPosition($hotelModel->id)
+            ->orderByFeatured($hotelModel->id)
+            ->orderByWeighing($hotelModel->id)
+            // ->orderBy('distance','ASC')
+            ->whereCity($cityModel->name);
+
+        $shouldContinue = true;
+
+        $newOrder = null;
+
+        $productsQuery->chunk(100, function ($products) use (&$newOrder, $order, $hotelModel) {
+            foreach ($products as $productModal) {
+                $toggleProduct = ToggleProduct::where(['hotel_id' => $hotelModel->id, 'products_id' => $productModal->id])->first();
+                $orderProductCurrent = (float) $toggleProduct->order;
+                if ($orderProductCurrent < $order) {
+                    return false;
+                }
+                $newOrder = $orderProductCurrent;
+            }
+        });
+
+        return $newOrder;
+        
     }
 
     public function findRecommendation ($hotelModel, $productModel) {

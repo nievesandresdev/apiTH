@@ -378,9 +378,12 @@ if (! function_exists('settingsNotyStayDefault')) {
             $settings->guestcreate_check_email = true;
             //Mensaje cuando un huésped crea una estancia
             $settings->guestcreate_msg_email = [
-                'es' => 'Estimado huésped,<br> Estamos encantados de darte la bienvenida a [nombre_del_hotel].<br><br>Esperamos que tu estancia sea única e inolvidable,<br>nuestro equipo está a tu disposición.',
-                'en'=>'<p>Dear guest,<br> We are delighted to welcome you to [nombre_del_hotel].<br> We hope your stay is unique and unforgettable.<br> Our team is at your service.<p>',
-                'fr'=>"Cher invité,<br> Nous sommes ravis de vous accueillir à [nombre_del_hotel].<br> Nous espérons que votre séjour sera unique et inoubliable.<br> Notre équipe est à votre disposition."
+                'es' => '<p>Estimado huésped,<br> Estamos encantados de darte la bienvenida a nuestra WebApp.<br>Esperamos que tu estancia sea única e inolvidable,<br>nuestro equipo está a tu disposición.</p>',
+                'en'=>'<p>Dear guest,<br> We are delighted to welcome you to our WebApp.<br> We hope your stay is unique and unforgettable.<br> Our team is at your service.</p>',
+                'fr'=>"<p><br> Nous espérons que votre séjour sera unique et inoubliable.<br> Notre équipe est à votre disposition.</p>",
+                "pt" => "<p>Estimado hóspede,<br> Temos o prazer de o receber na nossa WebApp. <br>Esperamos que a sua estadia seja única e inesquecível,<br>a nossa equipa está ao seu dispor.</p>",
+                "it" => "<p>Caro ospite,<br> Siamo lieti di darti il ​​benvenuto nella nostra WebApp.<br>Ci auguriamo che il tuo soggiorno sia unico e indimenticabile,<br>il nostro team è a tua disposizione.</p>",
+                "de" => "<p>Lieber Gast,<br>Wir freuen uns, Sie in unserer WebApp begrüßen zu dürfen.<br>Wir hoffen, dass Ihr Aufenthalt einzigartig und unvergesslich wird,<br>unser Team steht Ihnen gerne zur Verfügung.</p>"
             ];
             //
             $settings->guestinvite_check_email = true;

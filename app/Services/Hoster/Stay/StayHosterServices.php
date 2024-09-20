@@ -33,6 +33,7 @@ class StayHosterServices {
     // DB::raw('(SELECT COUNT(*) FROM note_guests as ng WHERE ng.stay_id = stays.id) as guests_notes_count'),
     public function getAllByHotel($hotel, $filters, $offset = 0, $limit = 10) {
         try {
+            
             $now = Carbon::now()->format('Y-m-d H:i');
             $limit = $filters['limit'] ?? $limit;
             $offset = $filters['offset'] ?? $offset;
@@ -48,9 +49,11 @@ class StayHosterServices {
                     'stays.number_guests',
                     'stays.check_out',
                     'stays.check_in',
+                    'stays.trial',
                     DB::raw('(SELECT COUNT(*) FROM queries WHERE queries.stay_id = stays.id AND queries.attended = 0 AND queries.answered = 1) as pending_queries_count'),
                     DB::raw('(SELECT COUNT(*) FROM queries WHERE queries.stay_id = stays.id AND queries.answered = 1) as answered_queries_count'),
                     DB::raw('(SELECT MAX(pending) FROM chats WHERE chats.stay_id = stays.id) as has_pending_chats'),
+                    DB::raw('(SELECT COUNT(*) FROM chats WHERE chats.stay_id = stays.id) as has_chats'),
                     DB::raw("CASE 
                                 WHEN '$now' < DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) THEN 'pre-stay'
                                 WHEN '$now' >= DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) AND '$now' < stays.check_out THEN 'in-stay'
@@ -82,11 +85,16 @@ class StayHosterServices {
             
             // $totalCount = (clone $query)->count();
             $allStays = (clone $query)->get();
+            $countStayTest = $allStays->where('trial', 1)->count();
             $totalCount = count($allStays);
+            
+
             $stays = $query->orderByRaw('
                 CASE 
                     WHEN has_pending_chats = 1 OR pending_queries_count > 0 THEN 0
-                    ELSE 1
+                    WHEN has_chats > 0 THEN 1
+                    WHEN answered_queries_count > 0 THEN 2
+                    ELSE 3
                 END ASC, 
                 stays.updated_at DESC, 
                 stays.id DESC
@@ -127,7 +135,8 @@ class StayHosterServices {
                 'total_valid_count' => $totalValidCount,
                 'counts_by_period' => $countsByPeriod,
                 'counts_general_by_period' => $countsGeneralByPeriod,
-                'pending_counts_by_period' => $pendingCountsByPeriod
+                'pending_counts_by_period' => $pendingCountsByPeriod,
+                'count_stay_test' => $countStayTest,
             ];
         } catch (\Exception $e) {
             return $e;
@@ -279,7 +288,7 @@ class StayHosterServices {
         try {
             $this->staySessionServices->updateActionOrcreateSession($data);
             $stay = Stay::find($stayId);
-            $stay->room = $data->room ?? $stay->room;
+            $stay->room = $data->room ?? null;
             $stay->middle_reservation = $data->middle_reservation ?? $stay->middle_reservation;
             $stay->sessions = $data->sessions ?? $stay->sessions;
 
@@ -319,6 +328,18 @@ class StayHosterServices {
                     ->where('id',$stayId)
                     ->first();
             return $stay;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function deleteTestStays($hotelId) {
+        try {
+            $delete = Stay::where('hotel_id',$hotelId)
+                    ->where('trial',1)
+                    ->delete();
+            sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', []);
+            return $delete;
         } catch (\Exception $e) {
             return $e;
         }

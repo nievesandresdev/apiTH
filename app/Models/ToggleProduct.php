@@ -14,5 +14,6 @@ class ToggleProduct extends Model
         'hotel_id',
         'order',
         'position',
+        'position_old',
     ];
 }

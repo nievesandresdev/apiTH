@@ -92,41 +92,96 @@ class ExperienceService {
                 LIMIT 1
             ) AS distance"),
         )->addBinding([$dataFilter['cityData']->long, $dataFilter['cityData']->lat], 'select');
-
         $queryExperience->whereVisibleByHoster($modelHotel->id);
-        
+        if($dataFilter['one_exp_id']){
+            $queryExperience = $queryExperience->where('products.id', $dataFilter['one_exp_id']);
+            return $queryExperience;
+        }
         // if(isset($dataFilter['cities'])){
         //     $queryExperience->whereCities($dataFilter['cities']);
         // }else{
         //     $queryExperience->whereCity($dataFilter['city']);
         // }
-        
-
-        if($dataFilter['search']){
-            $queryExperience->whereHas('activities', function($query) use($dataFilter){
-                $query->where('title','like',  ['%'.$dataFilter['search'].'%']);
+        if($dataFilter['all_cities']){
+        }else{
+            $queryExperience->whereHas('translationEs', function($query) use($dataFilter){
+                $query->where('city_experince', $dataFilter['city']);
             });
         }
-        
+        // if($dataFilter['search']){
+        //     $queryExperience->whereHas('activities', function($query) use($dataFilter){
+        //         $query->where('title','like',  ['%'.$dataFilter['search'].'%']);
+        //     });
+        // }
+        if (!empty($dataFilter['search'])) {
+            $query->whereHas('translation', function($query) use($dataFilter){
+                $query->where('title','like', ['%'.$dataFilter['search'].'%'])
+                    ->orWhere('description','like', ['%'.$dataFilter['search'].'%']);
+            });
+        }
+
         if (!empty($dataFilter['price_min'])) {
             $queryExperience->where('from_price', '>=', floatval($dataFilter['price_min']));
         }
         if (!empty($dataFilter['price_max'])) {
             $queryExperience->where('from_price', '<=', floatval($dataFilter['price_max']));
-        }    
+        }  
+        
+        if (!empty($dataFilter['free_cancelation'])) {
+            $queryExperience->whereHas('translation', function($query) use($dataFilter){
+                $query->where(['cancellation_policy' => 'STANDARD']);
+            });
+        }
 
+        // if (count($dataFilter['duration']) > 0) {
+        //     $queryExperience->whereHas('translation', function($query) use($dataFilter, $durations){
+        //         foreach ($dataFilter['duration'] as $key => $item) {
+        //             $d = intval($item) - 1;
+        //             $interval = $durations[$d];
+        //             if ($key == 0)
+        //                 $query->whereBetween('duration', [$interval['i'], $interval['f']]);
+        //             else
+        //                 $query->orWhereBetween('duration', [$interval['i'], $interval['f']]);
+        //         }
+        //     });
+        // }
         if (count($dataFilter['duration']) > 0) {
-            $queryExperience->whereHas('translation', function($query) use($dataFilter, $durations){
+            $queryExperience->whereHas('translation', function($query) use($dataFilter){
                 foreach ($dataFilter['duration'] as $key => $item) {
+                    $durations =  [['i'=>0,'f'=>60],['i'=>61,'f'=>180],['i'=>181,'f'=>480],['i'=>481,'f'=>100000]];
                     $d = intval($item) - 1;
                     $interval = $durations[$d];
-                    if ($key == 0)
+                    if ($key == 0){
                         $query->whereBetween('duration', [$interval['i'], $interval['f']]);
-                    else
+                        if ($interval['i'] == 0) {
+                            $query->orWhereNull('duration');
+                        }
+                    }else{
                         $query->orWhereBetween('duration', [$interval['i'], $interval['f']]);
+                        if ($interval['i'] == 0) {
+                            $query->orWhereNull('duration');
+                        }
+                    }
                 }
             });
         }
+        if (count($dataFilter['score']) > 0) {
+            foreach ($dataFilter['score'] as $key => $item) {
+                $durations =  [['i'=>0,'f'=>1.99],['i'=>2,'f'=>2.99],['i'=>3,'f'=>3.99],['i'=>4,'f'=>4.99],['i'=>5,'f'=>5]];
+                $d = intval($item) - 1;
+                
+                $interval = $durations[$d];
+                if ($key == 0){
+                    $queryExperience = $queryExperience->whereRaw("JSON_EXTRACT(reviews, '$.combined_average_rating') BETWEEN ? AND ?", [$interval['i'], $interval['f']]);
+                }else{
+                    $queryExperience = $queryExperience->orWhereRaw("JSON_EXTRACT(reviews, '$.combined_average_rating') BETWEEN ? AND ?", [$interval['i'], $interval['f']]);
+                }
+                if ($interval['i'] == 0) {
+                    $queryExperience = $queryExperience->orWhereNull('reviews');
+                }
+            }
+        }
+        
 
         if ($dataFilter['featured']) {
             $queryExperience->whereFeaturedHotel($modelHotel->id);

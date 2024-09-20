@@ -63,7 +63,7 @@ class ChatService {
                 ], [
                     'pending' => true,
             ]);
-            Log::info('sendMsgToHoster $chat'. json_encode($chat));
+            // Log::info('sendMsgToHoster $chat'. json_encode($chat));
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
                 'text' => $request->text,
@@ -79,7 +79,7 @@ class ChatService {
             $msg = $guest->chatMessages()->save($chatMessage);
             $msg->load('messageable');
             if($msg){
-                sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', [
+                sendEventPusher('private-update-chat.' . $guestId, 'App\Events\UpdateChatEvent', [
                     'message' => $msg,
                     'chatData' => $chat,
                 ]);
@@ -126,16 +126,16 @@ class ChatService {
                 if($request->isAvailable && $settings->three_available_show){
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(10));//10
 
-                    /** enviar Mail */
-                        $mailData = [
-                            'guest' => $guest,
-                            'stay' => $stay,
-                            'msg' => $msg,
-                            'messageContent' => $settings->three_available_msg[$langPage]
-                        ];
-                        // evento
-                        SendPendingMessageEmail::dispatch($mailData)->delay(now()->addMinutes(10));
-                    /** fin enviar mail */
+                    // /** enviar Mail */
+                    //     $mailData = [
+                    //         'guest' => $guest,
+                    //         'stay' => $stay,
+                    //         'msg' => $msg,
+                    //         'messageContent' => $settings->three_available_msg[$langPage]
+                    //     ];
+                    //     // evento
+                    //     SendPendingMessageEmail::dispatch($mailData)->delay(now()->addMinutes(10));
+                    // /** fin enviar mail */
                 }
 
                 //se envia el mensaje si no hay agente disponible
@@ -150,7 +150,7 @@ class ChatService {
 
                     $msg = $guest->chatMessages()->save($chatMessage);
                     $msg->load('messageable');
-                    sendEventPusher('private-update-chat.' . $stay->id, 'App\Events\UpdateChatEvent', [
+                    sendEventPusher('private-update-chat.' . $guestId, 'App\Events\UpdateChatEvent', [
                         'message' => $msg,
                         'chatData' => $chat,
                     ]);
@@ -225,20 +225,30 @@ class ChatService {
 
     }
 
-    public function unansweredMessagesData($chatId){
+    public function unansweredMessagesData($chatId, $model = 'ToHoster'){
 
         try{
+            
+            $diff = 'Hoster';
+            $pedding = 1;
+            if($model == 'ToGuest'){
+                $diff = 'Guest';
+                $pedding = 0;
+            }
+            // Log::info('unansweredMessagesData '.json_encode([$chatId,$diff]));
             $url = config('app.hoster_url');
-            $unansweredMessages = ChatMessage::whereHas('chat', function ($query) use ($chatId) { //los mensajes del ultimo chat pendiung 1
+            $unansweredMessages = ChatMessage::whereHas('chat', function ($query) use ($chatId,$pedding) { //los mensajes del ultimo chat pendiung 1
                 $query->where('id', $chatId)
-                    ->where('pending', 1);
+                    ->where('pending', $pedding);
             })
+            ->where('status', 'Entregado')
             ->where('automatic', 0)
-            ->where('by', '!=', 'Hoster')
+            ->where('by', '!=', $diff)
             ->with(['chat','messageable'])
-            ->latest()
+            ->orderBy('id','asc')
+            // ->latest()
             ->get();
-
+            
             $unansweredMessagesData = $unansweredMessages->map(function ($message) use ($url) { //map
                 $guestName = null;
                 if ($message->messageable_type === 'App\Models\Guest') {
@@ -280,7 +290,7 @@ class ChatService {
                     ['by', '=', $request->rol],
                     ['status', '=', 'Entregado']
                 ])->update(['status' => 'Leído']);
-                sendEventPusher('private-update-chat.' . $request->stayId, 'App\Events\MsgReadChatEvent', 'Actualizado');
+                sendEventPusher('private-update-chat.' . $request->guestId, 'App\Events\MsgReadChatEvent', 'Actualizado');
             }
          return true;
         } catch (\Exception $e) {

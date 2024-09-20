@@ -54,6 +54,7 @@ class Hotel extends Model
         'checkout_until',
         'x_url',
         'show_facilities',
+        'sender_mail_mask',
         // customization
         'subdomain',
         'language_default_webapp',

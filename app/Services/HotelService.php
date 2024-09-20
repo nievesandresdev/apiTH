@@ -21,6 +21,8 @@ use App\Jobs\TranslateModelJob;
 
 class HotelService {
 
+    protected $translateService;
+
     function __construct(
         TranslateService $_TranslateService
     )
@@ -30,9 +32,15 @@ class HotelService {
 
     public function getAll ($request, $modelHotel) {
 
-        $user = $modelHotel->user[0];
-
-        $hotelsCollection = $user->hotel()->where('del', 0)->get();
+        $user = \Auth::user();
+        Log::info('hotel withoutCurrent '. $request->withoutCurrent);
+        if (filter_var($request->withoutCurrent, FILTER_VALIDATE_BOOLEAN)) {
+            Log::info('entro withoutCurrent '. $modelHotel->id);
+            $hotelsCollection = $user->hotel()->where('del', 0)->where('hotels.id','!=', $modelHotel->id)->get();
+        }else{
+            Log::info('no entro withoutCurrent '. $modelHotel->id);
+            $hotelsCollection = $user->hotel()->where('del', 0)->get();
+        }
 
         return $hotelsCollection;
     }
@@ -174,11 +182,15 @@ class HotelService {
 
     public function processTranslateProfile ($request, $hotelModel) {
         $description = $request->description;
-        if ($description != $hotelModel->description) {
+        // Log::info('processTranslateProfile $description'. !$description);
+        if ($description && $description != $hotelModel->description) {
             $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
             $inputsTranslate = ['description' => $description];
             TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
+        }else{
+            $hotelModel->translations()->update(['description' => null]);
         }
+
     }
 
     public function updateVisivilityFacilities ($hotelModel) {
@@ -193,6 +205,11 @@ class HotelService {
 
     public function updateVisivilityPlaces ($hotelModel) {
         $hotelModel = $hotelModel->update(['show_places' => !$hotelModel->show_places]);
+        return $hotelModel;
+    }
+
+    public function updateSenderMailMask ($hotelModel, $email) {
+        $hotelModel = $hotelModel->update(['sender_mail_mask' => $email]);
         return $hotelModel;
     }
 

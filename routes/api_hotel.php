@@ -13,6 +13,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/create/subdomain', [SubdomainController::class, 'createDNSRecord']);
     Route::get('/getChatHours', [HotelController::class, 'getChatHours']);
     Route::post('/placeVisivility', [HotelController::class, 'updateVisivilityPlaces']);
+    Route::post('/updateSenderMailMask', [HotelController::class, 'updateSenderMailMask']);
     Route::post('/facilityVisivility', [HotelController::class, 'updateVisivilityFacilities']);
     Route::post('/experienceVisivility', [HotelController::class, 'updateVisivilityExperiences']);
     Route::post('/categoriVisivility', [HotelController::class, 'updateVisivilityCategory']);
