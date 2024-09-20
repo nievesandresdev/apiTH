@@ -93,11 +93,11 @@ class HotelController extends Controller
             // $leisureId = $modelTypePlaces->where('name','Ocio')->first()->id;
             // $whereeatId = $modelTypePlaces->where('name','Dónde comer')->first()->id;
             // $whatvisitId = $modelTypePlaces->where('name','Qué visitar')->first()->id;
-            
+
 
             $facilities = $this->serviceFacility->getCrosselling($modelHotel);
             $crossellingFacilities = FacilityResource::collection($facilities);
-            
+
             $experiences = $this->serviceExperience->getCrosselling($modelHotel, $cityData);
             $crossellingExperiences = ExperienceResource::collection($experiences);
 
@@ -158,9 +158,9 @@ class HotelController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            
+
             $traslationProfile = $this->service->processTranslateProfile($request, $hotelModel);
-            
+
             $hotelModel = $this->service->updateProfile($request, $hotelModel);
 
             $this->service->asyncImages($request, $hotelModel);
@@ -182,7 +182,7 @@ class HotelController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            
+
             $this->service->updateVisivilityFacilities($hotelModel);
 
             $hotelModel->refresh();
@@ -191,7 +191,7 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityFacilities');
         }
     }
-    
+
     public function updateVisivilityExperiences (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
@@ -202,7 +202,7 @@ class HotelController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            
+
             $this->service->updateVisivilityExperiences($hotelModel);
 
             $hotelModel->refresh();
@@ -222,7 +222,7 @@ class HotelController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            
+
             $this->service->updateVisivilityPlaces($hotelModel);
             $hotelModel->refresh();
             $data = new HotelResource($hotelModel);
@@ -264,7 +264,7 @@ class HotelController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            
+
             $this->service->updateVisivilityCategory($request, $hotelModel);
 
             $hotelModel->refresh();

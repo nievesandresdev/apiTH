@@ -51,7 +51,7 @@ class FacilityService {
                 $query = $query->where(['select' => $request->visible]);
             }
             $facilities = $query->orderBy('order')->get();
-                
+
             return $facilities;
         } catch (\Exception $e) {
             return $e;
@@ -65,7 +65,7 @@ class FacilityService {
                 ->where('hotel_id',$modelHotel->id)
                 // ->where(['status' => 1, 'select' => 1])->where('visible',1)
                 ->first();
-                
+
             return $facility;
         } catch (\Exception $e) {
             return $e;
@@ -164,7 +164,7 @@ class FacilityService {
     public function updateTranslation ($model, $translation) {
         try{
             if (!$translation) return;
-            
+
             foreach ($translation as $lg => $value) {
                 $title = !isset($value->title) || !$value->title || ($value->title == 'null') ? null : $value->title;
                 $description = !isset($value->description) || !$value->description || ($value->description == 'null') ? null : $value->description;
@@ -192,5 +192,5 @@ class FacilityService {
         $facilityHosterModel = FacilityHoster::find($id);
         $facilityHosterModel->update(['visible' => 0]);
     }
-    
+
 }

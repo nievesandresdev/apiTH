@@ -40,7 +40,7 @@ class FacilityController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             //
             $data = FacilityResource::collection($facilities);
@@ -61,7 +61,7 @@ class FacilityController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
             $data = new FacilityResource($model);
@@ -95,7 +95,7 @@ class FacilityController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             \DB::beginTransaction();
             $this->service->updateVisible($request, $facilityHosterModel);
@@ -110,6 +110,7 @@ class FacilityController extends Controller
     }
 
     public function storeOrUpdate (Request $request) {
+       /*  return bodyResponseRequest(EnumResponse::ACCEPTED, $request->all()); */
         try {
             // $f = FacilityHoster::find($request->id);
             // return $f;

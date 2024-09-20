@@ -5221,6 +5221,146 @@
             "time": "2024-07-01T07:33:21+00:00"
         },
         {
+            "name": "sdkconsultoria/open-ai-api",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sdkconsultoria/open-ai-api.git",
+                "reference": "540e17561ffe2ecd1cad7fe117876a118c608e06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sdkconsultoria/open-ai-api/zipball/540e17561ffe2ecd1cad7fe117876a118c608e06",
+                "reference": "540e17561ffe2ecd1cad7fe117876a118c608e06",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.8",
+                "php": "^8.0",
+                "pusher/pusher-php-server": "^7.2"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.23",
+                "laravel/pint": "^1.14",
+                "orchestra/testbench": "^9.0",
+                "php-coveralls/php-coveralls": "^0.1.0",
+                "phpunit/phpunit": "^11.0.6"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Sdkconsultoria\\OpenAiApi\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "OpenAiApi": "Sdkconsultoria\\OpenAiApi\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [],
+                "psr-4": {
+                    "Sdkconsultoria\\OpenAiApi\\": "src/",
+                    "Sdkconsultoria\\OpenAiApi\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Camilo Antonio Rodríguez Cruz",
+                    "email": "camilo@sdkconsultoria.com",
+                    "homepage": "https://sdkconsultoria.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Comunicación rapida y segura con la API de Open AI",
+            "keywords": [
+                "Open AI",
+                "laravel",
+                "package"
+            ],
+            "support": {
+                "issues": "https://github.com/sdkconsultoria/open-ai-api/issues",
+                "source": "https://github.com/sdkconsultoria/open-ai-api/tree/develop"
+            },
+            "time": "2024-03-29T21:46:12+00:00"
+        },
+        {
+            "name": "sdkconsultoria/whatsapp-cloud-api",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sdkconsultoria/whatsapp-cloud-api.git",
+                "reference": "1d3118384573fbd08cad0ec7dc434c00525ffdb1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sdkconsultoria/whatsapp-cloud-api/zipball/1d3118384573fbd08cad0ec7dc434c00525ffdb1",
+                "reference": "1d3118384573fbd08cad0ec7dc434c00525ffdb1",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.8",
+                "php": "^8.0",
+                "pusher/pusher-php-server": "^7.2",
+                "sdkconsultoria/open-ai-api": "dev-develop"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.23",
+                "laravel/pint": "^1.14",
+                "orchestra/testbench": "^9.0",
+                "php-coveralls/php-coveralls": "^0.1.0",
+                "phpunit/phpunit": "^11.0.6"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Sdkconsultoria\\WhatsappCloudApi\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "WhatsappCloudApi": "Sdkconsultoria\\WhatsappCloudApi\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [],
+                "psr-4": {
+                    "Sdkconsultoria\\WhatsappCloudApi\\": "src/",
+                    "Sdkconsultoria\\WhatsappCloudApi\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Camilo Antonio Rodríguez Cruz",
+                    "email": "camilo@sdkconsultoria.com",
+                    "homepage": "https://sdkconsultoria.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Comunicacion rapida y segura con la API de Whatsapp Cloud",
+            "keywords": [
+                "Whatsapp cloud Api",
+                "laravel",
+                "package",
+                "whatsapp"
+            ],
+            "support": {
+                "issues": "https://github.com/sdkconsultoria/whatsapp-cloud-api/issues",
+                "source": "https://github.com/sdkconsultoria/whatsapp-cloud-api/tree/develop"
+            },
+            "time": "2024-04-10T14:40:45+00:00"
+        },
+        {
             "name": "spatie/laravel-permission",
             "version": "6.9.0",
             "source": {
@@ -10529,7 +10669,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
