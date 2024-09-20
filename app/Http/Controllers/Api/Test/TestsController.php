@@ -112,6 +112,8 @@ class TestsController extends Controller
         'message' => 'required|string'             // El mensaje a enviar
     ]);
 
+    $accessTokenShort = $this->getShortLivedAccessToken();
+
     $accessToken = env('WHATSAPP_PERMANENT_TOKEN');
     
     if (!$accessToken) {
@@ -136,8 +138,10 @@ class TestsController extends Controller
         ]
     ]);*/
     $response = Http::withHeaders([
-        'Authorization' => "Bearer {$accessToken}",  // Usar el token permanente
+        'Authorization' => "Bearer {$accessTokenShort['access_token']}",  // Usar el token permanente
         'Content-Type' => 'application/json'
+    ])->withQueryParameters([
+        'access_token' => $accessToken
     ])->post($url, [
         'messaging_product' => 'whatsapp',
         'to' => $request->input('to'),             // Número de teléfono destinatario
