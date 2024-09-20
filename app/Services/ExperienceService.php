@@ -104,15 +104,22 @@ class ExperienceService {
         //     $queryExperience->whereCity($dataFilter['city']);
         // }
 
-        $queryExperience->whereHas('activities', function($query){   
-            $query->whereNotNull('metting_point_longitude')
-            ->whereNotNull('metting_point_latitude');
-        });
+        if($dataFilter['all_cities']){
+        }else{
+            $queryExperience->whereHas('translation', function($query) use($dataFilter){
+                $query->where('city_experince', $dataFilter['city']);
+            });
+        }
         
-
-        if($dataFilter['search']){
-            $queryExperience->whereHas('activities', function($query) use($dataFilter){
-                $query->where('title','like',  ['%'.$dataFilter['search'].'%']);
+        // if($dataFilter['search']){
+        //     $queryExperience->whereHas('activities', function($query) use($dataFilter){
+        //         $query->where('title','like',  ['%'.$dataFilter['search'].'%']);
+        //     });
+        // }
+        if (!empty($dataFilter['search'])) {
+            $query->whereHas('translation', function($query) use($dataFilter){
+                $query->where('title','like', ['%'.$dataFilter['search'].'%'])
+                    ->orWhere('description','like', ['%'.$dataFilter['search'].'%']);
             });
         }
 
@@ -212,7 +219,7 @@ class ExperienceService {
                                             LIMIT 1
                                         ) AS distance"),
                                     )
-                                    // ->whereCity($cityName)
+                                    ->whereCity($cityName)
                                     ->whereVisibleByHoster($hotelId)
                                     ->orderByFeatured($hotelId)
                                     ->orderByWeighing($modelHotel->id)
