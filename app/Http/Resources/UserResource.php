@@ -42,7 +42,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'prefix' => $prefix,
             'phone' => $number,
-            'role' => 'sss',
+            'role' => 'Usuario',
             'last_session' => $this->last_session,
             'created_at' => $this->created_at,
             'color' => $this->color,
