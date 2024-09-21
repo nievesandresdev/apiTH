@@ -42,10 +42,10 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'prefix' => $prefix,
             'phone' => $number,
-            /* 'role' => null,
+            'role' => null,
             'last_session' => $this->last_session,
             'created_at' => $this->created_at,
-            'color' => $this->color, */
+            'color' => $this->color,
             'hotels' => $this->hotel->map(function ($hotel) {
                 return [
                     'id' => $hotel->id,
@@ -70,7 +70,7 @@ class UserResource extends JsonResource
                     'permissions' =>  $hotel->pivot->permissions,
                 ];
             }),
-            //'current_hotel' => new HotelResource($firstHotelId),
+            'current_hotel' => new HotelResource($firstHotelId),
             'current_subdmain_hotel' => $firstHotelId?->subdomain
         ];
     }
