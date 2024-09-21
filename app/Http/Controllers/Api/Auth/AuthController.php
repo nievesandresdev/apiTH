@@ -45,6 +45,7 @@ class AuthController extends Controller
 
     public function loginAdmin(Request $request)
     {
+        dd($request->all());
         // Limpiar la sesión existente
         Session::flush();
         Auth::guard('web')->logout();
