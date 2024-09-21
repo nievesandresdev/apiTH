@@ -50,7 +50,7 @@ class AuthController extends Controller
         Auth::guard('web')->logout();
 
         // Buscar al usuario por ID
-        $user = User::find($request->user['id']);
+        $user = User::find($request->user);
 
         if (!$user) {
             return response()->json([
