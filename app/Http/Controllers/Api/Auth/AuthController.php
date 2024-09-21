@@ -45,7 +45,8 @@ class AuthController extends Controller
 
     public function loginAdmin(Request $request)
     {
-        return "hola";
+
+        return "llegue al fucking metodo";
         // Limpiar la sesión existente
         Session::flush();
         Auth::guard('web')->logout();
