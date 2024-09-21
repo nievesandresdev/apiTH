@@ -396,7 +396,7 @@ class UserServices
             'lastname' => $user->profile?->lastname ?? '--',
             'email' => $user->email,
             'del' => $user->del,
-            'role' => $user->getRole(),  // rol
+            'role' => 'user',  // rol
             'work_position' => $user->profile->work_position ?? $user->profile?->workPosition?->name,
             'work_position_id' => $user->profile?->work_position_id ?? null,
             'profile' => $user->profile ?? '--',
