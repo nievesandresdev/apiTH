@@ -25,17 +25,15 @@ class ApiReviewServices {
         //return $URL_BASE_API_REVIEW.'/hotels/getSummaryReviewsOtas/';
 
 
-        $url = $hotel->url_google;
-        $cid = get_property_in_url($url, "cid");
+        $code = $hotel->code;
 
         $params = [
-            "googleMapCid" => $cid
+            "googleMapCid" => $code
         ];
 
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->KEY_API_REVIEW];
         $response_request = $http_client_service->make_request('get', "$URL_BASE_API_REVIEW/hotels/getSummaryReviewsOtas", $params, $headers, 60);
-        return $response_request;
         /* return [
             'response_request' => $response_request,
             'hotel' => $hotel,
