@@ -32,8 +32,7 @@ class HotelService {
 
     public function getAll ($request, $modelHotel) {
 
-        $user = User::find(2389);
-        // $user = \Auth::user();
+        $user = \Auth::user();
         // Log::info('hotel withoutCurrent '. $request->withoutCurrent);
         if (filter_var($request->withoutCurrent, FILTER_VALIDATE_BOOLEAN)) {
             // Log::info('entro withoutCurrent '. $modelHotel->id);
