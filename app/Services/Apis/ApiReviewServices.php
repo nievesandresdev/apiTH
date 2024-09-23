@@ -25,11 +25,10 @@ class ApiReviewServices {
         //return $URL_BASE_API_REVIEW.'/hotels/getSummaryReviewsOtas/';
 
 
-        $url = $hotel->url_google;
-        $cid = get_property_in_url($url, "cid");
+        $code = $hotel->code;
 
         $params = [
-            "googleMapCid" => $cid
+            "googleMapCid" => $code
         ];
 
         $http_client_service = new HttpClientService();

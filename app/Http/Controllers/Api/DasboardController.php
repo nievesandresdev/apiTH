@@ -178,12 +178,20 @@ class DasboardController extends Controller
 
     public function getDataReviewOTA(Request $request){
 
-        $hotel = $request->attributes->get('hotel');
-        $summary_reviews = $this->api_review_service->get_summary_reviews_otas($hotel);
+        try {
 
-        return bodyResponseRequest(EnumResponse::SUCCESS, [
-            'summaryReviews' => $summary_reviews,
-        ]);
+            $hotel = $request->attributes->get('hotel');
+            $summary_reviews = $this->api_review_service->get_summary_reviews_otas($hotel);
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'summaryReviews' => $summary_reviews,
+            ]);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage()
+            ], null, $e->getMessage());
+        }
+
     }
 
 
