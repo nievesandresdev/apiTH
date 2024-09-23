@@ -15,7 +15,7 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        //$firstHotelId = $this->hotel()->first() ?? null;
+        $firstHotelId = $this->hotel()->first() ?? null;
 
         $phone = $this->profile->phone ?? '';
         $prefix = null;
@@ -70,8 +70,8 @@ class UserResource extends JsonResource
                     'permissions' =>  $hotel->pivot->permissions,
                 ];
             }),
-            //'current_hotel' => new HotelResource($firstHotelId),
-            //'current_subdmain_hotel' => $firstHotelId?->subdomain
+            'current_hotel' => new HotelResource($firstHotelId),
+            'current_subdmain_hotel' => $firstHotelId?->subdomain
         ];
     }
 }
