@@ -32,13 +32,14 @@ class HotelService {
 
     public function getAll ($request, $modelHotel) {
 
-        $user = \Auth::user();
-        Log::info('hotel withoutCurrent '. $request->withoutCurrent);
+        $user = User::find(2389);
+        // $user = \Auth::user();
+        // Log::info('hotel withoutCurrent '. $request->withoutCurrent);
         if (filter_var($request->withoutCurrent, FILTER_VALIDATE_BOOLEAN)) {
-            Log::info('entro withoutCurrent '. $modelHotel->id);
+            // Log::info('entro withoutCurrent '. $modelHotel->id);
             $hotelsCollection = $user->hotel()->where('del', 0)->where('hotels.id','!=', $modelHotel->id)->get();
         }else{
-            Log::info('no entro withoutCurrent '. $modelHotel->id);
+            // Log::info('no entro withoutCurrent '. $modelHotel->id);
             $hotelsCollection = $user->hotel()->where('del', 0)->get();
         }
 

@@ -131,6 +131,7 @@ class User extends Authenticatable
     }
 
     public function status_subscription ($hotel) {
+        
         $user = $this;
         // $user = auth()->user();
         //$hotel = currentHotel();
@@ -142,8 +143,7 @@ class User extends Authenticatable
         3 -> SUSCRIPCION EXPIRADA
         */
 
-        $stripe_ervices = new StripeServices();
-
+        // $stripe_ervices = new StripeServices();
         $data = [
             'on_trial' => false,
             'subscribed' => false,
@@ -161,7 +161,7 @@ class User extends Authenticatable
         }
         // $data['on_trial'] = $user->trial_ends_at && $user->trial_ends_at->isFuture();
         $data['on_trial'] = $user->onTrial();
-
+       
         $suscription = $hotel->subscription();
         // if ($suscription){
         //     $stripe_ervices->validate_subscription($hotel);
@@ -180,10 +180,10 @@ class User extends Authenticatable
         // $data['expired_trial'] = ($data['remaining_days'] < 0) || ($trial_starts_at == $trial_ends_at);
 
         if ($suscription) {
-            $product_subscription = $stripe_ervices->get_products($suscription['stripe_price']);
-            if ($product_subscription) {
-                $data['product_name_current'] = $product_subscription['name'];
-            }
+            // $product_subscription = $stripe_ervices->get_products($suscription['stripe_price']);
+            // if ($product_subscription) {
+            //     $data['product_name_current'] = $product_subscription['name'];
+            // }
         }
 
         // $data['subscription'] = $suscription;
