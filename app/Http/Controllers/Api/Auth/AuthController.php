@@ -45,12 +45,13 @@ class AuthController extends Controller
 
     public function loginAdmin(Request $request)
     {
+
         // Limpiar la sesión existente
         Session::flush();
         Auth::guard('web')->logout();
 
         // Buscar al usuario por ID
-        $user = User::find($request->user['id']);
+        $user = User::find($request->user);
 
         if (!$user) {
             return response()->json([
