@@ -6,8 +6,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "aws/aws-sdk-php": "*",
-        "barryvdh/laravel-dompdf": "*",
+        "aws/aws-sdk-php": "^3.322",
+        "barryvdh/laravel-dompdf": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.7",
         "jenssegers/agent": "^2.6",
