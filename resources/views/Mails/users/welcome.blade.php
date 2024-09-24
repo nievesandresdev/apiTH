@@ -62,7 +62,7 @@
                 <tr>
                     <td class="text-content" style="color: white; padding-right: 32px; text-align: left; width: 50%; vertical-align: top; padding-top:22px">
                         <span style="margin: 0; font-size: 32px;font-style: normal;font-weight: 600;line-height: 110%;">¡Bienvenido a TheHoster!</span>
-                        <p style="margin: 10px 0; font-size: 16px;font-style: normal;font-weight: 500;line-height: 110%;margin-top:12px !important">{{$user->full_name}} ha creado un usuario en la plataforma para que administres el Hotel</p>
+                        <p style="margin: 10px 0; font-size: 16px;font-style: normal;font-weight: 500;line-height: 110%;margin-top:12px !important">{{$userAuth->name}} te ha creado un usuario en la plataforma para que administres el Hotel</p>
                         <p style="margin: 10px 0; font-size: 16px;font-style: normal;font-weight: 700;line-height: 110%;margin-top:24px !important">¡Gracias por elegirnos!</p>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">

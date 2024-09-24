@@ -34,6 +34,11 @@ class AuthController extends Controller
             return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Su cuenta ha sido inactivada. Solicita acceso a tu responsable o superior para poder entrar.']);
         }
 
+        //verify if del = 1
+        if ($user->del == 1) {
+            return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Su cuenta ha sido eliminada. Solicita acceso a tu responsable o superior para poder entrar.']);
+        }
+
         $token = $user->createToken('appToken')->accessToken;
 
         return bodyResponseRequest(EnumResponse::SUCCESS, [
