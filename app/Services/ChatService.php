@@ -49,7 +49,7 @@ class ChatService {
              */
             $hotel = $request->attributes->get('hotel');
             $settings = $this->settings->getAll($hotel->id);
-            
+
             DB::beginTransaction();
             $langPage = $request->langWeb;
             $guestId = $request->guestId;
@@ -63,6 +63,7 @@ class ChatService {
                 ], [
                     'pending' => true,
             ]);
+
             // Log::info('sendMsgToHoster $chat'. json_encode($chat));
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
@@ -77,6 +78,7 @@ class ChatService {
              */
 
             $msg = $guest->chatMessages()->save($chatMessage);
+            //$this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
             $msg->load('messageable');
             if($msg){
                 sendEventPusher('private-update-chat.' . $guestId, 'App\Events\UpdateChatEvent', [
@@ -106,7 +108,7 @@ class ChatService {
                     'automatic' => false,
                     'add' => true,'pending' => false,//es falso en el input pero true en la bd
                 ]
-            );
+                );
                 /**
                  * cola de mensajes automaticos para el huesped
                  *
@@ -155,13 +157,14 @@ class ChatService {
                         'chatData' => $chat,
                     ]);
                 }
-            }
-
-            /**
+                /**
              * notificaciones push y por email para el hoster
              *
              */
             $this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
+            }
+
+
 
             DB::commit();
             return true;
@@ -174,10 +177,40 @@ class ChatService {
     public function notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg){
 
         try{
+            $urlChat = config('app.hoster_url').'/estancias/'.$stay->id.'/chat?g='.$guest->id;
+            /**
+             * mensajes sin leer
+             */
+            $unansweredMessagesData = $this->unansweredMessagesData($chat->id);
+
+
+
+
+            /**
+             * ultimo mensaje sin leer (nuevo mensaje)
+             */
+            $unansweredLastMessageData = $this->unansweredMessagesData($chat->id,'ToHoster',true);
+
+            //Log::info('unansweredMessagesData '.json_encode($unansweredMessagesData));
+           /*  Log::info('unansweredLastMessageData '.json_encode($unansweredLastMessageData));
+            Log::info('chat '.$msg); */
             /**
              * trae los ususarios y sus roles asociados al hotel en cuestion
              */
-            $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
+            $notificationFilters = [
+                'newChat' => true,
+            ];
+            $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
+
+             // Verificar si hay usuarios
+             if ($queryUsers->isNotEmpty()) {
+
+                // Enviar correo usuarios con newchat true
+                $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
+                    $email = $user->email;
+                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), $email);
+                });
+            }
 
             // Extraer los roles de usuario a notificar para un nuevo mensaje
             $rolesToNotifyNewMsg = collect($settings->email_notify_new_message_to);
@@ -199,13 +232,15 @@ class ChatService {
              * notificacion para cuando el hoster reciba un nuevo mensaje
              *
              */
-            $unansweredMessagesData = $this->unansweredMessagesData($chat->id);
-            if ($getUsersRoleNewMsg->isNotEmpty()) {
+
+
+            /* if ($queryUsers->isNotEmpty()) {
                 $getUsersRoleNewMsg->each(function ($user) use ($unansweredMessagesData) {
                     //http://localhost:82/estancias/{stayId}/chat?g=guestId
                     $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'new'), $user['email']); //email new message chat
                 });
-            }
+            } */
+
             $guestId = $guest->id;
             /**
              * notificacion a enviarse a los 10min si el chat aun esta pendiente
@@ -218,17 +253,16 @@ class ChatService {
              */
             $withAvailability = true;
             NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending10Min, $withAvailability)->delay(now()->addMinutes(30));
-            //aqui va
         } catch (\Exception $e) {
             return $e;
         }
 
     }
 
-    public function unansweredMessagesData($chatId, $model = 'ToHoster'){
+    /* public function unansweredMessagesData($chatId, $model = 'ToHoster'){
 
         try{
-            
+
             $diff = 'Hoster';
             $pedding = 1;
             if($model == 'ToGuest'){
@@ -248,7 +282,7 @@ class ChatService {
             ->orderBy('id','asc')
             // ->latest()
             ->get();
-            
+
             $unansweredMessagesData = $unansweredMessages->map(function ($message) use ($url) { //map
                 $guestName = null;
                 if ($message->messageable_type === 'App\Models\Guest') {
@@ -268,7 +302,84 @@ class ChatService {
             return $e;
         }
 
+    } */
+
+    public function unansweredMessagesData($chatId, $model = 'ToHoster', $onlyLast = false) {
+        try {
+            // Inicialización basada en el parámetro $model
+            $expectedSender = 'Hoster';
+            $pending = 1;
+
+            if($model == 'ToGuest'){
+                $expectedSender = 'Guest';
+                $pending = 0;
+            }
+
+            // Configuración de la URL base
+            $url = config('app.hoster_url');
+
+            // Construir la consulta base
+            $query = ChatMessage::whereHas('chat', function ($query) use ($chatId, $pending) {
+                    $query->where('id', $chatId)
+                          ->where('pending', $pending);
+                })
+                ->where('status', 'Entregado')
+                ->where('automatic', 0)
+                ->where('by', '!=', $expectedSender)
+                ->with(['chat','messageable'])
+                ->orderBy('id', 'asc');
+
+            if ($onlyLast) {
+                // Obtener solo el último mensaje pendiente
+                $message = $query->latest('id')->first();
+
+                if ($message) {
+                    $guestName = null;
+                    if ($message->messageable_type === 'App\Models\Guest') {
+                        $guestName = $message->messageable->name;
+                    }
+
+                    $messageData = [
+                        'guest_name'   => $guestName,
+                        'message_text' => $message->text,
+                        'sent_at'      => $message->created_at->format('d M - H:i'),
+                        'url'          => $url.'estancias/'.$message->chat->stay_id.'/chat?g='.$message->chat->guest_id,
+                    ];
+
+                    return $messageData;
+                } else {
+                    return null; // No hay mensajes pendientes
+                }
+            } else {
+                // Obtener todos los mensajes pendientes
+                $unansweredMessages = $query->get();
+
+                $unansweredMessagesData = $unansweredMessages->map(function ($message) use ($url) {
+                    $guestName = null;
+                    if ($message->messageable_type === 'App\Models\Guest') {
+                        $guestName = $message->messageable->name;
+                    }
+
+                    return [
+                        'guest_name'   => $guestName,
+                        'message_text' => $message->text,
+                        'sent_at'      => $message->created_at->format('d M - H:i'),
+                        'url'          => $url.'estancias/'.$message->chat->stay_id.'/chat?g='.$message->chat->guest_id,
+                    ];
+                });
+
+                return $unansweredMessagesData;
+            }
+        } catch (\Exception $e) {
+            // Registrar el error y devolver una respuesta amigable
+            Log::error('Error al obtener mensajes sin respuesta: ' . $e->getMessage());
+            return response()->json(['error' => 'No se pueden recuperar los mensajes en este momento.'], 500);
+        }
     }
+
+
+
+
 
     public function loadMessages ($request) {
         try{
