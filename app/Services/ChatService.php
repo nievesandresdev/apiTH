@@ -191,8 +191,8 @@ class ChatService {
              */
             $unansweredLastMessageData = $this->unansweredMessagesData($chat->id,'ToHoster',true);
 
-            /* Log::info('unansweredMessagesData '.json_encode($unansweredMessagesData));
-            Log::info('unansweredLastMessageData '.json_encode($unansweredLastMessageData));
+            //Log::info('unansweredMessagesData '.json_encode($unansweredMessagesData));
+           /*  Log::info('unansweredLastMessageData '.json_encode($unansweredLastMessageData));
             Log::info('chat '.$msg); */
             /**
              * trae los ususarios y sus roles asociados al hotel en cuestion
@@ -201,26 +201,14 @@ class ChatService {
                 'newChat' => true,
             ];
             $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
-            /* return [
-                'queryUsers' => $queryUsers,
-                'chat' => $chat,
-                'hotel' => $hotel,
-                'settings' => $settings,
-                'stay' => $stay,
-                'guest' => $guest,
-                'msg' => $msg
-            ]; */
 
              // Verificar si hay usuarios
              if ($queryUsers->isNotEmpty()) {
-                // Datos necesarios para el correo electrónico
-                //$unansweredMessagesData = []; // Proporciona los datos reales aquí
 
-                // Enviar correo electrónico a cada usuario
-                $queryUsers->each(function ($user) use ($msg, $urlChat) {
-                    //$emailArray [] = $user->name;
+                // Enviar correo usuarios con newchat true
+                $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     $email = $user->email;
-                    $this->mailService->sendEmail(new ChatEmail($msg,$urlChat, 'new'), $email);
+                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), $email);
                 });
             }
 
