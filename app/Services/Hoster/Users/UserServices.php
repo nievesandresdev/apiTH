@@ -97,6 +97,7 @@ class UserServices
         ->when(isset($filter['type']), function ($query) use ($filter) {
             switch ($filter['type']) {
                 case 0:
+                    $query->where('del', 0);
                     break;
                 case 1:
                     $query->whereHas('roles', function ($subQuery) {
@@ -114,7 +115,7 @@ class UserServices
                     });
                     break;
                 case 4:
-                    $query->where('del', 1);
+                    $query->where('status', 0);
                     break;
                 default:
                     $query->where('del', 0);
@@ -201,12 +202,6 @@ class UserServices
     {
         $hotelIds = $this->getIdsHotels();
         $query = User::myHotels($hotelIds);
-        /* where(function ($query) use ($filter) {
-            $query->where('name', 'like', '%' . $filter['search_terms'] . '%');
-        })
-        ->orWhereHas('profile.workPosition', function ($query) use ($filter) {
-            $query->where('name', 'like', '%' . $filter['search_terms'] . '%');
-        }); */
 
         $query->when(isset($filter['search_terms']) ? $filter['search_terms'] : null, function ($query) use ($filter) {
             $query->where('name', 'like', '%' . $filter['search_terms'] . '%')
@@ -216,18 +211,15 @@ class UserServices
         })->orderBy('created_at', 'desc');
 
 
-
         $query->when(isset($filter['type']), function ($query) use ($filter, $hotelIds) {
-            /* $query->whereHas('hotel', function ($query) use ($hotelIds) {
-                $query->whereIn('hotel_id', $hotelIds);
-            }); */
             switch ($filter['type']) {
                 case 0:
+                    $query->where('del', 0);
                     break;
                 case 1:
-                    $query->where('status', 1);
+                    $query->where('status', 1)->where('del', 0);
                     break;
-                case 2:
+                /* case 2:
                     $query->whereHas('roles', function ($subQuery) {
                         $subQuery->where('name', 'Administrator');
                     });
@@ -236,7 +228,7 @@ class UserServices
                     $query->whereHas('roles', function ($subQuery) {
                         $subQuery->where('name', 'Operator');
                     });
-                    break;
+                    break; */
                 case 4:
                     $query->where('status', 0);
                     break;
@@ -286,7 +278,7 @@ class UserServices
         $query = User::whereHas('hotel', function ($query) use ($hotelIds) {
             $query->whereIn('hotel_id', $hotelIds);
         })
-        //->where('del', 0)
+        ->where('del', 0)
         ->orderBy('created_at', 'desc');
 
         $paginatedUsers = $query->paginate($perPage, ['*'], 'page', $page);
@@ -478,7 +470,7 @@ class UserServices
 
         $this->storeHotelsUser($request, $user);
 
-        Mail::to($user['email'])->send(new WelcomeUser($user,$url,$request->password));
+        Mail::to($user['email'])->send(new WelcomeUser($user,$url,$request->password,auth()->user()));
 
         return $user ?? false;
     }

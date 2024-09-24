@@ -16,15 +16,17 @@ class WelcomeUser extends Mailable
     public $user;
     public $url;
     public $password;
+    public $userAuth;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($user,$url,$password)
+    public function __construct($user,$url,$password,$userAuth)
     {
         $this->user = $user;
         $this->url = $url;
         $this->password = $password;
+        $this->userAuth = $userAuth;
     }
 
 
