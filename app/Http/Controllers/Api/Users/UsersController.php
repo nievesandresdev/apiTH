@@ -264,12 +264,44 @@ class UsersController extends Controller
             $periodUrl = $query->period_id;
             $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id;
             //url para atender chat $url/estancias/{stayId}/chat?g=guestId
+            $urlChat = config('app.hoster_url')."/estancias/".$stay->id."/chat?g=".$guest->id;
             $user = User::findOrFail(1);
 
             $checkinFormat = date('d/m/Y', strtotime($stay->check_in));
             $checkoutFormat = date('d/m/Y', strtotime($stay->check_out));
 
             $dates = "$checkinFormat - $checkoutFormat";
+            // Filtros para las notificaciones
+            $notificationFilters = [
+                'newChat' => true,
+            ];
+
+            // Obtener los usuarios filtrados
+            $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
+            $emailArray = [];
+
+            // Verificar si hay usuarios
+            if ($queryUsers->isNotEmpty()) {
+                // Datos necesarios para el correo electrónico
+                $unansweredMessagesData = []; // Proporciona los datos reales aquí
+
+                // Enviar correo electrónico a cada usuario
+                $queryUsers->each(function ($user) use ($unansweredMessagesData, $urlChat) {
+                    //$emailArray [] = $user->name;
+                    $email = $user->email;
+                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,$urlChat, 'new'), $email);
+                });
+            }
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Correo enviado con éxito',
+                'data' => [
+                    'queryUsers' => $queryUsers,
+                    //'emailArray' => $emailArray,
+                    //'isNotEmpty' => $$queryUsers->isNotEmpty()
+                    //'getUsersRoleNewMsg' => $getUsersRoleNewMsg,
+                ]
+            ]);
             //$this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
             $this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
             //$this->mailService->sendEmail(new ChatEmail([],$url,'new'), 'francisco20990@gmail.com');
