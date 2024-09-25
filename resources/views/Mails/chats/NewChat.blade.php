@@ -65,7 +65,7 @@
                     <td class="text-content order-1" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top;">
                         @if($type == 'pending')
                             <span style="font-size: 32px; font-style: normal; font-weight: 600; line-height: 110%; margin: 0;">¡Tienes un chat pendiente!</span>
-                            <span style="display: block; margin: 10px 0 22px 0; font-size: 16px; font-style: normal; font-weight: 500; line-height: 130%;">Han transcurrido <span style="color: #FFD453;">10 minutos</span> desde que un huésped te ha escrito un mensaje desde el chat</span>
+                            <span style="display: block; margin: 10px 0 22px 0; font-size: 16px; font-style: normal; font-weight: 500; line-height: 130%;">Han transcurrido <span style="color: #FFD453;">{{ $time }} minutos</span> desde que un huésped te ha escrito un mensaje desde el chat</span>
                         @else
                             <span style="font-size: 32px; font-style: normal; font-weight: 600; line-height: 110%; margin: 0;">Tienes un nuevo mensaje en el chat</span>
                             <span style="display: block; margin: 10px 0 22px 0; font-size: 16px; font-style: normal; font-weight: 500; line-height: 130%;">Has recibido un nuevo mensaje de un huésped. Puedes ir al mensaje dando click al botón de abajo.</span>
