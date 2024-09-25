@@ -65,7 +65,7 @@
                     <td class="text-content order-1" style="color: white; padding-right: 40px; text-align: left; width: 50%; vertical-align: top;">
                         @if($type == 'pending')
                             <span style="font-size: 32px; font-style: normal; font-weight: 600; line-height: 110%; margin: 0;">¡Tienes un chat pendiente!</span>
-                            <span style="display: block; margin: 10px 0 22px 0; font-size: 16px; font-style: normal; font-weight: 500; line-height: 130%;">Han transcurrido <span style="color: #FFD453;">10 minutos</span> desde que un huésped te ha escrito un mensaje desde el chat</span>
+                            <span style="display: block; margin: 10px 0 22px 0; font-size: 16px; font-style: normal; font-weight: 500; line-height: 130%;">Han transcurrido <span style="color: #FFD453;">{{ $time }} minutos</span> desde que un huésped te ha escrito un mensaje desde el chat</span>
                         @else
                             <span style="font-size: 32px; font-style: normal; font-weight: 600; line-height: 110%; margin: 0;">Tienes un nuevo mensaje en el chat</span>
                             <span style="display: block; margin: 10px 0 22px 0; font-size: 16px; font-style: normal; font-weight: 500; line-height: 130%;">Has recibido un nuevo mensaje de un huésped. Puedes ir al mensaje dando click al botón de abajo.</span>
@@ -106,7 +106,7 @@
                     ];
                 @endphp
             @endif --}}
-            @if($type === 'new')
+            @if($type != 'new')
                 @foreach($unansweredMessagesData as $chat)
                     <section style="margin-bottom: 20px;">
                         <p style="margin-top: 20px; font-weight: 600; font-size: 16px;">{{ $chat['guest_name'] }}</p>
@@ -118,11 +118,11 @@
                 @endforeach
             @else
                 <section style="margin-bottom: 20px;">
-                    <p style="margin-top: 20px; font-weight: 600; font-size: 16px;">{{ $msg['guest_name'] }}</p>
+                    <p style="margin-top: 20px; font-weight: 600; font-size: 16px;">{{ $unansweredMessagesData['guest_name'] }}</p>
                     <div style="border-radius: 6px 6px 0px 6px; padding: 12px; margin: 10px 0; background-color: #ffffff; border: 1px solid #E0E0E0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 150%;">
-                        <p style="margin: 0;">{{ $msg['message_text'] }}</p>
+                        <p style="margin: 0;">{{ $unansweredMessagesData['message_text'] }}</p>
                     </div>
-                    <p style="text-align: right; font-size: 16px; font-weight: 400; color: #A0A0A0; margin-top: 8px;">{{ $msg['sent_at'] }}</p>
+                    <p style="text-align: right; font-size: 16px; font-weight: 400; color: #A0A0A0; margin-top: 8px;">{{ $unansweredMessagesData['sent_at'] }}</p>
                 </section>
             @endif
 
