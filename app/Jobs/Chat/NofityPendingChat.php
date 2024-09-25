@@ -26,18 +26,22 @@ class NofityPendingChat implements ShouldQueue
     protected $userToNotify;
     protected $chatService;
     protected $mailService;
+    protected $url;
+    protected $time;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($nameJob, $guestId, $stay, $userToNotify, $withAvailability = false)
+    public function __construct($nameJob, $guestId, $stay, $userToNotify, $withAvailability = false,$url = null,$time = null)
     {
         $this->nameJob = $nameJob;
         $this->guestId = $guestId;
         $this->stay = $stay;
         $this->userToNotify = $userToNotify;
         $this->withAvailability = $withAvailability;
+        $this->url = $url;
+        $this->time = $time;
     }
 
     /**
@@ -76,8 +80,11 @@ class NofityPendingChat implements ShouldQueue
 
             $unansweredMessagesData = $this->chatService->unansweredMessagesData($chat->id);
             Log::info("NofityPendingChat". json_encode($unansweredMessagesData));
+            Log::info("NofityPendingChat". json_encode($this->userToNotify));
+            Log::info("NofityPendingChattime". json_encode($this->time));
+
             foreach ($this->userToNotify as $user) {
-                $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,'pending'), $user['email']);
+                $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,$this->url,'pending',$this->time), $user['email']);
             }
         }
     }
