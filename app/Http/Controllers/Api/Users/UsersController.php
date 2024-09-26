@@ -154,7 +154,7 @@ class UsersController extends Controller
                 'name' => 'required|string|max:255',
                 'lastname' => 'required|string|max:255',
                 'email' => 'required|email|max:255|unique:users,email,' . $userId,
-                'prefix' => 'required|string|max:5',
+                // 'prefix' => 'required|string|max:5',
                 'phone' => 'required|string|max:15',
                 //'current_password' => 'required_with:new_password|string|min:6',
             ]);

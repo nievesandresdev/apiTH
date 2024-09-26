@@ -18,30 +18,30 @@ class UserResource extends JsonResource
         $firstHotelId = $this->hotel()->first() ?? null;
 
         $phone = $this->profile->phone ?? '';
-        $prefix = null;
-        $number = null;
+        // $prefix = null;
+        // $number = null;
 
-        if (!empty($phone)) {
-            if (preg_match('/^(\+\d+)\s(.+)/', $phone, $matches)) {
-                $prefix = $matches[1];
-                $number = $matches[2];
-            } else {
-                $number = $phone;
-            }
-        }
+        // if (!empty($phone)) {
+        //     if (preg_match('/^(\+\d+)\s(.+)/', $phone, $matches)) {
+        //         $prefix = $matches[1];
+        //         $number = $matches[2];
+        //     } else {
+        //         $number = $phone;
+        //     }
+        // }
 
-        if (empty($phone)) {
-            $prefix = null;
-            $number = null;
-        }
+        // if (empty($phone)) {
+        //     $prefix = null;
+        //     $number = null;
+        // }
 
         return [
             'id' => $this->id,
             'name' => $this->profile->firstname ?? '',
             'lastname' => $this->profile->lastname ?? '',
             'email' => $this->email,
-            'prefix' => $prefix,
-            'phone' => $number,
+            // 'prefix' => $prefix,
+            'phone' => $phone,
             'role' => 'Associate',
             'last_session' => $this->last_session,
             'created_at' => $this->created_at,
