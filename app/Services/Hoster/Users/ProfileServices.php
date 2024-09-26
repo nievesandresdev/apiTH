@@ -27,7 +27,7 @@ class ProfileServices
             $profile->update([
                 'firstname' => $request->name,
                 'lastname' => $request->lastname,
-                'phone' => $request->prefix . ' ' . $request->phone,
+                'phone' => $request->phone,
                 'work_position_id' => $request->work_position_id,
             ]);
         } else {
@@ -36,7 +36,7 @@ class ProfileServices
                 'user_id' => $user->id,
                 'firstname' => $request->name,
                 'lastname' => $request->lastname,
-                'phone' => $request->prefix . ' ' . $request->phone,
+                'phone' => $request->phone,
                 'work_position_id' => $request->work_position_id,
             ]);
         }
