@@ -164,8 +164,7 @@ class Products extends Model
     public function scopeOrderByFeatured($query, $hotelId)
     {
         if ($hotelId) {
-            $query->withCount('recomendations')
-                ->leftJoin('service_featured', function ($join) use ($hotelId) {
+            $query->leftJoin('service_featured', function ($join) use ($hotelId) {
                     $join->on('products.id', '=', 'service_featured.product_id')
                     ->where('service_featured.hotel_id', '=', $hotelId);
                 })
