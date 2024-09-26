@@ -154,7 +154,7 @@ class UsersController extends Controller
                 'name' => 'required|string|max:255',
                 'lastname' => 'required|string|max:255',
                 'email' => 'required|email|max:255|unique:users,email,' . $userId,
-                'prefix' => 'required|string|max:5',
+                // 'prefix' => 'required|string|max:5',
                 'phone' => 'required|string|max:15',
                 //'current_password' => 'required_with:new_password|string|min:6',
             ]);
@@ -188,6 +188,38 @@ class UsersController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, [
                 'message' => $e->getMessage(),
             ], null, $e->getMessage());
+        }
+    }
+
+    public function verifyExistMail(){
+        try {
+            $email = request()->email;
+            $id = request()->userId;
+            $query = User::where('email',$email);
+
+
+            if($id){
+                $query->where('id','!=',$id);
+            }
+
+            $user = $query->first();
+
+
+            if($user){
+                return bodyResponseRequest(EnumResponse::SUCCESS, [
+                    'message' => 'Correo encontrado',
+                    'exists' => true,
+                ]);
+            }else{
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, [
+                    'message' => 'Correo no encontrado',
+                    'exists' => false,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
         }
     }
 

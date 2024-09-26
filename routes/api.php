@@ -76,6 +76,9 @@ Route::middleware('auth:api')->group(function () {
         Route::post('disabled', [UsersController::class, 'disabled']);
         Route::post('enabled', [UsersController::class, 'enabled']);
 
+        //verifyExistMail
+        Route::post('/verifyExistMail', [UsersController::class, 'verifyExistMail']);
+
         Route::get('/get-subscription-status', [UsersController::class, 'getStatusSubscription']);
 
 
