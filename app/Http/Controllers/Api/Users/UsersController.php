@@ -191,6 +191,38 @@ class UsersController extends Controller
         }
     }
 
+    public function verifyExistMail(){
+        try {
+            $email = request()->email;
+            $id = request()->userId;
+            $query = User::where('email',$email);
+
+
+            if($id){
+                $query->where('id','!=',$id);
+            }
+
+            $user = $query->first();
+
+
+            if($user){
+                return bodyResponseRequest(EnumResponse::SUCCESS, [
+                    'message' => 'Correo encontrado',
+                    'exists' => true,
+                ]);
+            }else{
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, [
+                    'message' => 'Correo no encontrado',
+                    'exists' => false,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
+
     public function delete(){
         try {
             $user = $this->userServices->deleteUserHoster(request()->user_id);
