@@ -405,15 +405,15 @@ class UserServices
 
     public function arrayMapUser($user)
     {
-        if($user->profile?->phone == null){
-            $phone = '';
-            $prefix = '';
-        }else{
-            $phoneNumberParts = explode(' ', $user->profile->phone);
+        // if($user->profile?->phone == null){
+        //     $phone = '';
+        //     $prefix = '';
+        // }else{
+        //     $phoneNumberParts = explode(' ', $user->profile->phone);
 
-            $prefix = $phoneNumberParts[0];
-            $phone = isset($phoneNumberParts[1]) ? $phoneNumberParts[1] : null;
-        }
+        //     $prefix = $phoneNumberParts[0];
+        //     $phone = isset($phoneNumberParts[1]) ? $phoneNumberParts[1] : null;
+        // }
 
         //first hotel
         $firstHotel = $user->hotel->first();
@@ -428,8 +428,8 @@ class UserServices
             'work_position' => $user->profile->work_position ?? $user->profile?->workPosition?->name,
             'work_position_id' => $user->profile?->work_position_id ?? null,
             'profile' => $user->profile ?? '--',
-            'phone' => $phone,
-            'prefix' => $prefix,
+            'phone' => $user->profile->phone,
+            'prefix' => null,
             'hotelsNameId' => $user->hotel->pluck('name', 'id'), // 'id' => 'name
             'hotels' => $user->hotel->pluck('id'),
             'hotelsData' => $user->hotel->map(function ($hotel) {
