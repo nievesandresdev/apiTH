@@ -291,8 +291,8 @@ class ExperienceService {
                 ) AS distance"),
             )->addBinding([$cityModel->long, $cityModel->lag], 'select')
             ->whereVisibleByHoster($hotelModel->id)
-            ->orderByPosition($hotelModel->id)
             ->orderByFeatured($hotelModel->id)
+            ->orderByPosition($hotelModel->id)
             ->orderByWeighing($hotelModel->id)
             ->orderBy('distance','ASC')
             ->whereCity($cityModel->name);
