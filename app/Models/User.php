@@ -36,6 +36,7 @@ class User extends Authenticatable
         'status',
         'periodicity_chat',
         'periodicity_stay',
+        'chat_last_notified_at',
 
         // STRIPE
         'stripe_id',
@@ -131,7 +132,7 @@ class User extends Authenticatable
     }
 
     public function status_subscription ($hotel) {
-        
+
         $user = $this;
         // $user = auth()->user();
         //$hotel = currentHotel();
@@ -161,7 +162,7 @@ class User extends Authenticatable
         }
         // $data['on_trial'] = $user->trial_ends_at && $user->trial_ends_at->isFuture();
         $data['on_trial'] = $user->onTrial();
-       
+
         $suscription = $hotel->subscription();
         // if ($suscription){
         //     $stripe_ervices->validate_subscription($hotel);
