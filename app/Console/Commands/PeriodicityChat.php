@@ -36,19 +36,18 @@ class PeriodicityChat extends Command
             $limit = $filters['limit'] ?? 10;
             $offset = $filters['offset'] ?? 0;
 
-            // Definimos las relaciones y los campos a seleccionar
             $query = Stay::with([
                 'chats' => function ($q) {
-                    $q->where('pending', 1) // Solo chats pendientes
+                    $q->where('pending', 1)
                       ->with(['messages' => function ($q) {
-                          $q->where('by', 'Guest') // Solo mensajes enviados por 'Guest'
-                            ->orderBy('created_at', 'desc') // Ordenamos por fecha de creación descendente
+                          $q->where('by', 'Guest')
+                            ->orderBy('created_at', 'desc')
                             ->limit(1); // Traemos solo el último mensaje
                       }]);
                 },
                 'hotel.user' => function ($q) {
-                    $q->where('del', 0) // Solo usuarios donde del = 0
-                      ->where('status', 1) // Solo usuarios con status = 1
+                    $q->where('del', 0)
+                      ->where('status', 1)
                       ->whereNotNull('periodicity_chat'); // Solo usuarios con periodicity_chat no nulo
                 },
             ])
@@ -66,18 +65,16 @@ class PeriodicityChat extends Command
                          END as period")
             ]);
 
-            // Filtramos por periodos seleccionados dinámicamente
+            // Filtramos por periodo
             if (!empty($filters['periods'])) {
                 $query->havingRaw("period IN ('" . implode("','", $filters['periods']) . "')");
             }
 
-            // Ordenamos y limitamos los resultados
             $stays = $query->orderBy('stays.updated_at', 'DESC')
                 ->offset($offset)
                 ->limit($limit)
                 ->get();
 
-            // Procesamos los resultados
             $result = $stays->map(function ($stay) use ($now) {
                 $stayData = [
                     'stay_id' => $stay->id,
@@ -87,7 +84,7 @@ class PeriodicityChat extends Command
                     'total_users' => $stay->hotel->user->count(),
                     'total_chats_pending' => $stay->chats->count(),
                     'users' => $stay->hotel->user->map(function ($user) use ($now, $stay) {
-                        // Verificar periodicity_chat con el último mensaje
+                        // Verificar periodicity_chat con el ultimo mensaje
                         $lastChatMessage = $stay->chats->flatMap->messages->first();
                         $lastMessageTime = $lastChatMessage ? Carbon::parse($lastChatMessage->created_at) : null;
 
@@ -98,32 +95,32 @@ class PeriodicityChat extends Command
 
                             // Verificamos si el usuario ha sido notificado recientemente
                             // Condiciones para enviar una nueva notificación:
-                            // 1. Si nunca ha sido notificado antes ($lastNotified es nulo).
-                            // 2. Si ha sido notificado antes, verificamos que el tiempo transcurrido desde la última notificación
-                            //    sea mayor o igual a lo especificado en 'periodicity_chat'.
+                            // 1. Si nunca ha sido notigicado antes ($lastNotified es nulo).
+                            // 2. Si ha sido notigicado antes, verificamos que el tiempo transcurrido desde la última notificación
+                            //    sea mayor o iual a lo especificado en 'periodicity_chat'.
                             if (!$lastNotified || $lastNotified->diffInMinutes($now) >= $user->periodicity_chat) {
-                                // Enviar evento a través de Pusher
+                                // Enviar pusher
                                 sendEventPusher(
                                     'private-notify-unread-msg-hotel.' . $stay->hotel_id,
                                     'App\Events\NotifyUnreadMsg',
                                     [
-                                        'user_id' => $user->id, // Agregado el user_id como parámetro
+                                        'user_id' => $user->id,
                                         'showLoadPage' => false,
-                                        'guest_id' => $stay->guest_id ?? null, // Cambia según cómo obtienes el guest_id
+                                        'guest_id' => $stay->guest_id ?? null,
                                         'stay_id' => $stay->id,
                                         'room' => $stay->room,
                                         'guest' => true,
                                         'text' => 'Tienes un chat sin responder',
                                         'automatic' => false,
                                         'add' => false,
-                                        'pending' => false, // es falso en el input pero true en la bd
+                                        'pending' => false,
                                     ]
                                 );
 
                                 // Actualizamos el campo chat_last_notified_at del usuario
                                 $user->update(['chat_last_notified_at' => $now]);
 
-                                // Retornamos el usuario para los logs
+                                // usuario para log
                                 return [
                                     'id' => $user->id,
                                     'name' => $user->name,
@@ -134,8 +131,9 @@ class PeriodicityChat extends Command
                             }
                         }
 
-                        return null; // No enviar si no se cumple el tiempo
+                        return null; // No enviar
                     })->filter(),
+
                     'pending_chats' => $stay->chats->map(function ($chat) {
                         $lastMessage = $chat->messages->first(); // Obtenemos el último mensaje enviado por 'Guest'
                         return [
@@ -151,7 +149,7 @@ class PeriodicityChat extends Command
                 return $stayData;
             });
 
-            // Logueamos el resultado
+            // Log
             Log::info('Usuarios de Hoteles y Chats Pendientes con Último Mensaje: ' . json_encode([
                 'stays' => $result,
                 'total_count' => count($stays)
