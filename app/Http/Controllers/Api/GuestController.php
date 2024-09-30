@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 use App\Utils\Enums\EnumResponse;
 use App\Services\GuestService;
+use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Facades\Socialite;
+use Google\Client as GoogleClient;
+
 class GuestController extends Controller
 {
     public $service;
@@ -94,6 +98,46 @@ class GuestController extends Controller
 
         $sent = $this->service->sendEmail($stayId,$guestId,$guestEmail,$hotelId);
         return bodyResponseRequest(EnumResponse::ACCEPTED, $sent);
+    }
+
+    /**
+     * Redirige al usuario a la página de autenticación de Google.
+     */
+    public function getDataByGoogle(Request $request)
+    {
+        // $request->validate([
+        //     'token' => 'required|string',
+        // ]);
+
+        $token = $request->token;
+        Log::info('$token: '. json_encode($token));
+
+        $clientId = config('services.google.client_id');
+
+        $client = new GoogleClient(['client_id' => $clientId]); 
+        $payload = $client->verifyIdToken($token);
+
+        Log::info('$payload: '. json_encode($payload));
+        if ($payload) {
+            $googleId = $payload['sub'];
+            $firstName = $payload['given_name'] ?? '';
+            $lastName = $payload['family_name'] ?? '';
+            $email = $payload['email'] ?? '';
+            $avatar = $payload['picture'] ?? '';
+            $data = [
+                'googleId' => $googleId,
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'email' => $email,
+                'avatar' => $avatar,
+            ];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        }else{
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
     }
 
 }
