@@ -45,6 +45,7 @@ class GuestService {
         try {
             $email = $data->email;
             $name = $data->name;
+            $phone = $data->phone;
             $lang = $data->language ?? 'es';
 
             $guest = Guest::where('email',$email)->first();
@@ -56,10 +57,12 @@ class GuestService {
                     'email' => $email,
                     'lang_web' => $lang,
                     'acronym' => $acronym,
+                    'phone' => $phone ?? null,
                 ]);
             }else{
                 $guest->name = $name;
                 $guest->lang_web = $lang;
+                $guest->phone = $phone ?? $guest->phone;
                 if($acronym){
                     $guest->acronym = $acronym;
                 }

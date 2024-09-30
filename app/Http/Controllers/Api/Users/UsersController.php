@@ -152,7 +152,7 @@ class UsersController extends Controller
 
             $request->validate([
                 'name' => 'required|string|max:255',
-                'lastname' => 'required|string|max:255',
+                // 'lastname' => 'required|string|max:255',
                 'email' => 'required|email|max:255|unique:users,email,' . $userId,
                 // 'prefix' => 'required|string|max:5',
                 'phone' => 'required|string|max:15',

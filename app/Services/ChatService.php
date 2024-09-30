@@ -178,10 +178,11 @@ class ChatService {
 
         try{
             $urlChat = config('app.hoster_url').'/estancias/'.$stay->id.'/chat?g='.$guest->id;
+
             /**
              * mensajes (TODOS) sin leer
              */
-            $unansweredMessagesData = $this->unansweredMessagesData($chat->id);
+           /*  $unansweredMessagesData = $this->unansweredMessagesData($chat->id); */
 
 
 
@@ -206,6 +207,8 @@ class ChatService {
             ];
 
             $queryUsersNewchat = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewChat);
+
+            Log::info('queryUsersNewchat'. $queryUsersNewchat);
 
              // Verificar si hay usuarios
              if ($queryUsersNewchat->isNotEmpty()) {
