@@ -201,7 +201,8 @@ class UserServices
     function getUserFilters($filter)
     {
         $hotelIds = $this->getIdsHotels();
-        $query = User::myHotels($hotelIds);
+        // Excluir siempre los usuarios eliminados (del = 1)
+        $query = User::myHotels($hotelIds)->where('del', 0);
 
         $query->when(isset($filter['search_terms']) ? $filter['search_terms'] : null, function ($query) use ($filter) {
             $query->where('name', 'like', '%' . $filter['search_terms'] . '%')
@@ -210,35 +211,23 @@ class UserServices
                 });
         })->orderBy('created_at', 'desc');
 
-
-        $query->when(isset($filter['type']), function ($query) use ($filter, $hotelIds) {
+        $query->when(isset($filter['type']), function ($query) use ($filter) {
             switch ($filter['type']) {
-                case 0:
-                    $query->where('del', 0);
-                    break;
                 case 1:
-                    $query->where('status', 1)->where('del', 0);
+                    // Solo usuarios activos
+                    $query->where('status', 1);
                     break;
-                /* case 2:
-                    $query->whereHas('roles', function ($subQuery) {
-                        $subQuery->where('name', 'Administrator');
-                    });
-                    break;
-                case 3:
-                    $query->whereHas('roles', function ($subQuery) {
-                        $subQuery->where('name', 'Operator');
-                    });
-                    break; */
                 case 4:
+                    // Solo usuarios inactivos
                     $query->where('status', 0);
                     break;
                 default:
-                    $query->where('del', 0);
+                    // No es necesario incluir aquí el filtro del = 0 porque ya está al inicio
                     break;
             }
         });
 
-        $perPage = $filter['per_page'] ?? 15; // Default 15
+        $perPage = $filter['per_page'] ?? 15; // Por defecto 15
         $page = $filter['page'] ?? 1;
 
         $paginatedUsers = $query->paginate($perPage, ['*'], 'page', $page);
@@ -253,6 +242,7 @@ class UserServices
 
         return $paginatedUsers;
     }
+
 
     function getUserHotels2($perPage = 15, $page = 1)
     {
