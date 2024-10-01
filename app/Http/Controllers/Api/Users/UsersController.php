@@ -314,7 +314,18 @@ class UsersController extends Controller
 
             // Obtener los usuarios filtrados
             $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
-            $unansweredLastMessageData = $this->chatService->unansweredMessagesData(55,'ToHoster',true);
+            $unansweredLastMessageData = $this->chatService->unansweredMessagesData(54,'ToHoster',true);
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Correo enviado con éxito',
+                'data' => [
+                    'queryUsers' => $queryUsers,
+                    'unansweredLastMessageData' => $unansweredLastMessageData,
+                    //'emailArray' => $emailArray,
+                    //'isNotEmpty' => $$queryUsers->isNotEmpty()
+                    //'getUsersRoleNewMsg' => $getUsersRoleNewMsg,
+                ]
+            ]);
 
             // Verificar si hay usuarios
             if ($queryUsers->isNotEmpty()) {
