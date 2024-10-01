@@ -119,7 +119,7 @@
             @else
                 <section style="margin-bottom: 20px;">
                     <p style="margin-top: 20px; font-weight: 600; font-size: 16px;">{{ $unansweredMessagesData['guest_name'] }}</p>
-                    <div style="border-radius: 6px 6px 0px 6px; padding: 12px; margin: 10px 0; background-color: #ffffff; border: 1px solid #E0E0E0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 150%;">
+                    <div style="border-radius: 6px 6px 0px 6px; padding: 12px; margin: 10px 0; background-color: #ffffff; border: 1px solid #E0E0E0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 150%; box-shadow: 0px 2px 11.2px 0px rgba(55, 55, 55, 0.20);">
                         <p style="margin: 0;">{{ $unansweredMessagesData['message_text'] }}</p>
                     </div>
                     <p style="text-align: right; font-size: 16px; font-weight: 400; color: #A0A0A0; margin-top: 8px;">{{ $unansweredMessagesData['sent_at'] }}</p>

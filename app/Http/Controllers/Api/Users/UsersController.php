@@ -19,6 +19,7 @@ use App\Models\Stay;
 use App\Models\Query;
 use App\Models\User;
 use App\Mail\Chats\ChatEmail;
+use App\Services\ChatService;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -30,6 +31,7 @@ class UsersController extends Controller
     protected $serviceQuery;
     protected $settings;
     protected $api_review_service;
+    protected $chatService;
 
 
     public function __construct(
@@ -38,7 +40,8 @@ class UsersController extends Controller
         MailService $_MailService,
         QueryServices $serviceQuery,
         QuerySettingsServices $_QuerySettingsServices,
-        ApiReviewServices $_api_review_service
+        ApiReviewServices $_api_review_service,
+        ChatService $_ChatService
     )
     {
         $this->userServices = $userServices;
@@ -47,6 +50,7 @@ class UsersController extends Controller
         $this->serviceQuery = $serviceQuery;
         $this->settings = $_QuerySettingsServices;
         $this->api_review_service = $_api_review_service;
+        $this->chatService = $_ChatService;
     }
 
     public function getUsers()
@@ -310,18 +314,18 @@ class UsersController extends Controller
 
             // Obtener los usuarios filtrados
             $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
-            $emailArray = [];
+            $unansweredLastMessageData = $this->chatService->unansweredMessagesData(55,'ToHoster',true);
 
             // Verificar si hay usuarios
             if ($queryUsers->isNotEmpty()) {
                 // Datos necesarios para el correo electrónico
-                $unansweredMessagesData = []; // Proporciona los datos reales aquí
+                //$unansweredMessagesData = []; // Proporciona los datos reales aquí
 
                 // Enviar correo electrónico a cada usuario
-                $queryUsers->each(function ($user) use ($unansweredMessagesData, $urlChat) {
+                $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     //$emailArray [] = $user->name;
                     $email = $user->email;
-                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,$urlChat, 'new'), $email);
+                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), $email);
                 });
             }
 
