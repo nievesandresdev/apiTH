@@ -313,6 +313,7 @@ class UsersController extends Controller
             ];
 
             // Obtener los usuarios filtrados
+
             $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
             $unansweredLastMessageData = $this->chatService->unansweredMessagesData(54,'ToHoster',true);
 
