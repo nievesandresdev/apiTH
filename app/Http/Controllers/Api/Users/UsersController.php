@@ -325,7 +325,7 @@ class UsersController extends Controller
                 $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     //$emailArray [] = $user->name;
                     $email = $user->email;
-                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), $email);
+                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), 'francisco20990@gmail.com');
                 });
             }
 
