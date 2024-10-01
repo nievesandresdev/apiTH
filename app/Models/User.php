@@ -36,6 +36,7 @@ class User extends Authenticatable
         'status',
         'periodicity_chat',
         'periodicity_stay',
+        'feedback_last_notified_at',
         'chat_last_notified_at',
 
         // STRIPE
