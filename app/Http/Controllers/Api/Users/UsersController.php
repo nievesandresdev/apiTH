@@ -313,6 +313,7 @@ class UsersController extends Controller
             ];
 
             // Obtener los usuarios filtrados
+
             $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
             $unansweredLastMessageData = $this->chatService->unansweredMessagesData(54,'ToHoster',true);
 
@@ -323,7 +324,7 @@ class UsersController extends Controller
                 //$unansweredMessagesData = []; // Proporciona los datos reales aquí
 
                 // Enviar correo electrónico a cada usuario
-                $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), 'francisco20990@gmail.com');
+                $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'test'), 'francisco20990@gmail.com');
                 /* $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     //$emailArray [] = $user->name;
                     $email = $user->email;
