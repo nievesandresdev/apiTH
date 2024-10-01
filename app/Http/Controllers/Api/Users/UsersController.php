@@ -322,11 +322,12 @@ class UsersController extends Controller
                 //$unansweredMessagesData = []; // Proporciona los datos reales aquí
 
                 // Enviar correo electrónico a cada usuario
-                $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
+                $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), 'francisco20990@gmail.com');
+                /* $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     //$emailArray [] = $user->name;
                     $email = $user->email;
                     $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), 'francisco20990@gmail.com');
-                });
+                }); */
             }
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
