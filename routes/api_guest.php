@@ -17,7 +17,8 @@ Route::group(['prefix' => 'guest'], function () {
     });
     
     Route::group(['prefix' => 'auth'], function () {
-        Route::post('/google', [GuestController::class, 'getDataByGoogle']);
+        Route::get('/google', [GuestController::class, 'getDataByGoogle']);
+        Route::get('/google/callback', [GuestController::class, 'handleGoogleCallback']);
         
     });
 });

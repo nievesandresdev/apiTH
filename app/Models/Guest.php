@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
-class Guest extends Model
+class Guest extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, Notifiable, HasFactory;
 
     protected $fillable = [
         'name',
