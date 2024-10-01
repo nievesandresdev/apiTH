@@ -316,16 +316,6 @@ class UsersController extends Controller
             $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
             $unansweredLastMessageData = $this->chatService->unansweredMessagesData(54,'ToHoster',true);
 
-            return bodyResponseRequest(EnumResponse::SUCCESS, [
-                'message' => 'Correo enviado con éxito',
-                'data' => [
-                    'queryUsers' => $queryUsers,
-                    'unansweredLastMessageData' => $unansweredLastMessageData,
-                    //'emailArray' => $emailArray,
-                    //'isNotEmpty' => $$queryUsers->isNotEmpty()
-                    //'getUsersRoleNewMsg' => $getUsersRoleNewMsg,
-                ]
-            ]);
 
             // Verificar si hay usuarios
             if ($queryUsers->isNotEmpty()) {
@@ -345,6 +335,7 @@ class UsersController extends Controller
                 'message' => 'Correo enviado con éxito',
                 'data' => [
                     'queryUsers' => $queryUsers,
+                    'unansweredLastMessageData' => $unansweredLastMessageData,
                     //'emailArray' => $emailArray,
                     //'isNotEmpty' => $$queryUsers->isNotEmpty()
                     //'getUsersRoleNewMsg' => $getUsersRoleNewMsg,
