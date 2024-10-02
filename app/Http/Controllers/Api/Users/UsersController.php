@@ -72,9 +72,9 @@ class UsersController extends Controller
         ]);
     }
 
-    public function getUser()
+    public function getUser($id)
     {
-        $user = $this->userServices->getUserById(auth()->id());
+        $user = $this->userServices->getUserById($id);
 
         if (!$user) {
             return bodyResponseRequest(EnumResponse::NOT_FOUND, [
