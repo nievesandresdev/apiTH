@@ -141,18 +141,18 @@ class GuestController extends Controller
             $lastName = $googleUser->user['family_name'] ?? '';
             $email = $googleUser->getEmail();
             $avatar = $googleUser->getAvatar();
-            Log::info('$googleUser '.json_encode($googleUser));
-            Log::info('$firstName'. json_encode($firstName));
-            Log::info('$lastName'. json_encode($lastName));
+            
+            $names = $firstName.' '.$lastName;
+            
             // Buscar al usuario por email
             $guest = Guest::where('email', $email)->first();
             Log::info('$guest'. json_encode($guest));
             // Generar un token de autenticación (usando Laravel Sanctum)
             $token = $guest->createToken('auth_token')->plainTextToken;
             Log::info('$token'. json_encode($token));
-
+            
             // Redirigir de vuelta al subdominio original con el token
-            return redirect()->to("{$redirectUrl}?auth_token={$token}");
+            return redirect()->to("{$redirectUrl}?auth_token={$token}&googleId={$googleId}&names={$names}&email={$email}&avatar={$avatar}");
         } catch (\Exception $e) {
             // Manejar errores y redirigir con un mensaje de error
             $state = $request->input('state');
