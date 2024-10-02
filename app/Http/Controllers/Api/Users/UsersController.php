@@ -333,6 +333,7 @@ class UsersController extends Controller
             }
             $this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
             Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
+            $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'test'), 'francisco20990@gmail.com');
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
