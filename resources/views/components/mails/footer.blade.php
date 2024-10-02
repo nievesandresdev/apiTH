@@ -6,10 +6,13 @@
     <div class="responsive-footer-links" style="margin-bottom: 24px; margin-top:16px;">
         <a href="https://thehoster.io/aviso-legal" style="color: #A0A0A0; text-decoration: none; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%; margin-right: 15px;">Aviso legal</a>
         <a href="https://thehoster.io/privacidad" style="color: #A0A0A0; text-decoration: none; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%; margin-right: 15px;">Política de privacidad</a>
-        <a href="{{$url}}equipo/configuracion/usuarios?n={{auth()->user()->id}}" class="config-notifications" style="color: #A0A0A0; text-decoration: none; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%;">Configurar notificaciones</a>
+        @if($showNotify)
+            <a href="{{$url}}equipo/configuracion/usuarios?n={{auth()->user()->id}}" class="config-notifications" style="color: #A0A0A0; text-decoration: none; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%;">Configurar notificaciones</a>
+        @endif
     </div>
     <p style="margin: 12px 0 0; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%;">© Copyright TheHoster 2024</p>
 </div>
+
 <div style="background-color: #ffffff; padding: 20px; text-align: center; color: #A0A0A0; font-family: 'Montserrat', sans-serif;">
     <p style="margin: 0; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%;">Nota: Este correo ha sido enviado desde una dirección de e-mail que no acepta correos entrantes. Por favor, no respondas a este e-mail.</p>
 </div>

@@ -112,7 +112,7 @@
         </div>
 
         <!-- Footer -->
-        @include('components.mails.footer')
+        @include('components.mails.footer',['showNotify' => false])
     </div>
 </body>
 </html>
