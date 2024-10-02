@@ -67,9 +67,10 @@ class UserResource extends JsonResource
                     'slug' => $hotel->slug,
                     'name_short' => $hotel->name_short,
                     'subdomain' => $hotel->subdomain,
-                    'permissions' =>  $hotel->pivot->permissions,
+                    //'permissions' =>  $hotel->pivot->permissions,
                 ];
             }),
+            'permissions' => $this->permissions,
             'current_hotel' => new HotelResource($firstHotelId),
             'current_subdmain_hotel' => $firstHotelId?->subdomain
         ];
