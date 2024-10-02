@@ -44,15 +44,33 @@ class FacilityService {
 
     public function getAll ($request, $modelHotel) {
         try {
+            $offset = $request->offset ?? 0;
+            $limit = $request->limit ?? 10;
             $query = FacilityHoster::with(['images', 'translations'])
                 ->where('hotel_id',$modelHotel->id)
                 ->where(['status' => 1])->where('visible',1);
             if (isset($request->visible)) {
                 $query = $query->where(['select' => $request->visible]);
             }
-            $facilities = $query->orderBy('order')->get();
+            
+            $totalCount = (clone $query)->count();
+            $totalVisibleCount = (clone $query)->where(['select' => 1])->count();
+            $totalHiddenCount = (clone $query)->where(['select' => 0])->count();
 
-            return $facilities;
+            $facilities = $query->orderByRaw('
+                CASE 
+                    WHEN `select` = 1 THEN 0
+                    ELSE 1
+                END ASC,
+                facility_hosters.order ASC
+            ')->offset($offset)->limit($limit)->get();
+
+            return [
+                "facilities" => $facilities,
+                "totalCount" => $totalCount,
+                "totalVisibleCount" => $totalVisibleCount,
+                "totalHiddenCount" => $totalHiddenCount,
+            ];
         } catch (\Exception $e) {
             return $e;
         }

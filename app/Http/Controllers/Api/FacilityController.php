@@ -21,6 +21,7 @@ use App\Http\Resources\PlaceResource;
 use App\Utils\Enums\EnumResponse;
 
 use App\Http\Requests\UpdateFacilityOrderRequest;
+use Illuminate\Support\Facades\Log;
 
 class FacilityController extends Controller
 {
@@ -35,15 +36,23 @@ class FacilityController extends Controller
     public function getAll (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
-            $facilities = $this->service->getAll($request, $hotelModel);
-            if(!$facilities){
+            $dataModel = $this->service->getAll($request, $hotelModel);
+            
+            Log::info("datamodel ". json_encode($dataModel));
+            if(!$dataModel){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             //
-            $data = FacilityResource::collection($facilities);
+            $facilities = FacilityResource::collection($dataModel['facilities']);
+            $data =  [
+                "facilities" => $facilities,
+                "totalCount" => $dataModel['totalCount'],
+                "totalVisibleCount" => $dataModel['totalVisibleCount'],
+                "totalHiddenCount" => $dataModel['totalHiddenCount']
+            ];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
