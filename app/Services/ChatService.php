@@ -177,7 +177,7 @@ class ChatService {
     public function notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg){
 
         try{
-            $urlChat = config('app.hoster_url').'/estancias/'.$stay->id.'/chat?g='.$guest->id;
+            $urlChat = config('app.hoster_url').'estancias/'.$stay->id.'/chat?g='.$guest->id;
 
             /**
              * mensajes (TODOS) sin leer
