@@ -52,7 +52,7 @@ class UserServices
         $user = User::findOrFail($id);
 
         if ($user) {
-            return new UserResource($user);
+            return $this->arrayMapUser($user);
         }else{
             return false;
         }
