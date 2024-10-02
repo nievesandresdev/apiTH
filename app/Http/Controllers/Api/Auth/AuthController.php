@@ -55,8 +55,10 @@ class AuthController extends Controller
         Session::flush();
         Auth::guard('web')->logout();
 
+
         // Buscar al usuario por ID
         $user = User::find($request->user);
+
 
         if (!$user) {
             return response()->json([
@@ -94,6 +96,7 @@ class AuthController extends Controller
         // Retornar los datos del usuario
         return response()->json([
             'user' => new UserResource($user),
+            'ss' => 'sss',
             /* 'current_hotel' => $user->current_hotel,
             'current_subdomain' => $user->current_hotel->subdomain, */
         ]);
