@@ -81,6 +81,16 @@ class WorkPositionController extends Controller
                 'periodicity_stay' => $data['periodicityStay']
 
             ]);
+
+            foreach ($work_position->profiles as $profile) {
+                $profile->user->update([
+                    'permissions' => json_encode($data['permissions']),
+                    'notifications' => json_encode($data['notifications']),
+                    'periodicity_chat' => $data['periodicityChat'],
+                    'periodicity_stay' => $data['periodicityStay']
+                ]);
+            }
+
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Actualizado con éxito',
                 'wPosition' => $work_position

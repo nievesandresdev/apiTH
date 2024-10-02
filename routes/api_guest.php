@@ -11,7 +11,14 @@ Route::group(['prefix' => 'guest'], function () {
     Route::post('/updateLanguageApi', [GuestController::class, 'updateLanguage']);
     Route::get('/findLastStayApi/{id}', [GuestController::class, 'findLastStay']);
     Route::post('/sendMailTo', [GuestController::class, 'sendMailTo']);
+    
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/inviteToHotel', [GuestHosterController::class, 'inviteToHotel']);
+    });
+    
+    Route::group(['prefix' => 'auth'], function () {
+        Route::get('/google', [GuestController::class, 'getDataByGoogle']);
+        Route::get('/google/callback', [GuestController::class, 'handleGoogleCallback']);
+        
     });
 });

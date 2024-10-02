@@ -16,6 +16,8 @@ class VerifyApiKey
         // Rutas que no requieren verificación de API key
         $excludedPaths = [
             'api/stay/hoster/deleteSessionWithApiKey',
+            'api/guest/auth/google',
+            'api/guest/auth/google/callback',
             'test',
         ];
 

@@ -41,5 +41,12 @@ return [
         'id' => env('PUSHER_APP_ID'),
         'cluster' => env('PUSHER_APP_CLUSTER'),
     ],
+    
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI')
+    ],
+    
 
 ];
