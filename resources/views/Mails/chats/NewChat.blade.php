@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Nuevo Chat</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
         @media only screen and (max-width: 600px) {
             body {
                 background-color: #ffffff !important;
@@ -68,7 +71,7 @@
                         @endif
                         <!-- Botón que se muestra en el modo no responsive -->
                         <div style="text-align: center; margin-top: 22px;">
-                            <a href="{{$url}}" class="full-width-button order-3" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box; font-family: Arial, sans-serif;">Atender Chat</a>
+                            <a href="{{$url}}" class="full-width-button order-3" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 500; width: 100%; height: 45px; box-sizing: border-box; font-family: Arial, sans-serif;">Atender Chat</a>
                         </div>
                     </td>
                     <td class="order-2" style="text-align: center; width: 50%; vertical-align: top;">
@@ -79,7 +82,7 @@
                         @endif
                         <!-- Botón que se muestra en el modo responsive -->
                         <div style="text-align: center; margin-top: 22px;">
-                            <a href="{{$url}}" class="full-width-button order-4" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box; font-family: Arial, sans-serif;">Atender Chat</a>
+                            <a href="{{$url}}" class="full-width-button order-4" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 500; width: 100%; height: 45px; box-sizing: border-box; font-family: Arial, sans-serif;">Atender Chat</a>
                         </div>
                     </td>
                 </tr>
@@ -120,7 +123,7 @@
             @endif
 
             <div style="text-align: center; margin-top: 22px;">
-                <a href="{{$url}}" class="full-width-button" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box; font-family: Arial, sans-serif;">Atender Chat</a>
+                <a href="{{$url}}" class="full-width-button" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 500; width: 100%; height: 45px; box-sizing: border-box; font-family: Arial, sans-serif;">Atender Chat</a>
             </div>
         </div>
 
