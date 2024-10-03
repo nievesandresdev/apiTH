@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <title>Bienvenido a Thehoster</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
         @media only screen and (max-width: 600px) {
             body {
                 background-color: #ffffff !important;
@@ -57,9 +53,9 @@
             <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
                     <td class="text-content" style="color: white; text-align: left; width: 50%; vertical-align: top; padding-top: 22px; font-family: Helvetica, Arial, sans-serif;">
-                        <span style="margin: 0; font-size: 32px; font-weight: 600; line-height: 110%;">¡Bienvenido a TheHoster!</span>
-                        <p style="margin: 12px 0 0 0; font-size: 16px; font-weight: 500; line-height: 110%;">{{$userAuth->name}} te ha creado un usuario en la plataforma para que administres el Hotel</p>
-                        <p style="margin: 24px 0 0 0; font-size: 16px; font-weight: 700; line-height: 110%;">¡Gracias por elegirnos!</p>
+                        <span style="margin: 0; font-size: 32px; font-weight: 600; line-height: 110%; display: block;">¡Bienvenido a TheHoster!</span>
+                        <p style="margin: 12px 0 0 0; font-size: 16px; font-weight: 500; line-height: 110%; font-family: Verdana, sans-serif;">{{$userAuth->name}} te ha creado un usuario en la plataforma para que administres el Hotel</p>
+                        <p style="margin: 24px 0 0 0; font-size: 16px; font-weight: 700; line-height: 110%; font-family: Arial, sans-serif;">¡Gracias por elegirnos!</p>
                     </td>
                     <td style="text-align: center; width: 50%; vertical-align: top;">
                         <img src="{{ asset('mails/users/banner.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px;">
@@ -73,7 +69,7 @@
             <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
                 <tr style="height: 100%;">
                     <td style="width: 40%; vertical-align: top; padding-right: 32px;">
-                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;" class="image-frame">
+                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">
                     </td>
                     <td class="text-content" style="width: 60%; vertical-align: top; text-align: left; font-family: Verdana, sans-serif;">
                         <h2 style="margin: 0; font-family: Helvetica, Arial, sans-serif;">Datos de acceso</h2>
@@ -100,7 +96,7 @@
                         <a href="{{ $url }}" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 500; width: 100%; box-sizing: border-box; text-align: center; font-family: Arial, sans-serif;">Entrar a Thehoster</a>
                     </td>
                     <td class="order-3" style="width: 40%; vertical-align: top; padding-right: 20px;">
-                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 187px; border-radius: 8px; max-height: 300px;" class="image-frame">
+                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 187px; border-radius: 8px; max-height: 300px;">
                     </td>
                 </tr>
             </table>
