@@ -22,7 +22,7 @@ class PeriodicityChat extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'chat y feedback pendientes segun periodicidad de los usuarios de los hoteles';
 
     /**
      * Execute the console command.
