@@ -43,14 +43,14 @@ class GuestService {
     public function saveOrUpdate($data)
     {
         try {
-            $email = $data->email;
-            $name = $data->name;
-            $phone = $data->phone;
-            $lang = $data->language ?? 'es';
-
-            $guest = Guest::where('email',$email)->first();
             
+            $email = $data->email;
+            $name = $data->name ?? null;
+            $phone = $data->phone ?? null;
+            $lang = $data->language ?? 'es';
+            $guest = Guest::where('email',$email)->first();
             $acronym = $this->generateInitialsName($name ?? $email);
+            
             if(!$guest){
                 $guest = Guest::create([
                     'name' =>$name,
@@ -59,6 +59,7 @@ class GuestService {
                     'acronym' => $acronym,
                     'phone' => $phone ?? null,
                 ]);
+                
             }else{
                 $guest->name = $name;
                 $guest->lang_web = $lang;

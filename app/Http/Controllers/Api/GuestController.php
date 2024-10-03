@@ -130,7 +130,6 @@ class GuestController extends Controller
 
             $decodedState = json_decode(base64_decode($state), true);
             $redirectUrl = $decodedState['redirect'] ?? 'https://test.thehoster.io';
-            Log::info('$redirectUrl'. json_encode($redirectUrl));
 
             // Obtener el usuario autenticado de Google
             $googleUser = Socialite::driver('google')->stateless()->user();
@@ -145,11 +144,14 @@ class GuestController extends Controller
             $names = $firstName.' '.$lastName;
             
             // Buscar al usuario por email
-            $guest = Guest::where('email', $email)->first();
-            Log::info('$guest'. json_encode($guest));
+            $dataGuest = new \stdClass();
+            $dataGuest->email = $email;
+            $guest = $this->service->saveOrUpdate($dataGuest);
+            // $guest = Guest::where('email', $email)->first();
+            // Log::info('$guest'. json_encode($guest));
             // Generar un token de autenticación (usando Laravel Sanctum)
             $token = $guest->createToken('auth_token')->plainTextToken;
-            Log::info('$token'. json_encode($token));
+            // Log::info('$token'. json_encode($token));
             
             // Redirigir de vuelta al subdominio original con el token
             return redirect()->to("{$redirectUrl}?auth_token={$token}&googleId={$googleId}&names={$names}&email={$email}&avatar={$avatar}");
