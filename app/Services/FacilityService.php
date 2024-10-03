@@ -49,6 +49,7 @@ class FacilityService {
             $query = FacilityHoster::with(['images', 'translations'])
                 ->where('hotel_id',$modelHotel->id)
                 ->where(['status' => 1])->where('visible',1);
+            
             if (isset($request->visible)) {
                 $query = $query->where(['select' => $request->visible]);
             }

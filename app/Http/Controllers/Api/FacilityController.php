@@ -38,7 +38,7 @@ class FacilityController extends Controller
             $hotelModel = $request->attributes->get('hotel');
             $dataModel = $this->service->getAll($request, $hotelModel);
             
-            Log::info("datamodel ". json_encode($dataModel));
+            // Log::info("datamodel ". json_encode($dataModel));
             if(!$dataModel){
                 $data = [
                     'message' => __('response.bad_request_long')
