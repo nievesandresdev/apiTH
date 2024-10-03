@@ -34,10 +34,11 @@ class ExperienceService {
             $collectionExperiences = $queryExperience
                 ->orderByCityAndFeatures($modelHotel->zone, $modelHotel->id)
                 // ->orderByPosition($modelHotel->id)
-                // ->orderByASpecificCity($modelHotel->zone)
-                // ->orderByFeatured($modelHotel->id)
-                ->orderByWeighing($modelHotel->id)
-                ->orderBy('distance', 'asc')
+                // ->orderByWeighing($modelHotel->id)
+                // ->orderBy('distance', 'asc')
+                ->orderByPosition($hotelModel->id)
+                ->orderByDistance()
+                ->orderByWeighing($hotelModel->id)
                 ->paginate(20)
                 ->appends(request()->except('page'));
             return ['experiences' => $collectionExperiences, 'countOtherCities' => $countOtherCities];
@@ -218,9 +219,15 @@ class ExperienceService {
                                     )
                                     ->whereCity($cityName)
                                     ->whereVisibleByHoster($hotelId)
+                                    // ->orderByFeatured($hotelId)
+                                    // ->orderByWeighing($modelHotel->id)
+                                    // ->orderBy('distance', 'asc')
+                                    //
                                     ->orderByFeatured($hotelId)
-                                    ->orderByWeighing($modelHotel->id)
-                                    ->orderBy('distance', 'asc')
+                                    ->orderByPosition($hotelId)
+                                    ->orderByDistance()
+                                    ->orderByWeighing($hotelId)
+                                    //
                                     ->limit($lengthAExpFeatured)
                                     ->get();
                             

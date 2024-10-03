@@ -82,8 +82,7 @@ class ExperienceService {
                         ORDER BY a.id ASC
                         LIMIT 1
                     ) AS distance"),
-                )->addBinding([$cityModel->long, $cityModel->lag], 'select');
-
+                )->addBinding([$cityModel->long, $cityModel->lat], 'select');
         if($dataFilter['one_exp_id']){
             $query = $query->where('products.id', $dataFilter['one_exp_id']);
         }else{
@@ -185,11 +184,11 @@ class ExperienceService {
         if(!$dataFilter['visibility']){
             $query->withVisibilityForProduct($hotelModel->id);
         }
-
-        $query->orderByPosition($hotelModel->id);
         $query->orderByFeatured($hotelModel->id);
+        $query->orderByPosition($hotelModel->id);
+        $query->orderByDistance();
         $query->orderByWeighing($hotelModel->id);
-        $query->orderBy('distance','ASC');
+        // $query->orderByWeighingMain();
         
         return $query;
     }
@@ -289,14 +288,16 @@ class ExperienceService {
                     ORDER BY a.id ASC
                     LIMIT 1
                 ) AS distance"),
-            )->addBinding([$cityModel->long, $cityModel->lag], 'select')
+            )->addBinding([$cityModel->long, $cityModel->lat], 'select')
             ->whereVisibleByHoster($hotelModel->id)
             ->orderByFeatured($hotelModel->id)
             ->orderByPosition($hotelModel->id)
+            ->orderByDistance()
             ->orderByWeighing($hotelModel->id)
-            ->orderBy('distance','ASC')
             ->whereCity($cityModel->name);
 
+
+            
         $position = 0;
 
         $productsQuery->chunk(100, function ($products) use (&$position, $hotelModel, $update_position_old) {
@@ -346,11 +347,10 @@ class ExperienceService {
             ToggleProduct::where(['id' => $id])->update(['position' => $position]);
         }
     }
-    public function updatePosition ($hotelModel, $productModel) {
-        $toggleProductModel = ToggleProduct::where(['products_id' => $productModel->id, 'hotel_id' => $hotelModel->id])->first();
-        if ($toggleProductModel && $toggleProductModel->position_old) {
-            var_dump('entro');
-            $toggleProductModel->update(['position' => $toggleProductModel->position_old, 'position_old' => $toggleProductModel->position_old]);
+    public function updatePosition ($position, $toggleProductModel) {
+
+        if ($toggleProductModel && $position) {
+            $toggleProductModel->update(['position' => $position]);
         }
     }
     public function getPositionFirtNonRecommendated ($hotelModel, $cityModel) {
@@ -370,10 +370,10 @@ class ExperienceService {
                 ) AS distance"),
             )->addBinding([$cityModel->long, $cityModel->lag], 'select')
             ->whereVisibleByHoster($hotelModel->id)
-            ->orderByPosition($hotelModel->id)
             ->orderByFeatured($hotelModel->id)
+            ->orderByPosition($hotelModel->id)
+            ->orderByDistance()
             ->orderByWeighing($hotelModel->id)
-            ->orderBy('distance','ASC')
             ->whereCity($cityModel->name);
 
         $productsQuery->chunk(100, function ($products) use (&$newPosition, $hotelModel) {
@@ -392,47 +392,62 @@ class ExperienceService {
         return $newPosition;
         
     }
-    public function getPositionOld ($order, $hotelModel, $cityModel) {
+    public function getClosestPosition ($toggleProductSelectedModel, $hotelModel, $cityModel) {
+        // $toggleProductModel = ToggleProduct::where(['hotel_id' => $hotelModel->id])
+        //     ->where('order', '<', $order)
+        //     ->orderBy('order', 'desc')
+        //     ->first();
 
-        $order = (float) $order;
-        $productsQuery = Products::activeToShow()
-            ->select(
-                'products.id',
-                \DB::raw("(
-                    SELECT ST_Distance_Sphere(
-                        point(a.metting_point_longitude, a.metting_point_latitude),
-                        point(?, ?)
-                    )
-                    FROM activities a
-                    WHERE a.products_id = products.id
-                    ORDER BY a.id ASC
-                    LIMIT 1
-                ) AS distance"),
-            )->addBinding([$cityModel->long, $cityModel->lag], 'select')
-            ->whereVisibleByHoster($hotelModel->id)
-            ->orderByPosition($hotelModel->id)
-            ->orderByFeatured($hotelModel->id)
-            ->orderByWeighing($hotelModel->id)
-            // ->orderBy('distance','ASC')
-            ->whereCity($cityModel->name);
-
-        $shouldContinue = true;
-
-        $newOrder = null;
-
-        $productsQuery->chunk(100, function ($products) use (&$newOrder, $order, $hotelModel) {
-            foreach ($products as $productModal) {
-                $toggleProduct = ToggleProduct::where(['hotel_id' => $hotelModel->id, 'products_id' => $productModal->id])->first();
-                $orderProductCurrent = (float) $toggleProduct->order;
-                if ($orderProductCurrent < $order) {
-                    return false;
-                }
-                $newOrder = $orderProductCurrent;
-            }
-        });
-
-        return $newOrder;
+        $toggleProductSelectedModel = \DB::table('toggle_products')
+        ->join('products', 'toggle_products.products_id', '=', 'products.id') // Join entre toggle_products y products
+        ->select(
+            'toggle_products.*', // Selecciona todos los campos de toggle_products
+            'products.id as product_id',
+            \DB::raw("(
+                SELECT ST_Distance_Sphere(
+                    point(a.metting_point_longitude, a.metting_point_latitude),
+                    point(?, ?)
+                )
+                FROM activities a
+                WHERE a.products_id = products.id
+                ORDER BY a.id ASC
+                LIMIT 1
+            ) AS distance") // Distancia calculada desde las actividades asociadas al producto
+        )
+        ->addBinding([$cityModel->long, $cityModel->lat], 'select') // Agregar las coordenadas de la ciudad
+        ->where('toggle_products.id', '=', $toggleProductSelectedModel->id) // Filtra por el id de toggle_products que quieres obtener
+        ->first(); // Obtiene el primer registro
         
+        $toggleProductPositionModel = \DB::table('toggle_products')
+        ->join('products', 'toggle_products.products_id', '=', 'products.id') // Join entre toggle_products y products
+        ->join('hotels', 'toggle_products.hotel_id', '=', 'hotels.id') // Join entre toggle_products y hotels
+        ->select(
+            'toggle_products.*', // Selecciona todos los campos de toggle_products
+            'products.id as product_id',
+            \DB::raw("(
+                SELECT ST_Distance_Sphere(
+                    point(a.metting_point_longitude, a.metting_point_latitude),
+                    point(?, ?)
+                )
+                FROM activities a
+                WHERE a.products_id = products.id
+                ORDER BY a.id ASC
+                LIMIT 1
+            ) AS distance") // Distancia calculada desde las actividades asociadas al producto
+        )
+        ->addBinding([$cityModel->long, $cityModel->lat], 'select') // Añadir las coordenadas a la consulta
+        ->where('toggle_products.hotel_id', '=', $hotelModel->id) // Filtra por hotel_id
+        ->orderByRaw('distance IS NULL, distance ASC') // Ordena colocando NULL al final y luego por distancia ascendente
+        ->having('distance', '>', $toggleProductSelectedModel->distance) // Filtro para obtener distancias mayores
+        ->first(); // Obtiene el primer registro, que será el más próximo
+
+        return $toggleProductPositionModel;
+
+        $newPosition = null;
+        if ($toggleProductPositionModel) {
+            $newPosition = $toggleProductPositionModel->position - 1;
+        }
+        return $newPosition;
     }
 
     public function findRecommendation ($hotelModel, $productModel) {
