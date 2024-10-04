@@ -36,9 +36,9 @@ class ExperienceService {
                 // ->orderByPosition($modelHotel->id)
                 // ->orderByWeighing($modelHotel->id)
                 // ->orderBy('distance', 'asc')
-                ->orderByPosition($hotelModel->id)
+                ->orderByPosition($modelHotel->id)
                 ->orderByDistance()
-                ->orderByWeighing($hotelModel->id)
+                ->orderByWeighing($modelHotel->id)
                 ->paginate(20)
                 ->appends(request()->except('page'));
             return ['experiences' => $collectionExperiences, 'countOtherCities' => $countOtherCities];
