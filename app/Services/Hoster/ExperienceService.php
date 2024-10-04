@@ -368,7 +368,7 @@ class ExperienceService {
                     ORDER BY a.id ASC
                     LIMIT 1
                 ) AS distance"),
-            )->addBinding([$cityModel->long, $cityModel->lag], 'select')
+            )->addBinding([$cityModel->long, $cityModel->lat], 'select')
             ->whereVisibleByHoster($hotelModel->id)
             ->orderByFeatured($hotelModel->id)
             ->orderByPosition($hotelModel->id)

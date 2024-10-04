@@ -68,6 +68,7 @@ class ExperienceController extends Controller
             ];
 
             $response = $this->service->getAll($request, $modelHotel, $dataFilter);
+            return $response;
             $expsCollection = $response['experiences'];
             $countOtherCities = $response['countOtherCities'];
             $data = [
