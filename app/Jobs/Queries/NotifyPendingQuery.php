@@ -72,11 +72,13 @@ class NotifyPendingQuery implements ShouldQueue
                 ]
             );
             $this->usersList->each(function ($user) {
-                Log::info('ENVIADO EMAIL A '.$user['email']);
-                Mail::to($user['email'])->send(new NewFeedback($this->dates, $this->urlQuery, $this->hotel ,$this->query,$this->guest,$this->stay, 'pending'));
+                $email = $user->email;
+                Log::info('ENVIADO EMAILFFEDBACK A '.$email);
+                Mail::to($email)->send(new NewFeedback($this->dates, $this->urlQuery, $this->hotel ,$this->query,$this->guest,$this->stay, 'pending'));
+                //Mail::to($email)->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
             });
         }
-       
+
 
     }
 }

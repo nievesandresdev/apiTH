@@ -21,6 +21,7 @@ use App\Http\Resources\PlaceResource;
 use App\Utils\Enums\EnumResponse;
 
 use App\Http\Requests\UpdateFacilityOrderRequest;
+use Illuminate\Support\Facades\Log;
 
 class FacilityController extends Controller
 {
