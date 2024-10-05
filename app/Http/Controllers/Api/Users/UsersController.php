@@ -140,7 +140,7 @@ class UsersController extends Controller
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Usuario actualizado con éxito',
-                'user' => $user
+                'user' => new UserResource($user)
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [
