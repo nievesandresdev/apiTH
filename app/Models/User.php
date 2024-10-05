@@ -29,6 +29,7 @@ class User extends Authenticatable
         //OTHERS
         'del',
         'google_url',
+        'parent_id',
 
         //settings
         'permissions', //json
@@ -103,6 +104,11 @@ class User extends Authenticatable
     public function profile()
     {
       return $this->hasOne(Profile::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(User::class, 'parent_id'); //para ver los hoteles del usuario principal
     }
 
     public function hotel()

@@ -516,7 +516,10 @@ class UserServices
 
     function getParentId() {
         $user = auth()->user();
-        $userRole = $user->getRoleNames()->first();
+
+        return $user->parent_id ?? $user->id;
+
+        /* $userRole = $user->getRoleNames()->first();
 
         switch ($userRole) {
             case 'Admin':
@@ -529,7 +532,7 @@ class UserServices
                 }
             default:
                 return $user->parent_id;
-        }
+        } */
     }
 
 

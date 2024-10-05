@@ -7,6 +7,8 @@ use App\Http\Controllers\Subdomain\SubdomainController;
 
 Route::group(['prefix' => 'hotel'], function () {
     Route::get('/getAll', [HotelController::class, 'getAll']);
+    Route::get('/getHotelsByUser', [HotelController::class, 'getHotelsByUser']);
+    Route::post('/updateDefaultHotel', [HotelController::class, 'updateDefaultHotel']);
     Route::get('/findByParams', [HotelController::class, 'findByParams']);
     Route::post('/profile', [HotelController::class, 'updateProfile']);
     Route::get('/getAllCrossellings', [HotelController::class, 'getAllCrossellings']);

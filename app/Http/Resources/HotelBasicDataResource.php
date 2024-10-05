@@ -19,6 +19,7 @@ class HotelBasicDataResource extends JsonResource
     {
 
         $user = $this->user[0];
+        $authUser = auth()->user();
         $is_subscribed = $user->subscriptions()->where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
         $pending_chat_count =  $this->stays()
         ->whereHas('chats', function ($query) {
@@ -31,6 +32,11 @@ class HotelBasicDataResource extends JsonResource
             ->where('answered', 1)->where('attended', 0)
             ->where('hotel_id', $this->id)->count();
 
+        // Validamos si existe un usuario autenticado y buscamos el hotel con is_default = 1 desde la relación del usuario
+         $is_default = $authUser
+         ? $authUser->hotel()->wherePivot('hotel_id', $this->id)->wherePivot('is_default', 1)->exists()
+         : false;
+
         return [
             "id"=> $this->id,
             "user_id" => $user->id,
@@ -42,8 +48,9 @@ class HotelBasicDataResource extends JsonResource
             "del" => $this->del,
             "subscribed"=> $this->subscription_active ? $is_subscribed : false,
             "with_notificartion" => $pending_chat_count + $pending_query_count,
-            "code"=>$this->code
+            "code"=>$this->code,
+            'is_default' =>$is_default,
         ];
-        
+
     }
 }
