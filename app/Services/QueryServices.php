@@ -263,6 +263,7 @@ class QueryServices {
                 "guestId" => $guest->id,
                 "title" => "Nuevo feedback",
                 "text" => "Tienes un nuevo feedback",
+                "concept" => "new",
                 "countPendingQueries" => 1
             ]
             );

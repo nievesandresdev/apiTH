@@ -89,6 +89,13 @@ class PeriodicityChat extends Command
 
         // Procesamos los resultados
         $result = $stays->map(function ($stay) use ($now) {
+            // Log::info('$stay '. json_encode($stay));
+            $firstPendingChat = $stay->chats()->where('pending',1)->first();
+            $firstguestIdChat = $firstPendingChat->guest_id ?? null;
+            // Log::info('firstguestIdChat '. $firstguestIdChat);
+            $firstPendingQuery = $stay->queries()->where('answered', 1)->where('attended', 0)->first();
+            $firstguestIdQuery = $firstPendingQuery->guest_id ?? null;
+            // Log::info('firstguestIdQuery '. $firstguestIdQuery);
             $stayData = [
                 'stay_id' => $stay->id,
                 'room' => $stay->room,
@@ -97,7 +104,8 @@ class PeriodicityChat extends Command
                 'total_users' => $stay->hotel->user->count(),
                 'total_chats_pending' => $stay->chats->count(),
                 'total_queries_pending' => $stay->queries->count(), // Total de queries pendientes
-                'users' => $stay->hotel->user->map(function ($user) use ($now, $stay) {
+                'users' => $stay->hotel->user->map(function ($user) use ($now, $stay, $firstguestIdChat, $firstguestIdQuery) {
+                    
                     // Verificar periodicity_chat con el último mensaje
                     $lastChatMessage = $stay->chats->flatMap->messages->first();
                     $lastMessageTime = $lastChatMessage ? Carbon::parse($lastChatMessage->created_at) : null;
@@ -109,13 +117,14 @@ class PeriodicityChat extends Command
 
                         if (!$lastNotified || $lastNotified->diffInMinutes($now) >= $user->periodicity_chat) {
                             // Enviar pusher para chats pendientes
+                            
                             sendEventPusher(
                                 'private-notify-unread-msg-hotel.' . $stay->hotel_id,
                                 'App\Events\NotifyUnreadMsg',
                                 [
                                     'user_id' => $user->id,
                                     'showLoadPage' => false,
-                                    'guest_id' => $stay->guest_id ?? null,
+                                    'guest_id' => $firstguestIdChat,
                                     'stay_id' => $stay->id,
                                     'room' => $stay->room,
                                     'guest' => true,
@@ -123,6 +132,7 @@ class PeriodicityChat extends Command
                                     'automatic' => false,
                                     'add' => false,
                                     'pending' => false,
+                                    'concept' => "pending",
                                 ]
                             );
 
@@ -148,11 +158,12 @@ class PeriodicityChat extends Command
                         // Enviar pusher para feedback pendiente
                         sendEventPusher('notify-send-query.' . $stay->hotel_id, 'App\Events\NotifySendQueryEvent',
                             [
-                                "user_id" => $user->id,
+                                "userId" => $user->id,
                                 "stayId" => $stay->id,
-                                "guestId" => $stay->guest_id,
+                                "guestId" => $firstguestIdQuery,
                                 "title" => "Feedback Pendiente",
                                 "text" => "Tienes un Feedback pendiente",
+                                "concept" => "pending",
                                 "countPendingQueries" => 1
                             ]
                         );
@@ -200,7 +211,7 @@ class PeriodicityChat extends Command
     }
 }
 
-    public function handle2()
+public function handle2()
     {
         $filters = ['periods' => ['in-stay', 'pre-stay']];
 
@@ -295,6 +306,7 @@ class PeriodicityChat extends Command
                                         'automatic' => false,
                                         'add' => false,
                                         'pending' => false,
+                                        'concept' => "pending",
                                     ]
                                 );
 
@@ -340,7 +352,6 @@ class PeriodicityChat extends Command
             Log::error('Error al obtener los usuarios de los hoteles y chats pendientes', ['error' => $e->getMessage()]);
         }
     }
-
 
 
 

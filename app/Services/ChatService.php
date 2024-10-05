@@ -106,6 +106,7 @@ class ChatService {
                     'guest' => true,
                     'text' => $msg->text,
                     'automatic' => false,
+                    'concept' => "new",
                     'add' => true,'pending' => false,//es falso en el input pero true en la bd
                 ]
                 );
