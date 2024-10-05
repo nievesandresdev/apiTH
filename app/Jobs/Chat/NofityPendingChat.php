@@ -54,6 +54,8 @@ class NofityPendingChat implements ShouldQueue
         $this->chatService = $_ChatService;
         $this->mailService = $_MailService;
 
+        Log::info("hotel_id / NofityPendingChat: ".$this->stay->hotel_id);
+
         if($this->withAvailability){
             $isHosterAvailable = $this->chatService->getAvailavilityByHotel($this->stay->hotel_id);
             if(!$isHosterAvailable){
@@ -78,13 +80,15 @@ class NofityPendingChat implements ShouldQueue
             //     ]
             // );
 
-            $unansweredMessagesData = $this->chatService->unansweredMessagesData($chat->id);
+            $unansweredMessagesData = $this->chatService->unansweredMessagesData($chat->id,'ToHoster');
             Log::info("NofityPendingChat". json_encode($unansweredMessagesData));
             Log::info("NofityPendingChat". json_encode($this->userToNotify));
             Log::info("NofityPendingChattime". json_encode($this->time));
 
             foreach ($this->userToNotify as $user) {
-                $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,$this->url,'pending',$this->time), $user['email']);
+                $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,$this->url,$this->time,$user['id'],'pending'), $user['email']);
+                //$this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,$this->url,null,2337, 'test'), 'francisco20990@gmail.com');
+                //$this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,$this->time,$user->id, 'new'), $email);
             }
         }
     }

@@ -324,7 +324,7 @@ class UsersController extends Controller
                 //$unansweredMessagesData = []; // Proporciona los datos reales aquí
 
                 // Enviar correo electrónico a cada usuario
-                $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'test'), 'francisco20990@gmail.com');
+                $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
                 /* $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     //$emailArray [] = $user->name;
                     $email = $user->email;
@@ -333,7 +333,7 @@ class UsersController extends Controller
             }
             $this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
             Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
-            $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'test'), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
@@ -346,7 +346,7 @@ class UsersController extends Controller
                 ]
             ]);
             //$this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
-            $this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
+            //$this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
             //$this->mailService->sendEmail(new ChatEmail([],$url,'new'), 'francisco20990@gmail.com');
             //Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
 
