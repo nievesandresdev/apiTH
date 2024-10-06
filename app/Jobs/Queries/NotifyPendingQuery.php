@@ -59,18 +59,16 @@ class NotifyPendingQuery implements ShouldQueue
                     ->first();
         Log::info('$query '.json_encode($query));
         if($query){
-            // Log::info('$this->hotel->id '. $this->hotel->id);
-            // Log::info('$this->stay->id '. $this->stay->id);
-            // Log::info('$this->guest->id '. $this->guest->id);
-            sendEventPusher('notify-send-query.' . $this->hotel->id, 'App\Events\NotifySendQueryEvent',
-                [
-                    "stayId" => $this->stay->id,
-                    "guestId" => $this->guest->id,
-                    "title" => "Feedback pendiente",
-                    "text" => "Tienes un feedback pendiente",
-                    "countPendingQueries" => 1
-                ]
-            );
+            // sendEventPusher('notify-send-query.' . $this->hotel->id, 'App\Events\NotifySendQueryEvent',
+            //     [
+            //         "stayId" => $this->stay->id,
+            //         "guestId" => $this->guest->id,
+            //         "title" => "Feedback pendiente",
+            //         "text" => "Tienes un feedback pendiente",
+            //         "concept" => "pending",
+            //         "countPendingQueries" => 1
+            //     ]
+            // );
             $this->usersList->each(function ($user) {
                 $email = $user->email;
                 Log::info('ENVIADO EMAILFFEDBACK A '.$email);

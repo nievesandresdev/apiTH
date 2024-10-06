@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ChatEmail extends Mailable
 {
@@ -16,17 +17,21 @@ class ChatEmail extends Mailable
     public $type;
     public $url;
     public $time;
+    public $user;
+    public $idUser;
     //public $hotel;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($unansweredMessagesData,$url,$type,$time = null)
+    public function __construct($unansweredMessagesData,$url,$time = null,$idUser = null,$type)
     {
         $this->unansweredMessagesData = $unansweredMessagesData ?? [];
         $this->type = $type;
         $this->url = $url;
         $this->time = $time;
+        $this->idUser = $idUser;
+
         //$this->hotel = $hotel;
     }
 
@@ -36,7 +41,6 @@ class ChatEmail extends Mailable
         if ($this->type == 'pending') {
             $typeTitle = "Chat pendiente";
         }
-
         /* return $this->from("no-reply@thehoster.es", $this->hotel['sender_for_sending_email'])
                     ->subject($typeTitle)
                     ->view('Mails.queries.NewFeedback')

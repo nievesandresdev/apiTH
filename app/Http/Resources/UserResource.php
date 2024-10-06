@@ -15,32 +15,19 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        $firstHotelId = $this->hotel()->first() ?? null;
+        // Buscar el hotel con is_default = 1
+        $defaultHotel = $this->hotel()->wherePivot('is_default', 1)->first();
+
+        // Si no se encuentra un hotel con is_default = 1, seleccionamos el primero
+        $firstHotelId = $defaultHotel ?? $this->hotel()->first();
 
         $phone = $this->profile->phone ?? '';
-        // $prefix = null;
-        // $number = null;
-
-        // if (!empty($phone)) {
-        //     if (preg_match('/^(\+\d+)\s(.+)/', $phone, $matches)) {
-        //         $prefix = $matches[1];
-        //         $number = $matches[2];
-        //     } else {
-        //         $number = $phone;
-        //     }
-        // }
-
-        // if (empty($phone)) {
-        //     $prefix = null;
-        //     $number = null;
-        // }
 
         return [
             'id' => $this->id,
             'name' => $this->profile->firstname ?? '',
             'lastname' => $this->profile->lastname ?? '',
             'email' => $this->email,
-            // 'prefix' => $prefix,
             'phone' => $phone,
             'role' => 'Associate',
             'last_session' => $this->last_session,
@@ -70,6 +57,29 @@ class UserResource extends JsonResource
                     //'permissions' =>  $hotel->pivot->permissions,
                 ];
             }),
+            'parent_hotels' => $this->parent_id ? $this->parent->hotel->map(function ($hotel) {
+            return [
+                'id' => $hotel->id,
+                'name' => $hotel->name,
+                'name_origin' => $hotel->name_origin,
+                'type' => $hotel->type,
+                'address' => $hotel->address,
+                'zone' => $hotel->zone,
+                'category' => $hotel->category,
+                'image' => $hotel->image,
+                'phone' => $hotel->phone,
+                'email' => $hotel->email,
+                'latitude' => $hotel->latitude,
+                'longitude' => $hotel->longitude,
+                'description' => $hotel->description,
+                'instagram_url' => $hotel->instagram_url,
+                'facebook_url' => $hotel->facebook_url,
+                'pinterest_url' => $hotel->pinterest_url,
+                'slug' => $hotel->slug,
+                'name_short' => $hotel->name_short,
+                'subdomain' => $hotel->subdomain,
+            ];
+        }) : null,
             'permissions' => $this->permissions,
             'current_hotel' => new HotelResource($firstHotelId),
             'current_subdmain_hotel' => $firstHotelId?->subdomain

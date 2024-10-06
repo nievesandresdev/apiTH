@@ -39,7 +39,6 @@ class ExperienceController extends Controller
     public function getAll (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
-
             $lengthAExpFeatured = 12;
             $hotelId = $hotelModel->id;
             $priceMin = $request->price_min ?? null;
@@ -59,7 +58,6 @@ class ExperienceController extends Controller
             //crear array de ciudades para la consulta
             $citySlug = Str::slug($hotelModel->zone);
             $cityModel  = $this->cityService->findByParams([ 'slug' => $citySlug]);
-
             $dataFilter = [
                 'city' => $cityName,
                 'all_cities' => $all_cities,
@@ -86,10 +84,7 @@ class ExperienceController extends Controller
             }
 
             $productspaginate = $queryExperiences->paginate($limit)->appends(request()->except('page'));
-            
-            // return $products->total();
             $countHidden = $productspaginate->total() - $countVisible;
-
             $productsCollection = new ExperiencePaginateResource($productspaginate);
             
             $data = [
@@ -244,20 +239,18 @@ class ExperienceController extends Controller
             if ($featuredBool) {
                 $r = $this->service->assignFirstPosition($hotelModel, $productModel);
             } else {
-                // $position = $this->service->getPositionFirtNonRecommendated($hotelModel, $cityModel);
-                // $position = $this->service->getPositionOld($toggleProductModel->order, $hotelModel, $cityModel);
-                // $position = ExperienceResource::collection($position);
-                // $position = new ExperienceResource($position);
-                // return $position;
+                // $newPosition = $this->service->getClosestPosition($toggleProductModel, $hotelModel, $cityModel);
                 // $toggleProductModel->refresh();
-                // $this->service->updatePosition($hotelModel, $productModel);
+                // $this->service->updatePosition($newPosition, $toggleProductModel, $cityModel);
             }
+            // return 'no entro';
             $this->service->syncPosition($request, $cityModel, $hotelModel, false);
             \DB::commit();
             $toggleProductModel->refresh();  
             return bodyResponseRequest(EnumResponse::ACCEPTED, $toggleProductModel);
         } catch (\Exception $e) {
             \DB::rollback();
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateRecommendation');
         }
     }

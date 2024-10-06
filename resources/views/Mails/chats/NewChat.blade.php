@@ -128,7 +128,7 @@
         </div>
 
         <!-- Footer -->
-        @include('components.mails.footer',['showNotify' => true])
+        @include('components.mails.footer',['showNotify' => $idUser])
     </div>
 </body>
 </html>

@@ -36,7 +36,20 @@ class HotelService {
         // Log::info('hotel withoutCurrent '. $request->withoutCurrent);
         if (filter_var($request->withoutCurrent, FILTER_VALIDATE_BOOLEAN)) {
             // Log::info('entro withoutCurrent '. $modelHotel->id);
-            $hotelsCollection = $user->hotel()->where('del', 0)->where('hotels.id','!=', $modelHotel->id)->get();
+            //$hotelsCollection = $user->hotel()->where('del', 0)->where('hotels.id','!=', $modelHotel->id)->get();
+            if ($user->parent_id) {
+                $hotelsCollection = User::find($user->parent_id)
+                    ->hotel() // Relación de hoteles del usuario padre
+                    ->where('del', 0) // Condición para excluir hoteles eliminados
+                    ->where('hotels.id', '!=', $modelHotel->id) // Excluir el hotel actual
+                    ->get();
+            } else {
+                $hotelsCollection = $user->hotel()
+                    ->where('del', 0)
+                    ->where('hotels.id', '!=', $modelHotel->id)
+                    ->get();
+            }
+
         }else{
             // Log::info('no entro withoutCurrent '. $modelHotel->id);
             $hotelsCollection = $user->hotel()->where('del', 0)->get();
@@ -44,6 +57,34 @@ class HotelService {
 
         return $hotelsCollection;
     }
+
+    public function getHotelsByUser() {
+        $user = \Auth::user();
+        $hotelsCollection = $user->hotel()->where('del', 0)->get();
+        return $hotelsCollection;
+    }
+
+    public function updateDefaultHotel($request) {
+        $user = \Auth::user();
+
+        // Revisamos si el usuario ya tiene un hotel predeterminado
+        $currentDefaultHotel = $user->hotel()->wherePivot('is_default', 1)->first();
+
+        // Si tiene un hotel predeterminado, lo actualizamos a 0
+        if ($currentDefaultHotel) {
+            $user->hotel()->updateExistingPivot($currentDefaultHotel->id, ['is_default' => 0]);
+        }
+
+        // Actualizamos el nuevo hotel a predeterminado
+        $user->hotel()->updateExistingPivot($request->hotel_id, ['is_default' => 1]);
+
+        // Recuperamos el hotel que ha sido marcado como predeterminado
+        $newDefaultHotel = $user->hotel()->where('hotels.id', $request->hotel_id)->first();
+
+        return $newDefaultHotel;
+    }
+
+
 
     public function findByParams ($request) {
         try {
@@ -247,7 +288,7 @@ class HotelService {
         if ($subdomain == $hotelModel->subdomain) {
             return;
         }
-        
+
         HotelSubdomain::where([
             'hotel_id' => $hotelModel->id,
             'active' => true
@@ -294,7 +335,7 @@ class HotelService {
         $api_key = env('API_KEY_CLOUDFLARE');
         $zone_id = env('ZONE_ID_CLOUDFLARE');
         $ip_address = env('IP_ADDRESS');
-        
+
         // Construye el nombre completo del subdominio
         $full_domain = $subdomain . ($environment == "pro" ? '' : '.' . $environment) . '.thehoster.io';
 

@@ -26,7 +26,7 @@ class Products extends Model
         'city_id',
         'location',
         'url',
-        'url',
+        'weighing',
     ];
 
     protected $casts = [
@@ -161,6 +161,13 @@ class Products extends Model
         }
     }
 
+    public function scopeOrderByWeighingMain($query)
+    {
+            $query->orderByRaw('ISNULL(products.weighing) ASC')
+            ->orderBy('products.weighing', 'desc');
+    }
+
+
     public function scopeOrderByFeatured($query, $hotelId)
     {
         if ($hotelId) {
@@ -199,15 +206,15 @@ class Products extends Model
             $join->on('products.id', '=', 'service_featured.product_id')
                 ->where('service_featured.hotel_id', '=', $hotelId);
         });
-        $query->leftJoin('toggle_products as tp', function ($join) use ($hotelId) {
-            $join->on('products.id', '=', 'tp.products_id')
-                ->where('tp.hotel_id', '=', $hotelId);
+        $query->leftJoin('toggle_products as pr', function ($join) use ($hotelId) {
+            $join->on('products.id', '=', 'pr.products_id')
+                ->where('pr.hotel_id', '=', $hotelId);
         });
 
         // Ordenar por ciudad, y luego por recomendados y destacados
         $query->orderByRaw("CASE WHEN activities.city_experince = '$cityName' THEN 0 ELSE 1 END")
-        ->orderByRaw('CASE WHEN tp.position IS NOT NULL THEN 0 ELSE 1 END')
-        ->orderBy('tp.position')
+        ->orderByRaw('CASE WHEN pr.position IS NOT NULL THEN 0 ELSE 1 END')
+        ->orderBy('pr.position')
         ->orderByRaw('CASE
                 WHEN service_featured.product_id IS NOT NULL THEN 1
                 ELSE 2
@@ -263,13 +270,17 @@ class Products extends Model
     public function scopeOrderByPosition($query, $hotelId)
     {
         if ($hotelId) {
-            $query->leftJoin('toggle_products as tp', function ($join) use ($hotelId) {
-                $join->on('products.id', '=', 'tp.products_id')
-                    ->where('tp.hotel_id', '=', $hotelId);
+            $query->leftJoin('toggle_products as prdo', function ($join) use ($hotelId) {
+                $join->on('products.id', '=', 'prdo.products_id')
+                    ->where('prdo.hotel_id', '=', $hotelId);
             })
-            ->orderByRaw('ISNULL(tp.position), tp.position ASC')
-            ->orderBy('tp.updated_at', 'DESC');
+            ->orderByRaw('ISNULL(prdo.position), prdo.position ASC')
+            ->orderBy('prdo.updated_at', 'DESC');
         }
+    }
+    public function scopeOrderByDistance($query)
+    {
+        $query->orderByRaw('distance IS NULL, distance ASC');
     }
 
 }

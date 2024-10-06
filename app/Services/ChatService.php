@@ -106,6 +106,7 @@ class ChatService {
                     'guest' => true,
                     'text' => $msg->text,
                     'automatic' => false,
+                    'concept' => "new",
                     'add' => true,'pending' => false,//es falso en el input pero true en la bd
                 ]
                 );
@@ -161,6 +162,28 @@ class ChatService {
              * notificaciones push y por email para el hoster
              *
              */
+            /* $notificationFiltersNewChat = [
+                'newChat' => true,
+            ];
+
+
+            $queryUsersNewchat = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewChat);
+            $unansweredLastMessageData = $this->unansweredMessagesData($chat->id,'ToHoster',true);
+            $urlChat = config('app.hoster_url').'estancias/'.$stay->id.'/chat?g='.$guest->id;
+
+            Log::info('queryUsersNewchat'. $queryUsersNewchat);
+
+             // Verificar si hay usuarios
+             if ($queryUsersNewchat->isNotEmpty()) {
+                Log::info('queryUsersNewchatSIPI'. $queryUsersNewchat);
+                // Enviar correo usuarios con newchat true
+                $queryUsersNewchat->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
+                    $email = $user->email;
+                    Log::info('queryUsersNewchatSIPIEACH '. $email);
+                    //$this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), francisco);
+                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'test'), 'francisco20990@gmail.com');
+                });
+            } */
             $this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
             }
 
@@ -191,6 +214,7 @@ class ChatService {
              * ultimo mensaje sin leer (nuevo mensaje)
              */
             $unansweredLastMessageData = $this->unansweredMessagesData($chat->id,'ToHoster',true);
+            Log::info('queryUsersNewchat'. $stay->hotel_id);
             /**
              * trae los ususarios y sus roles asociados al hotel en cuestion
              */
@@ -206,9 +230,9 @@ class ChatService {
                 'pendingChat30' => true,
             ];
 
-            $queryUsersNewchat = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewChat);
+            $queryUsersNewchat = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewChat,true);
 
-            Log::info('queryUsersNewchat'. $queryUsersNewchat);
+
 
              // Verificar si hay usuarios
              if ($queryUsersNewchat->isNotEmpty()) {
@@ -216,7 +240,7 @@ class ChatService {
                 // Enviar correo usuarios con newchat true
                 $queryUsersNewchat->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     $email = $user->email;
-                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), $email);
+                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,$user->id, 'new'), $email);
                 });
             }
 
@@ -265,6 +289,7 @@ class ChatService {
             $withAvailability = true;
             NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending30, $withAvailability,$urlChat,30)->delay(now()->addMinutes(30));
         } catch (\Exception $e) {
+            Log::error('Error al enviar notificaciones a hoster ChatService/notificationsToHosterWhenSendMsg: ' . $e->getMessage());
             return $e;
         }
 
@@ -336,12 +361,13 @@ class ChatService {
                 ->where('status', 'Entregado')
                 ->where('automatic', 0)
                 ->where('by', '!=', $expectedSender)
-                ->with(['chat','messageable'])
-                ->orderBy('id', 'asc');
+                ->with(['chat','messageable']);
+
+
 
             if ($onlyLast) {
                 // Obtener solo el último mensaje pendiente
-                $message = $query->latest('id')->first();
+                $message = $query->latest('id')->orderBy('id', 'desc')->first();
 
                 if ($message) {
                     $guestName = null;
@@ -356,13 +382,13 @@ class ChatService {
                         'url'          => $url.'estancias/'.$message->chat->stay_id.'/chat?g='.$message->chat->guest_id,
                     ];
 
-                    return $messageData;
+                    return collect($messageData);
                 } else {
                     return null; // No hay mensajes pendientes
                 }
             } else {
                 // Obtener todos los mensajes pendientes
-                $unansweredMessages = $query->get();
+                $unansweredMessages = $query->orderBy('id', 'asc')->get();
 
                 $unansweredMessagesData = $unansweredMessages->map(function ($message) use ($url) {
                     $guestName = null;
