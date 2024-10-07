@@ -163,4 +163,10 @@ class GuestController extends Controller
             return redirect()->to("{$redirectUrl}?error=authentication_failed");
         }
     }
+    
+    public function deleteFacebookData(Request $request)
+    {
+
+        return response()->json(['message' => 'Datos de usuario eliminados correctamente.'], 200);
+    }
 }
