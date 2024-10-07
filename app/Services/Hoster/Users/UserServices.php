@@ -309,6 +309,48 @@ class UserServices
         return $users;
     }
 
+    function getTrial() {
+        $user = auth()->user();
+
+        // Si el parent_id es null, usamos los datos del propio usuario
+        $trialDuration = $user->parent?->trial_duration_current ?? $user->trial_duration_current ?? null;
+        $trialEndsAt = $user->parent?->trial_ends_at ?? $user->trial_ends_at ?? null;
+        $trialStartsAt = $user->parent?->trial_starts_at ?? $user->trial_starts_at ?? null;
+
+        // si el trial está activo (entre trial_starts_at y trial_ends_at)
+        $isTrialActive = $trialStartsAt && $trialStartsAt->isPast() && $trialEndsAt && $trialEndsAt->isFuture();
+
+        // si el trial está vencido (ya ha comenzado pero el trial_ends_at es en el pasado)
+        $isTrialExpired = $trialEndsAt && !$trialEndsAt->isFuture();
+
+        // Calcular la duración real del trial en días
+        $trialDurationInDays = null;
+        $trialDurationFormatted = null;
+        if ($trialStartsAt && $trialEndsAt) {
+            $trialDurationInDays = $trialStartsAt->diffInDays($trialEndsAt);
+            $trialDurationFormatted = $trialDurationInDays === 1 ? "$trialDurationInDays día" : "$trialDurationInDays días";
+        }
+
+        // Devolver un array con los datos
+        return [
+            'trial_duration_current' => $trialDuration,
+            'trial_starts_at' => $trialStartsAt,
+            'trial_ends_at' => $trialEndsAt,
+            'is_active' => $isTrialActive,
+            'is_expired' => $isTrialExpired,
+            'starts_at_formatted' => $trialStartsAt ? $trialStartsAt->format('Y-m-d H:i:s') : null,
+            'ends_at_formatted' => $trialEndsAt ? $trialEndsAt->format('Y-m-d H:i:s') : null,
+            'trial_duration_calculated' => $trialDurationInDays,
+            'trial_duration_formatted' => $trialDurationFormatted,
+        ];
+    }
+
+
+
+
+
+
+
     function getUserHotelById($id)
     {
 

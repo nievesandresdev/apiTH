@@ -138,9 +138,11 @@ class User extends Authenticatable
         return in_array($role, ['Administrator', 'Operator']);
     }
 
+
     public function status_subscription ($hotel) {
 
-        $user = $this;
+        $user = $this->parent; //ahora se usa con el usuario principalq que es el parent
+        //return $this->parent;
         // $user = auth()->user();
         //$hotel = currentHotel();
         // $subscription_hotel = $hotel->subscription();
@@ -176,7 +178,8 @@ class User extends Authenticatable
         //     $hotel->refresh();
         // }
 
-        $data['subscribed'] = $user->subscribed($hotel['subscription_active']);
+        //$data['subscribed'] = $user->subscribed($hotel['subscription_active']);
+        $data['subscribed'] = $user->subscriptions()->where(['name' => $hotel->subscription_active, 'stripe_status' => 'active'])->exists();
         $data['on_grace_period'] = $data['subscribed'] ? $user->subscription($hotel['subscription_active'])->onGracePeriod() : false;
         $now = Carbon::now();
         $trial_starts_at = Carbon::parse($user->trial_starts_at);
@@ -224,7 +227,24 @@ class User extends Authenticatable
             $data['status'] = 3;
         }
 
+        //$data['status'] = 2;
+
         return $data;
+    }
+
+    public function onTrial($name = 'default', $price = null)
+    {
+        if (func_num_args() === 0 && $this->onGenericTrial()) {
+            return true;
+        }
+
+        $subscription = $this->subscription($name);
+
+        if (! $subscription || ! $subscription->onTrial()) {
+            return false;
+        }
+
+        return ! $price || $subscription->hasPrice($price);
     }
 
 }
