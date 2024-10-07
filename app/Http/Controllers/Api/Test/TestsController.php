@@ -124,19 +124,7 @@ class TestsController extends Controller
     $url = "https://graph.facebook.com/v20.0/{$request->input('phone_number_id')}/messages";
     
     // Llamada a la API para enviar el mensaje
-    /*$response = Http::withHeaders([
-        'Authorization' => "Bearer {$accessToken}",  // Token de acceso corto
-        'Content-Type' => 'application/json'
-    ])->withQueryParameters([
-        'access_token' => $accessToken
-    ])->asForm()->post($url, [
-        'messaging_product' => 'whatsapp',
-        'to' => $request->input('to'),
-        'type' => 'text', 
-        'text' => [
-            'body' => $request->input('message') // El mensaje que envías
-        ]
-    ]);*/
+    
     $response = Http::withHeaders([
         'Authorization' => "Bearer {$accessTokenShort['access_token']}",  // Usar el token permanente
         'Content-Type' => 'application/json'
@@ -144,13 +132,11 @@ class TestsController extends Controller
         'access_token' => $accessToken
     ])->post($url, [
         'messaging_product' => 'whatsapp',
-        'to' => $request->input('to'),             // Número de teléfono destinatario
-        'type' => 'template',                      // Tipo de mensaje: plantilla
-        'template' => [
-            'name' => "hello_world",  // Nombre de la plantilla
-            'language' => [
-                'code' => "en_US" // Código de idioma (e.g., 'en_US')
-            ]
+        'to' => $request->input('to'),
+        "recipient_type" => "individual",
+        'type' => 'text',
+        'text' => [
+            'body' => $request->input('message')
         ]
     ]);
 
