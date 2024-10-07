@@ -146,6 +146,12 @@ class TestsController extends Controller
     }
 }
 
+
+/**
+ *  OJO: ESTA ES LA DOCUMENTACION PARA ACTUALIZAR EL PERFIL DEL WHATSAPP
+ * https://developers.facebook.com/docs/whatsapp/cloud-api/reference/business-profiles/
+ *  
+ **/
 public function updateWhatsAppProfile(Request $request)
 {
     $request->validate([
