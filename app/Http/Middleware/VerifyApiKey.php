@@ -18,6 +18,7 @@ class VerifyApiKey
             'api/stay/hoster/deleteSessionWithApiKey',
             'api/guest/auth/google',
             'api/guest/auth/google/callback',
+            'api/guest/auth/facebook/delete/data',
             'test',
         ];
 
