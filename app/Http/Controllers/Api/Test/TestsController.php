@@ -112,8 +112,6 @@ class TestsController extends Controller
         'message' => 'required|string'             // El mensaje a enviar
     ]);
 
-    $accessTokenShort = $this->getShortLivedAccessToken();
-
     $accessToken = env('WHATSAPP_PERMANENT_TOKEN');
     
     if (!$accessToken) {
@@ -126,7 +124,7 @@ class TestsController extends Controller
     // Llamada a la API para enviar el mensaje
     
     $response = Http::withHeaders([
-        'Authorization' => "Bearer {$accessTokenShort['access_token']}",  // Usar el token permanente
+        'Authorization' => "Bearer {$accessToken}",  // Usar el token permanente
         'Content-Type' => 'application/json'
     ])->withQueryParameters([
         'access_token' => $accessToken
@@ -147,4 +145,43 @@ class TestsController extends Controller
         return response()->json(['error' => 'Error al enviar el mensaje', 'details' => $response->body()], 500);
     }
 }
+
+public function updateWhatsAppProfile(Request $request)
+{
+    $request->validate([
+        'phone_number_id' => 'required|string',
+        'name' => 'nullable|string|max:256',
+        'description' => 'nullable|string|max:512',
+        'address' => 'nullable|string|max:256',
+        'email' => 'nullable|string|max:256',
+        'website' => 'nullable|string|max:256',
+    ]);
+
+    $accessToken = env('WHATSAPP_PERMANENT_TOKEN');
+
+    if (!$accessToken) {
+        return response()->json(['error' => 'El token permanente no está configurado.'], 500);
+    }
+
+    $url = "https://graph.facebook.com/v20.0/{$request->input('phone_number_id')}/whatsapp_business_profile";
+    
+    $response = Http::withHeaders([
+        'Authorization' => "Bearer {$accessToken}", 
+        'Content-Type' => 'application/json',
+    ])->post($url, [
+        'messaging_product' => 'whatsapp',
+        'name' => $request->input('name'),
+        'description' => $request->input('description'),
+        'address' => $request->input('address'),
+        'email' => $request->input('email'),
+        'website' => $request->input('website'),
+    ]);
+
+    if ($response->successful()) {
+        return response()->json(['message' => 'Perfil actualizado con éxito', 'response' => $response->json()], 200);
+    } else {
+        return response()->json(['error' => 'Error al actualizar el perfil', 'details' => $response->body()], 500);
+    }
+}
+
 }
