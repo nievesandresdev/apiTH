@@ -54,7 +54,7 @@ class NofityPendingChat implements ShouldQueue
         $this->chatService = $_ChatService;
         $this->mailService = $_MailService;
 
-        Log::info("hotel_id / NofityPendingChat: ".$this->stay->hotel_id);
+        //Log::info("hotel_id / NofityPendingChat: ".$this->stay->hotel_id);
 
         if($this->withAvailability){
             $isHosterAvailable = $this->chatService->getAvailavilityByHotel($this->stay->hotel_id);
