@@ -214,7 +214,7 @@ class ChatService {
              * ultimo mensaje sin leer (nuevo mensaje)
              */
             $unansweredLastMessageData = $this->unansweredMessagesData($chat->id,'ToHoster',true);
-            Log::info('queryUsersNewchat'. $stay->hotel_id);
+            //Log::info('queryUsersNewchat'. $stay->hotel_id);
             /**
              * trae los ususarios y sus roles asociados al hotel en cuestion
              */

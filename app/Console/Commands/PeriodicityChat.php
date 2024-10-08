@@ -30,8 +30,8 @@ class PeriodicityChat extends Command
 
      public function handle()
     {
-        Log::info('Inicio de la tarea programada app:periodicity-chat');
-        /* $filters = ['periods' => ['in-stay', 'pre-stay']];
+        //Log::info('Inicio de la tarea programada app:periodicity-chat');
+        $filters = ['periods' => ['in-stay', 'pre-stay']];
 
         try {
             $now = Carbon::now();
@@ -209,7 +209,7 @@ class PeriodicityChat extends Command
 
         } catch (\Exception $e) {
             Log::error('Error al obtener los usuarios de los hoteles y chats/queries pendientes', ['error' => $e->getMessage()]);
-        } */
+        }
     }
 
 public function handle2()
