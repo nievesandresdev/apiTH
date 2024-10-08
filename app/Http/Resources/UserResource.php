@@ -36,7 +36,7 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
             'color' => $this->color,
             'trial' => $this->parent?->trial_duration,
-            'hotels' => $this->hotel->map(function ($hotel) use ($is_subscribed) {
+            'hotels' => $this->hotel->map(function ($hotel){
                 return [
                     'id' => $hotel->id,
                     'name' => $hotel->name,
