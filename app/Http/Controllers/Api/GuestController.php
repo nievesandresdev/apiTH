@@ -127,7 +127,7 @@ class GuestController extends Controller
             }
 
             $decodedState = json_decode(base64_decode($state), true);
-            $redirectUrl = $decodedState['redirect'] ?? 'https://test.thehoster.io';
+            $redirectUrl = $decodedState['redirect'] ?? 'https://thehoster.io';
 
             // Obtener el usuario autenticado de Google
             $googleUser = Socialite::driver('google')->stateless()->user();
@@ -165,7 +165,7 @@ class GuestController extends Controller
     public function authWithFacebook(Request $request)
     {
         // Obtener la URL de redirección desde el frontend
-        $redirectUrl = $request->input('redirect'); // e.g., https://subdominio.tu-dominio.com
+        $redirectUrl = $request->input('redirect'); // Ejemplo: https://subdominio.tu-dominio.com
 
         // Serializar la URL de redirección en el parámetro state
         $state = base64_encode(json_encode(['redirect' => $redirectUrl]));
@@ -177,17 +177,18 @@ class GuestController extends Controller
     }
 
 
+
     public function handleFacebookCallback(Request $request)
     {
         try {
             // Obtener y decodificar el parámetro state para extraer la URL de redirección
             $state = $request->input('state');
             if (!$state) {
-                throw new \Exception('State parameter is missing.');
+                throw new \Exception('El parámetro state está ausente.');
             }
 
             $decodedState = json_decode(base64_decode($state), true);
-            $redirectUrl = $decodedState['redirect'] ?? 'https://tu-dominio.com';
+            $redirectUrl = $decodedState['redirect'] ?? 'https://thehoster.io';
 
             // Obtener el usuario autenticado de Facebook
             $facebookUser = Socialite::driver('facebook')->stateless()->user();
@@ -199,35 +200,13 @@ class GuestController extends Controller
             $email = $facebookUser->getEmail();
             $avatar = $facebookUser->getAvatar();
 
-            $names = trim("{$firstName} {$lastName}");
-
-            // Buscar al usuario por facebook_id o email
-            $guest = Guest::where('facebook_id', $facebookId)->orWhere('email', $email)->first();
-
-            if (!$guest) {
-                // Crear un nuevo registro de Guest
-                $guest = Guest::create([
-                    'facebook_id' => $facebookId,
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
-                    'name' => $names,
-                    'email' => $email,
-                    'profile_photo' => $avatar,
-                    // Añade otros campos según sea necesario
-                ]);
-            } else {
-                // Actualizar los datos del Guest existente
-                $guest->update([
-                    'facebook_id' => $facebookId,
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
-                    'name' => $names,
-                    'email' => $email,
-                    'profile_photo' => $avatar,
-                    // Actualiza otros campos según sea necesario
-                ]);
-            }
-
+            $names = $firstName.' '.$lastName;
+            
+            // Buscar al usuario por email
+            $dataGuest = new \stdClass();
+            $dataGuest->email = $email;
+            $guest = $this->service->saveOrUpdate($dataGuest);
+            
             // Generar un token de autenticación (usando Laravel Sanctum)
             $token = $guest->createToken('auth_token')->plainTextToken;
 
@@ -244,6 +223,7 @@ class GuestController extends Controller
             return redirect()->to("{$redirectUrl}?error=authentication_failed");
         }
     }
+
 
 
     public function deleteFacebookData(Request $request)
