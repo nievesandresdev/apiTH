@@ -227,7 +227,7 @@ class User extends Authenticatable
             $data['status'] = 3;
         }
 
-        //$data['status'] = 3;
+        //$data['status'] = 2;
 
         return $data;
     }
