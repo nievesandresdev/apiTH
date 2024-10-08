@@ -200,12 +200,12 @@ class GuestController extends Controller
             Log::info('$facebookUser->user '.json_encode($facebookUser->user));
             // Extraer información del usuario
             $facebookId = $facebookUser->getId();
-            $firstName = $facebookUser->user['first_name'] ?? '';
+            $firstName = $facebookUser->user['name'] ?? '';
             $lastName = $facebookUser->user['last_name'] ?? '';
             $email = $facebookUser->getEmail();
             $avatar = $facebookUser->getAvatar();
 
-            $names = $firstName.' '.$lastName;
+            $names = $firstName;
             
             // Buscar al usuario por email
             $dataGuest = new \stdClass();
