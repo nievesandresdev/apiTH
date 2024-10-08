@@ -137,7 +137,26 @@ class TestsController extends Controller
             'body' => $request->input('message')
         ]
     ]);
-
+    /*
+    example with template
+    $response = Http::withHeaders([
+        'Authorization' => "Bearer {$accessToken}",  // Usar el token permanente
+        'Content-Type' => 'application/json'
+    ])->withQueryParameters([
+        'access_token' => $accessToken
+    ])->post($url, [
+        'messaging_product' => 'whatsapp',
+        'to' => $request->input('to'),
+        "recipient_type" => "individual",
+        'type' => 'template',
+        'template' => [
+            "name" => "hello_world",
+            "language" => [
+                "code"=>"en_US"
+            ]
+        ]
+    ]);
+     */
     // Verificar si la solicitud fue exitosa
     if ($response->successful()) {
         return response()->json(['message' => 'Mensaje enviado con éxito', 'response' => $response->json()], 200);
