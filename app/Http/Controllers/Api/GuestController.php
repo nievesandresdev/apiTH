@@ -172,12 +172,14 @@ class GuestController extends Controller
         // Serializar la URL de redirección en el parámetro state
         $state = base64_encode(json_encode(['redirect' => $redirectUrl]));
 
-        // Redirigir al usuario a Facebook para la autenticación con el parámetro state
+        // Redirigir al usuario a Facebook para la autenticación con los permisos y parámetros necesarios
         return Socialite::driver('facebook')
-            ->stateless() // Indica que la autenticación es stateless
+            ->stateless() // Modo sin estado
             ->with(['state' => $state])
+            ->scopes(['public_profile', 'email']) // Solicitar permisos necesarios
             ->redirect();
     }
+
 
 
 
@@ -203,8 +205,8 @@ class GuestController extends Controller
             $firstName = $facebookUser->user['name'] ?? '';
             $lastName = $facebookUser->user['last_name'] ?? '';
             $email = $facebookUser->getEmail();
-            // $avatar = $facebookUser->getAvatar();
-            $avatar = $facebookUser->attributes['avatar_original'] ?? 'avatarnulo';
+            $avatar = $facebookUser->getAvatar();
+            // $avatar = $facebookUser->attributes['avatar_original'] ?? 'avatarnulo';
             
 
             $names = $firstName;
