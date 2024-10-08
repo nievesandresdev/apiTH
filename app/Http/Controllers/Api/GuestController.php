@@ -176,9 +176,9 @@ class GuestController extends Controller
         return Socialite::driver('facebook')
             ->stateless() // Indica que la autenticación es stateless
             ->with(['state' => $state])
+            ->scopes(['public_profile', 'email']) // Solicitar permisos necesarios
             ->redirect();
     }
-
 
 
     public function handleFacebookCallback(Request $request)
@@ -196,6 +196,10 @@ class GuestController extends Controller
             // Obtener el usuario autenticado de Facebook
             $facebookUser = Socialite::driver('facebook')->stateless()->user();
 
+            // Registrar los datos retornados por Facebook
+            Log::info('Datos del usuario de Facebook: ' . json_encode($facebookUser->user));
+            Log::info('response fb: ' . $facebookUser->user);
+
             // Extraer información del usuario
             $facebookId = $facebookUser->getId();
             $firstName = $facebookUser->user['first_name'] ?? '';
@@ -203,8 +207,9 @@ class GuestController extends Controller
             $email = $facebookUser->getEmail();
             $avatar = $facebookUser->getAvatar();
 
-            $names = $firstName.' '.$lastName;
-            
+            $names = trim("{$firstName} {$lastName}");
+
+            // Continuar con el procesamiento...
             // Buscar al usuario por email
             $dataGuest = new \stdClass();
             $dataGuest->email = $email;
@@ -213,7 +218,7 @@ class GuestController extends Controller
             // Generar un token de autenticación (usando Laravel Sanctum)
             $token = $guest->createToken('auth_token')->plainTextToken;
 
-            // Redirigir de vuelta al subdominio original con el token
+
             return redirect()->to("{$redirectUrl}?auth_token={$token}&facebookId={$facebookId}&names={$names}&email={$email}&avatar={$avatar}");
         } catch (\Exception $e) {
             // Manejar errores y redirigir con un mensaje de error
@@ -226,6 +231,7 @@ class GuestController extends Controller
             return redirect()->to("{$redirectUrl}?error=authentication_failed");
         }
     }
+
 
 
 
