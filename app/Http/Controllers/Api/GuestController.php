@@ -162,6 +162,8 @@ class GuestController extends Controller
         }
     }
     
+    
+
     public function authWithFacebook(Request $request)
     {
         // Obtener la URL de redirección desde el frontend
@@ -172,6 +174,7 @@ class GuestController extends Controller
 
         // Redirigir al usuario a Facebook para la autenticación con el parámetro state
         return Socialite::driver('facebook')
+            ->stateless() // Indica que la autenticación es stateless
             ->with(['state' => $state])
             ->redirect();
     }
