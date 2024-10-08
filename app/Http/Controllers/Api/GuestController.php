@@ -176,7 +176,6 @@ class GuestController extends Controller
         return Socialite::driver('facebook')
             ->stateless() // Indica que la autenticación es stateless
             ->with(['state' => $state])
-            ->scopes(['public_profile', 'email']) // Solicitar permisos necesarios
             ->redirect();
     }
 
@@ -197,9 +196,8 @@ class GuestController extends Controller
 
             // Obtener el usuario autenticado de Facebook
             $facebookUser = Socialite::driver('facebook')->stateless()->user();
-            Log::info('Datos del usuario de Facebook: ' . json_encode($facebookUser->user));
-            Log::info('response fb: ' . $facebookUser->user);
-
+            Log::info('$facebookUser '.json_encode($facebookUser));
+            Log::info('$facebookUser->user '.json_encode($facebookUser->user));
             // Extraer información del usuario
             $facebookId = $facebookUser->getId();
             $firstName = $facebookUser->user['first_name'] ?? '';
