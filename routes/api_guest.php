@@ -19,8 +19,12 @@ Route::group(['prefix' => 'guest'], function () {
     Route::group(['prefix' => 'auth'], function () {
         Route::get('/google', [GuestController::class, 'getDataByGoogle']);
         Route::get('/google/callback', [GuestController::class, 'handleGoogleCallback']);
+
         
-        Route::delete('/facebook/delete/data', [GuestController::class, 'deleteFacebookData']);
+        Route::get('/facebook', [GuestController::class, 'authWithFacebook']);
+        Route::post('/facebook/deleteData', [GuestController::class, 'deleteFacebookData']);
+        Route::get('/facebook/callback', [GuestController::class, 'handleFacebookCallback']);
+
         // ->middleware('auth:sanctum')
     });
 });
