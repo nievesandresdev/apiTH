@@ -204,7 +204,7 @@ class GuestController extends Controller
             $lastName = $facebookUser->user['last_name'] ?? '';
             $email = $facebookUser->getEmail();
             // $avatar = $facebookUser->getAvatar();
-            $avatar = $facebookUser->user['avatar_original'];
+            $avatar = $facebookUser->attributes['avatar_original'] ?? 'avatarnulo';
             
 
             $names = $firstName;
