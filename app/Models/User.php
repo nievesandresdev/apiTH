@@ -141,7 +141,7 @@ class User extends Authenticatable
 
     public function status_subscription ($hotel) {
 
-        $user = $this->parent; //ahora se usa con el usuario principalq que es el parent
+        $user = $this->parent_id ? $this->parent : $this; //ahora se usa con el usuario principalq que es el parent
         //return $this->parent;
         // $user = auth()->user();
         //$hotel = currentHotel();
