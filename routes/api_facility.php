@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\FacilityController;
+use App\Http\Controllers\Api\Hoster\FacilityHosterController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -11,4 +12,10 @@ Route::group(['prefix' => 'facility'], function () {
     Route::post('/visible', [FacilityController::class, 'updateVisible']);
     Route::post('/storeOrUpdate', [FacilityController::class, 'storeOrUpdate']);
     Route::delete('/{id}', [FacilityController::class, 'destroy']);
+
+    Route::group(['prefix' => 'hoster'], function () {
+
+        Route::get('/getAll', [FacilityHosterController::class, 'getAll']);
+
+    });
 });

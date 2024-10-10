@@ -16,3 +16,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+#ignorar locks
+composer.lock
+package-lock.json

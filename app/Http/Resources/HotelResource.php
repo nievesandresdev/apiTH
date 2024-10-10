@@ -19,8 +19,11 @@ class HotelResource extends JsonResource
         $defaultChatSettingsArray  = defaultChatSettings();
         $chatSettings = ChatSetting::with('languages')->where('hotel_id',$this->id)->first() ?? $defaultChatSettingsArray;
 
-        //ya hay una key translate para la traduccion 
-        //dejo el descripcion normal para tener a la mano el original 
+        $is_default = auth()->user()
+        ? auth()->user()->hotel()->wherePivot('hotel_id', $this->id)->wherePivot('is_default', 1)->exists()
+        : false;
+        //ya hay una key translate para la traduccion
+        //dejo el descripcion normal para tener a la mano el original
         //guardado en el perfil del hotel en el sass
 
         // if (localeCurrent() == 'es') {
@@ -78,7 +81,8 @@ class HotelResource extends JsonResource
             "hidden_categories" => $this->hiddenCategories->pluck('id'),
             "hidden_type_places" => $this->hiddenTypePlaces->pluck('id'),
             "code" => $this->code,
-            "sender_mail_mask" => $this->sender_mail_mask
+            "sender_mail_mask" => $this->sender_mail_mask,
+            'is_default' => $is_default,
         ];
     }
 }

@@ -5,9 +5,8 @@
     <title>Nuevo Feedback</title>
     <style>
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: Arial, sans-serif;
         }
-
         @media only screen and (max-width: 600px) {
             body {
                 background-color: #ffffff !important;
@@ -72,7 +71,7 @@
                         @endif
                         <!-- Botón que se muestra en el modo no responsive -->
                         <div style="text-align: center; margin-top: 22px;">
-                            <a href="{{$url}}" class="full-width-button order-3" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box;">Atender Feedback</a>
+                            <a href="{{$url}}" class="full-width-button order-3" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 500; width: 100%; height: 45px; box-sizing: border-box;">Atender Feedback</a>
                         </div>
                     </td>
                     <td class="order-2" style="text-align: center; width: 30%; vertical-align: top;">
@@ -83,7 +82,7 @@
                         @endif
                         <!-- Botón que se muestra en el modo responsive -->
                         <div style="text-align: center; margin-top: 22px;">
-                            <a href="{{$url}}" class="full-width-button order-4" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box;">Atender Feedback</a>
+                            <a href="{{$url}}" class="full-width-button order-4" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 500; width: 100%; height: 45px; box-sizing: border-box;">Atender Feedback</a>
                         </div>
                     </td>
                 </tr>
@@ -104,7 +103,7 @@
                 <span style="display: block; font-weight: 400; font-size: 16px; margin: 0;">{{ $query->comment[$query->response_lang] ?? $query->comment['SinTraduccion'] ?? '--' }}</span>
             </div>
             <div style="text-align: center; margin-top: 22px;">
-                <a href="{{$url}}" class="full-width-button" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 600; width: 100%; height: 45px; box-sizing: border-box;">Atender feedback</a>
+                <a href="{{$url}}" class="full-width-button" style="display: inline-block; padding: 12px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: 500; width: 100%; height: 45px; box-sizing: border-box;">Atender feedback</a>
             </div>
             <span style="display: block; margin: 10px 0; color: #A0A0A0; text-align: center; font-size: 14px;">Nota: En la plataforma podrás ver el mensaje en el idioma de elijas</span>
         </div>

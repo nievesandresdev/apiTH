@@ -16,4 +16,14 @@ class ToggleProduct extends Model
         'position',
         'position_old',
     ];
+
+
+
+    // SCOPED
+
+    public function scopeOrderByDistance($query)
+    {
+        $query->orderByRaw('distance IS NULL, distance ASC');
+    }
+
 }

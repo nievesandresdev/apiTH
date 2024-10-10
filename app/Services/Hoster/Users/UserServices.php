@@ -516,7 +516,10 @@ class UserServices
 
     function getParentId() {
         $user = auth()->user();
-        $userRole = $user->getRoleNames()->first();
+
+        return $user->parent_id ?? $user->id;
+
+        /* $userRole = $user->getRoleNames()->first();
 
         switch ($userRole) {
             case 'Admin':
@@ -529,7 +532,7 @@ class UserServices
                 }
             default:
                 return $user->parent_id;
-        }
+        } */
     }
 
 
@@ -586,7 +589,7 @@ class UserServices
         }
     }
 
-    public function storeHotelsUser($request, $user) {
+    /* public function storeHotelsUser($request, $user) {
         if ($request->hotels) {
             foreach ($request->hotels as $key => $hotelId) {
                 if (isset($request->access[$key]) && $request->access[$key] == true) {
@@ -594,7 +597,26 @@ class UserServices
                 }
             }
         }
+    } */
+
+    public function storeHotelsUser($request, $user) {
+        if ($request->hotels) {
+            // Verifica cuántos hoteles se están agregando
+            $totalHotels = count($request->hotels);
+
+            foreach ($request->hotels as $key => $hotelId) {
+                if (isset($request->access[$key]) && $request->access[$key] == true) {
+                    $isDefault = ($totalHotels == 1) ? 1 : 0;
+
+                    $user->hotel()->attach($hotelId, [
+                        'permissions' => json_encode($request->access[$key]),
+                        'is_default' => $isDefault
+                    ]);
+                }
+            }
+        }
     }
+
     public function updateAccessUser($request, $user) {
         if($request->filled('access')){
             $user->permissions()->detach(); // borra todos los permisos actuale

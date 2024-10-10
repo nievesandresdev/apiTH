@@ -60,6 +60,28 @@ class HotelController extends Controller
         }
     }
 
+    public function getHotelsByUser(Request $request) {
+        try {
+            $modelHotel = $request->attributes->get('hotel');
+            $hotelsCollection = $this->service->getHotelsByUser($request, $modelHotel);
+            $data = HotelBasicDataResource::collection($hotelsCollection);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getHotelsByUser');
+        }
+    }
+
+    public function updateDefaultHotel(Request $request){
+        try {
+            $hotel = $this->service->updateDefaultHotel($request);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateDefaultHotel');
+        }
+    }
+
     public function findByParams (Request $request) {
         try {
 
@@ -244,7 +266,7 @@ class HotelController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            
+
             $this->service->updateSenderMailMask($hotelModel, $request->email);
             $hotelModel->refresh();
             $data = new HotelResource($hotelModel);

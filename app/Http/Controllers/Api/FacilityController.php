@@ -36,23 +36,15 @@ class FacilityController extends Controller
     public function getAll (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
-            $dataModel = $this->service->getAll($request, $hotelModel);
-            
-            Log::info("datamodel ". json_encode($dataModel));
-            if(!$dataModel){
+            $facilities = $this->service->getAll($request, $hotelModel);
+            if(!$facilities){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             //
-            $facilities = FacilityResource::collection($dataModel['facilities']);
-            $data =  [
-                "facilities" => $facilities,
-                "totalCount" => $dataModel['totalCount'],
-                "totalVisibleCount" => $dataModel['totalVisibleCount'],
-                "totalHiddenCount" => $dataModel['totalHiddenCount']
-            ];
+            $data = FacilityResource::collection($facilities);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
