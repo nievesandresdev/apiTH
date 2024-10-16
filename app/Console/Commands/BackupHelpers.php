@@ -48,7 +48,7 @@ class BackupHelpers extends Command
             $firstBackup->delete();
         }
 
-        $uniqueFileName = now()->format('Y-m-d-H-i-s') . '.zip';
+        $uniqueFileName = now()->format('Y-m-d-H-i-s') . '-helpers.zip';
         $folderPath = 'helpers-backup-db';
         $sqlFilename = 'helpers_' . now()->format('Y-m-d-H-i-s') . '.sql';
 

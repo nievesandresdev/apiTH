@@ -47,7 +47,7 @@ class BackupHoster extends Command
             $firstBackup->delete();
         }
 
-        $uniqueFileName = now()->format('Y-m-d-H-i-s') . '.zip';
+        $uniqueFileName = now()->format('Y-m-d-H-i-s') . '-hoster.zip';
         $folderPath = 'hoster-backup-db';
 
         // Generar el nombre del archivo SQL
