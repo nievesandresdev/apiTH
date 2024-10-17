@@ -115,16 +115,23 @@ class FacilityController extends Controller
         try {
             // $f = FacilityHoster::find($request->id);
             // return $f;
+            $image = null;
             $hotelModel = $request->attributes->get('hotel');
+            // Verificar si hay una imagen en el modelo del hotel, de lo contrario usar una imagen por defecto
+            if ($hotelModel->image == null) {
+                $image = ['/storage/gallery/general-1.jpg']; // Aseguramos que sea un array
+            } else {
+                $image = is_array($hotelModel->image) ? $hotelModel->image : [$hotelModel->image]; // Aseguramos que sea un array
+            }
             \DB::beginTransaction();
             $facilityHosterModel = $this->service->storeOrUpdate($request, $hotelModel);
             $this->service->processTranslate($request, $facilityHosterModel, $hotelModel);
-            $images = $request->images ?? [];
+            $images = $request->images ?? $image;
             $this->service->updateImages($images, $facilityHosterModel, $hotelModel);
             $this->service->syncOrder($hotelModel);
             \DB::commit();
             $data = [];
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $image);
         } catch (\Exception $e) {
             \DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdate');
