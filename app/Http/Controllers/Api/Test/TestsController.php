@@ -212,9 +212,12 @@ public function updateWhatsAppProfile(Request $request)
 }
 public function sendEmail(Request $request)
 {
-    $email = 'xpestana4@gmail.com';
+    $email = 'xavierclasesit@gmail.com';
     $sendMail = Mail::to($email)->send(new TestMailer());
 
-    return response()->json(['message' => 'Correo enviado correctamente']);
+    return response()->json([
+        'message' => 'Correo enviado correctamente',
+        'msg' => $sendMail
+        ]);
 }
 }
