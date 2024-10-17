@@ -23,6 +23,8 @@ class UserResource extends JsonResource
 
         $phone = $this->profile->phone ?? '';
 
+        //$is_subscribed =$this->parent->subscriptions()->where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
+
         return [
             'id' => $this->id,
             'name' => $this->profile->firstname ?? '',
@@ -33,7 +35,8 @@ class UserResource extends JsonResource
             'last_session' => $this->last_session,
             'created_at' => $this->created_at,
             'color' => $this->color,
-            'hotels' => $this->hotel->map(function ($hotel) {
+            'trial' => $this->parent?->trial_duration,
+            'hotels' => $this->hotel->map(function ($hotel){
                 return [
                     'id' => $hotel->id,
                     'name' => $hotel->name,
@@ -54,6 +57,7 @@ class UserResource extends JsonResource
                     'slug' => $hotel->slug,
                     'name_short' => $hotel->name_short,
                     'subdomain' => $hotel->subdomain,
+                    //'subscribed' => $is_subscribed,
                     //'permissions' =>  $hotel->pivot->permissions,
                 ];
             }),

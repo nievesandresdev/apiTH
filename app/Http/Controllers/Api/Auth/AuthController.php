@@ -73,6 +73,16 @@ class AuthController extends Controller
         // Obtener el usuario autenticado
         $authenticatedUser = Auth::guard('web')->user();
 
+         /* // Verificar si el usuario tiene status = 1
+         if ($authenticatedUser->status == 0) {
+            return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Su cuenta ha sido inactivada. Solicita acceso a tu responsable o superior para poder entrar.']);
+        }
+
+        //verify if del = 1
+        if ($authenticatedUser->del == 1) {
+            return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Su cuenta ha sido eliminada. Solicita acceso a tu responsable o superior para poder entrar.']);
+        } */
+
         // Crear el token de acceso
         $token = $authenticatedUser->createToken('appToken')->accessToken;
 

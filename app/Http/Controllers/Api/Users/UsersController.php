@@ -227,6 +227,20 @@ class UsersController extends Controller
         }
     }
 
+    public function getTrial(){
+        try {
+            $trial = $this->userServices->getTrial();
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'trial' => $trial,
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
+
     public function delete(){
         try {
             $user = $this->userServices->deleteUserHoster(request()->user_id);
@@ -280,7 +294,7 @@ class UsersController extends Controller
             $hotel = $request->attributes->get('hotel');
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
-                'status' => $user->status_subscription($hotel),
+                'subscription' => $user->status_subscription($hotel),
             ]);
         }catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [
@@ -362,7 +376,7 @@ class UsersController extends Controller
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [
-                'message' => $e->getMessage(),
+                'message22' => $e->getMessage(),
             ],null,$e->getMessage());
         }
     }

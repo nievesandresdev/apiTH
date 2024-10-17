@@ -90,10 +90,13 @@ class FacilityService {
     }
 
     public function storeOrUpdate ($request, $hotelModel) {
+        $title = $request->title ?? 'Nueva Instalación';
+        $title = $this->generateUniqueTitle($title, $hotelModel->id);
+
         if($request->id){
             $facilityHosterModel = FacilityHoster::find($request->id);
             $facilityHosterModel->update([
-                'title' => $request->title,
+                'title' => $title,
                 'description' => $request->description,
                 // 'schedule' =>  $request->schedule,
                 'schedules' => $request->schedules ? json_encode($request->schedules) : null,
@@ -102,7 +105,7 @@ class FacilityService {
             ]);
         }else{
             $facilityHosterModel  = FacilityHoster::create([
-                'title' => $request->title,
+                'title' => $title,
                 'description' => $request->description,
                 // 'schedule' =>  $request->schedule,
                 'status' => 1,
@@ -152,6 +155,20 @@ class FacilityService {
                 'type' => $item['type']
             ]);
         }
+    }
+
+    private function generateUniqueTitle($baseTitle, $hotelId)
+    {
+        $originalTitle = $baseTitle;
+        $count = 1;
+
+        // Repite el proceso hasta que encuentres un título que no exista
+        while (FacilityHoster::where('hotel_id', $hotelId)->where('title', $baseTitle)->exists()) {
+            $count++;
+            $baseTitle = $originalTitle . ' ' . $count;
+        }
+
+        return $baseTitle;
     }
 
     public function processTranslate ($request, $facilityHosterModel, $hotelModel) {
