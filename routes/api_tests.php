@@ -9,5 +9,6 @@ Route::group(['prefix' => 'test'], function () {
     Route::post('/change/password', [TestsController::class, 'updtPasswordAdmin']);
     Route::post('/send/message', [TestsController::class, 'sendWhatsAppMessage']);
     Route::post('/update/data', [TestsController::class, 'updateWhatsAppProfile']);
+    Route::post('/send/mail', [TestsController::class, 'sendEmail']);
     
 });
