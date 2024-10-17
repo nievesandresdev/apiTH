@@ -103,12 +103,12 @@ class ExperienceService {
         // }else{
         //     $queryExperience->whereCity($dataFilter['city']);
         // }
-        if($dataFilter['all_cities']){
-        }else{
-            $queryExperience->whereHas('translationEs', function($query) use($dataFilter){
-                $query->where('city_experince', $dataFilter['city']);
-            });
-        }
+        // if($dataFilter['all_cities']){
+        // }else{
+        //     $queryExperience->whereHas('translationEs', function($query) use($dataFilter){
+        //         $query->where('city_experince', $dataFilter['city']);
+        //     });
+        // }
         // if($dataFilter['search']){
         //     $queryExperience->whereHas('activities', function($query) use($dataFilter){
         //         $query->where('title','like',  ['%'.$dataFilter['search'].'%']);
