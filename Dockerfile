@@ -4,13 +4,14 @@ FROM php:8.2-apache
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies required at runtime
+# Install system dependencies required at runtime, including mysql-client for mysqldump
 RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
+    mysql-client \  
     zip \
     vim \
     unzip \
@@ -41,8 +42,6 @@ COPY 000-default.conf /etc/apache2/sites-available/
 RUN a2ensite 000-default.conf
 
 # Change ownership of our applications
-# Nota: Asegúrate de que el directorio /var/www/html ya contenga los datos necesarios antes de cambiar de propietario
-# Esto puede requerir ajustar tu proceso de CI/CD o de despliegue para pre-cargar los archivos necesarios
 RUN chown -R www-data:www-data /var/www/html
 
 # Expose port 80
