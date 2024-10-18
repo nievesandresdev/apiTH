@@ -31,7 +31,7 @@ class BackupHoster extends Command
     public function handle()
     {
         $sixMonthsAgo = Carbon::now()->subMonths(6);
-        $storage = 'local';
+        $storage = 's3';
 
         // Obtener el primer backup registrado en la base de datos (el más antiguo)
         $firstBackup = Backup::where('type', 'hoster')->oldest()->first();
@@ -41,7 +41,7 @@ class BackupHoster extends Command
                 Storage::disk($storage)->delete($firstBackup->file_path);
                 Log::info('El primer backup (de hace más de 6 meses) ha sido eliminado correctamente.');
             } else {
-                Log::info('No se encontró el archivo de backup antiguo en S3 para eliminar.');
+                Log::info('No se encontró el archivo de backup antiguo para eliminar.');
             }
 
             $firstBackup->delete();
