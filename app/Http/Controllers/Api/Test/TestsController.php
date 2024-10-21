@@ -8,6 +8,8 @@ use Aws\Rekognition\RekognitionClient;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Test\TestMailer;
 use Illuminate\Http\Request;
 use App\Models\User;
 use SoapClient;
@@ -208,5 +210,14 @@ public function updateWhatsAppProfile(Request $request)
         return response()->json(['error' => 'Error al actualizar el perfil', 'details' => $response->body()], 500);
     }
 }
+public function sendEmail(Request $request)
+{
+    $email = 'xavierclasesit@gmail.com';
+    $sendMail = Mail::to($email)->send(new TestMailer());
 
+    return response()->json([
+        'message' => 'Correo enviado correctamente',
+        'msg' => $sendMail
+        ]);
+}
 }
