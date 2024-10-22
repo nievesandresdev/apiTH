@@ -83,6 +83,7 @@ class HotelResource extends JsonResource
             "code" => $this->code,
             "sender_mail_mask" => $this->sender_mail_mask,
             'is_default' => $is_default,
+            "buttons_home" => $this->buttons_home,
         ];
     }
 }

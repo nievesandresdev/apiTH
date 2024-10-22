@@ -178,5 +178,17 @@ class Hotel extends Model
         // $plan = $this->stripe->plans->retrieve($request->price_id);
     }
 
+    public function getButtonsHomeAttribute($value)
+    {
+        $defaultButtonsHome = [
+            'show_wifi' => false,
+            'show_call' => false,
+            'show_legal_text' => false,
+            'show_all' => false,
+        ];
+
+        return $value ? json_decode($value, true) : $defaultButtonsHome;
+    }
+
 
 }
