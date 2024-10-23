@@ -16,6 +16,7 @@ use App\Services\QuerySettingsServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Pusher\Pusher;
 
 class UtilsController extends Controller
@@ -65,8 +66,17 @@ class UtilsController extends Controller
     
     public function test()
     {
-        $settings = $this->chatSettingsServices->getAll(217);
-        return $rolesToNotifyNewMsg = collect($settings->email_notify_new_message_to);
+        $payload = json_encode([
+            'email' => 'facebook@email.com',
+            'data_deletion' => 'requested'
+        ]);
+        
+        $appSecret = config('services.facebook.client_secret');
+        Log::info('$appSecret '.json_encode($appSecret));
+        $hash = hash_hmac('sha1', $payload, $appSecret, false);
+        $signature = 'sha1=' . $hash;
+        
+        return $signature;   
     }
 
 
