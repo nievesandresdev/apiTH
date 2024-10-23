@@ -171,10 +171,12 @@ class HotelController extends Controller
         }
     }
 
-    public function updateProfile (UpdateProfileRequest $request) {
+    public function updateProfile(UpdateProfileRequest $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [$hotelModel,$request->all()]);
             if(!$hotelModel){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -195,10 +197,14 @@ class HotelController extends Controller
         }
     }
 
-    public function updateShowButtons(Request $request) {
+
+
+    public function updateShowButtons(Request $request)
+    {
         try {
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+
             if(!$hotelModel){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -206,15 +212,43 @@ class HotelController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
-            $this->service->updateShowButtons($request,$hotelModel);
+
+            $hotelModel = $this->service->updateShowButtons($request, $hotelModel);
+
+            //$this->service->asyncImages($request, $hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+        }
+    }
+
+    /* public function updateShowButtons(Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [$hotelModel,$request->all()]);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+            $traslationProfile = $this->service->processTranslateProfile($request, $hotelModel);
+
+            $hotelModel = $this->service->updateProfile($request, $hotelModel);
+
             $this->service->asyncImages($request, $hotelModel);
 
             $hotelModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateShowButtons');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
         }
-    }
+    } */
 
     public function updateVisivilityFacilities (Request $request) {
         try {
