@@ -121,8 +121,8 @@ class HotelController extends Controller
             $facilities = $this->serviceFacility->getCrosselling($modelHotel);
             $crossellingFacilities = FacilityResource::collection($facilities);
 
-            $experiences = $this->serviceExperience->getCrosselling($modelHotel, $cityData);
-            $crossellingExperiences = ExperienceResource::collection($experiences);
+            // $experiences = $this->serviceExperience->getCrosselling($modelHotel, $cityData);
+            // $crossellingExperiences = ExperienceResource::collection($experiences);
 
             // $placesLeisure = $this->servicePlace->getCrosselling('Ocio', $modelHotel);
             // $crossellingPlacesLeisure = PlaceResource::collection($placesLeisure)->toArray(request());
@@ -135,7 +135,7 @@ class HotelController extends Controller
 
             $data = [
                 'crosselling_facilities' => $crossellingFacilities,
-                'crosselling_experiences' => $crossellingExperiences,
+                // 'crosselling_experiences' => $crossellingExperiences,
                 // 'crosselling_places_leisure' => $crossellingPlacesLeisure,
                 // 'crosselling_places_whereeat' => $crossellingPlacesWhereeat,
                 // 'crosselling_places_whatvisit' => $crossellingPlacesWhatvisit,
