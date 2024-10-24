@@ -4,6 +4,7 @@
 /public/hot
 /public/storage
 /vendor
+storage/*.key
 .env
 .env.backup
 .env.production
@@ -16,6 +17,15 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Ignorar archivos y carpetas relacionados con MadelineProto
+MadelineProto.log
+public/MadelineProto.log
+storage/session.madeline
+storage/telegram/*
+storage/framework
+storage/logs
+
 #ignorar locks
 composer.lock
 package-lock.json
