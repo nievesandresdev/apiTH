@@ -551,6 +551,28 @@ if (! function_exists('includeSubdomainInUrlHuesped')) {
     }
 }
 
+if (! function_exists('buildUrlWebApp')) {
+    function buildUrlWebApp($chainSubdomain, $hotelSlug = null, $uri = null, $paramsString = null){
+        $resultURL = null;
+        $guest_path  = config('app.guest_path').'/webapp';
+        $env  = config('app.env');
+        if($env == "local"){
+            $hotelSlug ? $guest_path .= "/$hotelSlug": '';
+            $uri ? $guest_path .= "/$uri": '';
+            $guest_path .= "?chainSubdomain={$chainSubdomain}&subdomain={$hotelSlug}";
+            $paramsString ? $guest_path .= "&{$paramsString}" : '';
+            $resultURL = $guest_path;
+        }else{
+            $urlBase = url('/webapp');
+            $resultURL = str_replace('api', $chainSubdomain, $urlBase);
+            $hotelSlug ? $resultURL .= "/$hotelSlug": '';
+            $uri ? $resultURL .= "/$uri": '';
+            $paramsString ? $resultURL .= "?{$paramsString}" : '';
+        }
+        return $resultURL;
+    }
+}
+
 if (! function_exists('sendEventPusher')) {
     function sendEventPusher($channel,$event,$data){
         $pusher = new Pusher(
