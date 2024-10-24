@@ -14,7 +14,7 @@ class CustomizationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $colors = $this->colors ? json_decode($this->colors) : null;
+        $colors = !empty($this->colors) ? json_decode($this->colors) : null;
         return [
             "colors" => $colors,
             "logo" => $this->logo,
