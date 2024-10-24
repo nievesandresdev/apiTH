@@ -25,7 +25,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::post('/customization', [HotelController::class, 'updateCustomization']);
     Route::post('/updateShowButtons', [HotelController::class, 'updateShowButtons']);
     
-    Route::group(['prefix' => 'customization'], function () {
+    Route::group(['prefix' => '/customization'], function () {
         Route::post('/', [ChainCustomizationController::class, 'update']);
         Route::get('/findOne', [ChainCustomizationController::class, 'findOne']);
     });
