@@ -46,6 +46,9 @@ class User extends Authenticatable
         'trial_duration',
         'trial_ends_at',
         'trial_starts_at',
+
+        //cadena
+        'chain_id',
     ];
 
     protected $dates = [
