@@ -61,6 +61,7 @@ class Hotel extends Model
         'sender_for_sending_sms',
         'sender_for_sending_email',
         'code',
+        'chain_id',
     ];
 
     /* public function user()
