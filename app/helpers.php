@@ -552,7 +552,7 @@ if (! function_exists('includeSubdomainInUrlHuesped')) {
 }
 
 if (! function_exists('buildUrlWebApp')) {
-    function buildUrlWebApp($chainSubdomain, $hotelSlug = 'slug', $uri = 'uri', $paramsString = 'var1=asdasd&var2=123123'){
+    function buildUrlWebApp($chainSubdomain, $hotelSlug = null, $uri = null, $paramsString = null){
         $resultURL = null;
         $guest_path  = config('app.guest_path').'/webapp';
         $env  = config('app.env');
