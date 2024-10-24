@@ -143,6 +143,9 @@ class Hotel extends Model
         return $this->hasMany(ImageGallery::class, 'image_id');
     }
 
+
+
+
     // AUXILIARIES
 
     public function toArray()
@@ -176,6 +179,18 @@ class Hotel extends Model
         $subscription = $this->subscription();
         return $subscription;
         // $plan = $this->stripe->plans->retrieve($request->price_id);
+    }
+
+    public function getButtonsHomeAttribute($value)
+    {
+        $defaultButtonsHome = [
+            'show_wifi' => false,
+            'show_call' => false,
+            'show_legal_text' => false,
+            'show_all' => false,
+        ];
+
+        return $value ? json_decode($value, true) : $defaultButtonsHome;
     }
 
 

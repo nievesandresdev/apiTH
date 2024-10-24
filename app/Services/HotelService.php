@@ -171,6 +171,7 @@ class HotelService {
         $hotelModel->x_url = $request->urlX;
         $hotelModel->with_wifi = $request->with_wifi;
         $hotelModel->show_profile = $request->show_profile;
+        $hotelModel->buttons_home = json_encode($request->buttons);
 
         $hotelModel->save();
         return $hotelModel;
@@ -196,6 +197,26 @@ class HotelService {
             }
         }
     }
+
+    public function updateShowButtons($request,$hotelModel)
+    {
+        $buttonsData = $request->buttons;
+        $imageData = $request->image ?? null;
+
+        if ($buttonsData) {
+            $hotelModel->buttons_home = json_encode($buttonsData);
+        }
+
+        if ($imageData) {
+            $hotelModel->image = $imageData;
+        }
+
+
+        $hotelModel->save();
+
+        return $hotelModel;
+    }
+
 
     public function updateTranslation ($model, $translation) {
         $translation = collect($translation ?? []);
