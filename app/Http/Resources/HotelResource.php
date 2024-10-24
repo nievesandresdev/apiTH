@@ -85,6 +85,7 @@ class HotelResource extends JsonResource
             'is_default' => $is_default,
             "buttons_home" => $this->buttons_home,
             "legal" => $this->generalLegal ? true : false,
+            "chain" => new ChainResource($this->chain)
         ];
     }
 }

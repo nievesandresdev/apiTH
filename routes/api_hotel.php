@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\HotelController;
 use App\Http\Controllers\Subdomain\SubdomainController;
+use App\Http\Controllers\Api\Hoster\ChainCustomizationController;
 
 Route::group(['prefix' => 'hotel'], function () {
     Route::get('/getAll', [HotelController::class, 'getAll']);
@@ -23,4 +24,10 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/verifySubdomainExistPerHotel', [HotelController::class, 'verifySubdomainExistPerHotel']);
     Route::post('/customization', [HotelController::class, 'updateCustomization']);
     Route::post('/updateShowButtons', [HotelController::class, 'updateShowButtons']);
+    
+    Route::group(['prefix' => 'customization'], function () {
+        Route::post('/', [ChainCustomizationController::class, 'update']);
+        Route::get('/findOne', [ChainCustomizationController::class, 'findOne']);
+    });
+
 });
