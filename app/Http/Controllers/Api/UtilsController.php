@@ -66,6 +66,7 @@ class UtilsController extends Controller
     
     public function test()
     {
+        
         return buildUrlWebApp('cadena');
     }
 
