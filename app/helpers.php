@@ -563,7 +563,7 @@ if (! function_exists('buildUrlWebApp')) {
             $paramsString ? $guest_path .= "&{$paramsString}" : '';
             $resultURL = $guest_path;
         }else{
-            $urlBase = url('');
+            $urlBase = url('/webapp');
             $resultURL = str_replace('api', $chainSubdomain, $urlBase);
             $hotelSlug ? $resultURL .= "/$hotelSlug": '';
             $uri ? $resultURL .= "/$uri": '';
