@@ -75,6 +75,17 @@ class GuestService {
         }
     }
 
+    public function existGuest($data)
+    {
+        try {
+            
+            $email = $data->email;    
+            return  Guest::where('email',$email)->first();
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
     public function updateLanguage ($data)
     {
         try {

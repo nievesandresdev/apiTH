@@ -66,17 +66,7 @@ class UtilsController extends Controller
     
     public function test()
     {
-        $payload = json_encode([
-            'email' => 'facebook@email.com',
-            'data_deletion' => 'requested'
-        ]);
-        
-        $appSecret = config('services.facebook.client_secret');
-        Log::info('$appSecret '.json_encode($appSecret));
-        $hash = hash_hmac('sha1', $payload, $appSecret, false);
-        $signature = 'sha1=' . $hash;
-        
-        return $signature;   
+        return buildUrlWebApp('cadena');
     }
 
 
