@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\GuestAuthController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\GuestController;
@@ -17,6 +18,8 @@ Route::group(['prefix' => 'guest'], function () {
     });
     
     Route::group(['prefix' => 'auth'], function () {
+        Route::post('/registerOrLogin', [GuestAuthController::class, 'registerOrLogin']);
+
         Route::get('/google', [GuestController::class, 'getDataByGoogle']);
         Route::get('/google/callback', [GuestController::class, 'handleGoogleCallback']);
 

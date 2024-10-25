@@ -11,5 +11,11 @@ class Chain extends Model
 
     public $fillable = ['subdomain','type'];
 
+    public function customization()
+    {
+        return $this->hasOne(Customization::class);
+    }
+
+
 
 }

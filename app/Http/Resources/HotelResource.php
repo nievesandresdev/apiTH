@@ -84,7 +84,12 @@ class HotelResource extends JsonResource
             "sender_mail_mask" => $this->sender_mail_mask,
             'is_default' => $is_default,
             "buttons_home" => $this->buttons_home,
+<<<<<<< HEAD
             "legal" => $this->policies()->exists() ? true : false,
+=======
+            "legal" => $this->generalLegal ? true : false,
+            "chain" => new ChainResource($this->chain)
+>>>>>>> fa1e9b0e067969a4f99f3ce21a705ade533974a9
         ];
     }
 }
