@@ -559,7 +559,7 @@ if (! function_exists('buildUrlWebApp')) {
         if($env == "local"){
             $hotelSlug ? $guest_path .= "/$hotelSlug": '';
             $uri ? $guest_path .= "/$uri": '';
-            $guest_path .= "?chainSubdomain={$chainSubdomain}&subdomain={$hotelSlug}";
+            $guest_path .= "?chainsubdomain={$chainSubdomain}&subdomain={$hotelSlug}";
             $paramsString ? $guest_path .= "&{$paramsString}" : '';
             $resultURL = $guest_path;
         }else{
