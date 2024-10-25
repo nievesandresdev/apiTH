@@ -203,5 +203,16 @@ class StayController extends Controller
         }
     }
 
+    public function findbyId($stayId)
+    {
+        try {
+            $stay = $this->service->findbyId($stayId);
+            $data = ['message' => __('response.bad_request_long')];
+            if(!$stay) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $stay);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findbyId');
+        }
+    }
 
 }

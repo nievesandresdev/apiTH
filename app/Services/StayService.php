@@ -349,4 +349,14 @@ class StayService {
         }
     }
 
+    public function findbyId($stayId)
+    {
+        try {
+            $stay = Stay::find($stayId);
+            return $stay;
+
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }
