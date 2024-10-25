@@ -28,9 +28,8 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/verifySubdomainExistPerHotel', [HotelController::class, 'verifySubdomainExistPerHotel']);
     Route::post('/customization', [HotelController::class, 'updateCustomization']);
     Route::post('/updateShowButtons', [HotelController::class, 'updateShowButtons']);
-    
+
     // Route::group(['prefix' => 'customization'], function () {
     // });
-
 
 });
