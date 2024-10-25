@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\Hoster\ChainCustomizationController;
 Route::group(['prefix' => 'hotel'], function () {
 
     Route::post('/appearence', [ChainCustomizationController::class, 'update']);
-    Route::get('/appearence/findOne', [ChainCustomizationController::class, 'findOne']);
+    Route::get('/appearence-findOne', [ChainCustomizationController::class, 'findOne']);
 
     Route::get('/getAll', [HotelController::class, 'getAll']);
     Route::get('/getHotelsByUser', [HotelController::class, 'getHotelsByUser']);
