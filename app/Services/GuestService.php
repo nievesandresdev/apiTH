@@ -48,6 +48,8 @@ class GuestService {
             $name = $data->name ?? null;
             $phone = $data->phone ?? null;
             $lang = $data->language ?? 'es';
+            $avatar = $data->avatar ?? null;
+            $googleId = $data->googleId ?? null;
             $guest = Guest::where('email',$email)->first();
             $acronym = $this->generateInitialsName($name ?? $email);
             
@@ -58,12 +60,16 @@ class GuestService {
                     'lang_web' => $lang,
                     'acronym' => $acronym,
                     'phone' => $phone ?? null,
+                    'avatar' => $avatar,
+                    'googleId' => $googleId,
                 ]);
                 
             }else{
                 $guest->name = $name;
                 $guest->lang_web = $lang;
                 $guest->phone = $phone ?? $guest->phone;
+                $guest->avatar = $avatar ?? $guest->avatar;
+                $guest->googleId = $googleId ?? $guest->googleId;
                 if($acronym){
                     $guest->acronym = $acronym;
                 }
@@ -75,11 +81,11 @@ class GuestService {
         }
     }
 
-    public function existGuest($data)
+    public function findByEmail($data)
     {
         try {
             
-            $email = $data->email;    
+            return $email = $data->email;    
             return  Guest::where('email',$email)->first();
         } catch (\Exception $e) {
             return $e;

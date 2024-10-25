@@ -101,4 +101,21 @@ class GuestController extends Controller
         return bodyResponseRequest(EnumResponse::ACCEPTED, $sent);
     }
 
+    public function findByEmail (Request $request) {
+        try {
+            return 'asdasd';
+            return $model = $this->service->findByEmail($request);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findByEmail');
+        }
+    }
 }
