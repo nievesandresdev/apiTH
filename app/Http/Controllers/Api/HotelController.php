@@ -84,7 +84,6 @@ class HotelController extends Controller
 
     public function findByParams (Request $request) {
         try {
-            return 'd';
             $model = $this->service->findByParams($request);
 
             if(!$model){
