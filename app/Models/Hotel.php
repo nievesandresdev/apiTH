@@ -79,6 +79,11 @@ class Hotel extends Model
         return $this->hasMany(HotelSubdomain::class);
     }
 
+    public function chain()
+    {
+        return $this->belongsTo(Chain::class);
+    }
+
     public function facilities()
     {
         return $this->hasMany(FacilityHoster::class);
