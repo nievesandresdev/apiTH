@@ -26,19 +26,23 @@ class GuestAuthController extends Controller
 
     public function registerOrLogin(Request $request){
         try {
+            // buildUrlWebApp('cadena');
             $type = $request->type;
             $guest = null;
+            $data = [];
             switch ($type) {
                 case 'email':
-                    $guest = $this->existGuest($request);
+                    $guest = $this->findByEmail($request);
                     break;
                 case 'google':
-                        $guest = $this->existGuest($request);
+                        $data['redirect'] = buildUrlWebApp('cadena','slug','completar-registro');
+                        $guest = $this->getDataByGoogle($data);
                         break;
                 default:
                     # code...
                     break;
             }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, true);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.registerOrLogin');
         }
@@ -48,13 +52,12 @@ class GuestAuthController extends Controller
     {
         
         // Obtener la URL de redirección actual para volver después de la autenticación
-        $redirectUrl = $request->input('redirect'); // e.g., https://nobuhotelsevillatex.test.thehoster.io
-        Log::info('$redirectUrl '. $redirectUrl);
+        $redirectUrl = buildUrlWebApp('cadena',null,'completar-registro');
+        // Log::info('$redirectUrl '. $redirectUrl);
 
 
         // Serializar la URL de redirección en el parámetro state
         $state = base64_encode(json_encode(['redirect' => $redirectUrl]));
-        Log::info("redirectToGoogle: state: {$state}");
 
         // Redirigir al usuario a Google para la autenticación con el parámetro state
         return Socialite::driver('google')->stateless()->with(['state' => $state])->redirect();
@@ -63,6 +66,7 @@ class GuestAuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
+            // Log::info('handleGoogleCallback');
             // Obtener y decodificar el parámetro state para extraer la URL de redirección
             $state = $request->input('state');
             if (!$state) {
@@ -78,24 +82,33 @@ class GuestAuthController extends Controller
             // Extraer información del usuario
             $googleId = $googleUser->getId();
             $firstName = $googleUser->user['given_name'] ?? '';
-            $lastName = $googleUser->user['family_name'] ?? '';
+            // $lastName = $googleUser->user['family_name'] ?? '';
             $email = $googleUser->getEmail();
             $avatar = $googleUser->getAvatar();
-            
-            $names = $firstName.' '.$lastName;
             
             // Buscar al usuario por email
             $dataGuest = new \stdClass();
             $dataGuest->email = $email;
-            $guest = $this->service->saveOrUpdate($dataGuest);
-            // $guest = Guest::where('email', $email)->first();
-            // Log::info('$guest'. json_encode($guest));
-            // Generar un token de autenticación (usando Laravel Sanctum)
-            $token = $guest->createToken('auth_token')->plainTextToken;
-            // Log::info('$token'. json_encode($token));
+            $dataGuest->name = $firstName;
+            $dataGuest->avatar = $avatar;
+            $dataGuest->googleId = $googleId;
+            // Log::info('$avatar '.$avatar);
+            $findGuest = $this->service->findByEmail($dataGuest);
             
-            // Redirigir de vuelta al subdominio original con el token
-            return redirect()->to("{$redirectUrl}?auth_token={$token}&googleId={$googleId}&names={$names}&email={$email}&avatar={$avatar}");
+            $guest = $this->service->saveOrUpdate($dataGuest);
+            
+            // // $guest = Guest::where('email', $email)->first();
+            // // Log::info('$guest'. json_encode($guest));
+            // // Generar un token de autenticación (usando Laravel Sanctum)
+            
+            
+            if($findGuest){
+                $token = $findGuest->createToken('auth_token')->plainTextToken;
+                return redirect()->to("{$redirectUrl}");
+            }else{
+                // auth_token={$token}&googleId={$googleId}&
+                return redirect()->to("{$redirectUrl}?g={$guest->id}&m=google");
+            }
         } catch (\Exception $e) {
             // Manejar errores y redirigir con un mensaje de error
             $state = $request->input('state');

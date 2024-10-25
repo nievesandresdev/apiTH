@@ -18,7 +18,9 @@ class Guest extends Authenticatable
         'phone',
         'lang_web',
         'acronym',
-        'color'
+        'color',
+        'googleId',
+        'avatar',
     ];
 
     // protected static function boot()
