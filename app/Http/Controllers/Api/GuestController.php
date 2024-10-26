@@ -103,8 +103,8 @@ class GuestController extends Controller
 
     public function findByEmail (Request $request) {
         try {
-            return 'asdasd';
-            return $model = $this->service->findByEmail($request);
+            
+            $model = $this->service->findByEmail($request);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

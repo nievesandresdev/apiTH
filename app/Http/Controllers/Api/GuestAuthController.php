@@ -48,6 +48,22 @@ class GuestAuthController extends Controller
         }
     }
 
+    public function updateById(Request $request){
+        try {
+            $model = $this->service->updateById($request);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateById');
+        }
+    }
+
     public function getDataByGoogle(Request $request)
     {
         

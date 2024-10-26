@@ -54,6 +54,7 @@ class RouteServiceProvider extends ServiceProvider
                  $this->loadModuleRoutes('api_tests.php');
                  $this->loadModuleRoutes('api_gallery.php');
                  $this->loadModuleRoutes('api_notifications.php');
+                 $this->loadModuleRoutes('api_chain.php');
                  // Aquí puedes añadir más archivos de módulos según sea necesario
              });
     }
