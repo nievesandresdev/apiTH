@@ -149,41 +149,42 @@ class StayService {
                 $guest->save();
             }
             DB::commit();
+            //por ahora ya no se invitan huespedes
             //adjutar huespedes y enviar correos
-            $list_guest = $request->listGuest ?? [];
-            foreach($list_guest as $g){
-                DB::beginTransaction();
-                if($g['email']){
-                    $dataGuest = new \stdClass();
-                    $dataGuest->name = null;
-                    $dataGuest->email = $g['email'];
-                    $dataGuest->language = $request->language;
-                    $guest = $this->guestService->saveOrUpdate($dataGuest);
+            // $list_guest = $request->listGuest ?? [];
+            // foreach($list_guest as $g){
+            //     DB::beginTransaction();
+            //     if($g['email']){
+            //         $dataGuest = new \stdClass();
+            //         $dataGuest->name = null;
+            //         $dataGuest->email = $g['email'];
+            //         $dataGuest->language = $request->language;
+            //         $guest = $this->guestService->saveOrUpdate($dataGuest);
 
-                    if($settings->guestinvite_check_email){
-                        $stay = $this->existingStayThenMatch($stay->id,$g['email'],$hotel);
-                        $data['stay_id'] = $stay->id;
-                        $data['guest_id'] = $guest->id;
-                        $data['guest_name'] = $guest->name;
-                        $data['msg_text'] = $settings->create_msg_email[$guest->lang_web];
-                        $msg = prepareMessage($data,$hotel,'&subject=invited');
-                        $link = prepareLink($data,$hotel,'&subject=invited');
-                        // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                        $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name,true), $guest->email);
-                    }
-                    $guest->stays()->syncWithoutDetaching([$stay->id]);
-                    $this->stayAccessService->save($stay->id,$guestId);
-                    $colorsExists = $stay->guests()->select('color')->pluck('color');
-                    Log::info('agregado colors '.json_encode($colorsExists));
-                    $color = $this->guestService->updateColorGuestForStay($colorsExists);
-                    if($color){
-                        Log::info('se agregar el color al huesped agregado '.$color);
-                        $guest->color = $color;
-                        $guest->save();
-                    }
-                }
-                DB::commit();
-            }
+            //         if($settings->guestinvite_check_email){
+            //             $stay = $this->existingStayThenMatch($stay->id,$g['email'],$hotel);
+            //             $data['stay_id'] = $stay->id;
+            //             $data['guest_id'] = $guest->id;
+            //             $data['guest_name'] = $guest->name;
+            //             $data['msg_text'] = $settings->create_msg_email[$guest->lang_web];
+            //             $msg = prepareMessage($data,$hotel,'&subject=invited');
+            //             $link = prepareLink($data,$hotel,'&subject=invited');
+            //             // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
+            //             $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,true,$guest->name,true), $guest->email);
+            //         }
+            //         $guest->stays()->syncWithoutDetaching([$stay->id]);
+            //         $this->stayAccessService->save($stay->id,$guestId);
+            //         $colorsExists = $stay->guests()->select('color')->pluck('color');
+            //         Log::info('agregado colors '.json_encode($colorsExists));
+            //         $color = $this->guestService->updateColorGuestForStay($colorsExists);
+            //         if($color){
+            //             Log::info('se agregar el color al huesped agregado '.$color);
+            //             $guest->color = $color;
+            //             $guest->save();
+            //         }
+            //     }
+            //     DB::commit();
+            // }
             //actualizar accesos
             $currentStayAccesses = StayAccess::where('stay_id', $stay->id)
                     ->distinct('guest_id')
