@@ -85,7 +85,7 @@ class GuestService {
     {
         try {
             
-            return $email = $data->email;    
+            $email = $data->email;    
             return  Guest::where('email',$email)->first();
         } catch (\Exception $e) {
             return $e;
@@ -207,6 +207,11 @@ class GuestService {
             $guest->phone = $data->phone ?? $guest->phone;
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
             $guest->acronym = $acronym;
+
+            if (isset($data->password) && !empty($data->password)) {
+                $guest->password = bcrypt($data->password); 
+            }
+
             $guest->save();
             return $guest;
         } catch (\Exception $e) {

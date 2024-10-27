@@ -21,6 +21,7 @@ class Guest extends Authenticatable
         'color',
         'googleId',
         'avatar',
+        'password'
     ];
 
     // protected static function boot()
