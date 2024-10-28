@@ -388,7 +388,7 @@ class HotelController extends Controller
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
             \DB::beginTransaction();
 
-            $subdomain = $request->subdomain;
+            $subdomainChain = $request->subdomain_chain;
             $exitsSubdomain = $this->service->verifySubdomainExistPerHotel($subdomain, $hotelModel);
             $subdomainIsNotNew = $this->service->verifySubdomainExist($subdomain, $hotelModel);
             $newSubdomainParam = false;

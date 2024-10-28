@@ -295,7 +295,7 @@ class HotelService {
         if (!$hotelModel || $hotelModel->subdomain == $subdomain) {
             return  false;
         }
-        $exist = hotel::where(['name' => $subdomain])->whereNot('hotel_id', $hotelModel->id)->exists();
+        $exist = hotel::where(['subdomain' => $subdomain])->whereNot('hotels.id', $hotelModel->id)->exists();
         return $exist;
     }
     public function verifySubdomainExist ($subdomain, $hotelModel) {
@@ -305,6 +305,7 @@ class HotelService {
         $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
         return $exist;
     }
+
     public function updateSubdomain ($subdomain, $hotelModel) {
         if ($subdomain == $hotelModel->subdomain) {
             return;
@@ -329,6 +330,15 @@ class HotelService {
 
         $hotelModel->save();
     }
+
+    public function updateSlug ($slug, $hotelModel) {
+
+        $hotelModel->update([
+            'subdomain' => $slug,
+            'slug' => $slug,
+        ]);
+    }
+
     public function updateCustomization ($request, $hotelModel) {
         [
             'language_default_webapp' => $languageDefaultWebapp,

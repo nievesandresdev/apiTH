@@ -40,4 +40,38 @@ class ChainCustomizationController extends Controller
         return bodyResponseRequest(EnumResponse::SUCCESS, $data);
     }
 
+    public function updateConfigGeneral (Request $request) {
+        try {
+            $environment = env('APP_ENV');
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            \DB::beginTransaction();
+
+            $subdomainChain = $request->subdomain_chain;
+            $exitsSubdomain = $this->service->verifySubdomainExistPerHotel($subdomain, $hotelModel);
+            $subdomainIsNotNew = $this->service->verifySubdomainExist($subdomain, $hotelModel);
+            $newSubdomainParam = false;
+            if (!$exitsSubdomain && !$subdomainIsNotNew) {
+                if ($environment !== 'LOCAL') {
+                    $r_s = $this->service->createSubdomainInCloud($subdomain, $environment);
+                    $newSubdomainParam = true;
+                }
+            }
+            $this->service->updateSubdomain($subdomain, $hotelModel);
+
+            $this->service->updateCustomization($request, $hotelModel);
+
+
+            \DB::commit();
+
+            $hotelModel->refresh();
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateCustomization');
+        }
+    }
+
 }
