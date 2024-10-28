@@ -377,7 +377,7 @@ class HotelController extends Controller
         if (!$hotel || $hotel->subdomain == $subdomain) {
             return  false;
         }
-        $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
+        $exist = hotel::where(['subdomain' => $subdomain])->exists();
         return $exist;
     }
 

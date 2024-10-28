@@ -5,5 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix' => 'chain'], function () {
+    Route::get('/verifySubdomainExist', [ChainController::class, 'verifySubdomainExist']);
     Route::get('/getHotelsList', [ChainController::class, 'getHotelsList']);
+    Route::get('/findBySubdomain', [ChainController::class, 'findBySubdomain']);
 });
