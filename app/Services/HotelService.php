@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Models\ImagesHotels;
 use App\Models\HotelSubdomain;
 
-use App\Http\Resources\HotelResource;
+use App\Http\Resources\HotelBasicDataResource;
 use App\Models\ChatHour;
 
 use App\Services\Chatgpt\TranslateService;
@@ -117,16 +117,23 @@ class HotelService {
         }
     }
 
-    public function findById ($id) {
+    public function findById($id) {
         try {
 
             $model = Hotel::find($id);
 
-            return $model;
+            return new HotelBasicDataResource($model);
 
         } catch (\Exception $e) {
             return $e;
         }
+    }
+
+
+    public function getStayByHotel($id){
+        $hotel = Hotel::find($id);
+        //$stay = $hotel->stay;
+        return $hotel;
     }
 
     public function getChatHours ($hotelId,$all = false) {
