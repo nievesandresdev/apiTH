@@ -34,7 +34,9 @@ class ChainController extends Controller
         $chainModel = $hotelModel->chain;
 
         $data = $this->chainServices->verifySubdomainExist($request->subdomain, $hotelModel, $chainModel);
-
+        $data = [
+            "verifySubdomainExist" => $data
+        ];
         return bodyResponseRequest(EnumResponse::SUCCESS, $data);
     }
 
