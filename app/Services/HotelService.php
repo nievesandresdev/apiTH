@@ -140,26 +140,9 @@ class HotelService {
             ->whereIn('hotel_id', $hotels)
             ->get();
 
-        // Fecha actual para verificar estancia activa
-        $currentDate = Carbon::now();
 
-        // Filtramos y ordenamos las estancias
-        $stays = $stays->map(function ($stay) use ($currentDate) {
-            $stay->isActive = $stay->check_in <= $currentDate && $stay->check_out >= $currentDate;
-            return $stay;
-        });
 
-        // Separa la estancia activa
-        $activeStay = $stays->firstWhere('isActive', true);
-        $otherStays = $stays->where('isActive', false)->sortByDesc('check_in');
-
-        // Construye el listado en el formato deseado
-        $result = [
-            'active_stay' => $activeStay,
-            'other_stays' => $otherStays->values()->all()
-        ];
-
-        return $result;
+        return $hotels;
     }
 
 
@@ -330,7 +313,7 @@ class HotelService {
         if (!$hotelModel || $hotelModel->subdomain == $subdomain) {
             return  false;
         }
-        $exist = hotel::where(['subdomain' => $subdomain])->whereNot('hotels.id', $hotelModel->id)->exists();
+        $exist = hotel::where(['name' => $subdomain])->whereNot('hotel_id', $hotelModel->id)->exists();
         return $exist;
     }
     public function verifySubdomainExist ($subdomain, $hotelModel) {
@@ -340,7 +323,6 @@ class HotelService {
         $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
         return $exist;
     }
-
     public function updateSubdomain ($subdomain, $hotelModel) {
         if ($subdomain == $hotelModel->subdomain) {
             return;
@@ -365,15 +347,6 @@ class HotelService {
 
         $hotelModel->save();
     }
-
-    public function updateSlug ($slug, $hotelModel) {
-
-        $hotelModel->update([
-            'subdomain' => $slug,
-            'slug' => $slug,
-        ]);
-    }
-
     public function updateCustomization ($request, $hotelModel) {
         [
             'language_default_webapp' => $languageDefaultWebapp,
