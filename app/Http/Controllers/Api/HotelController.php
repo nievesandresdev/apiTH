@@ -96,8 +96,8 @@ class HotelController extends Controller
     public function getStayByHotel($id){
         try {
             //$hotel = $request->attributes->get('hotel');
-            $stay = $this->service->getStayByHotel($id);
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $stay);
+            $stays = $this->service->getStayByHotel($id);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $stays);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getStayByHotel');
         }
