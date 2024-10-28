@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Models\ImagesHotels;
 use App\Models\HotelSubdomain;
 
-use App\Http\Resources\HotelResource;
+use App\Http\Resources\HotelBasicDataResource;
 use App\Models\ChatHour;
 
 use App\Services\Chatgpt\TranslateService;
@@ -117,17 +117,52 @@ class HotelService {
         }
     }
 
-    public function findById ($id) {
+    public function findById($id) {
         try {
 
             $model = Hotel::find($id);
 
-            return $model;
+            return new HotelBasicDataResource($model);
 
         } catch (\Exception $e) {
             return $e;
         }
     }
+
+
+
+    public function getStayByHotel($id)
+    {
+        $hotels = Hotel::where('chain_id', $id)->active()->pluck('id');
+
+        // Obtenemos todas las estancias de los hoteles en la cadena
+        $stays = DB::table('stays')
+            ->whereIn('hotel_id', $hotels)
+            ->get();
+
+        // Fecha actual para verificar estancia activa
+        $currentDate = Carbon::now();
+
+        // Filtramos y ordenamos las estancias
+        $stays = $stays->map(function ($stay) use ($currentDate) {
+            $stay->isActive = $stay->check_in <= $currentDate && $stay->check_out >= $currentDate;
+            return $stay;
+        });
+
+        // Separa la estancia activa
+        $activeStay = $stays->firstWhere('isActive', true);
+        $otherStays = $stays->where('isActive', false)->sortByDesc('check_in');
+
+        // Construye el listado en el formato deseado
+        $result = [
+            'active_stay' => $activeStay,
+            'other_stays' => $otherStays->values()->all()
+        ];
+
+        return $result;
+    }
+
+
 
     public function getChatHours ($hotelId,$all = false) {
         try {
@@ -295,7 +330,7 @@ class HotelService {
         if (!$hotelModel || $hotelModel->subdomain == $subdomain) {
             return  false;
         }
-        $exist = hotel::where(['name' => $subdomain])->whereNot('hotel_id', $hotelModel->id)->exists();
+        $exist = hotel::where(['subdomain' => $subdomain])->whereNot('hotels.id', $hotelModel->id)->exists();
         return $exist;
     }
     public function verifySubdomainExist ($subdomain, $hotelModel) {
@@ -305,6 +340,7 @@ class HotelService {
         $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
         return $exist;
     }
+
     public function updateSubdomain ($subdomain, $hotelModel) {
         if ($subdomain == $hotelModel->subdomain) {
             return;
@@ -329,6 +365,15 @@ class HotelService {
 
         $hotelModel->save();
     }
+
+    public function updateSlug ($slug, $hotelModel) {
+
+        $hotelModel->update([
+            'subdomain' => $slug,
+            'slug' => $slug,
+        ]);
+    }
+
     public function updateCustomization ($request, $hotelModel) {
         [
             'language_default_webapp' => $languageDefaultWebapp,

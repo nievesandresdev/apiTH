@@ -150,6 +150,12 @@ class Hotel extends Model
     }
 
 
+    public function scopeActive($query)
+    {
+        return $query->where('del', 0);
+    }
+
+
 
 
     // AUXILIARIES
