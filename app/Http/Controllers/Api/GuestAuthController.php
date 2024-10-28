@@ -64,6 +64,18 @@ class GuestAuthController extends Controller
         }
     }
 
+    public function confirmPassword(Request $request){
+        try {
+            $model = $this->service->confirmPassword($request);
+            if($model){
+                $model = new GuestResource($model);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
+        }
+    }
+
     public function getDataByGoogle(Request $request)
     {
         

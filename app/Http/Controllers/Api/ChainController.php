@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ChainResource;
 use Illuminate\Http\Request;
 use App\Services\Hoster\ChainCustomizationServices;
 use App\Http\Resources\CustomizationResource;
-
+use App\Http\Resources\HotelCardResource;
 use App\Services\ChainService;
 use App\Services\HotelService;
 
@@ -16,6 +17,8 @@ use App\Utils\Enums\EnumResponse;
 
 class ChainController extends Controller
 {
+    public $chainServices;
+
     public function __construct(
         ChainService $_chain_services,
         HotelService $_hotel_service
@@ -38,7 +41,7 @@ class ChainController extends Controller
     public function getHotelsList (Request $request) {
         try {
             $chainSubdomain = $request->attributes->get('chainSubdomain');
-            $hotels = $this->service->getHotelsList($chainSubdomain);
+            $hotels = $this->chainServices->getHotelsList($chainSubdomain);
             $hotels = HotelCardResource::collection($hotels);
             if(!$hotels){
                 $data = [
@@ -87,6 +90,23 @@ class ChainController extends Controller
         } catch (\Exception $e) {
             \DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateCustomization');
+        }
+    }
+    public function findBySubdomain (Request $request) {
+        try {
+            $chainSubdomain = $request->attributes->get('chainSubdomain');
+            $chain = $this->chainServices->findBySubdomain($chainSubdomain);
+            $chain = new ChainResource($chain);
+            if(!$chain){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $chain);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findBySubdomain');
         }
     }
 

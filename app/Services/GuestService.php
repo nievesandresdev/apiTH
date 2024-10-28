@@ -219,6 +219,18 @@ class GuestService {
         }
     }
 
+    public function confirmPassword($data){
+        try{
+            $guest = $this->findByEmail($data);
+            if ($guest && Hash::check($data->password, $guest->password)) {
+                return $guest; 
+            }
+            return null;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
+        }
+    }
+
     public function sendEmail($stayId,$guestId,$guestEmail,$hotelId,$concept = null){
 
         try{
