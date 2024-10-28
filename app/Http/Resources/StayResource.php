@@ -30,6 +30,7 @@ class StayResource extends JsonResource
             "hour_checkin" => $this->hour_checkin,
             "hour_checkout" => $this->hour_checkout,
             "uniqueAccessesCount" => $uniqueAccessesCount,
+            "hotelSubdomain" => $this->hotel->subdomain,
         ];
     }
 }

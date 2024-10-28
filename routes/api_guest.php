@@ -11,6 +11,7 @@ Route::group(['prefix' => 'guest'], function () {
     Route::post('/saveOrUpdateApi', [GuestController::class, 'saveOrUpdate']);
     Route::post('/updateLanguageApi', [GuestController::class, 'updateLanguage']);
     Route::get('/findLastStayApi/{id}', [GuestController::class, 'findLastStay']);
+    Route::get('/findAndValidLastStay', [GuestController::class, 'findAndValidLastStay']);
     Route::get('/findByEmail', [GuestController::class, 'findByEmail']);
     Route::post('/sendMailTo', [GuestController::class, 'sendMailTo']);
     

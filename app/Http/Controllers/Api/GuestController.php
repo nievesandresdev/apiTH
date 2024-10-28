@@ -88,6 +88,29 @@ class GuestController extends Controller
         }
     }
 
+
+    public function findAndValidLastStay(Request $request) {
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $hotelId = $hotel->id ?? null;
+            $chainId = $request->chainId;
+            $guestId = $request->guestId;
+            
+            $model = $this->service->findAndValidLastStay($guestId, $hotelId, $chainId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            $data = new StayResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findLastStay');
+        }
+    }
+
     public function sendMailTo(Request $request){
         $stayId = $request->stayId;
         $guestId = $request->guestId;
