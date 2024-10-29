@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\GuestResource;
 use App\Http\Resources\StayResource;
 use App\Models\Guest;
+use App\Services\ChainService;
 use Illuminate\Http\Request;
 
 use App\Utils\Enums\EnumResponse;
@@ -16,12 +17,15 @@ use Laravel\Socialite\Facades\Socialite;
 class GuestAuthController extends Controller
 {
     public $service;
+    public $chainServices;
 
     function __construct(
-        GuestService $_GuestService
+        GuestService $_GuestService,
+        ChainService $_ChainService
     )
     {
         $this->service = $_GuestService;
+        $this->chainServices = $_ChainService;
     }
 
     public function registerOrLogin(Request $request){
@@ -78,10 +82,9 @@ class GuestAuthController extends Controller
 
     public function getDataByGoogle(Request $request)
     {
-        $chainSubdomain = $request->chainSubdomain;
-        Log::info('este es un log dentro de mi metodo en api '.$chainSubdomain);
+        $chain = $this->chainServices->findBySubdomain($request->chainSubdomain);
         // Obtener la URL de redirección actual para volver después de la autenticación
-        $redirectUrl = buildUrlWebApp($chainSubdomain,null);
+        $redirectUrl = buildUrlWebApp($chain);
         // Log::info('$redirectUrl '. $redirectUrl);
 
 

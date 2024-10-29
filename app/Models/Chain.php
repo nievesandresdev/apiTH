@@ -16,6 +16,9 @@ class Chain extends Model
         return $this->hasOne(Customization::class);
     }
 
-
+    public function hotels()
+    {
+        return $this->hasMany(Hotel::class);
+    }
 
 }

@@ -552,14 +552,16 @@ if (! function_exists('includeSubdomainInUrlHuesped')) {
 }
 
 if (! function_exists('buildUrlWebApp')) {
-    function buildUrlWebApp($chainSubdomain, $hotelSlug = null, $uri = null, $paramsString = null){
+    function buildUrlWebApp($chain, $hotelSlug = null, $uri = null, $paramsString = null){
+        $chainSubdomain = $chain->subdomain;
+        $isIndependentChain = $chain->type == "INDEPENDENT";
         $resultURL = null;
         $guest_path  = config('app.guest_path');
         $env  = config('app.env');
         if($env == "local"){
             $hotelSlug ? $guest_path .= "/$hotelSlug": '';
             $uri ? $guest_path .= "/$uri": '';
-            $guest_path .= "?chainsubdomain={$chainSubdomain}&subdomain={$hotelSlug}";
+            $guest_path .= "?chainsubdomain={$chainSubdomain}";
             $paramsString ? $guest_path .= "&{$paramsString}" : '';
             $resultURL = $guest_path;
         }else{

@@ -14,10 +14,12 @@ class ChainResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $independentSubdomain = $this->hotels()->where('del',0)->first();
         return [
             "id" => $this->id,
             "subdomain" => $this->subdomain,
-            "type" => $this->type
+            "type" => $this->type,
+            "independentSubdomain" => $this->type == "INDEPENDENT" ? $independentSubdomain->subdomain : null
         ];
     }
 }
