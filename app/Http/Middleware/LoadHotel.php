@@ -25,10 +25,10 @@ class LoadHotel
             return $next($request);
         }
         $hotelSubdomain = $request->header('subdomainHotel');
-        // $modelHotel = Hotel::where('subdomain', $hotelSubdomain)->first();
-        $modelHotel = Hotel::whereHas('subdomains', function($query) use($hotelSubdomain){
-            $query->where('name', $hotelSubdomain);
-        })->first();
+        $modelHotel = Hotel::where('subdomain', $hotelSubdomain)->first();
+        // $modelHotel = Hotel::whereHas('subdomains', function($query) use($hotelSubdomain){
+        //     $query->where('name', $hotelSubdomain);
+        // })->first();
 
         $data = new HotelResource($modelHotel);
 
