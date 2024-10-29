@@ -366,8 +366,8 @@ class HotelController extends Controller
             $newSubdomainParam = false;
             if (!$exitsSubdomain && !$subdomainIsNotNew) {
                 if ($environment !== 'LOCAL') {
-                    return 'entro';
                     $r_s = $this->service->createSubdomainInCloud($subdomain, $environment);
+                    return $r_s;
                     $newSubdomainParam = true;
                 }
             }
