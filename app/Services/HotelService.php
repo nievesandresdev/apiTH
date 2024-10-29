@@ -330,6 +330,11 @@ class HotelService {
     }
 
     public function createSubdomainInCloud ($subdomain, $environment) {
+        try {
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
 
         $email = env('EMAIL_CLOUDFLARE');
         $api_key = env('API_KEY_CLOUDFLARE');
@@ -366,7 +371,6 @@ class HotelService {
 
         // Verifica si la respuesta es exitosa
         $data = json_decode($response, true);
-        \Log::info($data);
         if (isset($data['success']) && $data['success']) {
             return "success";
         } else {
