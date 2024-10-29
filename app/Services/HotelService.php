@@ -138,8 +138,10 @@ class HotelService {
 
         // Obtenemos todas las estancias de los hoteles en la cadena
         $stays = DB::table('stays')
-            ->whereIn('hotel_id', $hotels)
-            ->get();
+                ->join('hotels', 'stays.hotel_id', '=', 'hotels.id') // Hacemos el join con la tabla hotels
+                ->whereIn('stays.hotel_id', $hotels)
+                ->select('stays.*', 'hotels.name as hotel_name','hotels.zone as hotel_zone') // Seleccionamos todos los campos de stays y el nombre del hotel
+                ->get();
 
         // Fecha actual para verificar estancia activa
         $currentDate = Carbon::now();
@@ -331,7 +333,7 @@ class HotelService {
         if (!$hotelModel || $hotelModel->subdomain == $subdomain) {
             return  false;
         }
-        $exist = hotel::where(['subdomain' => $subdomain])->whereNot('hotels.id', $hotelModel->id)->exists();
+        $exist = hotel::where(['name' => $subdomain])->whereNot('hotel_id', $hotelModel->id)->exists();
         return $exist;
     }
     public function verifySubdomainExist ($subdomain, $hotelModel) {
@@ -341,7 +343,6 @@ class HotelService {
         $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
         return $exist;
     }
-
     public function updateSubdomain ($subdomain, $hotelModel) {
         if ($subdomain == $hotelModel->subdomain) {
             return;
@@ -366,15 +367,6 @@ class HotelService {
 
         $hotelModel->save();
     }
-
-    public function updateSlug ($slug, $hotelModel) {
-
-        $hotelModel->update([
-            'subdomain' => $slug,
-            'slug' => $slug,
-        ]);
-    }
-
     public function updateCustomization ($request, $hotelModel) {
         [
             'language_default_webapp' => $languageDefaultWebapp,

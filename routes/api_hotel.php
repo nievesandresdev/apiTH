@@ -36,6 +36,6 @@ Route::group(['prefix' => 'hotel'], function () {
     //findById
     Route::get('findById/{id}', [HotelController::class, 'findById']);
     //getStayByHotel
-    Route::get('getStayByHotel/{id}', [HotelController::class, 'getStayByHotel']);
+    Route::get('getStayByHotel/{id}', [HotelController::class, 'getStaysByHotel']);
 
 });
