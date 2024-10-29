@@ -60,6 +60,7 @@ class ChainController extends Controller
 
     public function updateConfigGeneral (Request $request) {
         try {
+            
             $environment = config('app.env');
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
@@ -75,6 +76,8 @@ class ChainController extends Controller
 
             $subdomain = $request->subdomain_chain;
             $slugHotel = $request->slug_hotel;
+            $this->hotelServices->updateSlug($slugHotel, $hotelModel);
+            return true;
 
             $exitsSubdomain = $this->chainServices->verifySubdomainExist($subdomain, $hotelModel, $chainModel);
             $subdomainIsNotNew = $this->chainServices->verifySubdomainExistInHistory($subdomain, $hotelModel, $chainModel);
@@ -87,7 +90,7 @@ class ChainController extends Controller
             }
             $this->chainServices->updateSubdomain($subdomain, $chainModel);
 
-            $this->hotelServices->updateSlug($slugHotel, $hotelModel);
+            
 
             $this->chainServices->updateConfigGeneral($request, $hotelModel);
 
