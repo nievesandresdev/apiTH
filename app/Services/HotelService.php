@@ -350,7 +350,6 @@ class HotelService {
             'ttl'     => 1,
             'proxied' => false,
         ]);
-        return $payload;
         // Configura las opciones de cURL
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'X-Auth-Email: ' . $email,
@@ -367,7 +366,7 @@ class HotelService {
 
         // Verifica si la respuesta es exitosa
         $data = json_decode($response, true);
-
+        \Log::info($data);
         if (isset($data['success']) && $data['success']) {
             return "success";
         } else {
