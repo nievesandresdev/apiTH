@@ -113,7 +113,11 @@ class StayService {
                 'check_in' => $request->checkDate['start'],
                 'check_out' => $request->checkDate['end']
             ]);
-            $guest->stays()->syncWithoutDetaching([$stay->id]);
+            // $guest->stays()->syncWithoutDetaching([$stay->id]);
+            $guest->stays()->syncWithoutDetaching([
+                $stay->id => ['chain_id' => $hotel->chain_id]
+            ]);
+            
             //guardar acceso
             $this->stayAccessService->save($stay->id,$guestId);
 

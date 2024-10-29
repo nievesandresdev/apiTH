@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 
 use App\Utils\Enums\EnumResponse;
 use App\Services\GuestService;
+use App\Services\HotelService;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -18,14 +19,17 @@ class GuestAuthController extends Controller
 {
     public $service;
     public $chainServices;
+    public $hotelServices;
 
     function __construct(
         GuestService $_GuestService,
-        ChainService $_ChainService
+        ChainService $_ChainService,
+        HotelService $_HotelService
     )
     {
         $this->service = $_GuestService;
         $this->chainServices = $_ChainService;
+        $this->hotelServices = $_HotelService;
     }
 
     public function registerOrLogin(Request $request){
@@ -82,18 +86,19 @@ class GuestAuthController extends Controller
 
     public function getDataByGoogle(Request $request)
     {
-        $chain = $this->chainServices->findBySubdomain($request->chainSubdomain);
-        // Obtener la URL de redirección actual para volver después de la autenticación
-        $redirectUrl = buildUrlWebApp($chain);
-        // Log::info('$redirectUrl '. $redirectUrl);
+        
 
+        // Include 'chainId' in the state parameter
+        $stateData = [
+            'chainSubdomain' => $request->chainSubdomain,
+        ];
 
-        // Serializar la URL de redirección en el parámetro state
-        $state = base64_encode(json_encode(['redirect' => $redirectUrl]));
+        $state = base64_encode(json_encode($stateData));
 
-        // Redirigir al usuario a Google para la autenticación con el parámetro state
+        // Pass only the 'state' parameter
         return Socialite::driver('google')->stateless()->with(['state' => $state])->redirect();
     }
+
     
     public function handleGoogleCallback(Request $request)
     {
@@ -106,8 +111,10 @@ class GuestAuthController extends Controller
             }
 
             $decodedState = json_decode(base64_decode($state), true);
-            $redirectUrl = $decodedState['redirect'] ?? 'https://thehoster.io';
-
+            $chainSubdomain = $decodedState['chainSubdomain'];
+            $chain = $this->chainServices->findBySubdomain($chainSubdomain);
+            
+            
             // Obtener el usuario autenticado de Google
             $googleUser = Socialite::driver('google')->stateless()->user();
 
@@ -126,6 +133,7 @@ class GuestAuthController extends Controller
             $dataGuest->googleId = $googleId;
             // Log::info('$avatar '.$avatar);
             $findGuest = $this->service->findByEmail($dataGuest);
+            $guest = $this->service->saveOrUpdate($dataGuest);
             
             // // $guest = Guest::where('email', $email)->first();
             // // Log::info('$guest'. json_encode($guest));
@@ -133,11 +141,19 @@ class GuestAuthController extends Controller
             
             
             if($findGuest){
-                $token = $findGuest->createToken('auth_token')->plainTextToken;
-                return redirect()->to("{$redirectUrl}");
+                $stay = $this->service->findAndValidLastStay($guest->id, null, $chain->id);
+                if($stay){
+                    $hotel = $this->hotelServices->findById($stay->hotel_id);
+                    //falto revisar cuando si tiene estancia
+                    $redirectUrl = buildUrlWebApp($chain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
+                    return redirect()->to($redirectUrl);    
+                }
+                // $token = $findGuest->createToken('auth_token')->plainTextToken;
+                $redirectUrl = buildUrlWebApp($chain, null, 'lista-de-alojamientos',"g={$guest->id}");
+                return redirect()->to($redirectUrl);
             }else{
-                $guest = $this->service->saveOrUpdate($dataGuest);
                 // auth_token={$token}&googleId={$googleId}&
+                $redirectUrl = buildUrlWebApp($chain);
                 return redirect()->to("{$redirectUrl}&g={$guest->id}&m=google&acform=complete");
             }
         } catch (\Exception $e) {
