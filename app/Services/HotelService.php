@@ -137,12 +137,31 @@ class HotelService {
 
         // Obtenemos todas las estancias de los hoteles en la cadena
         $stays = DB::table('stays')
-            ->whereIn('hotel_id', $hotels)
-            ->get();
+                ->join('hotels', 'stays.hotel_id', '=', 'hotels.id') // Hacemos el join con la tabla hotels
+                ->whereIn('stays.hotel_id', $hotels)
+                ->select('stays.*', 'hotels.name as hotel_name','hotels.zone as hotel_zone') // Seleccionamos todos los campos de stays y el nombre del hotel
+                ->get();
 
+        // Fecha actual para verificar estancia activa
+        $currentDate = Carbon::now();
 
+        // Filtramos y ordenamos las estancias
+        $stays = $stays->map(function ($stay) use ($currentDate) {
+            $stay->isActive = $stay->check_in <= $currentDate && $stay->check_out >= $currentDate;
+            return $stay;
+        });
 
-        return $hotels;
+        // Separa la estancia activa
+        $activeStay = $stays->firstWhere('isActive', true);
+        $otherStays = $stays->where('isActive', false)->sortByDesc('check_in');
+
+        // Construye el listado en el formato deseado
+        $result = [
+            'active_stay' => $activeStay,
+            'other_stays' => $otherStays->values()->all()
+        ];
+
+        return $result;
     }
 
 
