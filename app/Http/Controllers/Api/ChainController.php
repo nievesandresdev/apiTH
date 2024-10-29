@@ -65,6 +65,7 @@ class ChainController extends Controller
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
 
             $chainModel = $hotelModel->chain;
+            return $hotelModel;
             if(!$chainModel || !$hotelModel){
                 $data = [
                     'message' => __('response.bad_request_long')
