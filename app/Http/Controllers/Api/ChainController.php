@@ -63,7 +63,14 @@ class ChainController extends Controller
             $environment = config('app.env');
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+
             $chainModel = $hotelModel->chain;
+            if(!$chain || !$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
             \DB::beginTransaction();
 
             $subdomain = $request->subdomain_chain;
