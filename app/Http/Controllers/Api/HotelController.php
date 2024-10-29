@@ -356,7 +356,6 @@ class HotelController extends Controller
     public function updateCustomization (Request $request) {
         try {
             $environment = env('APP_ENV');
-            return $environment;
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
             \DB::beginTransaction();
@@ -367,10 +366,12 @@ class HotelController extends Controller
             $newSubdomainParam = false;
             if (!$exitsSubdomain && !$subdomainIsNotNew) {
                 if ($environment !== 'LOCAL') {
+                    return 'entro';
                     $r_s = $this->service->createSubdomainInCloud($subdomain, $environment);
                     $newSubdomainParam = true;
                 }
             }
+            return 'no entro';
             $this->service->updateSubdomain($subdomain, $hotelModel);
 
             $this->service->updateCustomization($request, $hotelModel);
