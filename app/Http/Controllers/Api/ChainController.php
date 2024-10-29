@@ -87,7 +87,7 @@ class ChainController extends Controller
                 }
             }
             $this->chainServices->updateSubdomain($subdomain, $chainModel);
-            return true;
+            
             $this->hotelServices->updateSlug($slugHotel, $hotelModel);
 
             $this->chainServices->updateConfigGeneral($request, $hotelModel);
