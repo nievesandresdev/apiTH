@@ -554,7 +554,7 @@ if (! function_exists('includeSubdomainInUrlHuesped')) {
 if (! function_exists('buildUrlWebApp')) {
     function buildUrlWebApp($chainSubdomain, $hotelSlug = null, $uri = null, $paramsString = null){
         $resultURL = null;
-        $guest_path  = config('app.guest_path').'/webapp';
+        $guest_path  = config('app.guest_path');
         $env  = config('app.env');
         if($env == "local"){
             $hotelSlug ? $guest_path .= "/$hotelSlug": '';
@@ -563,7 +563,7 @@ if (! function_exists('buildUrlWebApp')) {
             $paramsString ? $guest_path .= "&{$paramsString}" : '';
             $resultURL = $guest_path;
         }else{
-            $urlBase = url('/webapp');
+            $urlBase = url('/');
             $resultURL = str_replace('api', $chainSubdomain, $urlBase);
             $hotelSlug ? $resultURL .= "/$hotelSlug": '';
             $uri ? $resultURL .= "/$uri": '';

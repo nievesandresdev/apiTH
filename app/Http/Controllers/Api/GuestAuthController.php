@@ -78,9 +78,10 @@ class GuestAuthController extends Controller
 
     public function getDataByGoogle(Request $request)
     {
-        
+        $chainSubdomain = $request->chainSubdomain;
+        Log::info('este es un log dentro de mi metodo en api '.$chainSubdomain);
         // Obtener la URL de redirección actual para volver después de la autenticación
-        $redirectUrl = buildUrlWebApp('cadena',null,'completar-registro');
+        $redirectUrl = buildUrlWebApp($chainSubdomain,null);
         // Log::info('$redirectUrl '. $redirectUrl);
 
 
@@ -123,8 +124,6 @@ class GuestAuthController extends Controller
             // Log::info('$avatar '.$avatar);
             $findGuest = $this->service->findByEmail($dataGuest);
             
-            $guest = $this->service->saveOrUpdate($dataGuest);
-            
             // // $guest = Guest::where('email', $email)->first();
             // // Log::info('$guest'. json_encode($guest));
             // // Generar un token de autenticación (usando Laravel Sanctum)
@@ -134,8 +133,9 @@ class GuestAuthController extends Controller
                 $token = $findGuest->createToken('auth_token')->plainTextToken;
                 return redirect()->to("{$redirectUrl}");
             }else{
+                $guest = $this->service->saveOrUpdate($dataGuest);
                 // auth_token={$token}&googleId={$googleId}&
-                return redirect()->to("{$redirectUrl}?g={$guest->id}&m=google");
+                return redirect()->to("{$redirectUrl}&g={$guest->id}&m=google&acform=complete");
             }
         } catch (\Exception $e) {
             // Manejar errores y redirigir con un mensaje de error
