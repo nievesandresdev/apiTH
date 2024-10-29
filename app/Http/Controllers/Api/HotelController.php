@@ -93,7 +93,7 @@ class HotelController extends Controller
         }
     }
 
-    public function getStayByHotel($id){
+    public function getStaysByHotel($id){
         try {
             //$hotel = $request->attributes->get('hotel');
             $stays = $this->service->getStayByHotel($id);

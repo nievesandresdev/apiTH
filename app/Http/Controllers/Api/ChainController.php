@@ -60,10 +60,18 @@ class ChainController extends Controller
 
     public function updateConfigGeneral (Request $request) {
         try {
+            
             $environment = config('app.env');
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+
             $chainModel = $hotelModel->chain;
+            if(!$chainModel || !$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
             \DB::beginTransaction();
 
             $subdomain = $request->subdomain_chain;
@@ -79,7 +87,7 @@ class ChainController extends Controller
                 }
             }
             $this->chainServices->updateSubdomain($subdomain, $chainModel);
-
+            
             $this->hotelServices->updateSlug($slugHotel, $hotelModel);
 
             $this->chainServices->updateConfigGeneral($request, $hotelModel);
