@@ -76,8 +76,6 @@ class ChainController extends Controller
 
             $subdomain = $request->subdomain_chain;
             $slugHotel = $request->slug_hotel;
-            $this->hotelServices->updateSlug($slugHotel, $hotelModel);
-            return true;
 
             $exitsSubdomain = $this->chainServices->verifySubdomainExist($subdomain, $hotelModel, $chainModel);
             $subdomainIsNotNew = $this->chainServices->verifySubdomainExistInHistory($subdomain, $hotelModel, $chainModel);
@@ -89,8 +87,8 @@ class ChainController extends Controller
                 }
             }
             $this->chainServices->updateSubdomain($subdomain, $chainModel);
-
-            
+            return true;
+            $this->hotelServices->updateSlug($slugHotel, $hotelModel);
 
             $this->chainServices->updateConfigGeneral($request, $hotelModel);
 
