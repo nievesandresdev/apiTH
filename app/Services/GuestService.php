@@ -134,22 +134,37 @@ class GuestService {
     }
 
 
-    public function findAndValidLastStay($guestId,$hotel){
+    public function findAndValidLastStay($guestId, $hotelId = null, $chainId = null){
 
         try {
             if(!$guestId) return;
             $guest = Guest::find($guestId);
-            $last_stay = $guest->stays()
-                        ->where('hotel_id',$hotel->id)
-                        ->orderBy('check_out','DESC')->first();
-            if($last_stay){
-                $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
-                // Verifica si han pasado más de 10 días desde el checkout
-                if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
-                    //si no han pasado retorna la estancia
-                    return $last_stay;
+            
+            if ($guest && $guest->stays()->exists()) {
+                $query = $guest->stays();  // Iniciar la consulta
+
+                // Añadir condición para hotel si $hotel no es nulo y tiene un id válido
+                if ($hotelId) {
+                    $query = $query->where('hotel_id', $hotelId);
+                }
+
+                // Añadir condición para chain_id si $chainId está definido y no es nulo
+                if ($chainId) {
+                    $query = $query->where('chain_id', $chainId);
+                }
+                // Obtener la última estancia ordenando por la fecha de check_out de manera descendente
+                return $last_stay = $query->orderBy('check_out', 'DESC')->first();
+
+                if ($last_stay) {
+                    $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
+                    // Verifica si han pasado más de 10 días desde el checkout
+                    if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
+                        //si no han pasado retorna la estancia
+                        return $last_stay;
+                    }
                 }
             }
+
             return null;
         } catch (\Exception $e) {
             return $e;
