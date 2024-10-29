@@ -367,6 +367,7 @@ class HotelService {
 
         // Verifica si la respuesta es exitosa
         $data = json_decode($response, true);
+        
         if (isset($data['success']) && $data['success']) {
             return "success";
         } else {

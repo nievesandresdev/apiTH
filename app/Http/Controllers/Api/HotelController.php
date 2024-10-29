@@ -356,6 +356,7 @@ class HotelController extends Controller
     public function updateCustomization (Request $request) {
         try {
             $environment = env('APP_ENV');
+            return $environment;
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
             \DB::beginTransaction();
