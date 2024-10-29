@@ -20,7 +20,6 @@ class UserResource extends JsonResource
 
         // Si no se encuentra un hotel con is_default = 1, seleccionamos el primero
         $firstHotelId = $defaultHotel ?? $this->hotel()->first();
-
         $phone = $this->profile->phone ?? '';
 
         //$is_subscribed =$this->parent->subscriptions()->where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
@@ -57,6 +56,7 @@ class UserResource extends JsonResource
                     'slug' => $hotel->slug,
                     'name_short' => $hotel->name_short,
                     'subdomain' => $hotel->subdomain,
+                    'chain' => new ChainResource($hotel->chain)
                     //'subscribed' => $is_subscribed,
                     //'permissions' =>  $hotel->pivot->permissions,
                 ];
@@ -82,6 +82,7 @@ class UserResource extends JsonResource
                 'slug' => $hotel->slug,
                 'name_short' => $hotel->name_short,
                 'subdomain' => $hotel->subdomain,
+                'chain' => new ChainResource($hotel->chain)
             ];
         }) : null,
             'permissions' => $this->permissions,

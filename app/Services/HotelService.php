@@ -96,11 +96,12 @@ class HotelService {
             //     }
             // });
 
-            $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
-                if ($subdomain) {
-                    $query->where('name', $subdomain);
-                }
-            });
+            $query = Hotel::where('subdomain', $subdomain);
+            // $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
+            //     if ($subdomain) {
+            //         $query->where('name', $subdomain);
+            //     }
+            // });
 
             if (!$subdomain) {
                 return null;
