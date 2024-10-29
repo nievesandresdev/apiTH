@@ -20,7 +20,6 @@ class UserResource extends JsonResource
 
         // Si no se encuentra un hotel con is_default = 1, seleccionamos el primero
         $firstHotelId = $defaultHotel ?? $this->hotel()->first();
-        $firstHotelId = 
         $phone = $this->profile->phone ?? '';
 
         //$is_subscribed =$this->parent->subscriptions()->where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
