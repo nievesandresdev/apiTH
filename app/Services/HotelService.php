@@ -138,7 +138,13 @@ class HotelService {
 
         // Obtenemos todas las estancias de los hoteles en la cadena
         $stays = DB::table('stays')
-            ->whereIn('hotel_id', $hotels)
+            ->join('hotels', 'stays.hotel_id', '=', 'hotels.id')
+            ->whereIn('stays.hotel_id', $hotels)
+            ->select(
+                'stays.*',
+                'hotels.name as hotel_name',
+                'hotels.zone as hotel_zone'
+            )
             ->get();
 
         // Fecha actual para verificar estancia activa
