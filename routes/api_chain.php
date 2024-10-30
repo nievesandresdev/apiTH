@@ -9,4 +9,5 @@ Route::group(['prefix' => 'chain'], function () {
     Route::get('/getHotelsList', [ChainController::class, 'getHotelsList']);
     Route::post('/configGeneral/update', [ChainController::class, 'updateConfigGeneral']);
     Route::get('/findBySubdomain', [ChainController::class, 'findBySubdomain']);
+    Route::get('/getCustomatizacion', [ChainController::class, 'getCustomatizacion']);
 });

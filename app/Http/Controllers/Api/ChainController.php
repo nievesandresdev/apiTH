@@ -18,6 +18,7 @@ use App\Utils\Enums\EnumResponse;
 class ChainController extends Controller
 {
     public $chainServices;
+    public $hotelServices;
 
     public function __construct(
         ChainService $_chain_services,
@@ -102,6 +103,7 @@ class ChainController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateCustomization');
         }
     }
+
     public function findBySubdomain (Request $request) {
         try {
             $chainSubdomain = $request->attributes->get('chainSubdomain');
@@ -117,6 +119,24 @@ class ChainController extends Controller
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findBySubdomain');
+        }
+    }
+
+    public function getCustomatizacion (Request $request) {
+        try {
+            $chainSubdomain = $request->attributes->get('chainSubdomain');
+            $chain = $this->chainServices->findBySubdomain($chainSubdomain);
+            $customization = $chain->customization()->first();
+            if(!$customization){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $customization);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCustomatizacion');
         }
     }
 
