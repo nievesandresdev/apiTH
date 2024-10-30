@@ -91,6 +91,7 @@ class GuestAuthController extends Controller
         // Include 'chainId' in the state parameter
         $stateData = [
             'chainSubdomain' => $request->chainSubdomain,
+            'subdomain' => $request->subdomain ?? null,
         ];
 
         $state = base64_encode(json_encode($stateData));
@@ -112,6 +113,7 @@ class GuestAuthController extends Controller
 
             $decodedState = json_decode(base64_decode($state), true);
             $chainSubdomain = $decodedState['chainSubdomain'];
+            $subdomainHotel = $decodedState['subdomain'];
             $chain = $this->chainServices->findBySubdomain($chainSubdomain);
             
             
@@ -149,11 +151,11 @@ class GuestAuthController extends Controller
                     return redirect()->to($redirectUrl);    
                 }
                 // $token = $findGuest->createToken('auth_token')->plainTextToken;
-                $redirectUrl = buildUrlWebApp($chain, null, 'lista-de-alojamientos',"g={$guest->id}");
+                $redirectUrl = buildUrlWebApp($chain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
                 return redirect()->to($redirectUrl);
             }else{
                 // auth_token={$token}&googleId={$googleId}&
-                $redirectUrl = buildUrlWebApp($chain);
+                $redirectUrl = buildUrlWebApp($chain, $subdomainHotel);
                 return redirect()->to("{$redirectUrl}&g={$guest->id}&m=google&acform=complete");
             }
         } catch (\Exception $e) {
