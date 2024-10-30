@@ -14,11 +14,14 @@ Route::group(['prefix' => 'guest'], function () {
     Route::get('/findAndValidLastStay', [GuestController::class, 'findAndValidLastStay']);
     Route::get('/findByEmail', [GuestController::class, 'findByEmail']);
     Route::post('/sendMailTo', [GuestController::class, 'sendMailTo']);
-    
+
+    //update data huesped
+    Route::post('/updatePasswordGuest', [GuestController::class, 'updatePasswordGuest']);
+
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/inviteToHotel', [GuestHosterController::class, 'inviteToHotel']);
     });
-    
+
     Route::group(['prefix' => 'auth'], function () {
         Route::post('/registerOrLogin', [GuestAuthController::class, 'registerOrLogin']);
         Route::post('/updateById', [GuestAuthController::class, 'updateById']);
@@ -27,10 +30,13 @@ Route::group(['prefix' => 'guest'], function () {
         Route::get('/google', [GuestAuthController::class, 'getDataByGoogle']);
         Route::get('/google/callback', [GuestAuthController::class, 'handleGoogleCallback']);
 
-        
+
         Route::get('/facebook', [GuestController::class, 'authWithFacebook']);
         Route::post('/facebook/deleteData', [GuestController::class, 'deleteFacebookData']);
         Route::get('/facebook/callback', [GuestController::class, 'handleFacebookCallback']);
+
+
+
 
         // ->middleware('auth:sanctum')
     });

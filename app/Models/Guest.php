@@ -14,6 +14,7 @@ class Guest extends Authenticatable
 
     protected $fillable = [
         'name',
+        'lastname',
         'email',
         'phone',
         'lang_web',
@@ -62,4 +63,4 @@ class Guest extends Authenticatable
     {
         return $this->hasMany(Query::class);
     }
-}   
+}

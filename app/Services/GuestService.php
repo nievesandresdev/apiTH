@@ -43,7 +43,7 @@ class GuestService {
     public function saveOrUpdate($data)
     {
         try {
-            
+
             $email = $data->email;
             $name = $data->name ?? null;
             $phone = $data->phone ?? null;
@@ -52,7 +52,7 @@ class GuestService {
             $googleId = $data->googleId ?? null;
             $guest = Guest::where('email',$email)->first();
             $acronym = $this->generateInitialsName($name ?? $email);
-            
+
             if(!$guest){
                 $guest = Guest::create([
                     'name' =>$name,
@@ -63,7 +63,7 @@ class GuestService {
                     'avatar' => $avatar,
                     'googleId' => $googleId,
                 ]);
-                
+
             }else{
                 $guest->name = $name;
                 $guest->lang_web = $lang;
@@ -84,9 +84,53 @@ class GuestService {
     public function findByEmail($data)
     {
         try {
-            
-            $email = $data->email;    
+
+            $email = $data->email;
             return  Guest::where('email',$email)->first();
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function updatePasswordGuest($data)
+    {
+        try {
+            $guest = Guest::find($data->id);
+
+            // Si el campo password es null, permite establecer la nueva contraseña
+            if (is_null($guest->password) || Hash::check($data->currentPassword, $guest->password)) {
+                // Actualiza la nueva contraseña
+                $guest->password = Hash::make($data->newPassword);
+                $guest->save();
+
+                return [
+                    'valid_password' => true,
+                    'data' => $guest
+                ];
+            }
+
+            // Si la contraseña actual no es válida
+            return [
+                'valid_password' => false,
+                'message' => __('response.invalid_password')
+            ];
+
+        } catch (\Exception $e) {
+            return $e;  // Puedes registrar el error o manejarlo según tu configuración
+        }
+    }
+
+    public function updateDataGuest($data)
+    {
+        try {
+            $guest = Guest::find($data->id);
+            $guest->name = $data->name;
+            $guest->lastname = $data->lastname;
+            $guest->email = $data->email;
+            $guest->phone = $data->phone;
+            $guest->avatar = $data->avatar;
+            $guest->save();
+            return $guest;
         } catch (\Exception $e) {
             return $e;
         }
@@ -139,7 +183,7 @@ class GuestService {
         try {
             if(!$guestId) return;
             $guest = Guest::find($guestId);
-            
+
             if ($guest && $guest->stays()->exists()) {
                 $query = $guest->stays();  // Iniciar la consulta
 
@@ -224,7 +268,7 @@ class GuestService {
             $guest->acronym = $acronym;
 
             if (isset($data->password) && !empty($data->password)) {
-                $guest->password = bcrypt($data->password); 
+                $guest->password = bcrypt($data->password);
             }
 
             $guest->save();
@@ -238,7 +282,7 @@ class GuestService {
         try{
             $guest = $this->findByEmail($data);
             if ($guest && Hash::check($data->password, $guest->password)) {
-                return $guest; 
+                return $guest;
             }
             return null;
         } catch (\Exception $e) {

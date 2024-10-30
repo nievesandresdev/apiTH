@@ -95,7 +95,7 @@ class GuestController extends Controller
             $hotelId = $hotel->id ?? null;
             $chainId = $request->chainId;
             $guestId = $request->guestId;
-            
+
             $model = $this->service->findAndValidLastStay($guestId, $hotelId, $chainId);
             if(!$model){
                 $data = [
@@ -126,7 +126,7 @@ class GuestController extends Controller
 
     public function findByEmail (Request $request) {
         try {
-            
+
             $model = $this->service->findByEmail($request);
             if(!$model){
                 $data = [
@@ -139,6 +139,46 @@ class GuestController extends Controller
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findByEmail');
+        }
+    }
+
+    public function updatePasswordGuest(Request $request)
+    {
+        try {
+            $response = $this->service->updatePasswordGuest($request);
+
+
+            if (!$response['valid_password']) {
+                $data = [
+                    'message' => __('response.invalid_password')
+                ];
+                return bodyResponseRequest(EnumResponse::BAD_REQUEST, $data);
+            }
+
+            // Si la contraseña es correcta, devuelve el recurso actualizado
+            $data = $response['data'];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, $e->getMessage(), $e->getMessage());
+        }
+    }
+
+
+    public function updateDataGuest($id){
+        try {
+            $model = $this->service->updateDataGuest($id);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateDataGuest');
         }
     }
 }
