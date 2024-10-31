@@ -7,6 +7,7 @@ use App\Http\Resources\GuestResource;
 use App\Http\Resources\StayResource;
 use App\Models\Guest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 use App\Utils\Enums\EnumResponse;
 use App\Services\GuestService;
@@ -145,7 +146,7 @@ class GuestController extends Controller
     public function updatePasswordGuest(Request $request)
     {
         try {
-            $response = $this->service->updatePasswordGuest($request);
+            $response = $this->service->updateDataGuest($request);
 
 
             if (!$response['valid_password']) {
@@ -165,20 +166,38 @@ class GuestController extends Controller
     }
 
 
-    public function updateDataGuest($id){
-        try {
-            $model = $this->service->updateDataGuest($id);
-            if(!$model){
-                $data = [
-                    'message' => __('response.bad_request_long')
-                ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
-            }
-            $data = new GuestResource($model);
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+    public function updateDataGuest(Request $request) {
+        $guest = Guest::find($request->id);
 
-        } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateDataGuest');
+        if (!$guest) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
         }
+
+        if ($request->hasFile('avatar')) {
+            if ($guest->avatar) {
+                // Elimina el avatar antiguo si existe
+                Storage::delete($guest->avatar);
+            }
+
+            // Guarda el nuevo avatar usando el helper
+            $guest->avatar = saveImage($request->file('avatar'), 'guest-avatar', null, null, false, null);
+        }
+
+        $model = $this->service->updateDataGuest($guest, $request);
+
+        if (!$model) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+
+        $data = new GuestResource($model);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
     }
+
+
 }

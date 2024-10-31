@@ -791,7 +791,7 @@ if (! function_exists('requestSettingsDefault')) {
 // ===============================
 
 if (! function_exists('saveImage')) {
-    function saveImage($image, $model, $id, $type = null, $withname = false, $customname = null) {
+    function saveImage($image, $model, $id = null, $type = null, $withname = false, $customname = null) {
 
         $storage_env = config('app.storage_env');
         $rand = mt_Rand(1000000, 9999999);
