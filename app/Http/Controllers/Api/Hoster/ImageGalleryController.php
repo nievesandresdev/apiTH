@@ -65,7 +65,7 @@ class ImageGalleryController extends Controller
                     $counter = $numbersImagesWithSameName > 1 ? $numbersImagesWithSameName + 1 : 1;
                     $customname = "$customname"."_"."$counter";
                 }
-            } 
+            }
             $pathImg = saveImage($request->file, "gallery", $hotelModel->id, $type, true, $customname);
             $data = ["url" => $pathImg, 'input' => $request->all()];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);

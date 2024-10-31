@@ -10,6 +10,8 @@ use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
@@ -120,21 +122,22 @@ class GuestService {
         }
     }
 
-    public function updateDataGuest($data)
-    {
+    public function updateDataGuest($guest,$request) {
         try {
-            $guest = Guest::find($data->id);
-            $guest->name = $data->name;
-            $guest->lastname = $data->lastname;
-            $guest->email = $data->email;
-            $guest->phone = $data->phone;
-            $guest->avatar = $data->avatar;
+            $guest->name = $request->name ?? $guest->name;
+            $guest->lastname = $request->lastname ?? $guest->lastname;
+            $guest->email = $request->email ?? $guest->email;
+            $guest->phone = $request->phone ?? $guest->phone;
+
             $guest->save();
             return $guest;
+
         } catch (\Exception $e) {
-            return $e;
+            logger()->error("Error en updateDataGuest: " . $e->getMessage());
+            return null;
         }
     }
+
 
     public function updateLanguage ($data)
     {

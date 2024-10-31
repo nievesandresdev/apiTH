@@ -18,6 +18,8 @@ class GuestResource extends JsonResource
         return [
             "id"=> $this->id,
             "name"=> $this->name,
+            "lastname" => $this->lastname,
+            "avatar"=> $this->avatar,
             "lang_web"=> $this->lang_web,
             "email"=> $this->email,
             "phone"=> $this->phone,
