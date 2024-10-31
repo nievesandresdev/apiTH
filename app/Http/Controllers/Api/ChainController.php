@@ -12,6 +12,7 @@ use App\Services\ChainService;
 use App\Services\HotelService;
 
 use App\Models\Hotel;
+use App\Models\Customization;
 
 use App\Utils\Enums\EnumResponse;
 
@@ -22,11 +23,13 @@ class ChainController extends Controller
 
     public function __construct(
         ChainService $_chain_services,
-        HotelService $_hotel_service
+        HotelService $_hotel_service,
+        Customization $_customization_model
         )
     {
         $this->chainServices = $_chain_services;
         $this->hotelServices = $_hotel_service;
+        $this->customizationModel = $_customization_model;
     }
 
     public function verifySubdomainExist (Request $request) {
@@ -128,10 +131,7 @@ class ChainController extends Controller
             $chain = $this->chainServices->findBySubdomain($chainSubdomain);
             $customization = $chain->customization()->first();
             if(!$customization){
-                $data = [
-                    'message' => __('response.bad_request_long')
-                ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+                $customization = $this->customizationModel->valueDefault();
             }
             return bodyResponseRequest(EnumResponse::ACCEPTED, $customization);
 

@@ -22,6 +22,28 @@ class Customization extends Model
         'colors' => 'array',
     ];
 
+
+    public function valueDefault () {
+        $customizationDefault = [
+            "colors" => [
+                [
+                    "cod_hex" => '#333333',
+                    "cod_rbg" => 'rgb(51, 51, 51)',
+                    "contrast" => '0',
+                ],
+                [
+                    "cod_hex" => '#333333',
+                    "cod_rbg" => 'rgb(51, 51, 51)',
+                    "contrast" => '0',
+                ]
+            ],
+            "logo" => null,
+            "name" => null,
+            "type_header" => '0',
+            "tonality_header" => '0',
+        ];
+        return $customizationDefault;
+    }
     
     
 }
