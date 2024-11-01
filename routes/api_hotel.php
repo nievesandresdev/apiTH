@@ -36,6 +36,4 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('buildUrlWebApp', [HotelController::class, 'buildUrlWebApp']);
     //findById
     Route::get('findById/{id}', [HotelController::class, 'findById']);
-    //getStayByHotel
-    Route::get('getStayByHotel/{id}', [HotelController::class, 'getStaysByHotel']);
 });
