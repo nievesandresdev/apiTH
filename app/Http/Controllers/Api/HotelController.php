@@ -217,6 +217,21 @@ class HotelController extends Controller
         }
     }
 
+    public function buildUrlWebApp (Request $request) {
+        try {
+            $chainSubdomain = $request->attributes->get('chainSubdomain');
+            $hotelSlug = $request->slugHotel ?? null;
+            $uri = $request->uri ?? null;
+            $paramsString = $request->paramsString ?? null;
+
+            $url = buildUrlWebApp($chainSubdomain, $hotelSlug, $uri, $paramsString);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $url);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.buildUrlWebApp');
+        }
+    }
+
 
 
     public function updateShowButtons(Request $request)

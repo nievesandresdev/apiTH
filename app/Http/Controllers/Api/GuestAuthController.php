@@ -89,12 +89,12 @@ class GuestAuthController extends Controller
             $request->validate(['email' => 'required|email']);
 
             $chainSubdomain = $request->attributes->get('chainSubdomain');
-            $chain = $this->chainServices->findBySubdomain($chainSubdomain);
+            // $chain = $this->chainServices->findBySubdomain($chainSubdomain);
 
             $hotel = $request->attributes->get('hotel');
             $hotelSlug = $hotel->subdomain ?? null;
 
-            $url = buildUrlWebApp($chain, $hotelSlug,'restablecer-contrasena',"email={$request->email}&token=");
+            $url = buildUrlWebApp($chainSubdomain, $hotelSlug,'restablecer-contrasena',"email={$request->email}&token=");
             
 
             $model = $this->service->sendResetLinkEmail($request->email, $url);
@@ -184,15 +184,15 @@ class GuestAuthController extends Controller
                 if($stay){
                     $hotel = $this->hotelServices->findById($stay->hotel_id);
                     //falto revisar cuando si tiene estancia
-                    $redirectUrl = buildUrlWebApp($chain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
+                    $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
                     return redirect()->to($redirectUrl);    
                 }
                 // $token = $findGuest->createToken('auth_token')->plainTextToken;
-                $redirectUrl = buildUrlWebApp($chain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
                 return redirect()->to($redirectUrl);
             }else{
                 // auth_token={$token}&googleId={$googleId}&
-                $redirectUrl = buildUrlWebApp($chain, $subdomainHotel);
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel);
                 return redirect()->to("{$redirectUrl}&g={$guest->id}&m=google&acform=complete");
             }
         } catch (\Exception $e) {

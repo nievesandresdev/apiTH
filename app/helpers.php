@@ -552,9 +552,9 @@ if (! function_exists('includeSubdomainInUrlHuesped')) {
 }
 
 if (! function_exists('buildUrlWebApp')) {
-    function buildUrlWebApp($chain, $hotelSlug = null, $uri = null, $paramsString = null){
-        $chainSubdomain = $chain->subdomain;
-        $isIndependentChain = $chain->type == "INDEPENDENT";
+    function buildUrlWebApp($chainSubdomain, $hotelSlug = null, $uri = null, $paramsString = null){
+        // $chainSubdomain = $chain->subdomain;
+        // $isIndependentChain = $chain->type == "INDEPENDENT";
         $resultURL = null;
         $guest_path  = config('app.guest_path');
         $env  = config('app.env');
