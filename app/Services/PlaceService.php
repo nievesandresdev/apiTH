@@ -116,11 +116,11 @@ class PlaceService {
         try {
             
             $typePLacesCollection = TypePlaces::where('active', 1)
-            ->where('show', 1)
-            ->with(['CategoriPlaces' => function ($query) {
-                $query->where('active', 1)->where('show', 1)->orderBy('order');
-            }])
-            ->get();
+            ->where('show', 1)->get();
+            // ->with(['CategoriPlaces' => function ($query) {
+            //     $query->where('active', 1)->where('show', 1)->orderBy('order');
+            // }])
+            // ->get();
 
             return $typePLacesCollection;
 
