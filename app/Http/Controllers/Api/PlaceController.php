@@ -73,7 +73,7 @@ class PlaceController extends Controller
         try {
 
             $modelHotel = $request->attributes->get('hotel');
-
+            
             $hotelId = $modelHotel->id;
             $search = $request->search ?? null;
             $cityName = $request->city ?? $modelHotel->zone;
@@ -108,6 +108,7 @@ class PlaceController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $categoriesCollection);
 
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCategoriesByType');
         }
 
