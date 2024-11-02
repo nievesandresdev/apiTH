@@ -125,7 +125,6 @@ class PlaceController extends Controller
             $typePlacesCollection = $this->service->getTypePlaces($request, $modelHotel);
 
             $typePlacesCollection = TypePlaceResource::collection($typePlacesCollection);
-            return $typePlacesCollection;
             return bodyResponseRequest(EnumResponse::ACCEPTED, $typePlacesCollection);
 
         } catch (\Exception $e) {
