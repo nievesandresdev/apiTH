@@ -20,6 +20,7 @@ class ChainController extends Controller
 {
     public $chainServices;
     public $hotelServices;
+    public $customizationModel;
 
     public function __construct(
         ChainService $_chain_services,
@@ -139,6 +140,19 @@ class ChainController extends Controller
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCustomatizacion');
+        }
+    }
+
+    public function getStaysGuest (Request $request) {
+        try {
+            $stayId = $request->stayId;
+            $guestId = $request->guestId;
+            $chainId = $request->chainId;
+            //$hotel = $request->attributes->get('hotel');
+            $stays = $this->chainServices->getStaysGuest($chainId, $guestId, $stayId);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $stays);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getStayByHotel');
         }
     }
 

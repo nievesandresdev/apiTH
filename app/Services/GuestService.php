@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Mail\Guest\MsgStay;
+use App\Mail\Guest\ResetPasswordGuest;
 use App\Models\Guest;
 use App\Models\hotel;
 use App\Models\StayNotificationSetting;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
@@ -83,11 +85,9 @@ class GuestService {
         }
     }
 
-    public function findByEmail($data)
+    public function findByEmail($email)
     {
         try {
-
-            $email = $data->email;
             return  Guest::where('email',$email)->first();
         } catch (\Exception $e) {
             return $e;
@@ -97,6 +97,7 @@ class GuestService {
     public function updatePasswordGuest($data)
     {
         try {
+            return $data->id;
             $guest = Guest::find($data->id);
 
             // Si el campo password es null, permite establecer la nueva contraseña
@@ -270,8 +271,10 @@ class GuestService {
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
             $guest->acronym = $acronym;
 
+            Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
                 $guest->password = bcrypt($data->password);
+                Log::info('update pass'. $guest->password);
             }
 
             $guest->save();
@@ -283,7 +286,9 @@ class GuestService {
 
     public function confirmPassword($data){
         try{
-            $guest = $this->findByEmail($data);
+            $guest = $this->findByEmail($data->email);
+            Log::info('$guest find '.json_encode($guest));
+            Log::info('compare '.Hash::check($data->password, $guest->password));
             if ($guest && Hash::check($data->password, $guest->password)) {
                 return $guest;
             }
@@ -380,5 +385,50 @@ class GuestService {
         }
     }
 
+    public function sendResetLinkEmail($email, $url){
 
+        try {
+            $guest = $this->findByEmail($email);
+
+            // Generar token de restablecimiento
+            $token = Str::random(60);
+             // Guardar token en la base de datos
+            DB::table('password_resets')->insert([
+                'email' => $guest->email,
+                'token' => $token,
+                'model_type' => get_class($guest),
+                'model_id' => $guest->id,
+                'created_at' => now()
+            ]);
+        
+            // Enviar correo con el enlace de restablecimiento
+            Mail::to($email)->send(new ResetPasswordGuest($url.$token));
+            return true;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function resetPassword($token, $newPassword){
+
+        try {
+            
+            $reset = DB::table('password_resets')->where([
+                ['token', $token]
+            ])->first();
+            if(!$reset) return null;
+            
+            $guest = $this->findByEmail($reset->email);
+            if(!$guest) return null;
+            $dataGuest = new \stdClass();
+            $dataGuest->id = $guest->id;
+            $dataGuest->name = $guest->name;
+            $dataGuest->email = $guest->email;
+            $dataGuest->password = $newPassword;
+            $result = $this->updateById($dataGuest);
+            return $result;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }

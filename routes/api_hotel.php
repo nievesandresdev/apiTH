@@ -33,9 +33,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/verifySubdomainExistPerHotel', [HotelController::class, 'verifySubdomainExistPerHotel']);
     Route::post('/customization', [HotelController::class, 'updateCustomization']);
     Route::post('/updateShowButtons', [HotelController::class, 'updateShowButtons']);
+    Route::get('buildUrlWebApp', [HotelController::class, 'buildUrlWebApp']);
     //findById
     Route::get('findById/{id}', [HotelController::class, 'findById']);
-    //getStayByHotel
-    Route::get('getStayByHotel/{id}', [HotelController::class, 'getStaysByHotel']);
-
 });

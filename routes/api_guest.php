@@ -27,7 +27,9 @@ Route::group(['prefix' => 'guest'], function () {
     Route::group(['prefix' => 'auth'], function () {
         Route::post('/registerOrLogin', [GuestAuthController::class, 'registerOrLogin']);
         Route::post('/updateById', [GuestAuthController::class, 'updateById']);
+        Route::post('/sendResetLinkEmail', [GuestAuthController::class, 'sendResetLinkEmail']);
         Route::post('/confirmPassword', [GuestAuthController::class, 'confirmPassword']);
+        Route::post('/resetPassword', [GuestAuthController::class, 'resetPassword']);
 
         Route::get('/google', [GuestAuthController::class, 'getDataByGoogle']);
         Route::get('/google/callback', [GuestAuthController::class, 'handleGoogleCallback']);

@@ -40,7 +40,7 @@ class GuestAuthController extends Controller
             $data = [];
             switch ($type) {
                 case 'email':
-                    $guest = $this->findByEmail($request);
+                    $guest = $this->findByEmail($request->email);
                     break;
                 case 'google':
                         $data['redirect'] = buildUrlWebApp('cadena','slug','completar-registro');
@@ -77,6 +77,43 @@ class GuestAuthController extends Controller
             $model = $this->service->confirmPassword($request);
             if($model){
                 $model = new GuestResource($model);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
+        }
+    }
+
+    public function sendResetLinkEmail(Request $request){
+        try {
+            $request->validate(['email' => 'required|email']);
+
+            $chainSubdomain = $request->attributes->get('chainSubdomain');
+            // $chain = $this->chainServices->findBySubdomain($chainSubdomain);
+
+            $hotel = $request->attributes->get('hotel');
+            $hotelSlug = $hotel->subdomain ?? null;
+
+            $url = buildUrlWebApp($chainSubdomain, $hotelSlug,'restablecer-contrasena',"email={$request->email}&token=");
+            
+
+            $model = $this->service->sendResetLinkEmail($request->email, $url);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
+        }
+    }
+
+    public function resetPassword(Request $request){
+        try {
+            $request->validate(['token' => 'required','newPassword' => 'required']);
+            
+            $model = $this->service->resetPassword($request->token, $request->newPassword);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
         } catch (\Exception $e) {
@@ -134,7 +171,7 @@ class GuestAuthController extends Controller
             $dataGuest->avatar = $avatar;
             $dataGuest->googleId = $googleId;
             // Log::info('$avatar '.$avatar);
-            $findGuest = $this->service->findByEmail($dataGuest);
+            $findGuest = $this->service->findByEmail($email);
             $guest = $this->service->saveOrUpdate($dataGuest);
             
             // // $guest = Guest::where('email', $email)->first();
@@ -147,15 +184,15 @@ class GuestAuthController extends Controller
                 if($stay){
                     $hotel = $this->hotelServices->findById($stay->hotel_id);
                     //falto revisar cuando si tiene estancia
-                    $redirectUrl = buildUrlWebApp($chain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
+                    $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
                     return redirect()->to($redirectUrl);    
                 }
                 // $token = $findGuest->createToken('auth_token')->plainTextToken;
-                $redirectUrl = buildUrlWebApp($chain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
                 return redirect()->to($redirectUrl);
             }else{
                 // auth_token={$token}&googleId={$googleId}&
-                $redirectUrl = buildUrlWebApp($chain, $subdomainHotel);
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel);
                 return redirect()->to("{$redirectUrl}&g={$guest->id}&m=google&acform=complete");
             }
         } catch (\Exception $e) {

@@ -93,15 +93,6 @@ class HotelController extends Controller
         }
     }
 
-    public function getStaysByHotel($id){
-        try {
-            //$hotel = $request->attributes->get('hotel');
-            $stays = $this->service->getStayByHotel($id);
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $stays);
-        } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getStayByHotel');
-        }
-    }
 
     public function findByParams (Request $request) {
         try {
@@ -214,6 +205,21 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+        }
+    }
+
+    public function buildUrlWebApp (Request $request) {
+        try {
+            $chainSubdomain = $request->attributes->get('chainSubdomain');
+            $hotelSlug = $request->slugHotel ?? null;
+            $uri = $request->uri ?? null;
+            $paramsString = $request->paramsString ?? null;
+
+            $url = buildUrlWebApp($chainSubdomain, $hotelSlug, $uri, $paramsString);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $url);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.buildUrlWebApp');
         }
     }
 

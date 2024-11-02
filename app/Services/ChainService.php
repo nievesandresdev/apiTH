@@ -86,5 +86,52 @@ class ChainService
         }
     }
    
+    public function getStaysGuest($chainId, $guestId, $currentStayId)
+    {
+        $hotels = Hotel::where('chain_id', $chainId)->active()->pluck('id');
+
+        // Obtenemos todas las estancias de los hoteles en la cadena
+        $stays = DB::table('guest_stay as gs')
+        ->select(
+            'gs.stay_id', 
+            'gs.guest_id', 
+            'gs.chain_id', 
+            'stays.hotel_id', 
+            'stays.room', 
+            'stays.number_guests', 
+            'stays.id as stayId', 
+            'stays.check_in', 
+            'stays.check_out', 
+            'hotels.name as hotel_name', 
+            'hotels.zone as hotel_zone'
+        )
+        ->join('stays', 'stays.id', '=', 'gs.stay_id')
+        ->join('hotels', 'hotels.id', '=', 'stays.hotel_id')
+        ->where('gs.chain_id', $chainId)
+        ->where('gs.guest_id', $guestId)
+        ->get();
+
+
+        // Fecha actual para verificar estancia activa
+        $currentDate = Carbon::now();
+
+        // Filtramos y ordenamos las estancias
+        $stays = $stays->map(function ($stay) use ($currentStayId) {
+            $stay->isActive = $stay->stayId == $currentStayId;
+            return $stay;
+        });
+
+        // Separa la estancia activa
+        $activeStay = $stays->firstWhere('isActive', true);
+        $otherStays = $stays->where('isActive', false)->sortByDesc('check_in');
+
+        // Construye el listado en el formato deseado
+        $result = [
+            'active_stay' => $activeStay,
+            'other_stays' => $otherStays->values()->all()
+        ];
+
+        return $result;
+    }
 }
 
