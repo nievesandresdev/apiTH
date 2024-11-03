@@ -65,7 +65,7 @@ class ChainController extends Controller
 
     public function updateConfigGeneral (Request $request) {
         try {
-            
+
             $environment = config('app.env');
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
@@ -92,7 +92,7 @@ class ChainController extends Controller
                 }
             }
             $this->chainServices->updateSubdomain($subdomain, $chainModel);
-            
+
             $this->hotelServices->updateSlug($slugHotel, $hotelModel);
 
             $this->chainServices->updateConfigGeneral($request, $hotelModel);
@@ -134,7 +134,7 @@ class ChainController extends Controller
             if(!$customization){
                 $customization = $this->customizationModel->valueDefault();
             }
-            $customization['colors'][0]['contrast_color'] = $customization['colors'][0]['contrast'] == '0' ? '#33333' : '#ffffff'; 
+            $customization['colors'][0]['contrast_color'] = $customization['colors'][0]['contrast'] == '0' ? '#33333' : '#ffffff';
             $customization['colors'][1]['contrast_color'] = $customization['colors'][1]['contrast'] == '0' ? '#33333' : '#ffffff';
             return bodyResponseRequest(EnumResponse::ACCEPTED, $customization);
 
