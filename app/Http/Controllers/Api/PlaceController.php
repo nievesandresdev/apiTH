@@ -12,6 +12,8 @@ use App\Services\CityService;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Str;
 
+use App\Http\Resources\TypePlaceResource;
+
 class PlaceController extends Controller
 {
     public $service;
@@ -108,6 +110,7 @@ class PlaceController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $categoriesCollection);
 
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCategoriesByType');
         }
 
@@ -120,10 +123,8 @@ class PlaceController extends Controller
             $modelHotel = $request->attributes->get('hotel');
 
             $typePlacesCollection = $this->service->getTypePlaces($request, $modelHotel);
-            // return $typePlacesCollection;
-            // $data = new ExperiencePaginateResource($experiencesCollection);
 
-
+            $typePlacesCollection = TypePlaceResource::collection($typePlacesCollection);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $typePlacesCollection);
 
         } catch (\Exception $e) {
