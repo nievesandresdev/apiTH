@@ -161,18 +161,18 @@ class StayController extends Controller
             $updateStay = $this->service->updateStayData($request);
             $data = ['message' => __('response.bad_request_long')];
             if(!$updateStay) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
-            //actualizar huespedes
-            foreach($request->listGuest as $g){
-                $data = (object) $g;
-                $updateGuest = $this->guestService->updateById($data);
-                $data = ['message' => __('response.bad_request_long')];
-                if(!$updateGuest) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
-            }
-            //eliminar huespedes
-            $deleteList = $request->deleteList;
-            foreach ($deleteList as $g) {
-                $this->service->deleteGuestOfStay($request->stayId,$g);
-            }
+            // //actualizar huespedes
+            // foreach($request->listGuest as $g){
+            //     $data = (object) $g;
+            //     $updateGuest = $this->guestService->updateById($data);
+            //     $data = ['message' => __('response.bad_request_long')];
+            //     if(!$updateGuest) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            // }
+            // //eliminar huespedes
+            // $deleteList = $request->deleteList;
+            // foreach ($deleteList as $g) {
+            //     $this->service->deleteGuestOfStay($request->stayId,$g);
+            // }
             $response = new StayResource($updateStay);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $response);
         } catch (\Exception $e) {

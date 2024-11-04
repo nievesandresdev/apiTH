@@ -303,10 +303,11 @@ class StayService {
 
         try{
             $stay = Stay::find($request->stayId);
-            $stay->room = $request->room;
-            $stay->number_guests = $request->numberGuests;
-            $stay->check_in = $request->checkDate['start'];
-            $stay->check_out = $request->checkDate['end'];
+            $stay->room = $request->room ?? $stay->room;
+            $stay->number_guests = $request->numberGuests ?? $stay->number_guests;
+            $stay->middle_reservation = $request->middle_reservation ?? $stay->middle_reservation;
+            $stay->check_in = $request->checkDate['start'] ?? $stay->check_in;
+            $stay->check_out = $request->checkDate['end'] ?? $stay->check_out;
             $stay->save();
 
             return $stay;
