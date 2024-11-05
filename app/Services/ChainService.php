@@ -103,7 +103,8 @@ class ChainService
             'stays.check_in', 
             'stays.check_out', 
             'hotels.name as hotel_name', 
-            'hotels.zone as hotel_zone'
+            'hotels.zone as hotel_zone',
+            'hotels.subdomain as hotel_subdomain',
         )
         ->join('stays', 'stays.id', '=', 'gs.stay_id')
         ->join('hotels', 'hotels.id', '=', 'stays.hotel_id')
