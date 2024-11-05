@@ -134,8 +134,9 @@ class ChainController extends Controller
             if(!$customization){
                 $customization = $this->customizationModel->valueDefault();
             }
-            $customization['colors'] = gettype($customization['colors']) == 'string' ? json_decode($customization['colors']) : $customization;
-            $customization['colors'][0]['contrast_color'] = $customization['colors'][0]['contrast'] == '0' ? '#333333' : '#ffffff';
+            $colors = gettype($customization['colors']) == 'string' ? json_decode($customization['colors']) : $customization;
+            $colors[0]['contrast_color'] = $colors[0]['contrast'] == '0' ? '#333333' : '#ffffff';
+            return $colors;
             $customization['colors'][1]['contrast_color'] = $customization['colors'][1]['contrast'] == '0' ? '#333333' : '#ffffff';
             return bodyResponseRequest(EnumResponse::ACCEPTED, $customization);
 
