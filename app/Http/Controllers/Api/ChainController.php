@@ -140,6 +140,7 @@ class ChainController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $customization);
 
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCustomatizacion');
         }
     }
