@@ -19,6 +19,7 @@ class TypePlaceResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "icon" => $this->icon,
             "translation_current" => $this->translate[localeCurrent()],
             "categori_places" => CategoriPlaceResource::collection($this->categoriPlaces()->where(['active'=>true, 'show'=>true])->get())
         ];

@@ -17,6 +17,7 @@ class CategoriPlaceResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "icon" => $this->icon,
             "type_places_id" => $this->type_places_id,
             "translation_current" => $this->translate ? $this->translate[localeCurrent()] : null
             // localeCurrent()
