@@ -117,6 +117,7 @@ class HotelController extends Controller
     public function getAllCrossellings (Request $request) {
         try {
             $modelHotel = $request->attributes->get('hotel');
+            //return bodyResponseRequest(EnumResponse::ACCEPTED, $modelHotel);
             // $modelTypePlaces = TypePlaces::all();
 
             //crear array de ciudades para la consulta
