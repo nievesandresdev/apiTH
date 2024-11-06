@@ -21,7 +21,8 @@ class Stay extends Model
         'hour_checkout',
         'pending_queries_seen',
         'sessions',
-        'trial'
+        'trial',
+        'guest_id'
     ];
 
     protected $casts = [
