@@ -29,11 +29,11 @@ class Customization extends Model
                 [
                     "cod_hex" => '#333333',
                     "cod_rbg" => 'rgb(51, 51, 51)',
-                    "contrast" => '0',
+                    "contrast" => '1',
                 ],
                 [
-                    "cod_hex" => '#333333',
-                    "cod_rbg" => 'rgb(51, 51, 51)',
+                    "cod_hex" => '#FAFAFA',
+                    "cod_rbg" => 'rgb(250, 250, 250)',
                     "contrast" => '0',
                 ]
             ],

@@ -38,6 +38,7 @@ class PlaceResource extends JsonResource
             'place_images' => $this->images,
             'distance' => $distance,
             'type_place' => $this->typePlaces,
+            'categori_place' => new CategoriPlaceResource($this->categoriPlaces),
             'range_prices' => $this->range_prices,
             'type_cuisine' => $this->type_cuisine,
             'url_menu' => $this->url_menu,
