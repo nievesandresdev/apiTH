@@ -117,11 +117,10 @@ class FacilityController extends Controller
             // return $f;
             $image = null;
             $hotelModel = $request->attributes->get('hotel');
-            // Verificar si hay una imagen en el modelo del hotel, de lo contrario usar una imagen por defecto
             if ($hotelModel->image == null) {
-                $image = ['/storage/gallery/general-1.jpg']; // Aseguramos que sea un array
+                $image = ['/storage/gallery/general-1.jpg']; //  array
             } else {
-                $image = is_array($hotelModel->image) ? $hotelModel->image : [$hotelModel->image]; // Aseguramos que sea un array
+                $image = is_array($hotelModel->image) ? $hotelModel->image : [$hotelModel->image]; //  array
             }
             \DB::beginTransaction();
             $facilityHosterModel = $this->service->storeOrUpdate($request, $hotelModel);
