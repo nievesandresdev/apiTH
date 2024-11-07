@@ -163,7 +163,7 @@ class FacilityService {
         $count = 1;
 
         // Repite el proceso hasta que encuentres un título que no exista
-        while (FacilityHoster::where('hotel_id', $hotelId)->where('title', $baseTitle)->exists()) {
+        while (FacilityHoster::where('hotel_id', $hotelId)->where('title', $baseTitle)->where('visible',1)->exists()) {
             $count++;
             $baseTitle = $originalTitle . ' ' . $count;
         }
