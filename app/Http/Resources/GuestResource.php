@@ -23,6 +23,7 @@ class GuestResource extends JsonResource
             "lang_web"=> $this->lang_web,
             "email"=> $this->email,
             "phone"=> $this->phone,
+            "hasPassword"=>  boolval($this->password),
         ];
     }
 }

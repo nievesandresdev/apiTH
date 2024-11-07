@@ -32,6 +32,7 @@ class StayResource extends JsonResource
             "uniqueAccessesCount" => $uniqueAccessesCount,
             "hotelSubdomain" => $this->hotel->subdomain,
             "middle_reservation" => $this->middle_reservation,
+            "guestIdCreator" => $this->guest_id,
         ];
     }
 }

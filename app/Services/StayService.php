@@ -111,7 +111,8 @@ class StayService {
                 'number_guests' => $request->numberGuests,
                 'language' => $langs[$request->language],
                 'check_in' => $request->checkDate['start'],
-                'check_out' => $request->checkDate['end']
+                'check_out' => $request->checkDate['end'],
+                'guest_id' => $guest->id,
             ]);
             // $guest->stays()->syncWithoutDetaching([$stay->id]);
             $guest->stays()->syncWithoutDetaching([
