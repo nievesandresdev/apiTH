@@ -91,7 +91,7 @@ class FacilityService {
 
     public function storeOrUpdate ($request, $hotelModel) {
         $title = $request->title ?? 'Nueva Instalación';
-        $title = $this->generateUniqueTitle($title, $hotelModel->id);
+        $title = $this->generateUniqueTitle($title, $hotelModel->id,$request->id);
 
         if($request->id){
             $facilityHosterModel = FacilityHoster::find($request->id);
