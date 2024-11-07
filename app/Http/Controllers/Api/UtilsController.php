@@ -5,14 +5,19 @@ namespace App\Http\Controllers\Api;
 use App\Events\Chat\NotifyUnreadMsg;
 use App\Http\Controllers\Controller;
 use App\Jobs\Chat\NofityPendingChat;
+use App\Models\Chat;
 use App\Models\ChatMessage;
+use App\Models\Guest;
+use App\Models\NoteGuest;
 use App\Models\Query;
 use App\Models\Stay;
+use App\Models\StayAccess;
 use App\Services\ChatService;
 use App\Services\Hoster\Chat\ChatSettingsServices;
 use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\Hoster\Users\UserServices;
 use App\Services\QuerySettingsServices;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -66,9 +71,9 @@ class UtilsController extends Controller
     
     public function test()
     {
-        
-        return buildUrlWebApp('cadena');
+       
     }
+
 
 
 }

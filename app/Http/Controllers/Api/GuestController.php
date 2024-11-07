@@ -223,6 +223,27 @@ class GuestController extends Controller
         }
     }
 
+    public function deleteGuestOfStay(Request $request) {
+        try {
+            $guestId = $request->guestId;
+            $stayId = $request->stayId;
+            $chainId = $request->chainId;
+            $hotelId = $request->hotelId;
+            
+            $model = $this->service->deleteGuestOfStay($guestId, $stayId, $hotelId, $chainId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteGuestOfStay');
+        }
+    }
+
     
 
 
