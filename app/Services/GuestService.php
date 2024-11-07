@@ -271,7 +271,7 @@ class GuestService {
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
             $guest->acronym = $acronym;
 
-            Log::info('pass '.$data->password);
+            // Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
                 $guest->password = bcrypt($data->password);
                 Log::info('update pass'. $guest->password);
@@ -428,6 +428,28 @@ class GuestService {
             $result = $this->updateById($dataGuest);
             return $result;
         } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function createAccessInStay($guestId, $stayId, $chainId)
+    {
+        try {
+            DB::beginTransaction();
+            $guest = Guest::find($guestId);
+            if(!$guest) return;
+
+            $guest->stays()->syncWithoutDetaching([
+                $stayId => ['chain_id' => $chainId]
+            ]);
+            
+            //guardar acceso
+            $this->stayAccessService->save($stayId,$guestId);
+            DB::commit();
+            return $guest;
+
+        } catch (\Exception $e) {
+            DB::rollback();
             return $e;
         }
     }
