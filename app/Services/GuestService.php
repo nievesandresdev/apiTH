@@ -6,6 +6,7 @@ use App\Mail\Guest\MsgStay;
 use App\Mail\Guest\ResetPasswordGuest;
 use App\Models\Guest;
 use App\Models\hotel;
+use App\Models\Stay;
 use App\Models\StayNotificationSetting;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
@@ -445,8 +446,19 @@ class GuestService {
             
             //guardar acceso
             $this->stayAccessService->save($stayId,$guestId);
+
+            //actualizar conteo de huespedes
+            $stay = Stay::find($stayId);
+            $currentCountGuestsInStay = $stay->guests()->count();
+            if($currentCountGuestsInStay > intval($stay->number_guests)){
+                $stay->number_guests = $currentCountGuestsInStay;
+                $stay->save();
+            }
             DB::commit();
-            return $guest;
+            return [
+                'stay' => $stay,
+                'guest' => $guest,
+            ];
 
         } catch (\Exception $e) {
             DB::rollback();

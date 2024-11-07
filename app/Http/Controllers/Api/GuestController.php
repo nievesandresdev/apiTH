@@ -212,7 +212,10 @@ class GuestController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            $data = new GuestResource($model);
+            $data = [
+                'guest' => new GuestResource($model['guest']),
+                'stay' => new StayResource($model['stay']),
+            ];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
