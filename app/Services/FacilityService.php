@@ -157,13 +157,32 @@ class FacilityService {
         }
     }
 
-    private function generateUniqueTitle($baseTitle, $hotelId)
+    /* private function generateUniqueTitle($baseTitle, $hotelId)
     {
         $originalTitle = $baseTitle;
         $count = 1;
 
         // Repite el proceso hasta que encuentres un título que no exista
         while (FacilityHoster::where('hotel_id', $hotelId)->where('title', $baseTitle)->where('visible',1)->exists()) {
+            $count++;
+            $baseTitle = $originalTitle . ' ' . $count;
+        }
+
+        return $baseTitle;
+    } */
+
+    private function generateUniqueTitle($baseTitle, $hotelId, $currentId = null)
+    {
+        $originalTitle = $baseTitle;
+        $count = 1;
+
+        while (FacilityHoster::where('hotel_id', $hotelId)
+            ->where('title', $baseTitle)
+            ->where('visible', 1)
+            ->when($currentId, function ($query) use ($currentId) {
+                return $query->where('id', '!=', $currentId);
+            })
+            ->exists()) {
             $count++;
             $baseTitle = $originalTitle . ' ' . $count;
         }
