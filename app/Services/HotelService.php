@@ -364,6 +364,11 @@ class HotelService {
     }
 
     public function createSubdomainInCloud ($subdomain, $environment) {
+        try {
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
 
         $email = env('EMAIL_CLOUDFLARE');
         $api_key = env('API_KEY_CLOUDFLARE');
@@ -384,7 +389,6 @@ class HotelService {
             'ttl'     => 1,
             'proxied' => false,
         ]);
-
         // Configura las opciones de cURL
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'X-Auth-Email: ' . $email,
