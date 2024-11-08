@@ -27,14 +27,6 @@ class WorkPositionController extends Controller
 
     public function store()
     {
-        /* $data = request()->validate([
-            //'name' => 'required|string|unique:work_positions',
-            'permissions' => 'required|array', // Asegura que los permisos se envían como un array
-            'notifications' => 'required|array', // Asegura que las notificaciones se envían como un array
-            'periodicityChat' => 'required|integer',
-            'periodicityStay' => 'required|integer'
-        ]); */
-
 
         try {
             // Guarda la posición de trabajo con los permisos y notificaciones enviados
@@ -64,7 +56,6 @@ class WorkPositionController extends Controller
         $work_position = WorkPosition::find(request()->id);
 
         $data = request()->validate([
-            //'name' => 'required|string|unique:work_positions,name,' . request()->id . ',id',
             'permissions' => 'required|array', // Asegura que los permisos se envían como un array
             'notifications' => 'required|array', // Asegura que las notificaciones se envían como un array
             'periodicityChat' => 'required|integer',
@@ -74,7 +65,7 @@ class WorkPositionController extends Controller
 
         try {
             $work_position->update([
-                'name' => $data['name'],
+                'name' => request()->name,
                 'permissions' => json_encode($data['permissions']), // Guarda el JSON de permisos
                 'notifications' => json_encode($data['notifications']), // Guarda el JSON de notificaciones
                 'periodicity_chat' => $data['periodicityChat'],
