@@ -64,7 +64,7 @@ class WorkPositionController extends Controller
         $work_position = WorkPosition::find(request()->id);
 
         $data = request()->validate([
-            'name' => 'required|string|unique:work_positions,name,' . request()->id . ',id',
+            //'name' => 'required|string|unique:work_positions,name,' . request()->id . ',id',
             'permissions' => 'required|array', // Asegura que los permisos se envían como un array
             'notifications' => 'required|array', // Asegura que las notificaciones se envían como un array
             'periodicityChat' => 'required|integer',
