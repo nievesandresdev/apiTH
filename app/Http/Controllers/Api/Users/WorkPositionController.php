@@ -39,11 +39,11 @@ class WorkPositionController extends Controller
         try {
             // Guarda la posición de trabajo con los permisos y notificaciones enviados
             $work_position = WorkPosition::create([
-                'name' => $data['name'],
-                'permissions' => json_encode($data['permissions']), // Guarda el JSON de permisos
-                'notifications' => json_encode($data['notifications']), // Guarda el JSON de notificaciones
-                'periodicity_chat' => $data['periodicityChat'],
-                'periodicity_stay' => $data['periodicityStay'],
+                'name' => request()->name,
+                'permissions' => json_encode(request()->permissions), // Guarda el JSON de permisos
+                'notifications' => json_encode(request()->notifications), // Guarda el JSON de notificaciones
+                'periodicity_chat' => request()->periodicityChat,
+                'periodicity_stay' => request()->periodicityStay,
             ]);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
