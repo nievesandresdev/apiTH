@@ -26,7 +26,7 @@ Route::group(['prefix' => 'chat'], function () {
         Route::group(['prefix' => 'settings'], function () {
             Route::get('/getAll', [ChatSettingsController::class, 'getAll']);
             Route::post('/updateNotificationsEmail', [ChatSettingsController::class, 'updateNotificationsEmail']);
-            Route::get('/getSettings', [ChatSettingsController::class, 'getSettings']);
+            Route::get('/getSettings', [ChatSettingsController::class, 'getAllsAndChatHours']);
             Route::post('/searchLang', [ChatSettingsController::class, 'searchLang']);
             Route::post('/storeGeneralSetting', [ChatSettingsController::class, 'storeGeneralSetting']);
             Route::post('/updateAvailability', [ChatSettingsController::class, 'updateAvailability']);
