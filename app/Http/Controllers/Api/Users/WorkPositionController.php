@@ -27,13 +27,13 @@ class WorkPositionController extends Controller
 
     public function store()
     {
-        $data = request()->validate([
+        /* $data = request()->validate([
             //'name' => 'required|string|unique:work_positions',
             'permissions' => 'required|array', // Asegura que los permisos se envían como un array
             'notifications' => 'required|array', // Asegura que las notificaciones se envían como un array
             'periodicityChat' => 'required|integer',
             'periodicityStay' => 'required|integer'
-        ]);
+        ]); */
 
 
         try {
