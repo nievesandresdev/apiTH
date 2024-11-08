@@ -14,7 +14,9 @@ Route::group(['prefix' => 'guest'], function () {
     Route::get('/findAndValidLastStay', [GuestController::class, 'findAndValidLastStay']);
     Route::get('/findByEmail', [GuestController::class, 'findByEmail']);
     Route::post('/sendMailTo', [GuestController::class, 'sendMailTo']);
-
+    Route::post('/createAccessInStay', [GuestController::class, 'createAccessInStay']);
+    Route::post('/deleteGuestOfStay', [GuestController::class, 'deleteGuestOfStay']);
+    
     //update data huesped
     Route::post('/updatePasswordGuest', [GuestController::class, 'updatePasswordGuest']);
     //updateDataGuest

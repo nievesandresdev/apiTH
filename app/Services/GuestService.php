@@ -4,8 +4,13 @@ namespace App\Services;
 
 use App\Mail\Guest\MsgStay;
 use App\Mail\Guest\ResetPasswordGuest;
+use App\Models\Chat;
 use App\Models\Guest;
 use App\Models\hotel;
+use App\Models\NoteGuest;
+use App\Models\Query;
+use App\Models\Stay;
+use App\Models\StayAccess;
 use App\Models\StayNotificationSetting;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
@@ -271,7 +276,7 @@ class GuestService {
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
             $guest->acronym = $acronym;
 
-            Log::info('pass '.$data->password);
+            // Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
                 $guest->password = bcrypt($data->password);
                 Log::info('update pass'. $guest->password);
@@ -428,6 +433,135 @@ class GuestService {
             $result = $this->updateById($dataGuest);
             return $result;
         } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function createAccessInStay($guestId, $stayId, $chainId)
+    {
+        try {
+            DB::beginTransaction();
+            $guest = Guest::find($guestId);
+            if(!$guest) return;
+
+            $guest->stays()->syncWithoutDetaching([
+                $stayId => ['chain_id' => $chainId]
+            ]);
+            
+            //guardar acceso
+            $this->stayAccessService->save($stayId,$guestId);
+
+            //actualizar conteo de huespedes
+            $stay = Stay::find($stayId);
+            $currentCountGuestsInStay = $stay->guests()->count();
+            if($currentCountGuestsInStay > intval($stay->number_guests)){
+                $stay->number_guests = $currentCountGuestsInStay;
+                $stay->save();
+            }
+            DB::commit();
+            return [
+                'stay' => $stay,
+                'guest' => $guest,
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+    }
+
+    public function deleteGuestOfStay($guestId, $stayId, $hotelId, $chainId)
+    {
+        try {
+            DB::beginTransaction();
+            try {
+                // Log::info('deleteGuestOfStay ');
+
+                $guest = Guest::find($guestId);
+                $stay = Stay::find($stayId);
+                $chatExists = Chat::where('stay_id', $stayId)->where('guest_id', $guestId)->first();
+                $queryAnsweredExists = Query::where('stay_id', $stayId)
+                            ->where('guest_id', $guestId)
+                            ->where('answered', 1)
+                            ->exists();
+    
+                if(intval($stay->number_guests) > 1){
+                    $stay->number_guests = intval($stay->number_guests) - 1;
+                    $stay->save();
+                }
+                
+                if($chatExists || $queryAnsweredExists){
+                    // Crear una nueva estancia solo para el huésped
+                    $newStay = new Stay();
+                    $newStay->hotel_id = $hotelId;
+                    $newStay->number_guests = 1;
+                    $newStay->language = 'Español';
+                    $newStay->check_in = Carbon::now()->subDays(5)->toDateString();
+                    $newStay->check_out = Carbon::now()->subDay()->toDateString();
+                    $newStay->guest_id = $guestId;
+                    $newStay->save();
+                    
+                    // Actualizar StayAccess para que apunte a la nueva estancia
+                    StayAccess::where([
+                        'stay_id' => $stayId,
+                        'guest_id' => $guestId
+                    ])->update(['stay_id' => $newStay->id]);
+    
+                    // Actualizar la relación guest->stays para que apunte a la nueva estancia
+                    // Primero, adjuntar la nueva estancia con los datos del pivot si es necesario
+                    $guest->stays()->syncWithoutDetaching([
+                        $newStay->id => ['chain_id' => $chainId]
+                    ]);
+    
+                    // Luego, desasociar la estancia antigua
+                    $guest->stays()->detach($stayId);
+    
+                    // Actualizar Queries para que apunten a la nueva estancia
+                    Query::where('stay_id', $stayId)
+                    ->where('guest_id', $guestId)
+                    ->update(['stay_id' => $newStay->id]);
+    
+                    if($chatExists){
+                        Chat::where('stay_id', $stayId)->where('guest_id', $guestId)->update(['stay_id' => $newStay->id]);
+                    }
+                    //actualizar notas
+                    NoteGuest::where('stay_id', $stayId)->where('guest_id', $guestId)->update(['stay_id' => $newStay->id]);
+
+                } else {
+                    // Eliminar relación
+                    $guest->stays()->detach($stayId);
+                    // Eliminar acceso
+                    $access = StayAccess::where([
+                        'stay_id' => $stayId,
+                        'guest_id' => $guestId
+                    ])->first();
+                    if ($access) {
+                        $access->delete();
+                    }
+    
+                    // Eliminar Queries asociadas a la estancia y huésped
+                    Query::where('stay_id', $stayId)
+                    ->where('guest_id', $guestId)
+                    ->delete();
+    
+                    // Eliminar Notas asociadas a la estancia y huésped
+                    NoteGuest::where('stay_id', $stayId)
+                    ->where('guest_id', $guestId)
+                    ->delete();
+                }
+    
+                DB::commit();
+                //actualizar lista en el saas
+                sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
+                return true;
+            } catch (\Exception $e) {
+                DB::rollBack();
+                // Manejo de errores según tu lógica
+                throw $e;
+            }
+
+        } catch (\Exception $e) {
+            DB::rollback();
             return $e;
         }
     }

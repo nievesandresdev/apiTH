@@ -199,5 +199,52 @@ class GuestController extends Controller
         return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
     }
 
+    public function createAccessInStay(Request $request) {
+        try {
+            $guestId = $request->guestId;
+            $stayId = $request->stayId;
+            $chainId = $request->chainId;
+
+            $model = $this->service->createAccessInStay($guestId, $stayId, $chainId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            $data = [
+                'guest' => new GuestResource($model['guest']),
+                'stay' => new StayResource($model['stay']),
+            ];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.createAccessInStay');
+        }
+    }
+
+    public function deleteGuestOfStay(Request $request) {
+        try {
+            $guestId = $request->guestId;
+            $stayId = $request->stayId;
+            $chainId = $request->chainId;
+            $hotelId = $request->hotelId;
+            
+            $model = $this->service->deleteGuestOfStay($guestId, $stayId, $hotelId, $chainId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteGuestOfStay');
+        }
+    }
+
+    
+
 
 }
