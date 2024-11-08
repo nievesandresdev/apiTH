@@ -17,6 +17,7 @@ class ChatSettingsServices {
 
     public function getAll ($hotelId) {
         try {
+            Log::info('getAll '.$hotelId);
             $default = ChatSetting::where('hotel_id',$hotelId)->first();
             if(!$default){
                 $default = defaultChatSettings();
