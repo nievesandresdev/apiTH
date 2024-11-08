@@ -20,7 +20,7 @@ class HotelBasicDataResource extends JsonResource
 
         $user = $this->user[0];
         $authUser = auth()->user();
-        $is_subscribed = $user->subscriptions()->where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
+        $is_subscribed = where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
         $pending_chat_count =  $this->stays()
         ->whereHas('chats', function ($query) {
             $query->where('pending', 1);
