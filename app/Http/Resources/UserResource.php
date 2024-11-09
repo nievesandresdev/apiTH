@@ -85,7 +85,7 @@ class UserResource extends JsonResource
                 'subdomain' => $hotel->subdomain,
             ];
         }) : null,
-            'permissions' => $this->permissions,
+            'permissions' => json_encode($this->permissions),
             'current_hotel' => new HotelResource($firstHotelId),
             'current_subdmain_hotel' => $firstHotelId?->subdomain
         ];
