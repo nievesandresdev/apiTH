@@ -31,6 +31,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'phone' => $phone,
             'role' => 'Associate',
+            'owner' => $this->owner,
             'last_session' => $this->last_session,
             'created_at' => $this->created_at,
             'color' => $this->color,
