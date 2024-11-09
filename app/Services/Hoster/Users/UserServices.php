@@ -70,133 +70,6 @@ class UserServices
         return $this->getUserFilters(request()->all());
     }
 
-    function getUserFilters2($filter)
-    {
-        $hotelIds = $this->getIdsHotels();
-        /* $users = User::where(function ($query) use ($filter) {
-            $query->where('name', 'like', '%' . $filter['search_terms'] . '%')
-                ->orWhereHas('workPosition', function ($subQuery) use ($filter) {
-                    $subQuery->where('name', 'like', '%' . $filter['search_terms'] . '%');
-                });
-        }) */
-        $users = User::where(function ($query) use ($filter) {
-            $query->where('name', 'like', '%' . $filter['search_terms'] . '%')
-                ->orWhereHas('profile', function ($subQuery) use ($filter) {
-                    $subQuery->orWhereHas('workPosition', function ($subQueryProfile) use ($filter) {
-                        $subQueryProfile->where('name', 'like', '%' . $filter['search_terms'] . '%');
-                    });
-                });
-        })
-        ->whereHas('hotel', function ($query) use ($hotelIds) {
-            $query->whereIn('hotel_id', $hotelIds);
-        })
-        /* ->whereDoesntHave('roles', function ($query) {
-            $query->where('name', 'Associate'); // Filter out users with the "Associate" role
-        }) */
-
-        ->when(isset($filter['type']), function ($query) use ($filter) {
-            switch ($filter['type']) {
-                case 0:
-                    $query->where('del', 0);
-                    break;
-                case 1:
-                    $query->whereHas('roles', function ($subQuery) {
-                        $subQuery->where('name', 'Associate');
-                    });
-                    break;
-                case 2:
-                    $query->whereHas('roles', function ($subQuery) {
-                        $subQuery->where('name', 'Administrator');
-                    });
-                    break;
-                case 3:
-                    $query->whereHas('roles', function ($subQuery) {
-                        $subQuery->where('name', 'Operator');
-                    });
-                    break;
-                case 4:
-                    $query->where('status', 0);
-                    break;
-                default:
-                    $query->where('del', 0);
-                    break;
-            }
-        })
-        ->get()
-        ->map(function ($user) {
-
-            return $this->arrayMapUser($user);
-        });
-
-        return $users;
-    }
-
-    function getUserFiltersOLD($filter)
-    {
-        $hotelIds = $this->getIdsHotels();
-        $query = User::myHotels($hotelIds);
-        /* where(function ($query) use ($filter) {
-            $query->where('name', 'like', '%' . $filter['search_terms'] . '%');
-        })
-        ->orWhereHas('profile.workPosition', function ($query) use ($filter) {
-            $query->where('name', 'like', '%' . $filter['search_terms'] . '%');
-        }); */
-
-        $query->when(isset($filter['search_terms']) ? $filter['search_terms'] : null, function ($query) use ($filter) {
-            $query->where('name', 'like', '%' . $filter['search_terms'] . '%')
-                ->orWhereHas('profile.workPosition', function ($subQuery) use ($filter) {
-                    $subQuery->where('name', 'like', '%' . $filter['search_terms'] . '%');
-                });
-        })->orderBy('created_at', 'desc');
-
-
-
-        $query->when(isset($filter['type']), function ($query) use ($filter, $hotelIds) {
-            /* $query->whereHas('hotel', function ($query) use ($hotelIds) {
-                $query->whereIn('hotel_id', $hotelIds);
-            }); */
-            switch ($filter['type']) {
-                case 0:
-                    break;
-                case 1:
-                    $query->whereHas('roles', function ($subQuery) {
-                        $subQuery->where('name', 'Associate');
-                    });
-                    break;
-                case 2:
-                    $query->whereHas('roles', function ($subQuery) {
-                        $subQuery->where('name', 'Administrator');
-                    });
-                    break;
-                case 3:
-                    $query->whereHas('roles', function ($subQuery) {
-                        $subQuery->where('name', 'Operator');
-                    });
-                    break;
-                case 4:
-                    $query->where('del', 1);
-                    break;
-                default:
-                    $query->where('del', 0);
-                    break;
-            }
-        });
-
-        $perPage = $filter['per_page'] ?? 15; // Default 15
-        $page = $filter['page'] ?? 1;
-
-        $paginatedUsers = $query->paginate($perPage, ['*'], 'page', $page);
-
-        // Mapeo de usuarios
-        $mappedUsers = $paginatedUsers->getCollection()->map(function ($user) {
-            return $this->arrayMapUser($user);
-        });
-
-        // Crear una nueva instancia de LengthAwarePaginator con los datos mapeados
-        $paginatedUsers->setCollection($mappedUsers);
-
-        return $paginatedUsers;
-    }
 
     function getUserFilters($filter)
     {
@@ -244,23 +117,6 @@ class UserServices
     }
 
 
-    function getUserHotels2($perPage = 15, $page = 1)
-    {
-        $hotelIds = $this->getIdsHotels();
-
-        $query = User::whereHas('hotel', function ($query) use ($hotelIds) {
-            $query->whereIn('hotel_id', $hotelIds);
-        })
-        ->where('del', 0)
-        ->orderBy('created_at', 'desc');
-
-        $paginatedUsers = $query->paginate($perPage, ['*'], 'page', $page);
-
-        return $paginatedUsers->map(function ($user) {
-            return $this->arrayMapUser($user);
-        });
-    }
-
     function getUserHotels($perPage = 15, $page = 1)
     {
         $hotelIds = $this->getIdsHotels();
@@ -292,12 +148,7 @@ class UserServices
         $users = User::whereHas('hotel', function ($query) use ($hotelIds) {
             $query->whereIn('hotel_id', $hotelIds);
         })
-        /* $users = User::whereHas('hotel', function ($query) use ($hotelIds) {
-            $query->where('hotel_id', $this->get_first_hotel_permissions_exists());
-        }) */
-        /* ->whereDoesntHave('roles', function ($query) {
-            $query->where('name', 'Associate'); // Filter out users with the "Associate" role
-        }) */
+
         ->where('del', 0)
         ->orderBy('created_at', 'desc')
         ->get()
@@ -371,39 +222,6 @@ class UserServices
     }
 
 
-    /* function getUsersHotelBasicData($hotelId)
-    {
-        $queryUsers = User::whereHas('hotel', function ($query) use ($hotelId) {
-            $query->where('hotel_id', $hotelId);
-        })
-        ->select('id', 'email', 'name','notifications','permissions','periodicity_chat','periodicity_stay','status','del')
-        ->whereNotNull('notifications')
-        ->where('del', 0)
-        ->where('status', 1)
-        ->orderBy('created_at', 'desc')
-        ->get();
-
-        if ($queryUsers->isEmpty()) {
-            return [];
-        }
-
-        $users = $queryUsers->map(function ($user) {
-            return [
-                'id' => $user->id,
-                'email' => $user->email,
-                'name' => $user->name,
-                'notifications' => json_decode($user->notifications),
-                'permissions' => json_decode($user->permissions),
-                'periodicity_chat' => $user->periodicity_chat,
-                'periodicity_stay' => $user->periodicity_stay,
-                'status' => $user->status,
-                'del' => $user->del,
-                //'role' => $user->getRoleName(),
-            ];
-        });
-
-        return $users;
-    } */
 
     function getUsersHotelBasicData($hotelId, $notificationFilters = [])
     {
@@ -486,28 +304,7 @@ class UserServices
         return auth()->user()->hotel->pluck('id');
     }
 
-   /*  public function get_first_hotel_id()
-    {
-        if (auth()->user()->hotel->count() > 0) {
-            return auth()->user()->hotel->first()->id;
-        }else{
-            return null;
-        }
-    }
 
-    public function get_first_hotel_permissions_exists()
-    {
-        if(auth()->user()->hotel->count() == 1)
-        {
-            return auth()->user()->hotel->first()->id;
-        }
-
-        return auth()->user()->hotel->count() > 0
-        ? (auth()->user()->hotel->first()->pivot->permissions
-            ? auth()->user()->hotel->skip(1)->first()->id
-            : auth()->user()->hotel->first()->id)
-        : null;
-    } */
 
     public function storeUserHoster($request)
     {
@@ -523,9 +320,7 @@ class UserServices
             'periodicity_stay' => $request->periodicityStay,
         ]);
 
-       /*  $role = $request->role == 1 ? 'Associate' : ($request->role == 2 ? 'Administrator' : 'Operator');
 
-        $user->assignRole($role); */
 
         $this->profileServices->handleProfileHoster($request, $user);
 
@@ -536,38 +331,14 @@ class UserServices
         return $user ?? false;
     }
 
-    /* function getParentId() {
-        $userRole = auth()->user()->getRoleNames()->first();
 
-        switch ($userRole) {
-            case 'Admin':
-                return null;
-            case 'Associate':
-                return auth()->id();
-            default:
-                return auth()->user()->parent_id;
-        }
-    } */
 
     function getParentId() {
         $user = auth()->user();
 
         return $user->parent_id ?? $user->id;
 
-        /* $userRole = $user->getRoleNames()->first();
 
-        switch ($userRole) {
-            case 'Admin':
-                return $user->parent_id;
-            case 'Associate':
-                if ($user->owner != null) {
-                    return $user->id;
-                } else {
-                    return $user->parent_id;
-                }
-            default:
-                return $user->parent_id;
-        } */
     }
 
 
@@ -601,10 +372,7 @@ class UserServices
             'periodicity_stay' => $request->periodicityStay,
         ]);
 
-        /* if ($request->filled('role')) {
-            $role = $request->role == 1 ? 'Associate' : ($request->role == 2 ? 'Administrator' : 'Operator');
-            $user->syncRoles([$role]);
-        } */
+
 
         $this->profileServices->handleProfileHoster($request, $user);
 
@@ -617,22 +385,14 @@ class UserServices
         if ($request->hotels) {
             $user->hotel()->detach(); // borrar hoteles actuales
             foreach ($request->hotels as $key => $hotelId) {
-                if (isset($request->access[$key]) && $request->access[$key] == true) {
-                    $user->hotel()->attach($hotelId, ['permissions' => json_encode($request->access[$key])]);
-                }
+                //if (isset($request->access[$key]) && $request->access[$key] == true) {
+                    $user->hotel()->attach($hotelId, ['permissions' => json_encode($request->permissions)]);
+                //}
             }
         }
     }
 
-    /* public function storeHotelsUser($request, $user) {
-        if ($request->hotels) {
-            foreach ($request->hotels as $key => $hotelId) {
-                if (isset($request->access[$key]) && $request->access[$key] == true) {
-                    $user->hotel()->attach($hotelId, ['permissions' => json_encode($request->access[$key])]);
-                }
-            }
-        }
-    } */
+
 
     public function storeHotelsUser($request, $user) {
         if ($request->hotels) {
