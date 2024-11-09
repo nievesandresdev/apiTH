@@ -20,6 +20,8 @@ class ChatSettingsServices {
             $default = ChatSetting::where('hotel_id',$hotelId)->first();
             if(!$default){
                 $default = defaultChatSettings();
+            }else{
+                $default->load('languages');
             }
             return $default;
         } catch (\Exception $e) {

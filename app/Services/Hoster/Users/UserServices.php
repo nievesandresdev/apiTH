@@ -437,15 +437,6 @@ class UserServices
 
     public function arrayMapUser($user)
     {
-        // if($user->profile?->phone == null){
-        //     $phone = '';
-        //     $prefix = '';
-        // }else{
-        //     $phoneNumberParts = explode(' ', $user->profile->phone);
-
-        //     $prefix = $phoneNumberParts[0];
-        //     $phone = isset($phoneNumberParts[1]) ? $phoneNumberParts[1] : null;
-        // }
 
         //first hotel
         $firstHotel = $user->hotel->first();
@@ -453,7 +444,7 @@ class UserServices
         return [
             'id' => $user->id,
             'name' => $user->name,
-            'lastname' => $user->profile?->lastname ?? '--',
+            'lastname' => $user->profile?->lastname ?? '',
             'email' => $user->email,
             'del' => $user->del,
             'role' => 'user',  // rol
@@ -475,14 +466,16 @@ class UserServices
                 return json_decode($hotel->pivot->permissions);
 
             }),
+            //'accessUser' => $user->permissions,
             //'access' => $user->getAllPermissions()->pluck('name'),
             'firstHotelId' => $firstHotel->id ?? null,
             'time' => formatTimeDifference($user->created_at),
-            'notifications' => json_decode($user->notifications),
+            'notifications' => $user->notifications,
             'periodicity_chat' => $user->periodicity_chat,
             'periodicity_stay' => $user->periodicity_stay,
-            'permissions' => json_decode($user->permissions),
+            'permissions' => $user->permissions,
             'status' => $user->status,
+            'owner' => $user->owner
             //'time' => $user->created_at->diffForHumans(),
         ];
     }

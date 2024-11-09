@@ -30,15 +30,15 @@ class ChatSettingsController extends Controller
 
     }
 
-    private function get_settings(){
-        $settings = currentHotel()->chatSettings()->first();
-        if(!$settings){
-            $settings = defaultChatSettings();
-        }else{
-            $settings->load('languages');
-        }
-        return $settings;
-    }
+    // private function get_settings(){
+    //     $settings = currentHotel()->chatSettings()->first();
+    //     if(!$settings){
+    //         $settings = defaultChatSettings();
+    //     }else{
+    //         $settings->load('languages');
+    //     }
+    //     return $settings;
+    // }
 
     public function getAll(Request $request){
         try {
@@ -75,10 +75,10 @@ class ChatSettingsController extends Controller
         }
     }
 
-    public function getSettings(Request $request){
+    public function getAllsAndChatHours(Request $request){
         try {
             $hotel = $request->attributes->get('hotel');
-            $settings = $this->get_settings();
+            $settings = $this->service->getAll($hotel->id);
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'settings' => $settings,
@@ -86,7 +86,7 @@ class ChatSettingsController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getSettings');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAllsAndChatHours');
         }
     }
 
