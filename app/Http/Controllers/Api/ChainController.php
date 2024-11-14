@@ -113,7 +113,7 @@ class ChainController extends Controller
         try {
             $chainSubdomain = $request->attributes->get('chainSubdomain');
             $chain = $this->chainServices->findBySubdomain($chainSubdomain);
-            Log::info('findBySubdomain chain cargada '. json_encode($chain));
+            // Log::info('findBySubdomain chain cargada '. json_encode($chain));
             $chain = new ChainResource($chain);
             if(!$chain){
                 $data = [

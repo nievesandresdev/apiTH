@@ -150,7 +150,8 @@ class GuestAuthController extends Controller
 
             $decodedState = json_decode(base64_decode($state), true);
             $chainSubdomain = $decodedState['chainSubdomain'];
-            $subdomainHotel = $decodedState['subdomain'];
+            // $subdomainHotel = $decodedState['subdomain'];
+            $subdomainHotel = $decodedState['subdomain'] === 'null' ? null : $decodedState['subdomain'];
             $chain = $this->chainServices->findBySubdomain($chainSubdomain);
             
             
