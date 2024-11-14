@@ -188,7 +188,11 @@ class GuestAuthController extends Controller
                     return redirect()->to($redirectUrl);    
                 }
                 // $token = $findGuest->createToken('auth_token')->plainTextToken;
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
+                if($chain->type == "INDEPENDENT"){
+                    $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&acform=createstay");
+                }else{
+                    $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
+                }
                 return redirect()->to($redirectUrl);
             }else{
                 // auth_token={$token}&googleId={$googleId}&
