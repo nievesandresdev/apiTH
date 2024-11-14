@@ -15,6 +15,7 @@ use App\Models\Hotel;
 use App\Models\Customization;
 
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\Log;
 
 class ChainController extends Controller
 {
@@ -112,6 +113,7 @@ class ChainController extends Controller
         try {
             $chainSubdomain = $request->attributes->get('chainSubdomain');
             $chain = $this->chainServices->findBySubdomain($chainSubdomain);
+            Log::info('findBySubdomain chain cargada '. json_encode($chain));
             $chain = new ChainResource($chain);
             if(!$chain){
                 $data = [
