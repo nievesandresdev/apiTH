@@ -71,7 +71,8 @@ class UtilsController extends Controller
     
     public function test()
     {
-        return buildUrlWebApp('acendas');
+        $guestId = 9;
+        return buildUrlWebApp('cadena', null, null,"g={$guestId}&m=google&acform=complete");
     }
 
 

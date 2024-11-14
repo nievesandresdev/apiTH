@@ -197,8 +197,8 @@ class GuestAuthController extends Controller
                 return redirect()->to($redirectUrl);
             }else{
                 // auth_token={$token}&googleId={$googleId}&
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel);
-                return redirect()->to("{$redirectUrl}&g={$guest->id}&m=google&acform=complete");
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete");
+                return redirect()->to($redirectUrl);
             }
         } catch (\Exception $e) {
             // Manejar errores y redirigir con un mensaje de error
