@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('Restablecimiento de contraseña') }}</title>
+    <style>
+        /* Estilos en línea para correos */
+        @media only screen and (max-width: 600px) {
+            .full-width-button {
+                width: 100% !important;
+                box-sizing: border-box;
+            }
+        }
+    </style>
 </head>
 <body style="background-color: #ffffff; font-family: Helvetica, Arial, sans-serif; margin: 0; padding: 20px;">
     <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
@@ -14,10 +23,11 @@
             Has solicitado un enlace para restablecer la contraseña de tu cuenta en TheHoster. Haz click en el siguiente botón para iniciar el proceso.
         </p>
 
-        <!-- Botón Centrado -->
+        <!-- Botón Centrado y Adaptable -->
         <div style="text-align: center; margin: 30px 0;">
             <a href="{{ config('app.hoster_url') . 'reset-password/' . $token . '?email=' . $notifiable->getEmailForPasswordReset() }}"
-               style="background-color: #FFD453; color: #000; padding: 10px 20px; border-radius: 5px; font-size: 18px; font-weight: 500; text-decoration: none; display: inline-block;">
+               class="full-width-button"
+               style="background-color: #FFD453; color: #000; padding: 10px 20px; border-radius: 5px; font-size: 18px; font-weight: 500; text-decoration: none; display: inline-block; width: auto;">
                 {{ __('Restablecer contraseña') }}
             </a>
         </div>
