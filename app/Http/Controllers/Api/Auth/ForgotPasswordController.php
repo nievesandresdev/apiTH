@@ -78,7 +78,7 @@ class ForgotPasswordController extends Controller
         $user = \App\Models\User::where('email', $email)->first();
         $user->notify(new ResetPasswordNotification($token));
 
-        return bodyResponseRequest(EnumResponse::ACCEPTED, ['message' => 'Hemos enviado un correo electrónico con un enlace para restablecer tu contraseña.']);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, ['message' => 'Hemos enviado un correo electrónico a tu dirección con un enlace para restablecer tu contraseña']);
 
     }
 
