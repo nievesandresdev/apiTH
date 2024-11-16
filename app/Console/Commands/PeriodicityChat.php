@@ -202,10 +202,10 @@ class PeriodicityChat extends Command
             });
 
             // Log
-            Log::info('Usuarios de Hoteles y Chats Pendientes con Último Mensaje y Queries: ' . json_encode([
-                'stays' => $result,
-                'total_count' => count($stays)
-            ], JSON_PRETTY_PRINT));
+            // Log::info('Usuarios de Hoteles y Chats Pendientes con Último Mensaje y Queries: ' . json_encode([
+            //     'stays' => $result,
+            //     'total_count' => count($stays)
+            // ], JSON_PRETTY_PRINT));
 
         } catch (\Exception $e) {
             Log::error('Error al obtener los usuarios de los hoteles y chats/queries pendientes', ['error' => $e->getMessage()]);
@@ -344,10 +344,10 @@ public function handle2()
             });
 
             // Log
-            Log::info('Usuarios de Hoteles y Chats Pendientes con Último Mensaje: ' . json_encode([
-                'stays' => $result,
-                'total_count' => count($stays)
-            ], JSON_PRETTY_PRINT));
+            // Log::info('Usuarios de Hoteles y Chats Pendientes con Último Mensaje: ' . json_encode([
+            //     'stays' => $result,
+            //     'total_count' => count($stays)
+            // ], JSON_PRETTY_PRINT));
 
         } catch (\Exception $e) {
             Log::error('Error al obtener los usuarios de los hoteles y chats pendientes', ['error' => $e->getMessage()]);

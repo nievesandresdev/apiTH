@@ -150,7 +150,8 @@ class GuestAuthController extends Controller
 
             $decodedState = json_decode(base64_decode($state), true);
             $chainSubdomain = $decodedState['chainSubdomain'];
-            $subdomainHotel = $decodedState['subdomain'];
+            // $subdomainHotel = $decodedState['subdomain'];
+            $subdomainHotel = $decodedState['subdomain'] === 'null' ? null : $decodedState['subdomain'];
             $chain = $this->chainServices->findBySubdomain($chainSubdomain);
             
             
@@ -188,12 +189,16 @@ class GuestAuthController extends Controller
                     return redirect()->to($redirectUrl);    
                 }
                 // $token = $findGuest->createToken('auth_token')->plainTextToken;
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
+                if($chain->type == "INDEPENDENT"){
+                    $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&acform=createstay");
+                }else{
+                    $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
+                }
                 return redirect()->to($redirectUrl);
             }else{
                 // auth_token={$token}&googleId={$googleId}&
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel);
-                return redirect()->to("{$redirectUrl}&g={$guest->id}&m=google&acform=complete");
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete");
+                return redirect()->to($redirectUrl);
             }
         } catch (\Exception $e) {
             // Manejar errores y redirigir con un mensaje de error
