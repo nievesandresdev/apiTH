@@ -23,7 +23,7 @@
         </div>
 
         <!-- Segundo Párrafo -->
-        <p style="font-size: 18px; font-style: normal; font-weight: 600; line-height: 28px; color: #333; text-align: left;">
+        <p style="font-size: 18px; font-style: normal; font-weight: 500; line-height: 28px; color: #333; text-align: left;">
             Este enlace de restablecimiento de contraseña expira en 60 minutos.
         </p>
 
@@ -32,7 +32,7 @@
         </p>
 
         <!-- Saludo Final -->
-        <p style="font-size: 18px; font-style: normal; font-weight: 700; line-height: 28px; color: #333; text-align: left;">
+        <p style="font-size: 18px; font-style: normal; font-weight: 500; line-height: 28px; color: #333; text-align: left;">
             Saludos,<br>
             TheHoster
         </p>
