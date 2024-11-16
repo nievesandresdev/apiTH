@@ -5,10 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('Restablecimiento de contraseña') }}</title>
-    <!-- Enlace a Google Fonts para Montserrat con todos los pesos -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body style="background-color: #ffffff; font-family: 'Montserrat', Arial, sans-serif; margin: 0; padding: 20px;">
+<body style="background-color: #ffffff; font-family: Helvetica, Arial, sans-serif; margin: 0; padding: 20px;">
     <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
 
         <!-- Primer Párrafo -->
