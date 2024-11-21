@@ -101,11 +101,11 @@ class WorkPositionController extends Controller
             // Buscar perfiles asociados
             $profiles = $work_position->profiles;
 
-            // Si existen perfiles, actualizar el campo work_position_id a null
+            // Si existen perfiles asociados, devolver un mensaje de error
             if ($profiles && $profiles->count() > 0) {
-                foreach ($profiles as $profile) {
-                    $profile->update(['work_position_id' => null]);
-                }
+                return bodyResponseRequest(EnumResponse::ERROR, [
+                    'message' => 'No se puede eliminar la posición de trabajo porque tiene registros asociados.'
+                ]);
             }
 
             // Actualizar el estado de la posición de trabajo a 0
@@ -121,5 +121,6 @@ class WorkPositionController extends Controller
             ]);
         }
     }
+
 
 }

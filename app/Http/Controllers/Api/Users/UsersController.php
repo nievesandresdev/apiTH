@@ -246,7 +246,7 @@ class UsersController extends Controller
             $user = $this->userServices->deleteUserHoster(request()->user_id);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
-                'message' => 'Usuario eliminado con éxito',
+                'message' => 'Usuario eliminado',
                 'user' => $user
             ]);
         } catch (\Exception $e) {

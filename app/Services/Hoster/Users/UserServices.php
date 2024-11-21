@@ -266,7 +266,7 @@ class UserServices
             'email' => $user->email,
             'del' => $user->del,
             'role' => 'user',  // rol
-            'work_position' => $user->profile->work_position ?? $user->profile?->workPosition?->name,
+            'work_position' => $user->profile?->work_position ?? $user->profile?->workPosition,
             'work_position_id' => $user->profile?->work_position_id ?? null,
             'profile' => $user->profile ?? '--',
             'phone' => $user->profile->phone,
@@ -288,9 +288,9 @@ class UserServices
             //'access' => $user->getAllPermissions()->pluck('name'),
             'firstHotelId' => $firstHotel->id ?? null,
             'time' => formatTimeDifference($user->created_at),
-            'notifications' => $user->notifications,
-            'periodicity_chat' => $user->periodicity_chat,
-            'periodicity_stay' => $user->periodicity_stay,
+            'notifications' => $user->profile?->work_position_id ? $user->profile?->workPosition->notifications : $user->notifications,
+            'periodicity_chat' => $user->profile?->work_position_id ? $user->profile?->workPosition->periodicity_chat : $user->periodicity_chat,
+            'periodicity_stay' => $user->profile?->work_position_id ? $user->profile?->workPosition->periodicity_stay : $user->periodicity_stay,
             'permissions' => $user->permissions,
             'status' => $user->status,
             'owner' => $user->owner
@@ -315,9 +315,9 @@ class UserServices
             'parent_id' => $this->getParentId(),
             'password' => Hash::make($request->password),
             'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
-            'notifications' => json_encode($request->notifications), // Guarda el JSON de notificaciones
-            'periodicity_chat' => $request->periodicityChat,
-            'periodicity_stay' => $request->periodicityStay,
+            'notifications' => json_encode($request->notifications),
+            'periodicity_chat' => json_encode($request->periodicityChat),
+            'periodicity_stay' => json_encode($request->periodicityStay),
         ]);
 
 
@@ -368,8 +368,8 @@ class UserServices
             'email' => $request->email,
             'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
             'notifications' => json_encode($request->notifications), // Guarda el JSON de notificaciones
-            'periodicity_chat' => $request->periodicityChat,
-            'periodicity_stay' => $request->periodicityStay,
+            'periodicity_chat' => json_encode($request->periodicityChat),
+            'periodicity_stay' => json_encode($request->periodicityStay),
         ]);
 
 
