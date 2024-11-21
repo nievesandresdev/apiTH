@@ -160,69 +160,44 @@ class GuestService {
         }
     }
 
-    public function findLastStayAndAccess($id,$hotel){
+    public function findAndValidLastStay($guestEmail, $chainId, $hotelId = null){
 
         try {
-            $guest = Guest::find($id);
-            $last_stay = $guest->stays()
-                        ->where('hotel_id',$hotel->id)
-                        ->orderBy('check_out','DESC')->first();
+            $limitDate = Carbon::now()->subDays(11)->toDateString(); // Formato 'YYYY-MM-DD'
+            $guest = Guest::where('email', $guestEmail)->first();
 
-            if($last_stay){
-                $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
-                // Verifica si han pasado más de 10 días desde el checkout
-
-
-                if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
-                    //si no han pasado retorna la estancia
-                    $this->stayAccessService->save($last_stay->id,$guest->id);
-
-                    return $last_stay;
-                }
+            if (!$guest || !$guestEmail) {
+                return null; // O maneja el caso donde el huésped no existe
             }
-            return null;
+
+            // Iniciar la consulta
+            $query = $guest->stays()
+                        ->wherePivot('chain_id', $chainId) // Filtrar por chain_id
+                        ->where('check_out', '>', $limitDate);
+
+            // Aplicar filtro por hotel_id si está presente
+            if ($hotelId) {
+                $query->where('hotel_id', $hotelId);
+            }
+
+            // Obtener la última estancia que cumple con los criterios
+            $last_stay = $query->first();
+
+            if ($last_stay) {
+                $this->stayAccessService->save($last_stay->id, $guest->id);
+                return [
+                    "stay" => $last_stay,
+                    "guest" => $guest
+                ];
+            }
+            return [
+                "guest" => $guest
+            ];
         } catch (\Exception $e) {
             return $e;
         }
     }
 
-
-    public function findAndValidLastStay($guestId, $hotelId = null, $chainId = null){
-
-        try {
-            if(!$guestId) return;
-            $guest = Guest::find($guestId);
-
-            if ($guest && $guest->stays()->exists()) {
-                $query = $guest->stays();  // Iniciar la consulta
-
-                // Añadir condición para hotel si $hotel no es nulo y tiene un id válido
-                if ($hotelId) {
-                    $query = $query->where('hotel_id', $hotelId);
-                }
-
-                // Añadir condición para chain_id si $chainId está definido y no es nulo
-                if ($chainId) {
-                    $query = $query->where('chain_id', $chainId);
-                }
-                // Obtener la última estancia ordenando por la fecha de check_out de manera descendente
-                return $last_stay = $query->orderBy('check_out', 'DESC')->first();
-
-                if ($last_stay) {
-                    $checkoutDate = $last_stay ? Carbon::parse($last_stay->check_out) : null;
-                    // Verifica si han pasado más de 10 días desde el checkout
-                    if ($checkoutDate && !$checkoutDate->isBefore(Carbon::now()->subDays(10))) {
-                        //si no han pasado retorna la estancia
-                        return $last_stay;
-                    }
-                }
-            }
-
-            return null;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
 
     public function inviteToStayByEmail($guest,$stayId,$hotel){
         $settings =  StayNotificationSetting::where('hotel_id',$hotel->id)->first();
