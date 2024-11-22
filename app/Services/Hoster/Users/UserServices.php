@@ -223,7 +223,7 @@ class UserServices
 
 
 
-    function getUsersHotelBasicData($hotelId, $notificationFilters = [])
+    /* function getUsersHotelBasicData($hotelId, $notificationFilters = [])
     {
         $queryUsers = User::whereHas('hotel', function ($query) use ($hotelId) {
                 $query->where('hotel_id', $hotelId);
@@ -248,7 +248,66 @@ class UserServices
 
         // No es necesario mapear los datos si no vas a transformarlos
         return $queryUsers;
+    } */
+
+    function getUsersHotelBasicData($hotelId, $notificationFilters = [], $specificChannels = [])
+    {
+        // Validar que $specificChannels sea un array
+        if (!is_array($specificChannels)) {
+            $specificChannels = [];
+        }
+
+        $queryUsers = User::whereHas('hotel', function ($query) use ($hotelId) {
+                $query->where('hotel_id', $hotelId);
+            })
+            ->select('id', 'email', 'name', 'notifications', 'permissions', 'periodicity_chat', 'periodicity_stay', 'status', 'del')
+            ->whereNotNull('notifications')
+            ->where('del', 0)
+            ->where('status', 1);
+
+        // Validar si se pasaron filtros de notificación
+        if (!empty($notificationFilters)) {
+            foreach ($notificationFilters as $key => $value) {
+                $queryUsers->where(function ($query) use ($key, $value, $specificChannels) {
+                    foreach ($specificChannels as $channel) {
+                        $query->orWhere("notifications->{$channel}->$key", $value);
+                    }
+                });
+            }
+        }
+
+        $queryUsers = $queryUsers->orderBy('created_at', 'desc')->get();
+
+        if ($queryUsers->isEmpty()) {
+            // Retorna un array con colecciones vacías para cada canal
+            return collect(array_fill_keys($specificChannels, collect()));
+        }
+
+        // Separar los resultados en grupos dinámicos según $specificChannels
+        $groupedUsers = [];
+        foreach ($specificChannels as $channel) {
+            $groupedUsers[$channel] = collect();
+        }
+
+        $queryUsers->each(function ($user) use (&$groupedUsers, $specificChannels, $notificationFilters) {
+            $notifications = $user->notifications;
+
+            foreach ($notificationFilters as $key => $value) {
+                foreach ($specificChannels as $channel) {
+                    if (($notifications[$channel][$key] ?? false) === $value) {
+                        $groupedUsers[$channel]->push($user);
+                    }
+                }
+            }
+        });
+
+        return collect($groupedUsers);
     }
+
+
+
+
+
 
 
 

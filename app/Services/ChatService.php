@@ -50,6 +50,27 @@ class ChatService {
             $hotel = $request->attributes->get('hotel');
             $settings = $this->settings->getAll($hotel->id);
 
+            $notificationFilters = [
+                'newChat' => true,
+
+            ];
+
+            $specificChannels = ['push'];
+
+            $usersByChannel = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters, $specificChannels);
+
+            // Usuarios con notificaciones push
+            $pushUsers = $usersByChannel['push'];
+
+            // Usuarios con notificaciones email
+            //$emailUsers = $usersByChannel['email'];
+
+            /* return [
+                'pushUsers' => $pushUsers,
+                'emailUsers' => $emailUsers,
+            ]; */
+
+
             DB::beginTransaction();
             $langPage = $request->langWeb;
             $guestId = $request->guestId;
@@ -95,8 +116,29 @@ class ChatService {
                 );
                 sendEventPusher('private-update-stay-list-hotel.' . $hotel->id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
 
+                if ($pushUsers->isNotEmpty()) {
+                    $pushUsers->each(function ($user) use ($chat, $stay, $guest, $msg, $hotel) {
+                        //Log::info('sendMsgToHoster $user'. json_encode($user));
+                        sendEventPusher('private-notify-unread-msg-hotel.' . $hotel->id, 'App\Events\NotifyUnreadMsg', [
+                            'showLoadPage' => false,
+                            'stay_id' => $stay->id,
+                            'guest_id' => $guest->id,
+                            'chat_id' => $chat->id,
+                            'hotel_id' => $hotel->id,
+                            'room' => $stay->room,
+                            'user_id' => $user->id,
+                            'guest' => true,
+                            'text' => $msg->text,
+                            'automatic' => false,
+                            'concept' => "new",
+                            'add' => true,
+                            'pending' => false,
+                        ]);
+                    });
+                }
+
                 //notificacion push para el navegador del hoster(nuevo mensaje)
-                sendEventPusher('private-notify-unread-msg-hotel.' . $hotel->id, 'App\Events\NotifyUnreadMsg',
+                /* sendEventPusher('private-notify-unread-msg-hotel.' . $hotel->id, 'App\Events\NotifyUnreadMsg',
                 [
                     'showLoadPage' => false,
                     'stay_id' => $stay->id,
@@ -110,7 +152,7 @@ class ChatService {
                     'concept' => "new",
                     'add' => true,'pending' => false,//es falso en el input pero true en la bd
                 ]
-                );
+                ); */
                 /**
                  * cola de mensajes automaticos para el huesped
                  *
