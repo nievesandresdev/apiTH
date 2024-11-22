@@ -179,21 +179,19 @@ class GuestAuthController extends Controller
             // $findGuest = $this->service->findByEmail($email);
             
             $guest = $this->service->saveOrUpdate($dataGuest);
-            Log::info('test $email '.$email);
-            Log::info('test $chainId '.$chainId);
-            Log::info('test $hotelId '.$hotelId);
             
             $findValidLastStay = $this->service->findAndValidLastStay($email, $chainId, $hotelId);
-            Log::info('handleGoogleCallback 4 '.json_encode($findValidLastStay));
+            // Log::info('handleGoogleCallback 4 '.json_encode($findValidLastStay));
             if(isset($findValidLastStay["stay"])){
                 $stay = $findValidLastStay["stay"];
                 $hotel = $this->hotelServices->findById($stay->hotel_id);
                 $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
-                Log::info('handleGoogleCallback 5');
             }else{
                 if(!$hotelId){
                     $subdomainHotel = null;
-                    Log::info('handleGoogleCallback 6');
+                }
+                if($stayId){
+                    $findValidLastStay = $this->service->createAccessInStay($guest->id, $stayId, $chainId);
                 }
                 $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete&e={$stayId}"); 
                 Log::info('handleGoogleCallback 7');
