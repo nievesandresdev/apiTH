@@ -131,7 +131,6 @@ class ChainController extends Controller
     public function getCustomatizacion (Request $request) {
         try {
             $chainSubdomain = $request->attributes->get('chainSubdomain');
-            return $chainSubdomain;
             $chain = $this->chainServices->findBySubdomain($chainSubdomain);
             $customization = $chain->customization()->first();
             if(!$customization){
