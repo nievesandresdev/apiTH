@@ -10,8 +10,8 @@ Route::group(['prefix' => 'guest'], function () {
     Route::get('/findByIdApi/{id}', [GuestController::class, 'findById']);
     Route::post('/saveOrUpdateApi', [GuestController::class, 'saveOrUpdate']);
     Route::post('/updateLanguageApi', [GuestController::class, 'updateLanguage']);
-    Route::get('/findLastStayApi/{id}', [GuestController::class, 'findLastStay']);
     Route::get('/findAndValidLastStay', [GuestController::class, 'findAndValidLastStay']);
+    Route::get('/saveAndFindValidLastStay', [GuestController::class, 'saveAndFindValidLastStay']);
     Route::get('/findByEmail', [GuestController::class, 'findByEmail']);
     Route::post('/sendMailTo', [GuestController::class, 'sendMailTo']);
     Route::post('/createAccessInStay', [GuestController::class, 'createAccessInStay']);

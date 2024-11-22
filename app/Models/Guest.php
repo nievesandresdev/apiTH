@@ -36,8 +36,9 @@ class Guest extends Authenticatable
 
     public function stays()
     {
-        return $this->belongsToMany(Stay::class);
+        return $this->belongsToMany(Stay::class)->withPivot('chain_id');
     }
+
 
     public function chatMessages()
     {

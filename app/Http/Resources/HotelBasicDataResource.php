@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\ChatHour;
 use App\Models\ChatSetting;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class HotelBasicDataResource extends JsonResource
 
         $user = $this->user[0];
         $authUser = auth()->user();
-        $is_subscribed = $user->subscriptions()->where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
+        $is_subscribed = Subscription::where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
         $pending_chat_count =  $this->stays()
         ->whereHas('chats', function ($query) {
             $query->where('pending', 1);

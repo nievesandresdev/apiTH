@@ -188,7 +188,7 @@ class HotelController extends Controller
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
 
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [$hotelModel,$request->all()]);
+            // return bodyResponseRequest(EnumResponse::ACCEPTED, [$hotelModel,$request->all()]);
             if(!$hotelModel){
                 $data = [
                     'message' => __('response.bad_request_long')

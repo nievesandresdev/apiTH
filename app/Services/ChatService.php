@@ -94,6 +94,7 @@ class ChatService {
                     ]
                 );
                 sendEventPusher('private-update-stay-list-hotel.' . $hotel->id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
+
                 //notificacion push para el navegador del hoster(nuevo mensaje)
                 sendEventPusher('private-notify-unread-msg-hotel.' . $hotel->id, 'App\Events\NotifyUnreadMsg',
                 [

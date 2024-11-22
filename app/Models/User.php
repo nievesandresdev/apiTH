@@ -250,4 +250,33 @@ class User extends Authenticatable
         return ! $price || $subscription->hasPrice($price);
     }
 
+    public function getPermissionsAttribute($value)
+    {
+        if (is_null($value)) {
+            return [
+                "hoster" => ["can" => [], "status" => true],
+                "webapp" => ["can" => [], "status" => true],
+                "resenas" => ["can" => [], "status" => true],
+                "estancias" => ["can" => [], "status" => true],
+            ];
+        }
+
+        return json_decode($value, true);
+    }
+
+    public function getNotificationsAttribute($value)
+    {
+        if (is_null($value)) {
+            return [
+                "newChat" => false,
+                "newFeedback" => false,
+                "PendingChat10" => false,
+                "pendingChat30" => false,
+                "pendingFeedback10" => false,
+            ];
+        }
+
+        return json_decode($value, true);
+    }
+
 }

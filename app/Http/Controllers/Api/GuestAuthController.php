@@ -129,6 +129,8 @@ class GuestAuthController extends Controller
         $stateData = [
             'chainSubdomain' => $request->chainSubdomain,
             'subdomain' => $request->subdomain ?? null,
+            'hotelId' => $request->hotelId ?? null,
+            'stayId' => $request->stayId ?? null,
         ];
 
         $state = base64_encode(json_encode($stateData));
@@ -141,7 +143,7 @@ class GuestAuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
-            // Log::info('handleGoogleCallback');
+            Log::info('handleGoogleCallback');
             // Obtener y decodificar el parámetro state para extraer la URL de redirección
             $state = $request->input('state');
             if (!$state) {
@@ -150,9 +152,11 @@ class GuestAuthController extends Controller
 
             $decodedState = json_decode(base64_decode($state), true);
             $chainSubdomain = $decodedState['chainSubdomain'];
-            $subdomainHotel = $decodedState['subdomain'];
+            $subdomainHotel = $decodedState['subdomain'] === 'null' ? null : $decodedState['subdomain'];
+            $hotelId = $decodedState['hotelId'] === 'null' ? null : $decodedState['hotelId'];
+            $stayId = $decodedState['stayId'] === 'null' ? null : $decodedState['stayId'];
             $chain = $this->chainServices->findBySubdomain($chainSubdomain);
-            
+            $chainId = $chain->id;
             
             // Obtener el usuario autenticado de Google
             $googleUser = Socialite::driver('google')->stateless()->user();
@@ -171,30 +175,48 @@ class GuestAuthController extends Controller
             $dataGuest->avatar = $avatar;
             $dataGuest->googleId = $googleId;
             // Log::info('$avatar '.$avatar);
-            $findGuest = $this->service->findByEmail($email);
+            
+            // $findGuest = $this->service->findByEmail($email);
+            
             $guest = $this->service->saveOrUpdate($dataGuest);
             
-            // // $guest = Guest::where('email', $email)->first();
-            // // Log::info('$guest'. json_encode($guest));
-            // // Generar un token de autenticación (usando Laravel Sanctum)
-            
-            
-            if($findGuest){
-                $stay = $this->service->findAndValidLastStay($guest->id, null, $chain->id);
-                if($stay){
-                    $hotel = $this->hotelServices->findById($stay->hotel_id);
-                    //falto revisar cuando si tiene estancia
-                    $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
-                    return redirect()->to($redirectUrl);    
-                }
-                // $token = $findGuest->createToken('auth_token')->plainTextToken;
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
-                return redirect()->to($redirectUrl);
+            $findValidLastStay = $this->service->findAndValidLastStay($email, $chainId, $hotelId);
+            // Log::info('handleGoogleCallback 4 '.json_encode($findValidLastStay));
+            if(isset($findValidLastStay["stay"])){
+                $stay = $findValidLastStay["stay"];
+                $hotel = $this->hotelServices->findById($stay->hotel_id);
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
             }else{
-                // auth_token={$token}&googleId={$googleId}&
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel);
-                return redirect()->to("{$redirectUrl}&g={$guest->id}&m=google&acform=complete");
+                if(!$hotelId){
+                    $subdomainHotel = null;
+                }
+                if($stayId){
+                    $findValidLastStay = $this->service->createAccessInStay($guest->id, $stayId, $chainId);
+                }
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete&e={$stayId}"); 
+                Log::info('handleGoogleCallback 7');
             }
+            return redirect()->to($redirectUrl);    
+            // if($findGuest){
+            //     $stay = $this->service->findAndValidLastStay($guest->id, null, $chain->id);
+            //     if($stay){
+            //         $hotel = $this->hotelServices->findById($stay->hotel_id);
+            //         //falto revisar cuando si tiene estancia
+            //         $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
+            //         return redirect()->to($redirectUrl);    
+            //     }
+            //     // $token = $findGuest->createToken('auth_token')->plainTextToken;
+            //     if($chain->type == "INDEPENDENT"){
+            //         $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&acform=createstay");
+            //     }else{
+            //         $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
+            //     }
+            //     return redirect()->to($redirectUrl);
+            // }else{
+            //     // auth_token={$token}&googleId={$googleId}&
+            //     $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete");
+            //     return redirect()->to($redirectUrl);
+            // }
         } catch (\Exception $e) {
             // Manejar errores y redirigir con un mensaje de error
             $state = $request->input('state');

@@ -71,46 +71,58 @@ class GuestController extends Controller
         }
     }
 
-    public function findLastStay($id,Request $request) {
-        try {
-            $hotel = $request->attributes->get('hotel');
-            $model = $this->service->findLastStayAndAccess($id,$hotel);
-            if(!$model){
-                $data = [
-                    'message' => __('response.bad_request_long')
-                ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
-            }
-            $data = new StayResource($model);
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
-
-        } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findLastStay');
-        }
-    }
-
-
     public function findAndValidLastStay(Request $request) {
         try {
-            $hotel = $request->attributes->get('hotel');
-            $hotelId = $hotel->id ?? null;
-            $chainId = $request->chainId;
-            $guestId = $request->guestId;
+            $hotelId = $request->hotelId ?? null;
+            $guestEmail = $request->guestEmail ?? null;
+            $chainId = $request->chainId ?? null;
 
-            $model = $this->service->findAndValidLastStay($guestId, $hotelId, $chainId);
-            if(!$model){
+            $models = $this->service->findAndValidLastStay($guestEmail, $chainId, $hotelId);
+            if(!$models){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            $data = new StayResource($model);
+            $data = [];
+            if(isset($models["stay"])){
+                $data['stay'] = new StayResource($models["stay"]);
+            }
+            $data['guest'] = new GuestResource($models["guest"]);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findLastStay');
         }
     }
+
+    public function saveAndFindValidLastStay(Request $request) {
+        try {
+            $hotelId = $request->hotelId ?? null;
+            $guestEmail = $request->guestEmail ?? null;
+            $chainId = $request->chainId ?? null;
+
+            $models = $this->service->findAndValidLastStay($guestEmail, $chainId, $hotelId);
+            $data = [];
+            if(isset($models["stay"])){
+                $data['stay'] = new StayResource($models["stay"]);
+            }
+            if(!isset($models["guest"])){
+                $dataGuest = new \stdClass();
+                $dataGuest->email = $guestEmail;
+                $guest = $this->service->saveOrUpdate($dataGuest);
+                $data['guest'] = new GuestResource($guest);
+            }else{
+                $data['guest'] = new GuestResource($models["guest"]);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findLastStay');
+        }
+    }
+
+
 
     public function sendMailTo(Request $request){
         $stayId = $request->stayId;

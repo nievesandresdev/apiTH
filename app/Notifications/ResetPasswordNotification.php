@@ -20,7 +20,7 @@ class ResetPasswordNotification extends Notification
         return ['mail'];
     }
 
-    public function toMail($notifiable)
+    /* public function toMail($notifiable)
     {
         return (new MailMessage)
                     ->subject(Lang::get('Restablecimiento de contraseña'))
@@ -28,7 +28,19 @@ class ResetPasswordNotification extends Notification
                     ->action(Lang::get('Restablecer contraseña'), config('app.hoster_url')."reset-password/{$this->token}?email={$notifiable->getEmailForPasswordReset()}")
                     ->line(Lang::get('Este enlace de restablecimiento de contraseña expirará en :count minutos.', ['count' => config('auth.passwords.users.expire')]))
                     ->line(Lang::get('Si no solicitó un restablecimiento de contraseña, no se requiere ninguna acción adicional.'));
+    } */
+
+    public function toMail($notifiable)
+    {
+        return (new \Illuminate\Notifications\Messages\MailMessage)
+            ->subject(Lang::get('Restablecimiento de contraseña'))
+            ->view('Mails.users.recovery-password', [
+                'token' => $this->token,
+                'notifiable' => $notifiable
+            ]);
     }
+
+
 
     public function toArray($notifiable)
     {
