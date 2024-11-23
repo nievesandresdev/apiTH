@@ -260,7 +260,7 @@ class UserServices
         $queryUsers = User::whereHas('hotel', function ($query) use ($hotelId) {
                 $query->where('hotel_id', $hotelId);
             })
-            ->select('id', 'email', 'name', 'notifications', 'permissions', 'periodicity_chat', 'periodicity_stay', 'status', 'del')
+            ->select('id', 'email', 'name', 'notifications')
             ->whereNotNull('notifications')
             ->where('del', 0)
             ->where('status', 1);
