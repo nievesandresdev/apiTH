@@ -32,8 +32,8 @@ class Customization extends Model
                     "contrast" => '1',
                 ],
                 [
-                    "cod_hex" => '#FAFAFA',
-                    "cod_rbg" => 'rgb(250, 250, 250)',
+                    "cod_hex" => '#FFD700',
+                    "cod_rbg" => 'rgb(250, 215, 0)',
                     "contrast" => '0',
                 ]
             ],

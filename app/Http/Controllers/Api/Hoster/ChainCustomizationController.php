@@ -34,6 +34,12 @@ class ChainCustomizationController extends Controller
         $chainModel = $hotelModel->chain;
 
         $customizationModel = $chainModel->customization;
+        if(!$customizationModel){
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
 
         $data = new CustomizationResource($customizationModel);
 
