@@ -52,7 +52,6 @@ class ChatService {
 
             $notificationFilters = [
                 'newChat' => true,
-
             ];
 
             $specificChannels = ['push','email'];

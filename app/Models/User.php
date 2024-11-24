@@ -264,7 +264,7 @@ class User extends Authenticatable
         return json_decode($value, true);
     }
 
-    public function getNotificationsAttribute($value)
+    /* public function getNotificationsAttribute($value)
     {
         if (is_null($value)) {
             return [
@@ -277,6 +277,6 @@ class User extends Authenticatable
         }
 
         return json_decode($value, true);
-    }
+    } */
 
 }

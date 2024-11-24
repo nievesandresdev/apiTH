@@ -347,9 +347,9 @@ class UserServices
             //'access' => $user->getAllPermissions()->pluck('name'),
             'firstHotelId' => $firstHotel->id ?? null,
             'time' => formatTimeDifference($user->created_at),
-            'notifications' => $user->profile?->work_position_id ? $user->profile?->workPosition->notifications : $user->notifications,
-            'periodicity_chat' => $user->profile?->work_position_id ? $user->profile?->workPosition->periodicity_chat : $user->periodicity_chat,
-            'periodicity_stay' => $user->profile?->work_position_id ? $user->profile?->workPosition->periodicity_stay : $user->periodicity_stay,
+            'notifications' => $user->profile?->work_position_id ? json_decode($user->profile?->workPosition->notifications) : json_decode($user->notifications),
+            'periodicity_chat' => $user->profile?->work_position_id ? json_decode($user->profile?->workPosition->periodicity_chat) : json_decode($user->periodicity_chat),
+            'periodicity_stay' => $user->profile?->work_position_id ? json_decode($user->profile?->workPosition->periodicity_stay) : json_decode($user->periodicity_stay),
             'permissions' => $user->permissions,
             'status' => $user->status,
             'owner' => $user->owner
