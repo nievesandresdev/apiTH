@@ -806,19 +806,52 @@ if (! function_exists('queriesTextDefault')) {
 if (! function_exists('requestSettingsDefault')) {
     function requestSettingsDefault(){
         $requestSettings = new stdClass();
-        $requestSettings->msg_title = [
-            "es" => "<p>¡Nos alegra que hayas disfrutado en [nombre del hotel]!</p>",
-            "en" => "<p>We are glad you enjoyed your stay at [nombre del hotel]!</p>",
-            "fr" => "<p>Nous sommes heureux que vous ayez apprécié votre séjour à [nombre del hotel]!</p>",
+        $requestSettings->in_stay_activate = true;
+        $requestSettings->in_stay_msg_title = [
+            "es" => "<p>¡Nos alegra que estés disfrutando de tu estancia!</p>",
+            "en" => "<p>We are happy to know that you are enjoying your stay!</p>",
+            "fr" => "<p>Nous sommes heureux de savoir que vous profitez de votre séjour !</p>",
+            "pt" => "<p>Estamos felizes que você esteja aproveitando sua estadia!</p>",
+            "it" => "<p>Siamo felici che tu stia godendo del tuo soggiorno!</p>",
+            "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genießen!</p>"
         ];
+        
+        
+        $requestSettings->in_stay_msg_text = [
+            "es" => '<p>Tu experiencia es muy importante, compartirla ayudaría a otros viajeros a conocernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si reservaste online, podrían solicitarte tu opinión pronto. Valoramos mucho que la compartieras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos tu tiempo y ¡Gracias por habernos elegido!</strong></p>',
+            "en" => '<p>Your experience is very important, sharing it would help other travelers get to know us.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>If you booked online, you may be asked for your opinion soon. We really appreciate that you shared it.</p><p><br></p><p class="ql-align-center"><strong>We appreciate your time and thank you for choosing us!</strong></p>',
+            "fr" => "<p>Votre expérience est très importante, la partager aiderait d'autres voyageurs à nous connaître.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si vous avez réservé en ligne, votre avis pourrait bientôt vous être demandé. Nous apprécions vraiment que vous l'ayez partagé.</p><p><br></p><p class='ql-align-center'><strong>Nous apprécions votre temps et merci de nous avoir choisis !</strong></p>",
+            "pt" => "<p>Sua experiência é muito importante, compartilhá-la ajudaria outros viajantes a nos conhecerem.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se você reservou online, sua opinião pode ser solicitada em breve. Agradecemos muito que você a tenha compartilhado.</p><p><br></p><p class='ql-align-center'><strong>Agradecemos o seu tempo e obrigado por nos escolher!</strong></p>",
+            "it" => "<p>La tua esperienza è molto importante, condividerla aiuterebbe altri viaggiatori a conoscerci.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se hai prenotato online, presto potrebbero chiederti la tua opinione. Apprezziamo molto che tu l'abbia condivisa.</p><p><br></p><p class='ql-align-center'><strong>Apprezziamo il tuo tempo e grazie per averci scelto!</strong></p>",
+            "de" => "<p>Ihre Erfahrung ist sehr wichtig, das Teilen würde anderen Reisenden helfen, uns kennenzulernen.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Wenn Sie online gebucht haben, könnte bald Ihre Meinung angefragt werden. Wir schätzen es sehr, wenn Sie sie teilen.</p><p><br></p><p class='ql-align-center'><strong>Wir schätzen Ihre Zeit und danken Ihnen, dass Sie uns gewählt haben!</strong></p>"
+        ];
+        $requestSettings->in_stay_otas_enabled = [
+            "google" => true,
+            "tripadvisor" => true
+        ];
+        $requestSettings->msg_title = [
+            "es" => "<p>¡Nos alegra que hayas disfrutado de tu estancia!</p>",
+            "en" => "<p>We are happy to know that you enjoyed your stay!</p>",
+            "fr" => "<p>Nous sommes ravis que vous ayez apprécié votre séjour !</p>",
+            "pt" => "<p>Estamos muito felizes que você tenha gostado da sua estadia!</p>",
+            "it" => "<p>Siamo felici che tu abbia apprezzato il tuo soggiorno!</p>",
+            "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genossen haben!</p>"
+        ];
+        
         $requestSettings->msg_text = [
             "es" => '<p>Tu experiencia es muy importante, compartirla ayudaría a otros viajeros a conocernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si reservaste online, podrían solicitarte tu opinión pronto. Valoramos mucho que la compartieras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos tu tiempo y ¡Gracias por habernos elegido!</strong></p>',
             "en" => '<p>Your experience is very important, sharing it would help other travelers get to know us.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>If you booked online, you may be asked for your opinion soon. We really appreciate that you shared it.</p><p><br></p><p class="ql-align-center"><strong>We appreciate your time and thank you for choosing us!</strong></p>',
             "fr" => "<p>Votre expérience est très importante, la partager aiderait d'autres voyageurs à nous connaître.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si vous avez réservé en ligne, votre avis pourrait bientôt vous être demandé. Nous apprécions vraiment que vous l'ayez partagé.</p><p><br></p><p class='ql-align-center'><strong>Nous apprécions votre temps et merci de nous avoir choisis !</strong></p>",
+            "pt" => "<p>Sua experiência é muito importante, compartilhá-la ajudaria outros viajantes a nos conhecerem.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se você reservou online, sua opinião pode ser solicitada em breve. Agradecemos muito que você a tenha compartilhado.</p><p><br></p><p class='ql-align-center'><strong>Agradecemos o seu tempo e obrigado por nos escolher!</strong></p>",
+            "it" => "<p>La tua esperienza è molto importante, condividerla aiuterebbe altri viaggiatori a conoscerci.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se hai prenotato online, presto potrebbero chiederti la tua opinione. Apprezziamo molto che tu l'abbia condivisa.</p><p><br></p><p class='ql-align-center'><strong>Apprezziamo il tuo tempo e grazie per averci scelto!</strong></p>",
+            "de" => "<p>Ihre Erfahrung ist sehr wichtig, das Teilen würde anderen Reisenden helfen, uns kennenzulernen.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Wenn Sie online gebucht haben, könnte bald Ihre Meinung angefragt werden. Wir schätzen es sehr, wenn Sie sie teilen.</p><p><br></p><p class='ql-align-center'><strong>Wir schätzen Ihre Zeit und danken Ihnen, dass Sie uns gewählt haben!</strong></p>"
         ];
         $requestSettings->otas_enabled = [
+            "booking" => true,
+            "expedia" => true,
             "google" => true,
-            "tripadvisor" => true
+            "tripadvisor" => true,
+            "airbnb" => true
         ];
         $requestSettings->request_to = json_encode(['GOOD','VERYGOOD']);
         return $requestSettings;

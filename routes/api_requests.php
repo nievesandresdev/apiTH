@@ -10,5 +10,6 @@ Route::group(['prefix' => 'request-settings'], function () {
     Route::get('/getPostStayRequestData', [RequestSettingController::class, 'getPostStayRequestData']);
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/updateData', [RequestReviewsSettingsController::class, 'updateData']);
+        Route::post('/updateDataInStay', [RequestReviewsSettingsController::class, 'updateDataInStay']);
     });
 });

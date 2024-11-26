@@ -36,4 +36,21 @@ class RequestReviewsSettingsController extends Controller
         }
     }
 
+    public function updateDataInStay(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->updateSettings($hotel->id, ['in_stay_activate','in_stay_msg_title','in_stay_msg_text','in_stay_otas_enabled'], $request);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateData');
+        }
+    }
+
 }
