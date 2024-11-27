@@ -39,6 +39,25 @@ class Guest extends Authenticatable
         return $this->belongsToMany(Stay::class)->withPivot('chain_id');
     }
 
+    /**
+     * Accesor para obtener el tipo de avatar.
+     */
+    public function getAvatarTypeAttribute()
+    {
+        // Comprobamos si la URL del avatar contiene "googleusercontent"
+        if (strpos($this->avatar, 'googleusercontent') !== false) {
+            return 'GOOGLE';
+        }
+
+        // Si no es de Google, es una imagen almacenada en el servidor
+        if (strpos($this->avatar, '/storage/') !== false) {
+            return 'STORAGE';
+        }
+
+        // Si no es ninguno de los dos, podemos devolver 'unknown' o lo que necesites
+        return false;
+    }
+
 
     public function chatMessages()
     {

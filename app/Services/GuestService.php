@@ -380,7 +380,7 @@ class GuestService {
                 'model_id' => $guest->id,
                 'created_at' => now()
             ]);
-        
+
             // Enviar correo con el enlace de restablecimiento
             Mail::to($email)->send(new ResetPasswordGuest($url.$token));
             return true;
@@ -392,12 +392,12 @@ class GuestService {
     public function resetPassword($token, $newPassword){
 
         try {
-            
+
             $reset = DB::table('password_resets')->where([
                 ['token', $token]
             ])->first();
             if(!$reset) return null;
-            
+
             $guest = $this->findByEmail($reset->email);
             if(!$guest) return null;
             $dataGuest = new \stdClass();
@@ -422,7 +422,7 @@ class GuestService {
             $guest->stays()->syncWithoutDetaching([
                 $stayId => ['chain_id' => $chainId]
             ]);
-            
+
             //guardar acceso
             $this->stayAccessService->save($stayId,$guestId);
 
@@ -459,12 +459,12 @@ class GuestService {
                             ->where('guest_id', $guestId)
                             ->where('answered', 1)
                             ->exists();
-    
+
                 if(intval($stay->number_guests) > 1){
                     $stay->number_guests = intval($stay->number_guests) - 1;
                     $stay->save();
                 }
-                
+
                 if($chatExists || $queryAnsweredExists){
                     // Crear una nueva estancia solo para el huésped
                     $newStay = new Stay();
@@ -475,27 +475,27 @@ class GuestService {
                     $newStay->check_out = Carbon::now()->subDay()->toDateString();
                     $newStay->guest_id = $guestId;
                     $newStay->save();
-                    
+
                     // Actualizar StayAccess para que apunte a la nueva estancia
                     StayAccess::where([
                         'stay_id' => $stayId,
                         'guest_id' => $guestId
                     ])->update(['stay_id' => $newStay->id]);
-    
+
                     // Actualizar la relación guest->stays para que apunte a la nueva estancia
                     // Primero, adjuntar la nueva estancia con los datos del pivot si es necesario
                     $guest->stays()->syncWithoutDetaching([
                         $newStay->id => ['chain_id' => $chainId]
                     ]);
-    
+
                     // Luego, desasociar la estancia antigua
                     $guest->stays()->detach($stayId);
-    
+
                     // Actualizar Queries para que apunten a la nueva estancia
                     Query::where('stay_id', $stayId)
                     ->where('guest_id', $guestId)
                     ->update(['stay_id' => $newStay->id]);
-    
+
                     if($chatExists){
                         Chat::where('stay_id', $stayId)->where('guest_id', $guestId)->update(['stay_id' => $newStay->id]);
                     }
@@ -513,18 +513,18 @@ class GuestService {
                     if ($access) {
                         $access->delete();
                     }
-    
+
                     // Eliminar Queries asociadas a la estancia y huésped
                     Query::where('stay_id', $stayId)
                     ->where('guest_id', $guestId)
                     ->delete();
-    
+
                     // Eliminar Notas asociadas a la estancia y huésped
                     NoteGuest::where('stay_id', $stayId)
                     ->where('guest_id', $guestId)
                     ->delete();
                 }
-    
+
                 DB::commit();
                 //actualizar lista en el saas
                 sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
