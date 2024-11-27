@@ -47,10 +47,11 @@ class QueryServices {
             $stayId = $request->stayId ?? null;
             $guestId = $request->guestId ?? null;
             $period = $request->period ?? null;
+            $answered = $request->answered ?? 'null';
             $visited = $request->visited ?? 'null';
             $disabled = $request->disabled ?? false;
 
-            $query = Query::where(function($query) use($stayId, $guestId, $period, $visited, $disabled){
+            $query = Query::where(function($query) use($stayId, $guestId, $period, $visited, $disabled,$answered){
                 if ($stayId) {
                     $query->where('stay_id', $stayId);
                 }
@@ -65,6 +66,9 @@ class QueryServices {
                 }
                 if ($visited !== 'null') {
                     $query->where('visited', $visited);
+                }
+                if ($answered !== 'null') {
+                    $query->where('answered', $answered);
                 }
                 if ($disabled) {
                     $query->where('disabled', true);

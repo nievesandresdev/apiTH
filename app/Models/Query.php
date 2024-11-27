@@ -28,6 +28,11 @@ class Query extends Model
     ];
 
     //attrs
+    public function getAnsweredAttribute($value)
+    {
+        return boolval($value);
+    }
+    
     public function getSeenAttribute($value)
     {
         return boolval($value);
