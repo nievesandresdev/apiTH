@@ -41,6 +41,7 @@ Route::post('/send-message-to-thehoster', [ContactController::class, 'send_messa
 Route::post('/create-dns-record', [SubdomainController::class, 'createDNSRecord']);
 
 Route::get('/language/getAll', [LanguageController::class, 'getAll']);
+Route::post('/language/getforItem', [LanguageController::class, 'getLanguageForItem']);
 
 
 Route::group(['prefix' => 'auth'], function () {

@@ -22,17 +22,17 @@ class LanguageController extends Controller
         // $this->service = $_LanguageServices;
     }
 
-    
+
 
     public function getAll(Request $request){
-        
+
         try {
             $isWebapp = isset($request->isWebapp) ? intval($request->isWebapp) : true;
             if ($isWebapp) {
-                $data = ['es', 'en', 'fr'];
+                $data = ['es', 'en', 'fr','pt','it','de'];
                 return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
             }
-            
+
             $languagesModel = Language::all();
             $languagesCollection = LanguageResource::collection($languagesModel);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $languagesCollection);
@@ -42,7 +42,27 @@ class LanguageController extends Controller
         }
     }
 
+    // Nuevo método para obtener idiomas específicos basado en un array de IDs o nombres
+    public function getLanguageForItem(Request $request)
+    {
+        //return bodyResponseRequest(EnumResponse::ACCEPTED, $request->all());
+        // Filtramos los idiomas según el array recibido
+        $languages = Language::whereIn('abbreviation', $request->languages)->orderBy('name')->get();
 
-    
+        // Ordenamos alfabéticamente y ponemos el "selected" al principio
+        $selected = $request->selected_language; // Asumo que el campo "selected_language" se pasa en la solicitud
+
+       /*  $languages = $languages->sortBy(function ($language) use ($selected) {
+            // Primero, si el idioma es el seleccionado, lo ponemos en primer lugar
+            return $language->abbreviation === $selected ? 0 : 1;
+        })->sortBy('name'); // Luego, ordenamos alfabéticamente */
+
+        // Devolvemos la colección de idiomas como un recurso
+        return bodyResponseRequest(EnumResponse::ACCEPTED,$languages);
+    }
+
+
+
+
 
 }
