@@ -183,8 +183,8 @@ class QueryServices {
              * traducir comentario
              */
             $comment = $request->comment;
-            $goodFeel = array('GOOD','VERYGOOD');
-            if (in_array($request->qualification, $goodFeel, true))  $comment = null;
+            // $goodFeel = array('GOOD','VERYGOOD');
+            // if (in_array($request->qualification, $goodFeel, true))  $comment = null;
 
             $originalComment = $request->comment;
             $responseLang = 'es';

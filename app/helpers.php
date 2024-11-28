@@ -681,13 +681,14 @@ if (! function_exists('inStayqueriesTextDefault')) {
         ];
         $queriesTextDefault->in_stay_assessment_good_activate = true;
         $queriesTextDefault->in_stay_assessment_good = [
-            "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
+            "es" => "Nos encantaría saber más detalles de tu opinión sobre el hotel y el personal, tratamos de mejorar tu experiencia.",
             "en" => "We would love to know more details, we seek to improve your experience.",
             "fr" => "Nous aimerions connaître plus de détails, nous cherchons à améliorer votre expérience.",
-            "pt" => "Adoraríamos saber mais detalhes, procuramos melhorar a sua experiência.",
-            "it" => "Ci piacerebbe conoscere maggiori dettagli, cerchiamo di migliorare la tua esperienza.",
-            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
+            "de" => "Wir würden gerne mehr Details zu Ihrer Meinung über das Hotel und das Personal erfahren, da wir versuchen, Ihre Erfahrung zu verbessern.",
+            "it" => "Ci piacerebbe sapere più dettagli sulla tua opinione sull'hotel e sul personale, cerchiamo di migliorare la tua esperienza.",
+            "pt" => "Adoraríamos saber mais detalhes sobre a sua opinião sobre o hotel e a equipe, buscamos melhorar sua experiência."
         ];
+        
         $queriesTextDefault->in_stay_thanks_normal = [
             "es" => "Lamentamos que tu estancia no esté siendo la ideal. Nos gustaría saber más para tratar de mejorarla.",
             "en" => "We are sorry that your stay was not ideal. We would like to know more to try to improve it.",
@@ -722,13 +723,13 @@ if (! function_exists('postStayqueriesTextDefault')) {
     function postStayqueriesTextDefault(){
         $queriesTextDefault = new stdClass();
         $queriesTextDefault->post_stay_thanks_good = [
-            "es" => "Nos alegra mucho saber que has disfrutado tu estancia. Agradecemos sinceramente tu feedback y esperamos seguir cumpliendo tus expectativas.",
-            "en" => "We are very happy to know that you enjoyed your stay. We sincerely appreciate your feedback and hope to continue meeting your expectations.",
-            "fr" => "Nous sommes très heureux de savoir que vous avez apprécié votre séjour. Nous apprécions sincèrement vos commentaires et espérons continuer à répondre à vos attentes.",
-            "pt" => "Estamos muito felizes em saber que você gostou da sua estadia. Agradecemos sinceramente o seu feedback e esperamos continuar atendendo às suas expectativas.",
-            "it" => "Siamo molto felici di sapere che ti sei goduto il tuo soggiorno. Apprezziamo sinceramente il tuo feedback e speriamo di continuare a soddisfare le tue aspettative.",
-            "de" => "Wir freuen uns sehr, dass Sie Ihren Aufenthalt genossen haben. Wir schätzen Ihr Feedback aufrichtig und hoffen, weiterhin Ihre Erwartungen zu erfüllen."
-        ];        
+            "es" => "Mención destacada a miembros del hotel:",
+            "en" => "Special mention to hotel staff:",
+            "fr" => "Mention spéciale aux membres du personnel de l'hôtel :",
+            "pt" => "Menção especial aos membros da equipe do hotel:",
+            "it" => "Menzione speciale ai membri dello staff dell'hotel:",
+            "de" => "Besondere Erwähnung für die Mitarbeiter des Hotels:"
+        ];       
         $queriesTextDefault->post_stay_assessment_good_activate = true;
         $queriesTextDefault->post_stay_assessment_good = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
@@ -739,21 +740,22 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
         ];
         $queriesTextDefault->post_stay_thanks_normal = [
-            "es" => "Lamentamos que tu estancia no haya sido perfecta. Nos ayudaría conocer tu opinión para entender la situación, es muy importante para nosotros.",
-            "en" => "We are sorry that your stay was not perfect. It would help us to know your opinion to understand the situation, it is very important for us",
-            "fr" => "Nous sommes désolés que votre séjour n'ait pas été parfait. Cela nous aiderait à connaître votre avis pour comprendre la situation, c'est très important pour nous",
-            "pt" => "Lamentamos que a sua estadia não tenha sido perfeita. Ajudar-nos-ia saber a sua opinião para compreender a situação, é muito importante para nós.",
-            "it" => "Ci dispiace che il tuo soggiorno non sia stato perfetto. Ci aiuterebbe conoscere la tua opinione per capire la situazione, per noi è molto importante.",
-            "de" => "Es tut uns leid, dass Ihr Aufenthalt nicht perfekt war. Es würde uns helfen, Ihre Meinung zu erfahren, um die Situation zu verstehen. Das ist für uns sehr wichtig."
+            "es" => "Lamentamos que tu estancia no esté siendo la ideal. Nos gustaría saber más para tratar de mejorarla.",
+            "en" => "We are sorry that your stay was not perfect. It would help us to know your opinion to understand the situation, it is very important for us.",
+            "fr" => "Nous sommes désolés que votre séjour ne soit pas parfait. Nous aimerions connaître votre avis pour mieux comprendre la situation, cela est très important pour nous.",
+            "de" => "Es tut uns leid, dass Ihr Aufenthalt nicht perfekt war. Es würde uns helfen, Ihre Meinung zu erfahren, um die Situation besser zu verstehen. Es ist uns sehr wichtig.",
+            "it" => "Ci dispiace che il tuo soggiorno non sia stato ideale. Ci piacerebbe sapere di più per cercare di migliorarlo.",
+            "pt" => "Lamentamos que a sua estadia não tenha sido ideal. Gostaríamos de saber mais para tentar melhorá-la."
         ];
+        
         $queriesTextDefault->post_stay_assessment_normal_activate = true;
         $queriesTextDefault->post_stay_assessment_normal = [
-            "es" => "Nos encantaría saber tu opinión, buscamos mejorar tu experiencia y la del resto de huéspedes.",
-            "en" => "We would love to hear from you, we are looking to improve your experience and that of other guests.",
-            "fr" => "Nous serions ravis de connaître votre avis, nous cherchons à améliorer votre expérience et celle du reste des invités.",
-            "pt" => "Gostaríamos muito de saber a sua opinião, tentamos melhorar a sua experiência e a dos restantes hóspedes.",
-            "it" => "Ci piacerebbe conoscere la tua opinione, cerchiamo di migliorare la tua esperienza e quella del resto degli ospiti.",
-            "de" => "Wir würden gerne Ihre Meinung erfahren, wir möchten Ihr Erlebnis und das der übrigen Gäste verbessern."
+            "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
+            "en" => "We would love to know more details, we seek to improve your experience.",
+            "fr" => "Nous aimerions connaître plus de détails, nous cherchons à améliorer votre expérience.",
+            "pt" => "Adoraríamos saber mais detalhes, procuramos melhorar a sua experiência.",
+            "it" => "Ci piacerebbe conoscere maggiori dettagli, cerchiamo di migliorare la tua esperienza.",
+            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
         ];
         $queriesTextDefault->post_stay_comment = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
