@@ -72,14 +72,14 @@ class StayObserver
                         // Log::info('observer stay: $query' . $query);
                     }   
                     if($resetQueryPost){
-                        $postQuery = $guest->queries()->where('period','post-stay')->first();
-                        $this->queryservice->updateParams( $postQuery->id, $arrUpdate);
+                        $postQuery = $guest->queries()->where('period','post-stay')->delete();
+                        // $this->queryservice->updateParams( $postQuery->id, $arrUpdate);
                         // Log::info('reset postQuery');
                     }
                     if($resetQueryIn ){
                         // Log::info('rest InQuery');
-                        $InQuery = $guest->queries()->where('period','in-stay')->first();
-                        $this->queryservice->updateParams( $InQuery->id, $arrUpdate);
+                        $InQuery = $guest->queries()->where('period','in-stay')->delete();
+                        // $this->queryservice->updateParams( $InQuery->id, $arrUpdate);
                     }
                 }   
                 
