@@ -49,14 +49,6 @@ class LanguageController extends Controller
         // Filtramos los idiomas según el array recibido
         $languages = Language::whereIn('abbreviation', $request->languages)->orderBy('name')->get();
 
-        // Ordenamos alfabéticamente y ponemos el "selected" al principio
-        $selected = $request->selected_language; // Asumo que el campo "selected_language" se pasa en la solicitud
-
-       /*  $languages = $languages->sortBy(function ($language) use ($selected) {
-            // Primero, si el idioma es el seleccionado, lo ponemos en primer lugar
-            return $language->abbreviation === $selected ? 0 : 1;
-        })->sortBy('name'); // Luego, ordenamos alfabéticamente */
-
         // Devolvemos la colección de idiomas como un recurso
         return bodyResponseRequest(EnumResponse::ACCEPTED,$languages);
     }
