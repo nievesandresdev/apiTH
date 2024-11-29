@@ -17,7 +17,9 @@
 </head>
 <body style="background-color: #ffffff; font-family: Helvetica, Arial, sans-serif; margin: 0; padding: 20px;">
     <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
-
+        <p style="font-size: 24px; font-style: normal; font-weight: 600; line-height: 28px; color: #333; text-align: left;">
+            Hola!
+        </p>
         <!-- Primer Párrafo -->
         <p style="font-size: 18px; font-style: normal; font-weight: 500; line-height: 28px; color: #333; text-align: left;">
             Has solicitado un enlace para restablecer la contraseña de tu cuenta en TheHoster. Haz click en el siguiente botón para iniciar el proceso.
