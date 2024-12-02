@@ -205,5 +205,10 @@ class Hotel extends Model
         return $value ? json_decode($value, true) : $defaultButtonsHome;
     }
 
+    public function getImageAttribute($value)
+    {
+        return $value ? $value : '/storage/gallery/general-1.jpg';
+    }
+
 
 }
