@@ -38,12 +38,13 @@ class RequestSettingController extends Controller
         }
     }
 
-    public function getPostStayRequestData(Request $request){
+    public function getRequestData(Request $request){
         
         try {
             $hotel = $request->attributes->get('hotel');
+            $period = $request->period;
             $settings = $this->service->getAll($hotel->id);
-            $model = $this->service->getPostStayRequestData($settings, $hotel);
+            $model = $this->service->getRequestData($settings, $hotel, $period);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -53,7 +54,7 @@ class RequestSettingController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getPostStayRequestData');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getRequestData');
         }
     }
 

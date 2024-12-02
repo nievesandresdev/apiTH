@@ -27,7 +27,8 @@ class RequestSetting extends Model
         'otas_enabled' => 'array',
         'in_stay_msg_title' => 'array',
         'in_stay_msg_text' => 'array',
-        'in_stay_otas_enabled' => 'array'
+        'in_stay_otas_enabled' => 'array',
+        'request_to' => 'array'
     ];
 
     protected $attributes = [
@@ -36,6 +37,7 @@ class RequestSetting extends Model
         'in_stay_msg_title' => '[]',
         'in_stay_msg_text' => '[]',
         'in_stay_otas_enabled' => '[]',
+        'request_to' => '[]'
     ];
     
     public function getInStayActivateAttribute($value)
