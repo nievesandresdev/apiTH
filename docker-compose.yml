@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  api:
+    container_name: thehoster-app-api-backend
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../api:/var/www/html
+      - ../api/vendor:/var/www/html/vendor
+    ports:
+      - "8001:80"
+    networks:
+      - bd-data_hoster_network
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      
+networks:
+  bd-data_hoster_network:
+    external: true
