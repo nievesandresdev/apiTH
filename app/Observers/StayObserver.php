@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\Query;
 use App\Models\Stay;
 use App\Services\QueryServices;
 use App\Services\QuerySettingsServices;
@@ -72,13 +73,25 @@ class StayObserver
                         // Log::info('observer stay: $query' . $query);
                     }   
                     if($resetQueryPost){
-                        $postQuery = $guest->queries()->where('period','post-stay')->delete();
+                        $postQuery = Query::where('guest_id',$guest->id)
+                            ->where('stay_id',$stay->id)
+                            ->where('period','post-stay')
+                            ->first();
+                        $postQuery->histories()->delete();
+                        $postQuery->delete();
+                        
                         // $this->queryservice->updateParams( $postQuery->id, $arrUpdate);
                         // Log::info('reset postQuery');
                     }
                     if($resetQueryIn ){
                         // Log::info('rest InQuery');
-                        $InQuery = $guest->queries()->where('period','in-stay')->delete();
+                        // $InQuery = $guest->queries()->where('period','in-stay')->delete();
+                        $InQuery = Query::where('guest_id',$guest->id)
+                            ->where('stay_id',$stay->id)
+                            ->where('period','in-stay')
+                            ->first();
+                        $InQuery->histories()->delete();
+                        $InQuery->delete();
                         // $this->queryservice->updateParams( $InQuery->id, $arrUpdate);
                     }
                 }   

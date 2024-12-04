@@ -828,8 +828,11 @@ if (! function_exists('requestSettingsDefault')) {
             "de" => "<p>Ihre Erfahrung ist sehr wichtig, das Teilen würde anderen Reisenden helfen, uns kennenzulernen.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Wenn Sie online gebucht haben, könnte bald Ihre Meinung angefragt werden. Wir schätzen es sehr, wenn Sie sie teilen.</p><p><br></p><p class='ql-align-center'><strong>Wir schätzen Ihre Zeit und danken Ihnen, dass Sie uns gewählt haben!</strong></p>"
         ];
         $requestSettings->in_stay_otas_enabled = [
+            "booking" => false,
+            "expedia" => false,
             "google" => true,
-            "tripadvisor" => true
+            "tripadvisor" => true,
+            "airbnb" => false
         ];
         $requestSettings->msg_title = [
             "es" => "<p>¡Nos alegra que hayas disfrutado de tu estancia!</p>",

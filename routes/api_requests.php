@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'request-settings'], function () {
     Route::get('/getAll', [RequestSettingController::class, 'getAll']);
-    Route::get('/getPostStayRequestData', [RequestSettingController::class, 'getPostStayRequestData']);
+    Route::get('/getRequestData', [RequestSettingController::class, 'getRequestData']);
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/updateData', [RequestReviewsSettingsController::class, 'updateData']);
         Route::post('/updateDataInStay', [RequestReviewsSettingsController::class, 'updateDataInStay']);
