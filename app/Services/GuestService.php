@@ -102,7 +102,7 @@ class GuestService {
     public function updatePasswordGuest($data)
     {
         try {
-            return $data->id;
+            //return $data->id;
             $guest = Guest::find($data->id);
 
             // Si el campo password es null, permite establecer la nueva contraseña
