@@ -344,7 +344,7 @@ class UsersController extends Controller
             $msg = prepareMessage($data,$hotel);
             $link = prepareLink($data,$hotel);
 
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name), $guest->email);
+            $this->mailService->sendEmail(new MsgStay('ssss',$hotel,'www.goog.co.ve',false,$guest->name), $guest->email);
 
 
             // Verificar si hay usuarios
