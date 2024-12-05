@@ -348,7 +348,7 @@ class UsersController extends Controller
 
 
             // Verificar si hay usuarios
-            if ($queryUsers->isNotEmpty()) {
+            //if ($queryUsers->isNotEmpty()) {
                 // Datos necesarios para el correo electrónico
                 //$unansweredMessagesData = []; // Proporciona los datos reales aquí
 
@@ -359,7 +359,7 @@ class UsersController extends Controller
                     $email = $user->email;
                     $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), 'francisco20990@gmail.com');
                 }); */
-            }
+            //}
             //$this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
             //Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
             //$this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
