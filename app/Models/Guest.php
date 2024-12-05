@@ -41,23 +41,29 @@ class Guest extends Authenticatable
     }
 
     /**
-     * Accesor para obtener el tipo de avatar.
+     * Accesor para obtener el tipo de avatar.graph.facebook
      */
     public function getAvatarTypeAttribute()
     {
-        // Comprobamos si la URL del avatar contiene "googleusercontent"
+        // Check if the avatar URL is from Google
         if (strpos($this->avatar, 'googleusercontent') !== false) {
             return 'GOOGLE';
         }
 
-        // Si no es de Google, es una imagen almacenada en el servidor
+        // Check if the avatar URL is from Facebook
+        if (strpos($this->avatar, 'facebook.com') !== false || strpos($this->avatar, 'fbcdn.net') !== false) {
+            return 'FACEBOOK';
+        }
+
+        // Check if it's an image stored on the server
         if (strpos($this->avatar, '/storage/') !== false) {
             return 'STORAGE';
         }
 
-        // Si no es ninguno de los dos, podemos devolver 'unknown' o lo que necesites
+        // If none of the above, return false or any default value you prefer
         return false;
     }
+
 
 
     public function chatMessages()
