@@ -135,7 +135,7 @@
         </div> --}}
 
         <!-- Footer -->
-        @include('components.mails.footer',['showNotify' => false])
+        {{-- @include('components.mails.footer',['showNotify' => false]) --}}
     </div>
 </body>
 </html>

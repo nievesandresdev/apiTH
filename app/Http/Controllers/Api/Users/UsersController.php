@@ -313,7 +313,7 @@ class UsersController extends Controller
             $guest = Guest::select('id','phone','email','name')->where('id',171)->first();
             $stay = Stay::find(40);
             $periodUrl = $query->period_id ?? 1;
-            $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id ?? 1;
+            $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay?->id ?? 1;
             //url para atender chat $url/estancias/{stayId}/chat?g=guestId
             $urlChat = config('app.hoster_url')."/estancias/".$stay->id."/chat?g=".$guest->id;
             $user = User::findOrFail(1);
@@ -353,7 +353,7 @@ class UsersController extends Controller
                 //$unansweredMessagesData = []; // Proporciona los datos reales aquí
 
                 // Enviar correo electrónico a cada usuario
-                $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
+                //$this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
                 /* $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     //$emailArray [] = $user->name;
                     $email = $user->email;
