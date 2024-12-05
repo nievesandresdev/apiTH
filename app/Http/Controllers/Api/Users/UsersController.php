@@ -312,7 +312,7 @@ class UsersController extends Controller
             $query = Query::find(245);
             $guest = Guest::select('id','phone','email','name')->where('id',171)->first();
             $stay = Stay::find(46);
-            $periodUrl = $query->period_id;
+            $periodUrl = $query->period_id ?? 1;
             $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id;
             //url para atender chat $url/estancias/{stayId}/chat?g=guestId
             $urlChat = config('app.hoster_url')."/estancias/".$stay->id."/chat?g=".$guest->id;
