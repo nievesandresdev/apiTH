@@ -45,4 +45,8 @@ class RequestSetting extends Model
         return boolval($value);
     }
 
+    public function history()
+    {
+        return $this->hasMany(RequestSettingsHistory::class);
+    }
 }
