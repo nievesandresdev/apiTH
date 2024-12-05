@@ -1,114 +1,141 @@
-{{-- <p style="color: red">
-    {!! $msg !!}
-</p> --}}
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <title>Document</title>
-    {{-- app.css --}}
+    <title>Bienvenido a Thehoster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <style>
 
-        /* Media queries para ajustar la imagen de fondo en dispositivos móviles */
-        @media only screen and (max-width: 768px) {
-            body {
-                background-image: url('{{ asset("mails/fondomobile.png") }}');
-            }
+        body {
+            font-family: "Roboto", sans-serif;
         }
 
-        /* Media queries para ajustar la imagen de fondo en dispositivos más pequeños */
         @media only screen and (max-width: 600px) {
-          body {
-            background-size: contain;
-            height: 10%;
-          }
+            body {
+                background-color: #ffffff !important;
+            }
+            .responsive-table, .responsive-table-2 {
+                width: 100% !important;
+                display: block !important;
+            }
+            .responsive-table td, .responsive-table-2 td {
+                display: block !important;
+                width: 100% !important;
+                text-align: center !important;
+                padding: 10px 0 !important;
+            }
+            .responsive-table .text-content, .responsive-table-2 .text-content {
+                text-align: left !important;
+            }
+            .full-width-button {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                text-align: center !important;
+            }
+            .image-frame {
+                height: auto !important;
+            }
+
+            .div-normal {
+                display: none;
+            }
+
+            .div-responsive {
+                display: block !important;
+            }
+
+            .responsive-section {
+                margin: 0 !important; /* Elimina el margen en pantallas pequeñas */
+            }
         }
 
-        @media (max-width: 768px) {
-            .welcome-text {
-                padding-right: 3px;
-            }
-
-            .welcome-text h1 {
-                font-size: 25px;
-                margin-left: 0;
-            }
-
-            .footer-text {
-                font-size: 12px;
-            }
-
-            /* Ajustar margen superior en pantallas pequeñas */
-            .welcome-message {
-                margin-top: 3px;
-                padding-left: 16px;
-                padding-right: 16px;
-                font-size: 20px;
-            }
+        .div-responsive {
+            display: none;
         }
-      </style>
+    </style>
 </head>
-<body style="background-image: url('{{ asset("mails/fondodesktop.png") }}'); background-size: cover; height: 100%; font-family: 'Montserrat'">
-    @if ($guest == true)
-        <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">¿Has probado la WebApp de {{ $hotel->name }}? Mira todo lo que hay para explorar!.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    @elseif ($create == true)
-        <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">Potencia tu experiencia de viaje, disfruta con nuestra WebApp.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    @else
-        <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">Todo lo que necesitas para optimizar tu estancia, en tu mano. Prueba nuestra WebApp.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    @endif
-
-    <div class="welcome-text" style="height: 500px; padding: 16px; padding-right: 180px; text-align: right; font-family: 'Montserrat'">
-        @if ($guest == true)
-            <h1 style="color: #333; font-size: 48px; margin-left: -20px;">Échale un<br> vistazo a la <br> WebApp de<br> {{ $hotel->name }}</h1>
-        @elseif ($create == true)
-            <h1 style="color: #333; font-size: 48px; margin-left: -20px;">Potencia tu<br> experiencia de<br> viaje</h1>
-        @else
-            <h1 style="color: #333; font-size: 48px; margin-left: -20px;">Te damos la <br>bienvenida a la<br> Webapp</h1>
-        @endif
-    </div>
-
-    <!-- Nuevo texto -->
-    <div class="welcome-message" style="margin-top: 15px; margin-bottom: 35px; padding-left: 40px; padding-right: 40px; font-family: 'Montserrat'">
-        <p style="color: #333; font-size: 35px; font-style: normal; font-weight: 500; line-height: normal;">
-            {!! $msg !!}
-        </p>
-    </div>
-
-    <img src="{{ asset("mails/1.png") }}" alt="1" style="display: block; margin: 0 auto; padding: 10px;margin-top: 20px;">
-    <h1 style="font-size: 20px;text-align: center;font-family: Montserrat;font-weight: 600;margin-top: 32px;margin-bottom: 64px;">¿Qué encontrarás en nuestra WebApp?</h1>
-    <img src="{{ asset("mails/2.png") }}" alt="2" style="display: block; margin: 0 auto; padding: 10px">
-    <img src="{{ asset("mails/3.png") }}" alt="3" style="display: block; margin: 0 auto; padding: 10px">
-    <img src="{{ asset("mails/4.png") }}" alt="4" style="display: block; margin: 0 auto; padding: 10px">
-    <img src="{{ asset("mails/5.png") }}" alt="5" style="display: block; margin: 0 auto; padding: 10px">
-
-    <!-- Texto y QR -->
-    <div style="text-align: center; padding: 20px;">
-        <p style="color: #333; font-size: 22px; font-family: 'Montserrat', sans-serif;">
-                Escanea el código QR o haz click en el botón para volver a la WebApp
-        </p>
-        <a href="{{ $link }}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #f5b700; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px;">Ingresar a WebApp</a>
-        <div>
-            <img src="{{ asset('mails/qr.png') }}" alt="QR Code" style="display: block; margin: 0 auto;">
+<body style="margin: 0; padding: 0; background-color: #FAFAFA;">
+    <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
+        <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
+            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">[NOMBRE HOTEL]</span>
         </div>
-    </div>
+        <section style="margin: 12px" class="responsive-section">
+            <div style="border-radius: 3px 3px 50px 3px; background: #F3F3F3; padding: 40px;">
+                <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                        <!-- Columna de Texto -->
+                        <td class="text-content"
+                            style="color: #333333;
+                                   padding: 0 5px 0 0;
+                                   text-align: left;
+                                   width: 53%;
+                                   vertical-align: top;
+                                   padding-top:22px;">
+                            <span style="margin: 0; font-size: 26px; font-style: normal; font-weight: 600; line-height: 110%;">Gracias por elegirnos</span>
+                            <p style="margin: 10px 0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 110%; margin-top:12px !important;">
+                                Hola [nombreHuésped]<br><br> Esperamos que hayas disfrutado de tu estancia con nosotros y haberte brindado la atención de calidad que mereces.<br><br> Deseamos volver a recibirte muy pronto.
+                            </p>
+                            {{-- <p style="margin: 10px 0; font-size: 16px; font-style: normal; font-weight: 700; line-height: 110%; margin-top:24px !important;">
+                                ¡Gracias por elegirnos!
+                            </p> --}}
+                        </td>
 
-    <!-- Pie de página -->
-    <div style="background-color: #333333; color: #F3F3F3; padding: 20px; text-align: center">
-        <span class="footer-text" style="font-size: 16px;font-style: normal; font-weight: 100; line-height: 1.1;">
-            Le informamos que ha recibido este correo electrónico en relación con su estancia en nuestro alojamiento, 
-            gestionada a través de una de nuestras plataforma de reservas en línea.  Conforme a lo establecido en la 
-            normativa de Protección de datos, le informamos que los datos facilitados son tratados por (Denominación social del hotel) 
-            en calidad de responsable del tratamiento de sus datos, con la finalidad de mejorar su experiencia como cliente y brindarle 
-            información relevante sobre nuestros servicios. Puede obtener más información consultando nuestra Política de Privacidad 
-            (enlace redirigiendo a Política de privacidad hoster-huésped o enlace para pop up de Política de privacidad hoster-huésped).
-        </span>
+                        <!-- Columna de Imagen -->
+                        <td style="text-align: center;
+                                   width: 50%;
+                                   vertical-align: top;
+                                   padding: 0 0 0 10px;"> <!-- 10px de padding a la izquierda -->
+                            <img src="{{ asset('mails/welcome1.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px; max-width: 100%; height: auto;">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+
+        <!-- Nueva sección añadida aquí -->
+        {{-- <div style="background-color: white; padding-top: 32px; padding-bottom: 64px; text-align: center; padding-right: 32px; padding-left: 32px;" class="div-normal">
+            <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
+                <tr style="height: 100%;">
+                    <td style="width: 40%; vertical-align: top; padding-right: 32px;">
+                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;" class="image-frame">
+                    </td>
+                    <td class="text-content" style="width: 60%; vertical-align: top; text-align: left;">
+                        <h2 style="margin: 0;">Datos de acceso</h2>
+                        <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
+                        <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">{{ $user->email }}</span></p>
+                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">{{ $password }}</span></p>
+                        <a href="{{ $url }}" style="display: inline-block; padding-top:13px;padding-bottom:13px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 27px; font-weight: 500; width: 100%; box-sizing: border-box; text-align: center;font-size: 16px;font-style: normal;line-height: 110%;">Entrar a Thehoster</a>
+                    </td>
+                </tr>
+            </table>
+        </div> --}}
+
+
+
+        {{-- <div style="background-color: white; padding: 20px; text-align: center;" class="div-responsive">
+            <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
+                <tr>
+                    <td class="text-content order-1" style="width: 60%; vertical-align: top; text-align: left;">
+                        <h2 style="margin: 0;">Datos de acceso</h2>
+                        <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
+                        <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">{{ $user->email }}</span></p>
+                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">{{ $password }}</span></p>
+                    </td>
+                    <td class="text-content order-2" style="width: 60%; vertical-align: top;">
+                        <a href="{{ $url }}" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 500; width: 100%; box-sizing: border-box; text-align: center;">Entrar a Thehoster</a>
+                    </td>
+                    <td class="order-3" style="width: 40%; vertical-align: top; padding-right: 20px;">
+                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 187px; border-radius: 8px; max-height: 300px;" class="image-frame">
+                    </td>
+                </tr>
+            </table>
+        </div> --}}
+
+        <!-- Footer -->
+        @include('components.mails.footer',['showNotify' => false])
     </div>
 </body>
-
-
-
 </html>
