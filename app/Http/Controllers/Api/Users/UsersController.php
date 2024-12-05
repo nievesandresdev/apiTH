@@ -333,13 +333,13 @@ class UsersController extends Controller
             $unansweredLastMessageData = $this->chatService->unansweredMessagesData(54,'ToHoster',true);
 
             $data = [
-                'stay_id' => $stay->id,
-                'guest_id' => $guest->id,
+                'stay_id' => 2,
+                'guest_id' => 2,
                 'stay_lang' => $guest->lang_web,
                 'msg_text' => 'hola',
                 'guest_name' => $guest->name,
                 'hotel_name' => $hotel->name,
-                'hotel_id' => $hotel->id,
+                'hotel_id' => 3,
             ];
             $msg = prepareMessage($data,$hotel);
             $link = prepareLink($data,$hotel);
