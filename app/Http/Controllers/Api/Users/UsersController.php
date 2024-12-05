@@ -323,15 +323,7 @@ class UsersController extends Controller
             $checkoutFormat = date('d/m/Y', strtotime($stay->check_out));
 
             $dates = "$checkinFormat - $checkoutFormat";
-            // Filtros para las notificaciones
-            $notificationFilters = [
-                'newChat' => true,
-            ];
 
-            // Obtener los usuarios filtrados
-
-            $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
-            $unansweredLastMessageData = $this->chatService->unansweredMessagesData(54,'ToHoster',true);
 
             $data = [
                 'stay_id' => 2,
@@ -345,7 +337,21 @@ class UsersController extends Controller
             $msg = prepareMessage($data,$hotel);
             $link = prepareLink($data,$hotel);
 
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$url,false,$guest->name), $guest->email);
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name), 'francisco20990@gmail.com');
+
+
+
+            // Filtros para las notificaciones
+            $notificationFilters = [
+                'newChat' => true,
+            ];
+
+            // Obtener los usuarios filtrados
+
+            $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
+            $unansweredLastMessageData = $this->chatService->unansweredMessagesData(54,'ToHoster',true);
+
+
 
 
             // Verificar si hay usuarios
