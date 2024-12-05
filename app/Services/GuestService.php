@@ -59,6 +59,8 @@ class GuestService {
             $lang = $data->language ?? 'es';
             $avatar = $data->avatar ?? null;
             $googleId = $data->googleId ?? null;
+            $facebookId = $data->facebookId ?? null;
+
             $guest = Guest::where('email',$email)->first();
             $acronym = $this->generateInitialsName($name ?? $email);
 
@@ -71,6 +73,7 @@ class GuestService {
                     'phone' => $phone ?? null,
                     'avatar' => $avatar,
                     'googleId' => $googleId,
+                    'facebookId' => $facebookId
                 ]);
 
             }else{
@@ -79,6 +82,7 @@ class GuestService {
                 $guest->phone = $phone ?? $guest->phone;
                 $guest->avatar = $avatar ?? $guest->avatar;
                 $guest->googleId = $googleId ?? $guest->googleId;
+                $guest->facebookId = $facebookId ?? $guest->facebookId;
                 if($acronym){
                     $guest->acronym = $acronym;
                 }
