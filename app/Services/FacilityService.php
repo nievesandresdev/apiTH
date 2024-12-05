@@ -193,7 +193,11 @@ class FacilityService {
     public function processTranslate ($request, $facilityHosterModel, $hotelModel) {
 
         $dirTemplateTranslate = 'translation/webapp/hotel_input/facility';
-        $inputsTranslate = ['title' => $request->title, 'description' => $request->description, 'schedule' => $request->ad_tag];
+        $inputsTranslate = [
+            'title' => $facilityHosterModel->title, 
+            'description' => $facilityHosterModel->description, 
+            'schedule' => $request->ad_tag
+        ];
         TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $facilityHosterModel);
     }
 
