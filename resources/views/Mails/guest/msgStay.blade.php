@@ -12,6 +12,12 @@
             font-family: "Roboto", sans-serif;
         }
 
+        .hidden-responsive {
+            display: none;
+        }
+
+
+
         @media only screen and (max-width: 600px) {
             body {
                 background-color: #ffffff !important;
@@ -38,6 +44,14 @@
                 height: auto !important;
             }
 
+            .hidden-responsive {
+                display: block;
+            }
+
+            .show-not-responsive {
+                display: none !important;
+            }
+
             .div-normal {
                 display: none;
             }
@@ -48,6 +62,18 @@
 
             .responsive-section {
                 margin: 0 !important; /* Elimina el margen en pantallas pequeñas */
+            }
+
+            .responsive-section table {
+            display: block;
+            }
+            .responsive-section td {
+                display: block;
+                width: 100%;
+                text-align: center;
+            }
+            .responsive-section td img {
+                margin-bottom: 20px; /* Separar la imagen del texto */
             }
         }
 
@@ -65,6 +91,12 @@
             <div style="border-radius: 3px 3px 50px 3px; background: #F3F3F3; padding: 40px;">
                 <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                     <tr>
+                        <td style="text-align: center;
+                                   width: 50%;
+                                   vertical-align: top;
+                                   padding: 0 0 0 10px;" class="hidden-responsive"> <!-- 10px de padding a la izquierda -->
+                            <img src="{{ asset('mails/welcome1.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px; max-width: 100%; height: auto;">
+                        </td>
                         <!-- Columna de Texto -->
                         <td class="text-content"
                             style="color: #333333;
@@ -77,16 +109,13 @@
                             <p style="margin: 10px 0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 110%; margin-top:12px !important;">
                                 Hola [nombreHuésped]<br><br> Esperamos que hayas disfrutado de tu estancia con nosotros y haberte brindado la atención de calidad que mereces.<br><br> Deseamos volver a recibirte muy pronto.
                             </p>
-                            {{-- <p style="margin: 10px 0; font-size: 16px; font-style: normal; font-weight: 700; line-height: 110%; margin-top:24px !important;">
-                                ¡Gracias por elegirnos!
-                            </p> --}}
                         </td>
 
                         <!-- Columna de Imagen -->
                         <td style="text-align: center;
                                    width: 50%;
                                    vertical-align: top;
-                                   padding: 0 0 0 10px;"> <!-- 10px de padding a la izquierda -->
+                                   padding: 0 0 0 10px;" class="show-not-responsive"> <!-- 10px de padding a la izquierda -->
                             <img src="{{ asset('mails/welcome1.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px; max-width: 100%; height: auto;">
                         </td>
                     </tr>
