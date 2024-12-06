@@ -17,7 +17,6 @@
         }
 
 
-
         @media only screen and (max-width: 600px) {
             body {
                 background-color: #ffffff !important;
@@ -51,6 +50,11 @@
             .show-not-responsive {
                 display: none !important;
             }
+
+            .responsive-section .show-not-responsive {
+                display: none !important;
+            }
+
 
             .div-normal {
                 display: none;
@@ -122,6 +126,37 @@
                 </table>
             </div>
         </section>
+        <section style="margin: 12px; padding: 20px; background: #FFFFFF; border-radius: 3px;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td style="text-align: center; padding-bottom: 16px;">
+                        <img src="{{ asset('mails/icons/reviews/VERYWRONG.svg') }}" alt="Good" style="display: block; margin: 0 auto;">
+                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Muy mala</span>
+                    </td>
+                    <td style="text-align: center; padding-bottom: 16px;">
+                        <img src="{{ asset('mails/icons/reviews/WRONG.svg') }}" alt="Very Good" style="display: block; margin: 0 auto;">
+                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Mala</span>
+                    </td>
+                    <td style="text-align: center; padding-bottom: 16px;">
+                        <img src="{{ asset('mails/icons/reviews/NORMAL.svg') }}" alt="Good" style="display: block; margin: 0 auto;">
+                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Normal</span>
+                    </td>
+                    <td style="text-align: center; padding-bottom: 16px;">
+                        <img src="{{ asset('mails/icons/reviews/GOOD.svg') }}" alt="Very Good" style="display: block; margin: 0 auto;">
+                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Buena</span>
+                    </td>
+                    <td style="text-align: center; padding-bottom: 16px;">
+                        <img src="{{ asset('mails/icons/reviews/VERYGOOD.svg') }}" alt="Very Good" style="display: block; margin: 0 auto;">
+                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Muy Buena</span>
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+
+
+
+
 
 
         <!-- Nueva sección añadida aquí -->
