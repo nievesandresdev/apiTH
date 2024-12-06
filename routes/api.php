@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UtilityController;
+use App\Http\Controllers\Api\revieNotificationController;
 use App\Http\Controllers\Subdomain\SubdomainController;
 use App\Http\Controllers\Api\{
     LanguageController,
@@ -94,8 +95,17 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/dataCustomerExperience', [DasboardController::class, 'dataCustomerExperience']);
         Route::get('/dataFeedback', [DasboardController::class, 'dataFeedback']);
         Route::get('/getDataReviewOTA', [DasboardController::class, 'getDataReviewOTA']);
-    });
+    }); 
+    
 });
+
+
+Route::group(['prefix' => 'review/notification'], function () {
+    Route::post('/', [revieNotificationController::class, 'send']);
+});
+
+
+
 
 
 
