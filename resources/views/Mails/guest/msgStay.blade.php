@@ -91,7 +91,7 @@
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">[NOMBRE HOTEL]</span>
         </div>
-        <section style="margin: 12px" class="responsive-section">
+        <section style="margin-right: 12px; margin-left: 12px" class="responsive-section">
             <div style="border-radius: 3px 3px 50px 3px; background: #F3F3F3; padding: 40px;">
                 <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                     <tr>
@@ -127,31 +127,62 @@
             </div>
         </section>
         <section style="margin: 12px; padding: 20px; background: #FFFFFF; border-radius: 3px;">
-            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-                <tr>
-                    <td style="text-align: center; padding-bottom: 16px;">
-                        <img src="{{ asset('mails/icons/reviews/VERYWRONG.svg') }}" alt="Good" style="display: block; margin: 0 auto;">
-                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Muy mala</span>
-                    </td>
-                    <td style="text-align: center; padding-bottom: 16px;">
-                        <img src="{{ asset('mails/icons/reviews/WRONG.svg') }}" alt="Very Good" style="display: block; margin: 0 auto;">
-                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Mala</span>
-                    </td>
-                    <td style="text-align: center; padding-bottom: 16px;">
-                        <img src="{{ asset('mails/icons/reviews/NORMAL.svg') }}" alt="Good" style="display: block; margin: 0 auto;">
-                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Normal</span>
-                    </td>
-                    <td style="text-align: center; padding-bottom: 16px;">
-                        <img src="{{ asset('mails/icons/reviews/GOOD.svg') }}" alt="Very Good" style="display: block; margin: 0 auto;">
-                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Buena</span>
-                    </td>
-                    <td style="text-align: center; padding-bottom: 16px;">
-                        <img src="{{ asset('mails/icons/reviews/VERYGOOD.svg') }}" alt="Very Good" style="display: block; margin: 0 auto;">
-                        <span style="color: #A0A0A0; text-align: center; font-family: Roboto; font-size: 14px; font-style: normal; font-weight: 500; line-height: 20px; display: block; margin-top: 4px;">Muy Buena</span>
-                    </td>
-                </tr>
-            </table>
+            <!-- Texto y preguntas -->
+            <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 18px; font-weight: 700;">¿Cómo ha sido tu estancia con nosotros?</p>
+            <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 16px; font-weight: 400;">Cuéntanos tu experiencia.</p>
+
+            <!-- Iconos y calificación -->
+            <div style="display: flex; justify-content: space-evenly; margin-top: 16px;">
+                <!-- Muy Mala -->
+                <div style="text-align: center;">
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/VERYWRONG.png') }}" alt="Muy mala" style="width: 32px; height: 32px;">
+                        <p style="color: #A0A0A0; font-family: Roboto; font-size: 14px; font-weight: 500; margin-top: 4px;">Muy mala</p>
+                    </a>
+                </div>
+
+                <!-- Mala -->
+                <div style="text-align: center;">
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/WRONG.png') }}" alt="Mala" style="width: 32px; height: 32px;">
+                        <p style="color: #A0A0A0; font-family: Roboto; font-size: 14px; font-weight: 500; margin-top: 4px;">Mala</p>
+                    </a>
+                </div>
+
+                <!-- Normal -->
+                <div style="text-align: center;">
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/NORMAL.png') }}" alt="Normal" style="width: 32px; height: 32px;">
+                        <p style="color: #A0A0A0; font-family: Roboto; font-size: 14px; font-weight: 500; margin-top: 4px;">Normal</p>
+                    </a>
+                </div>
+
+                <!-- Buena -->
+                <div style="text-align: center;">
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/GOOD.png') }}" alt="Buena" style="width: 32px; height: 32px;">
+                        <p style="color: #A0A0A0; font-family: Roboto; font-size: 14px; font-weight: 500; margin-top: 4px;">Buena</p>
+                    </a>
+                </div>
+
+                <!-- Muy Buena -->
+                <div style="text-align: center;">
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/VERYGOOD.png') }}" alt="Muy buena" style="width: 32px; height: 32px;">
+                        <p style="color: #A0A0A0; font-family: Roboto; font-size: 14px; font-weight: 500; margin-top: 4px;">Muy buena</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Botón "Responder en la WebApp" -->
+            <div style="text-align: center; margin-top: 24px;">
+                <a href="#" style="display: inline-block; text-decoration: none; border-radius: 6px; background: #333; width: 260px; height: 21px; padding: 12px 29px; color: white; font-family: Roboto, sans-serif; font-size: 16px; font-weight: 500; text-align: center; line-height: 20px;">
+                    Responder en la WebApp
+                </a>
+            </div>
         </section>
+
+
 
 
 
