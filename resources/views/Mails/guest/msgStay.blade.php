@@ -132,7 +132,7 @@
                 ¿Cómo ha sido tu estancia con nosotros?
             </p>
 
-            <div style="display: flex; justify-content: space-evenly; margin-top: 16px;">
+            <div style="display: flex; justify-content: center; margin-top: 16px;">
                 <!-- Muy Mala -->
                 <div style="text-align: center; flex: 1; padding: 0 10px;">
                     <a href="#" target="_blank" style="text-decoration: none;">
