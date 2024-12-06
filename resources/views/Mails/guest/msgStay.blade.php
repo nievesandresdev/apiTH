@@ -128,71 +128,65 @@
         </section>
         <section style="margin: 12px; padding: 20px; background: #FFFFFF; border-radius: 3px;">
             <!-- Texto y preguntas -->
-            <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 18px; font-weight: 700; color: #333;">
+            <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 18px; font-weight: 500; line-height: 24px; color: #333333;">
                 ¿Cómo ha sido tu estancia con nosotros?
             </p>
-            <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 16px; font-weight: 400; color: #333;">
+            <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px; color: #A0A0A0;">
                 Cuéntanos tu experiencia.
             </p>
 
-            <!-- Iconos y calificación usando tablas para compatibilidad con Gmail -->
-            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px;">
-                <tr>
-                    <!-- Muy mala -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/VERYWRONG.png') }}" alt="Muy mala" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Muy mala
-                            </p>
-                        </a>
-                    </td>
-                    <!-- Mala -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/WRONG.png') }}" alt="Mala" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Mala
-                            </p>
-                        </a>
-                    </td>
-                    <!-- Normal -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/NORMAL.png') }}" alt="Normal" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Normal
-                            </p>
-                        </a>
-                    </td>
-                    <!-- Buena -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/GOOD.png') }}" alt="Buena" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Buena
-                            </p>
-                        </a>
-                    </td>
-                    <!-- Muy Buena -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/VERYGOOD.png') }}" alt="Muy buena" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Muy buena
-                            </p>
-                        </a>
-                    </td>
-                </tr>
-            </table>
+            <!-- Opciones de calificación -->
+            <div style="display: flex; justify-content: space-evenly; margin-top: 16px; text-align: center;">
+                <!-- Muy Mala -->
+                <div>
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/VERYWRONG.png') }}" width="32" height="32" alt="Muy Mala">
+                        <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px;">Muy Mala</p>
+                    </a>
+                </div>
 
-            <!-- Botón "Responder en la WebApp" -->
+                <!-- Mala -->
+                <div>
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/WRONG.png') }}" width="32" height="32" alt="Mala">
+                        <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px;">Mala</p>
+                    </a>
+                </div>
+
+                <!-- Normal -->
+                <div>
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/NORMAL.png') }}" width="32" height="32" alt="Normal">
+                        <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px;">Normal</p>
+                    </a>
+                </div>
+
+                <!-- Buena -->
+                <div>
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/GOOD.png') }}" width="32" height="32" alt="Buena">
+                        <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px;">Buena</p>
+                    </a>
+                </div>
+
+                <!-- Muy Buena -->
+                <div>
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                        <img src="{{ asset('mails/icons/reviews/VERYGOOD.png') }}" width="32" height="32" alt="Muy Buena">
+                        <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px;">Muy Buena</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Botón -->
             <div style="text-align: center; margin-top: 24px;">
-                <a href="#" target="_blank" style="display: inline-block; text-decoration: none; border-radius: 6px; background: #333; width: 260px; height: 44px; padding: 12px 29px; color: white; font-family: Roboto, sans-serif; font-size: 16px; font-weight: 500; text-align: center; line-height: 20px;">
+                <a href="#" target="_blank" style="display: inline-block; background: #333; color: #fff; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 6px; width: 260px; height: 44px; line-height: 44px; text-align: center; padding: 12px 29px;">
                     Responder en la WebApp
                 </a>
             </div>
         </section>
+
+
 
 
 
