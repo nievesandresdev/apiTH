@@ -25,6 +25,21 @@
             margin-top: 4px;
         }
 
+        .response-button {
+            text-decoration: none;
+            background: #333;
+            color: #FFF;
+            font-family: Roboto, sans-serif;
+            font-size: 14px;
+            padding: 12px 29px;
+            border-radius: 6px;
+            display: inline-block;
+            width: 260px;
+            height: 44px;
+            text-align: center;
+            line-height: 44px;
+        }
+
 
         @media only screen and (max-width: 600px) {
             body {
