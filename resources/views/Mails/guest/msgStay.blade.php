@@ -220,84 +220,84 @@
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-spacing: 8px; text-align: center;">
                 <tr>
                     <!-- Card 1 -->
-                    <td style="width: 150px; border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden; background: #FFF; padding: 8px;">
+                    <td style="width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
                         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                             <tr>
                                 <td style="padding: 0;">
-                                    <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Catedral de Sevilla" style="width: 100%; height: auto; border-radius: 6px;">
+                                    <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Catedral de Sevilla" style="width: 100%; height: auto; display: block;">
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding-top: 8px; text-align: left;">
+                                <td style="padding: 8px; text-align: left;">
                                     <p style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333; font-family: Roboto, sans-serif; font-size: 12px; font-style: normal; font-weight: 500; margin: 0;">
                                         Catedral de Sevilla
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding-top: 8px; text-align: left;">
+                                <td style="padding: 8px; text-align: left;">
                                     <p style="font-family: Roboto, sans-serif; font-size: 12px; margin: 0; color: #333;">⭐ 5.0</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding-top: 8px; text-align: left;">
-                                    <a href="#" style="font-family: Roboto, sans-serif; font-size: 12px; text-decoration: none; color: #007BFF;">Ver en la WebApp</a>
+                                <td style="padding: 8px; text-align: left;">
+                                    <a href="#" style="font-family: Roboto, sans-serif; font-size: 12px; text-decoration: none; color: #333;">Ver en la WebApp</a>
                                 </td>
                             </tr>
                         </table>
                     </td>
 
                     <!-- Card 2 -->
-                    <td style="width: 150px; border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden; background: #FFF; padding: 8px;">
+                    <td style="width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
                         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                             <tr>
                                 <td style="padding: 0;">
-                                    <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="La cantina de Pepe" style="width: 100%; height: auto; border-radius: 6px;">
+                                    <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="La cantina de Pepe" style="width: 100%; height: auto; display: block;">
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding-top: 8px; text-align: left;">
+                                <td style="padding: 8px; text-align: left;">
                                     <p style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333; font-family: Roboto, sans-serif; font-size: 12px; font-style: normal; font-weight: 500; margin: 0;">
                                         La cantina de Pepe
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding-top: 8px; text-align: left;">
+                                <td style="padding: 8px; text-align: left;">
                                     <p style="font-family: Roboto, sans-serif; font-size: 12px; margin: 0; color: #333;">⭐ 5.0</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding-top: 8px; text-align: left;">
-                                    <a href="#" style="font-family: Roboto, sans-serif; font-size: 12px; text-decoration: none; color: #007BFF;">Ver en la WebApp</a>
+                                <td style="padding: 8px; text-align: left;">
+                                    <a href="#" style="font-family: Roboto, sans-serif; font-size: 12px; text-decoration: none; color: #333;">Ver en la WebApp</a>
                                 </td>
                             </tr>
                         </table>
                     </td>
 
                     <!-- Card 3 -->
-                    <td style="width: 150px; border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden; background: #FFF; padding: 8px;">
+                    <td style="width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
                         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                             <tr>
                                 <td style="padding: 0;">
-                                    <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Centro comercial Torre" style="width: 100%; height: auto; border-radius: 6px;">
+                                    <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Centro comercial Torre" style="width: 100%; height: auto; display: block;">
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding-top: 8px; text-align: left;">
+                                <td style="padding: 8px; text-align: left;">
                                     <p style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333; font-family: Roboto, sans-serif; font-size: 12px; font-style: normal; font-weight: 500; margin: 0;">
                                         Centro comercial Torre
                                     </p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding-top: 8px; text-align: left;">
+                                <td style="padding: 8px; text-align: left;">
                                     <p style="font-family: Roboto, sans-serif; font-size: 12px; margin: 0; color: #333;">⭐ 5.0</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding-top: 8px; text-align: left;">
-                                    <a href="#" style="font-family: Roboto, sans-serif; font-size: 12px; text-decoration: none; color: #007BFF;">Ver en la WebApp</a>
+                                <td style="padding: 8px; text-align: left;">
+                                    <a href="#" style="font-family: Roboto, sans-serif; font-size: 12px; text-decoration: none; color: #333;">Ver en la WebApp</a>
                                 </td>
                             </tr>
                         </table>
@@ -305,6 +305,8 @@
                 </tr>
             </table>
         </section>
+
+
 
 
 
