@@ -217,12 +217,14 @@
 
         <section style="margin: 32px; background: #FFFFFF;">
             <!-- Contenedor de las cards -->
-            <div style="display: flex; gap: 16px; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto;">
+            <div style="display: flex; gap: 8px; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto;">
                 <!-- Card 1 -->
                 <div style="width: 300px; border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden; background: #FFF; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0;">
                     <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Catedral de Sevilla" style="width: 100%; height: 180px; object-fit: cover;">
                     <div style="padding: 16px;">
-                        <h3 style="font-family: Roboto, sans-serif; font-size: 18px; margin: 0; color: #333;">Catedral de Sevilla</h3>
+                        <h3 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333; font-family: Roboto, sans-serif; font-size: 14px; font-style: normal; font-weight: 500; margin: 8px 0 0;">
+                            Catedral de Sevilla
+                        </h3>
                         <div style="margin-top: 8px; display: flex; align-items: center; color: #333;">
                             <span style="font-size: 16px;">⭐</span>
                             <span style="font-family: Roboto, sans-serif; font-size: 16px; margin-left: 4px;">5.0</span>
@@ -235,7 +237,9 @@
                 <div style="width: 300px; border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden; background: #FFF; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0;">
                     <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="La cantina de Pepe" style="width: 100%; height: 180px; object-fit: cover;">
                     <div style="padding: 16px;">
-                        <h3 style="font-family: Roboto, sans-serif; font-size: 18px; margin: 0; color: #333;">La cantina de Pepe</h3>
+                        <h3 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333; font-family: Roboto, sans-serif; font-size: 14px; font-style: normal; font-weight: 500; margin: 8px 0 0;">
+                            La cantina de Pepe
+                        </h3>
                         <div style="margin-top: 8px; display: flex; align-items: center; color: #333;">
                             <span style="font-size: 16px;">⭐</span>
                             <span style="font-family: Roboto, sans-serif; font-size: 16px; margin-left: 4px;">5.0</span>
@@ -248,7 +252,9 @@
                 <div style="width: 300px; border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden; background: #FFF; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0;">
                     <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Centro comercial Torre" style="width: 100%; height: 180px; object-fit: cover;">
                     <div style="padding: 16px;">
-                        <h3 style="font-family: Roboto, sans-serif; font-size: 18px; margin: 0; color: #333;">Centro comercial Torre</h3>
+                        <h3 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333; font-family: Roboto, sans-serif; font-size: 14px; font-style: normal; font-weight: 500; margin: 8px 0 0;">
+                            Centro comercial Torre
+                        </h3>
                         <div style="margin-top: 8px; display: flex; align-items: center; color: #333;">
                             <span style="font-size: 16px;">⭐</span>
                             <span style="font-family: Roboto, sans-serif; font-size: 16px; margin-left: 4px;">5.0</span>
@@ -258,6 +264,7 @@
                 </div>
             </div>
         </section>
+
 
 
 
