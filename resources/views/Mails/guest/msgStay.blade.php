@@ -28,14 +28,14 @@
         .response-button {
             text-decoration: none;
             background: #333;
-            color: #FFF;
+            color: #FFFF;
             font-family: Roboto, sans-serif;
             font-size: 18px;
             padding: 12px 29px;
             border-radius: 6px;
             display: inline-block;
             width: 260px;
-            height: 44px;
+            height: 40px;
             text-align: center;
             line-height: 44px;
         }
