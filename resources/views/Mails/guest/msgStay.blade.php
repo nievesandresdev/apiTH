@@ -126,14 +126,14 @@
                 </table>
             </div>
         </section>
-        <section style="margin: 12px; padding: 20px; background: #FFFFFF; border-radius: 3px;">
+        <section style="margin: 12px;  background: #FFFFFF; border-radius: 3px;">
             <!-- Texto y preguntas -->
             <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 16px; line-height: 24px; margin: 0;">
                 ¿Cómo ha sido tu estancia con nosotros?
             </p>
 
             <!-- Tabla de íconos -->
-            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-left : 80px; padding-right: 80px">
                 <tr>
                     <!-- Muy Mala -->
                     <td style="text-align: center; padding: 0 10px;">
