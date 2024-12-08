@@ -133,12 +133,12 @@
             </p>
 
             <!-- Tabla de íconos -->
-            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-left : 50px; padding-right: 50px">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-left : 40px; padding-right: 50px ; width:100%">
                 <tr>
                     <!-- Muy Mala -->
                     <td style="text-align: center; padding: 0 10px;">
                         <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/VERYWRONG.png') }}" alt="Muy Mala" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
+                            <img src="{{ asset('mails/icons/reviews/VERYWRONG.png') }}" alt="Muy Mala" style="width: 40px; height: 32px; display: block; margin: 0 auto;">
                             <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px;">Muy Mala</p>
                         </a>
                     </td>
@@ -166,7 +166,7 @@
                     <!-- Muy Buena -->
                     <td style="text-align: center; padding: 0 10px;">
                         <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/VERYGOOD.png') }}" alt="Muy Buena" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
+                            <img src="{{ asset('mails/icons/reviews/VERYGOOD.png') }}" alt="Muy Buena" style="width: 40px; height: 32px; display: block; margin: 0 auto;">
                             <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px;">Muy Buena</p>
                         </a>
                     </td>
