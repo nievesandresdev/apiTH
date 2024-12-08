@@ -206,7 +206,7 @@
 
             <!-- Botón -->
             <div style="text-align: center; margin-top: 20px;">
-                <a href="#" class="response-button" target="_blank" style="text-decoration: none; background: #333; color: #FFF; font-family: Roboto, sans-serif; font-size: 14px; padding: 12px 29px; border-radius: 6px; display: inline-block; width: 260px; height: 44px; text-align: center; line-height: 44px;">
+                <a href="#" class="response-button" target="_blank">
                     Responder en la WebApp
                 </a>
             </div>
