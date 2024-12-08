@@ -18,7 +18,7 @@
 
         .review-label {
             white-space: nowrap;
-            font-size: 14px;
+            font-size: 18px;
             color: #A0A0A0;
             font-family: Roboto, sans-serif;
             font-weight: 500;
@@ -30,7 +30,7 @@
             background: #333;
             color: #FFF;
             font-family: Roboto, sans-serif;
-            font-size: 14px;
+            font-size: 18px;
             padding: 12px 29px;
             border-radius: 6px;
             display: inline-block;
@@ -47,9 +47,9 @@
             }
 
             .response-button {
-                height: 34px; /* Altura reducida */
+                height: 40px; /* Altura reducida */
                 line-height: 34px; /* Centrado del texto */
-                font-size: 13px; /* Tamaño de fuente más pequeño */
+                font-size: 18px; /* Tamaño de fuente más pequeño */
                 padding: 10px 25px; /* Espaciado ajustado */
             }
             .responsive-table, .responsive-table-2 {
