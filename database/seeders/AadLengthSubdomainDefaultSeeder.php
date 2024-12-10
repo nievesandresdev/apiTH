@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 use App\Models\ChainSubdomain;
 
-class AadLengthSubdomainDefaultSeeder extends Seeder
+class addGuestCreatorIdToStays extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,8 +16,8 @@ class AadLengthSubdomainDefaultSeeder extends Seeder
     {
         $models = ChainSubdomain::all();
         foreach ($models as $model) {
-            $lengthSubdomainDefault = 
-            $model->length_subdomain_default = strlen($model->name);
+            $lengthSubdomainDefault = strlen($model->name);
+            $model->length_subdomain_default = $lengthSubdomainDefault > 20 ? $lengthSubdomainDefault : 20;
             $model->save();
         }
     }
