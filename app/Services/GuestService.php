@@ -255,7 +255,7 @@ class GuestService {
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
             $guest->acronym = $acronym;
 
-            // Log::info('pass '.$data->password);
+            Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
                 $guest->password = bcrypt($data->password);
                 Log::info('update pass'. $guest->password);
@@ -438,6 +438,9 @@ class GuestService {
                 $stay->save();
             }
             DB::commit();
+            
+            sendEventPusher('private-update-stay-list-hotel.' . $stay->hotel_id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
+
             return [
                 'stay' => $stay,
                 'guest' => $guest,
@@ -454,29 +457,32 @@ class GuestService {
         try {
             DB::beginTransaction();
             try {
-                // Log::info('deleteGuestOfStay ');
+                Log::info('-----deleteGuestOfStay ');
 
                 $guest = Guest::find($guestId);
+                Log::info('guest '.json_encode($guest->name));
                 $stay = Stay::find($stayId);
                 $chatExists = Chat::where('stay_id', $stayId)->where('guest_id', $guestId)->first();
+                Log::info('chatExists '.json_encode($chatExists));
                 $queryAnsweredExists = Query::where('stay_id', $stayId)
                             ->where('guest_id', $guestId)
                             ->where('answered', 1)
                             ->exists();
-
+                Log::info('queryAnsweredExists '.json_encode($queryAnsweredExists));
                 if(intval($stay->number_guests) > 1){
                     $stay->number_guests = intval($stay->number_guests) - 1;
                     $stay->save();
                 }
-
+                
                 if($chatExists || $queryAnsweredExists){
+                    Log::info('proceso para huesped con actividad ');
                     // Crear una nueva estancia solo para el huésped
                     $newStay = new Stay();
                     $newStay->hotel_id = $hotelId;
                     $newStay->number_guests = 1;
                     $newStay->language = 'Español';
-                    $newStay->check_in = Carbon::now()->subDays(5)->toDateString();
-                    $newStay->check_out = Carbon::now()->subDay()->toDateString();
+                    $newStay->check_in = $stay->check_in;
+                    $newStay->check_out = $stay->check_out;
                     $newStay->guest_id = $guestId;
                     $newStay->save();
 
@@ -507,6 +513,7 @@ class GuestService {
                     NoteGuest::where('stay_id', $stayId)->where('guest_id', $guestId)->update(['stay_id' => $newStay->id]);
 
                 } else {
+                    Log::info('proceso para huesped SIN actividad ');
                     // Eliminar relación
                     $guest->stays()->detach($stayId);
                     // Eliminar acceso
@@ -531,6 +538,9 @@ class GuestService {
 
                 DB::commit();
                 //actualizar lista en el saas
+                sendEventPusher('private-logout-webapp-guest.' . $guestId, 'App\Events\LogoutWebappGuest', [
+                    'guestId' => $guestId
+                ]);
                 sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
                 return true;
             } catch (\Exception $e) {

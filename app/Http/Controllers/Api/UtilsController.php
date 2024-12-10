@@ -19,6 +19,8 @@ use App\Services\Hoster\RequestReviews\RequestReviewsSettingsServices;
 use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\Hoster\Users\UserServices;
 use App\Services\QuerySettingsServices;
+use Illuminate\Support\Facades\Hash;
+
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -76,31 +78,15 @@ class UtilsController extends Controller
     
     public function test()
     {
-        $stayId = 443;
-        $hotelId = 191;
-        $guestData = Guest::find(9);
-        $queryInStay =  $guestData->queries()->where('stay_id',$stayId)->where('period','in-stay')->orderBy('created_at','asc')->first();
-        $respondedAt = $queryInStay->responded_at;
-        $activeWhenResponding = $this->requestReviewsSettingsServices->fieldAtTheMoment('request_to', $respondedAt, $hotelId);
-        return $goodAnswers = json_decode($activeWhenResponding);
-        $stay = Stay::find($stayId);
-
-        $icon = "Pendiente";
-        $answeredTime = null;
-        $goodAnswers = ['GOOD','VERYGOOD'];
-        if($queryInStay->answered){
-            $goodFeedback = $queryInStay ? in_array($queryInStay->qualification, $goodAnswers) : false;
-            if($goodFeedback){
-                $icon = "Solicitado";
-                $answeredTime = $queryInStay->responded_at;
-            }else{
-                $icon = "No solicitado";
-            }
-        }
-        return [
-            "icon" => $icon,
-            "answeredTime" => $answeredTime
-        ];
+        $guestId = 314;
+        sendEventPusher('private-logout-webapp-guest.' . $guestId, 'App\Events\LogoutWebappGuest', [
+            'guestId' => $guestId
+        ]);
+        $normal = 'tesadasd';
+        $enc = '$2y$12$lLA/81HnYCms90MWHkNMzec/rRl8qN2bNLg8tT.ecfU/puGl2FBN2';
+        $result = Hash::check($normal, $enc);
+        return 'el resultado es : '.strval($result);
+        
     }
 
 

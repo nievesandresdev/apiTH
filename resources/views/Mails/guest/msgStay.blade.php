@@ -16,10 +16,41 @@
             display: none;
         }
 
+        .review-label {
+            white-space: nowrap;
+            font-size: 18px;
+            color: #A0A0A0;
+            font-family: Roboto, sans-serif;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .response-button {
+            text-decoration: none;
+            background: #333;
+            color: #FFFF;
+            font-family: Roboto, sans-serif;
+            font-size: 18px;
+            padding: 12px 29px;
+            border-radius: 6px;
+            display: inline-block;
+            width: 260px;
+            height: 30px;
+            text-align: center;
+            line-height: 44px;
+        }
+
 
         @media only screen and (max-width: 600px) {
             body {
                 background-color: #ffffff !important;
+            }
+
+            .response-button {
+                height: 30px; /* Altura reducida */
+                line-height: 34px; /* Centrado del texto */
+                font-size: 18px; /* Tamaño de fuente más pequeño */
+                padding: 10px 25px; /* Espaciado ajustado */
             }
             .responsive-table, .responsive-table-2 {
                 width: 100% !important;
@@ -84,6 +115,43 @@
         .div-responsive {
             display: none;
         }
+
+            /* Mostrar 3 Cards en pantallas grandes */
+    .desktop-only {
+        display: block;
+    }
+
+    /* Mostrar 2 Cards en pantallas pequeñas */
+    .mobile-only {
+        display: none;
+    }
+
+    @media only screen and (max-width: 1024px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
+
+    @media only screen and (max-width: 768px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
     </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
@@ -91,156 +159,15 @@
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">[NOMBRE HOTEL]</span>
         </div>
-        <section style="margin-right: 12px; margin-left: 12px" class="responsive-section">
-            <div style="border-radius: 3px 3px 50px 3px; background: #F3F3F3; padding: 40px;">
-                <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-                    <tr>
-                        <td style="text-align: center;
-                                   width: 50%;
-                                   vertical-align: top;
-                                   padding: 0 0 0 10px;" class="hidden-responsive"> <!-- 10px de padding a la izquierda -->
-                            <img src="{{ asset('mails/welcome1.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px; max-width: 100%; height: auto;">
-                        </td>
-                        <!-- Columna de Texto -->
-                        <td class="text-content"
-                            style="color: #333333;
-                                   padding: 0 5px 0 0;
-                                   text-align: left;
-                                   width: 53%;
-                                   vertical-align: top;
-                                   padding-top:22px;">
-                            <span style="margin: 0; font-size: 26px; font-style: normal; font-weight: 600; line-height: 110%;">Gracias por elegirnos</span>
-                            <p style="margin: 10px 0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 110%; margin-top:12px !important;">
-                                Hola [nombreHuésped]<br><br> Esperamos que hayas disfrutado de tu estancia con nosotros y haberte brindado la atención de calidad que mereces.<br><br> Deseamos volver a recibirte muy pronto.
-                            </p>
-                        </td>
 
-                        <!-- Columna de Imagen -->
-                        <td style="text-align: center;
-                                   width: 50%;
-                                   vertical-align: top;
-                                   padding: 0 0 0 10px;" class="show-not-responsive"> <!-- 10px de padding a la izquierda -->
-                            <img src="{{ asset('mails/welcome1.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px; max-width: 100%; height: auto;">
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </section>
-        <section style="margin: 12px; padding: 20px; background: #FFFFFF; border-radius: 3px;">
-            <!-- Texto y preguntas -->
-            <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 18px; font-weight: 700; color: #333;">
-                ¿Cómo ha sido tu estancia con nosotros?
-            </p>
-            <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 16px; font-weight: 400; color: #333;">
-                Cuéntanos tu experiencia.
-            </p>
+        @include('components.mails.headerBye')
 
-            <!-- Iconos y calificación usando tablas para compatibilidad con Gmail -->
-            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px;">
-                <tr>
-                    <!-- Muy mala -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/VERYWRONG.png') }}" alt="Muy mala" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Muy mala
-                            </p>
-                        </a>
-                    </td>
-                    <!-- Mala -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/WRONG.png') }}" alt="Mala" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Mala
-                            </p>
-                        </a>
-                    </td>
-                    <!-- Normal -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/NORMAL.png') }}" alt="Normal" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Normal
-                            </p>
-                        </a>
-                    </td>
-                    <!-- Buena -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/GOOD.png') }}" alt="Buena" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Buena
-                            </p>
-                        </a>
-                    </td>
-                    <!-- Muy Buena -->
-                    <td align="center" style="padding: 0 20px; width: 20%;">
-                        <a href="#" target="_blank" style="text-decoration: none;">
-                            <img src="{{ asset('mails/icons/reviews/VERYGOOD.png') }}" alt="Muy buena" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
-                            <p style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; text-align: center;">
-                                Muy buena
-                            </p>
-                        </a>
-                    </td>
-                </tr>
-            </table>
+        @include('components.mails.feedback')
 
-            <!-- Botón "Responder en la WebApp" -->
-            <div style="text-align: center; margin-top: 24px;">
-                <a href="#" target="_blank" style="display: inline-block; text-decoration: none; border-radius: 6px; background: #333; width: 260px; height: 44px; padding: 12px 29px; color: white; font-family: Roboto, sans-serif; font-size: 16px; font-weight: 500; text-align: center; line-height: 20px;">
-                    Responder en la WebApp
-                </a>
-            </div>
-        </section>
+        @include('components.mails.places')
 
 
 
-
-
-
-
-
-
-
-        <!-- Nueva sección añadida aquí -->
-        {{-- <div style="background-color: white; padding-top: 32px; padding-bottom: 64px; text-align: center; padding-right: 32px; padding-left: 32px;" class="div-normal">
-            <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
-                <tr style="height: 100%;">
-                    <td style="width: 40%; vertical-align: top; padding-right: 32px;">
-                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;" class="image-frame">
-                    </td>
-                    <td class="text-content" style="width: 60%; vertical-align: top; text-align: left;">
-                        <h2 style="margin: 0;">Datos de acceso</h2>
-                        <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
-                        <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">{{ $user->email }}</span></p>
-                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">{{ $password }}</span></p>
-                        <a href="{{ $url }}" style="display: inline-block; padding-top:13px;padding-bottom:13px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 27px; font-weight: 500; width: 100%; box-sizing: border-box; text-align: center;font-size: 16px;font-style: normal;line-height: 110%;">Entrar a Thehoster</a>
-                    </td>
-                </tr>
-            </table>
-        </div> --}}
-
-
-
-        {{-- <div style="background-color: white; padding: 20px; text-align: center;" class="div-responsive">
-            <table class="responsive-table-2" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
-                <tr>
-                    <td class="text-content order-1" style="width: 60%; vertical-align: top; text-align: left;">
-                        <h2 style="margin: 0;">Datos de acceso</h2>
-                        <p style="margin: 10px 0; font-weight: 400;">Estas son tus credenciales de acceso a la plataforma.</p>
-                        <p style="margin: 10px 0;"><strong>Usuario:</strong> <span style="font-weight: 400;">{{ $user->email }}</span></p>
-                        <p style="margin: 10px 0;"><strong>Contraseña:</strong> <span style="font-weight: 400;">{{ $password }}</span></p>
-                    </td>
-                    <td class="text-content order-2" style="width: 60%; vertical-align: top;">
-                        <a href="{{ $url }}" style="display: inline-block; padding: 10px 20px; background-color: #FFD453; color: #000; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: 500; width: 100%; box-sizing: border-box; text-align: center;">Entrar a Thehoster</a>
-                    </td>
-                    <td class="order-3" style="width: 40%; vertical-align: top; padding-right: 20px;">
-                        <img src="{{ asset('mails/users/frame.png') }}" alt="Frame Image" style="width: 100%; height: 187px; border-radius: 8px; max-height: 300px;" class="image-frame">
-                    </td>
-                </tr>
-            </table>
-        </div> --}}
 
         <!-- Footer -->
         {{-- @include('components.mails.footer',['showNotify' => false]) --}}
