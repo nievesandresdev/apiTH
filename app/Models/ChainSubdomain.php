@@ -11,5 +11,6 @@ class ChainSubdomain extends Model
         'chain_id',
         'name',
         'active',
+        'length_subdomain_default'
     ];
 }

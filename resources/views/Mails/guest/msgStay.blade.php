@@ -35,7 +35,7 @@
             border-radius: 6px;
             display: inline-block;
             width: 260px;
-            height: 37px;
+            height: 30px;
             text-align: center;
             line-height: 44px;
         }
@@ -47,7 +47,7 @@
             }
 
             .response-button {
-                height: 37px; /* Altura reducida */
+                height: 30px; /* Altura reducida */
                 line-height: 34px; /* Centrado del texto */
                 font-size: 18px; /* Tamaño de fuente más pequeño */
                 padding: 10px 25px; /* Espaciado ajustado */
@@ -115,6 +115,43 @@
         .div-responsive {
             display: none;
         }
+
+            /* Mostrar 3 Cards en pantallas grandes */
+    .desktop-only {
+        display: block;
+    }
+
+    /* Mostrar 2 Cards en pantallas pequeñas */
+    .mobile-only {
+        display: none;
+    }
+
+    @media only screen and (max-width: 1024px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
+
+    @media only screen and (max-width: 768px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
     </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
