@@ -43,4 +43,9 @@ class Query extends Model
     {
         return $this->hasMany(QueryHistory::class);
     }
+
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class);
+    }
 }
