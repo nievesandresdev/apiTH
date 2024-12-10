@@ -15,6 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Create .env file
+        run: |
+            echo "APP_NAME=TheHoster" >> .env
+            echo "APP_KEY" >> .env
+            echo "ASSET_URL='${APP_URL}'" >> .env
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
