@@ -1,0 +1,39 @@
+name: Build and Push Landing Image
+
+on:
+  push:
+    branches: [ main, test ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Determine image name based on branch
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "IMAGE_NAME=api" >> $GITHUB_ENV
+          else
+            echo "IMAGE_NAME=api-test" >> $GITHUB_ENV
+          fi
+
+      - name: Build image with docker compose
+        run: docker compose build
+
+      - name: Tag image (versioned)
+        run: docker tag api:latest ghcr.io/th-the-api/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+
+      - name: Push versioned image to GHCR
+        run: docker push ghcr.io/th-the-api/${{ env.IMAGE_NAME }}:${{ github.run_number }}
