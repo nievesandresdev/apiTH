@@ -1,5 +1,6 @@
 services:
   api:
+    image: api:latest
     container_name: thehoster-app-api-backend
     restart: always
     build:
