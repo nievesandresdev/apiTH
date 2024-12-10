@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 use App\Models\ChainSubdomain;
 
-class addGuestCreatorIdToStays extends Seeder
+class AadLengthSubdomainDefaultSeeder extends Seeder
 {
     /**
      * Run the database seeds.
