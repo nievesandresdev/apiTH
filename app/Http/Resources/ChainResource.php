@@ -20,7 +20,7 @@ class ChainResource extends JsonResource
             "subdomain" => $this->subdomain,
             "type" => $this->type,
             "independentSubdomain" => $this->type == "INDEPENDENT" ? $independentSubdomain->subdomain : null,
-            "length_subdomain_default" => $this->length_subdomain_default
+            "length_subdomain_default" => $this->subdomainActive->chainlength_subdomain_default
         ];
     }
 }

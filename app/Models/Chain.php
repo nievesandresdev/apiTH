@@ -20,5 +20,9 @@ class Chain extends Model
     {
         return $this->hasMany(Hotel::class);
     }
+    public function subdomainActive()
+    {
+        return $this->hasOne(ChainSubdomain::class)->where('active', 1);
+    }
 
 }
