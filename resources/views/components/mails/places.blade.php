@@ -210,21 +210,38 @@
 
 <!-- Estilos Responsivos -->
 <style>
-    /* Estilo para escritorio */
+    /* Mostrar 3 Cards en pantallas grandes */
     .desktop-only {
         display: block;
     }
 
-    /* Estilo para móvil */
+    /* Mostrar 2 Cards en pantallas pequeñas */
     .mobile-only {
         display: none;
     }
 
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 1024px) {
         .desktop-only {
             display: none !important;
         }
+        .mobile-only {
+            display: block !important;
+        }
+    }
 
+    @media only screen and (max-width: 768px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        .desktop-only {
+            display: none !important;
+        }
         .mobile-only {
             display: block !important;
         }
