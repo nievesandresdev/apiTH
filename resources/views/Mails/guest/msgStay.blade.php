@@ -115,6 +115,43 @@
         .div-responsive {
             display: none;
         }
+
+            /* Mostrar 3 Cards en pantallas grandes */
+    .desktop-only {
+        display: block;
+    }
+
+    /* Mostrar 2 Cards en pantallas pequeñas */
+    .mobile-only {
+        display: none;
+    }
+
+    @media only screen and (max-width: 1024px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
+
+    @media only screen and (max-width: 768px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        .desktop-only {
+            display: none !important;
+        }
+        .mobile-only {
+            display: block !important;
+        }
+    }
     </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
