@@ -42,4 +42,4 @@ jobs:
         run: docker tag api:latest ghcr.io/th-the-api/${{ env.IMAGE_NAME }}:${{ github.run_number }}
 
       - name: Push versioned image to GHCR
-        run: docker push ghcr.io/th-the-api/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+        run: docker push ghcr.io/th-the-hoster/api:${{ github.run_number }}
