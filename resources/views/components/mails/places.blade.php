@@ -9,7 +9,7 @@
 
     <!-- Sección con 3 Cards (Visible solo en escritorio) -->
     <section class="desktop-only" style="margin: 12px 0; background: #FFFFFF;">
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-spacing: 0; text-align: left;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-spacing: 12px; text-align: left;">
             <tr>
                 <!-- Card 1 -->
                 <td style="width: 150px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
