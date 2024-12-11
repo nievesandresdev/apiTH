@@ -70,7 +70,37 @@ jobs:
 
             echo "AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_MAIN }}" >> .env
 
+            echo "STRIPE_KEY=${{ secrets.STRIPE_KEY_MAIN }}" >> .env
+            echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_MAIN }}" >> .env
+
+            echo "KEY_VIATOR=${{ secrets.KEY_VIATOR_MAIN }}" >> .env
+            echo "API_VIATOR=${{ secrets.API_VIATOR_MAIN }}" >> .env
+
+            echo "EMAIL_CLOUDFLARE=${{ secrets.EMAIL_CLOUDFLARE_MAIN }}" >> .env
+            echo "API_KEY_CLOUDFLARE=${{ secrets.API_KEY_CLOUDFLARE_MAIN }}" >> .env
+            echo "ZONE_ID_CLOUDFLARE=${{ secrets.ZONE_ID_CLOUDFLARE_MAIN }}" >> .env
+            echo "IP_ADDRESS=${{ secrets.IP_ADDRESS_MAIN }}" >> .env
+
+            echo "HOSTER_URL=${{ secrets.HOSTER_URL_MAIN }}" >> .env
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_MAIN }}" >> .env
+            echo "SMS_API_TOKEN=${{ secrets.SMS_API_TOKEN_MAIN }}" >> .env
+
             echo "X_KEY_API=${{ secrets.X_KEY_API_MAIN }}" >> .env
+
+            echo "URL_BASE_API_REVIEW=${{ secrets.URL_BASE_API_REVIEW_MAIN }}" >> .env
+            echo "KEY_API_REVIEW=${{ secrets.KEY_API_REVIEW_MAIN }}" >> .env
+
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_MAIN }}" >> .env
+            echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI_MAIN }}" >> .env
+            echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET_MAIN }}" >> .env
+
+            echo "FB_CLIENT_ID=${{ secrets.FB_CLIENT_ID_MAIN }}" >> .env
+            echo "FB_CLIENT_SECRET=${{ secrets.FB_CLIENT_SECRET_MAIN }}" >> .env
+            echo "WHATSAPP_PERMANENT_TOKEN=${{ secrets.WHATSAPP_PERMANENT_TOKEN_MAIN }}" >> .env
+          
+            echo "FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID_MAIN }}" >> .env
+            echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET_MAIN }}" >> .env
+            echo "FACEBOOK_REDIRECT=${{ secrets.FACEBOOK_REDIRECT_MAIN }}" >> .env
           else
             echo "APP_DEBUG=${{ secrets.APP_DEBUG_TEST }}" >> .env
             echo "APP_URL=${{ secrets.APP_URL_TEST }}" >> .env
@@ -90,7 +120,37 @@ jobs:
 
             echo "AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_TEST }}" >> .env
 
+            echo "STRIPE_KEY=${{ secrets.STRIPE_KEY_TEST }}" >> .env
+            echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_TEST }}" >> .env
+
+            echo "KEY_VIATOR=${{ secrets.KEY_VIATOR_TEST }}" >> .env
+            echo "API_VIATOR=${{ secrets.API_VIATOR_TEST }}" >> .env
+
+            echo "EMAIL_CLOUDFLARE=${{ secrets.EMAIL_CLOUDFLARE_TEST }}" >> .env
+            echo "API_KEY_CLOUDFLARE=${{ secrets.API_KEY_CLOUDFLARE_TEST }}" >> .env
+            echo "ZONE_ID_CLOUDFLARE=${{ secrets.ZONE_ID_CLOUDFLARE_TEST }}" >> .env
+            echo "IP_ADDRESS=${{ secrets.IP_ADDRESS_TEST }}" >> .env
+
+            echo "HOSTER_URL=${{ secrets.HOSTER_URL_TEST }}" >> .env
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_TEST }}" >> .env
+            echo "SMS_API_TOKEN=${{ secrets.SMS_API_TOKEN_TEST }}" >> .env
+
             echo "X_KEY_API=${{ secrets.X_KEY_API_TEST }}" >> .env
+
+            echo "URL_BASE_API_REVIEW=${{ secrets.URL_BASE_API_REVIEW_TEST }}" >> .env
+            echo "KEY_API_REVIEW=${{ secrets.KEY_API_REVIEW_TEST }}" >> .env
+
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_TEST }}" >> .env
+            echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI_TEST }}" >> .env
+            echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET_TEST }}" >> .env
+
+            echo "FB_CLIENT_ID=${{ secrets.FB_CLIENT_ID_TEST }}" >> .env
+            echo "FB_CLIENT_SECRET=${{ secrets.FB_CLIENT_SECRET_TEST }}" >> .env
+            echo "WHATSAPP_PERMANENT_TOKEN=${{ secrets.WHATSAPP_PERMANENT_TOKEN_TEST }}" >> .env
+          
+            echo "FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID_TEST }}" >> .env
+            echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET_TEST }}" >> .env
+            echo "FACEBOOK_REDIRECT=${{ secrets.FACEBOOK_REDIRECT_TEST }}" >> .env
           fi
           echo "MIX_AWS_STORAGE_PATH=${AWS_STORAGE_PATH}" >> .env
           echo "ASSET_URL='${APP_URL}'" >> .env
