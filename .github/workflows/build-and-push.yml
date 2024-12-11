@@ -164,10 +164,6 @@ jobs:
           echo "LOG_CHANNEL=stack" >> .env
           echo "LOG_LEVEL=debug" >> .env
       
-      - name: Validate .env file
-        run: |
-          cat .env
-
       # Configuración de Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
