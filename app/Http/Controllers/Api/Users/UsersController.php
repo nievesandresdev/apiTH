@@ -22,6 +22,8 @@ use App\Mail\Chats\ChatEmail;
 use App\Services\ChatService;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Guest\MsgStay;
+use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 
 class UsersController extends Controller
@@ -336,8 +338,19 @@ class UsersController extends Controller
             ];
             $msg = prepareMessage($data,$hotel);
             $link = prepareLink($data,$hotel);
+            //$qr = QrCode::format('png')->size(300)->generate($link);
+            // Definir el nombre del archivo con una marca de tiempo única
+            $nombreArchivo = 'qr_' . $hotel->subdomain . '.png';
 
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name), 'francisco20990@gmail.com');
+            // Definir la ruta completa donde se guardará el QR en S3
+            $rutaArchivo = 'qrcodes/' . $nombreArchivo;
+            //Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
+
+            // Obtener la URL pública del archivo guardado
+            //$urlQr = Storage::disk('s3')->url($rutaArchivo);
+            $urlQr= 'wwww';
+
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name,$urlQr), 'francisco20990@gmail.com');
 
 
 
