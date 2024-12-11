@@ -338,17 +338,17 @@ class UsersController extends Controller
             ];
             $msg = prepareMessage($data,$hotel);
             $link = prepareLink($data,$hotel);
-            //$qr = QrCode::format('png')->size(300)->generate($link);
+            $qr = QrCode::format('png')->size(300)->generate($link);
             // Definir el nombre del archivo con una marca de tiempo única
             $nombreArchivo = 'qr_' . $hotel->subdomain . '.png';
 
             // Definir la ruta completa donde se guardará el QR en S3
             $rutaArchivo = 'qrcodes/' . $nombreArchivo;
-            //Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
+            Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
 
             // Obtener la URL pública del archivo guardado
-            //$urlQr = Storage::disk('s3')->url($rutaArchivo);
-            $urlQr= 'wwww';
+            $urlQr = Storage::disk('s3')->url($rutaArchivo);
+            //$urlQr= 'wwww';
 
             $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name,$urlQr), 'francisco20990@gmail.com');
 
