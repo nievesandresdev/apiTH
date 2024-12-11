@@ -214,3 +214,19 @@ jobs:
             --name th-test-api \
             --resource-group th-test-resources \
             --image ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+      
+      # 5. Ejecutar migraciones en la Container App
+      - name: Run Laravel Migrations
+        run: |
+          az containerapp exec \
+            --name th-test-admin \
+            --resource-group th-test-resources \
+            --command "php artisan migrate --force"
+
+      # 6. Ejecutar seeders en la Container App (opcional)
+      #- name: Run Laravel Seeders
+      #  run: |
+      #    az containerapp exec \
+      #      --name th-test-admin \
+      #      --resource-group th-test-resources \
+      #      --command "php artisan db:seed --force"
