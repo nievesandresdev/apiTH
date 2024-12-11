@@ -12,7 +12,7 @@
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-spacing: 12px; text-align: left;">
             <tr>
                 <!-- Card 1 -->
-                <td style="width: 140px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
+                <td style="width: 110px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">
@@ -49,7 +49,7 @@
                 </td>
 
                 <!-- Card 2 -->
-                <td style="width: 140px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
+                <td style="width: 110px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">
@@ -86,7 +86,7 @@
                 </td>
 
                 <!-- Card 3 -->
-                <td style="width: 140px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
+                <td style="width: 110px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">
@@ -130,7 +130,7 @@
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-spacing: 12px; text-align: left;">
             <tr>
                 <!-- Card 1 -->
-                <td style="width: 140px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
+                <td style="width: 110px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">
@@ -167,7 +167,7 @@
                 </td>
 
                 <!-- Card 2 -->
-                <td style="width: 140px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
+                <td style="width: 110px !important; max-width: 150px; border: 1px solid #F3F3F3; border-radius: 4px; overflow: hidden; background: #FFF; padding: 0;">
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">

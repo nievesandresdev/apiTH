@@ -166,6 +166,8 @@
 
         @include('components.mails.places')
 
+        @include('components.mails.stayCheckDate')
+
 
 
 
