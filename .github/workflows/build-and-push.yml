@@ -154,9 +154,11 @@ jobs:
             echo "FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID_TEST }}" >> .env
             echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET_TEST }}" >> .env
             echo "FACEBOOK_REDIRECT=${{ secrets.FACEBOOK_REDIRECT_TEST }}" >> .env
-            
+
             echo "PASSPORT_PRIVATE_KEY=${{ secrets.PASSPORT_PRIVATE_KEY_TEST }}" >> .env
             echo "PASSPORT_PUBLIC_KEY=${{ secrets.PASSPORT_PUBLIC_KEY_TEST }}" >> .env
+
+
           fi
           echo "MIX_AWS_STORAGE_PATH=${AWS_STORAGE_PATH}" >> .env
           echo "ASSET_URL='${APP_URL}'" >> .env
