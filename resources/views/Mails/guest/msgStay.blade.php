@@ -160,14 +160,15 @@
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">[NOMBRE HOTEL]</span>
         </div>
-        {{$urlQr}}
         @include('components.mails.headerBye')
+
+        @include('components.mails.stayCheckDate')
 
         @include('components.mails.feedback')
 
         @include('components.mails.places')
 
-        @include('components.mails.stayCheckDate')
+
 
 
 

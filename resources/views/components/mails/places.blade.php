@@ -16,7 +16,7 @@
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">
-                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Catedral de Sevilla" style="max-width: 150px !important; height: auto; display: block;">
+                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Catedral de Sevilla" style="max-width: 150px !important; width:100%; width:100%; height: auto; display: block;">
                             </td>
                         </tr>
                         <tr>
@@ -53,7 +53,7 @@
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">
-                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="La cantina de Pepe" style="max-width: 150px !important; height: auto; display: block;">
+                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="La cantina de Pepe" style="max-width: 150px !important; width:100%; height: auto; display: block;">
                             </td>
                         </tr>
                         <tr>
@@ -90,13 +90,13 @@
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">
-                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Centro comercial Torre" style="max-width: 150px !important; height: auto; display: block;">
+                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="La cantina de Pepe" style="max-width: 150px !important; width:100%; height: auto; display: block;">
                             </td>
                         </tr>
                         <tr>
                             <td style="padding: 8px; text-align: left;">
                                 <p style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #333; font-family: Roboto, sans-serif; font-size: 12px; font-style: normal; font-weight: 500; margin: 0;">
-                                    Centro comercial Torre
+                                    La cantina de Pepe
                                 </p>
                             </td>
                         </tr>
@@ -134,7 +134,7 @@
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">
-                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Catedral de Sevilla" style="max-width: 150px !important; height: auto; display: block;">
+                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="Catedral de Sevilla" style="max-width: 150px !important; width:100%; height: auto; display: block;">
                             </td>
                         </tr>
                         <tr>
@@ -171,7 +171,7 @@
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td style="padding: 0;">
-                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="La cantina de Pepe" style="max-width: 150px !important; height: auto; display: block;">
+                                <img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" alt="La cantina de Pepe" style="max-width: 150px !important; width:100%; height: auto; display: block;">
                             </td>
                         </tr>
                         <tr>
