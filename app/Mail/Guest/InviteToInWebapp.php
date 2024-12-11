@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Mail\Guest;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class InviteToInWebapp extends Mailable
+{
+    use Queueable, SerializesModels;
+    
+    public $hotel;
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct($hotel)
+    {
+        $this->hotel = $hotel;
+
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        
+        $senderName = $this->hotel['sender_for_sending_email'];
+        $senderEmail = "no-reply@thehoster.es";
+        if($this->hotel['sender_mail_mask']){
+            $senderEmail = $this->hotel['sender_mail_mask'];
+        }
+        return $this->from($senderEmail, $senderName)
+                    ->subject('Asunto test')->view('Mails.guest.InviteToInWebapp');
+
+    }
+}

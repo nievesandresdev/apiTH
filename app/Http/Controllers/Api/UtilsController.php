@@ -8,6 +8,7 @@ use App\Jobs\Chat\NofityPendingChat;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Guest;
+use App\Models\hotel;
 use App\Models\NoteGuest;
 use App\Models\Query;
 use App\Models\RequestSettingsHistory;
@@ -78,7 +79,8 @@ class UtilsController extends Controller
 
     public function testTemplateEmail()
     {
-        return view('Mails.chats.test'); 
+        $hotel = hotel::find(191);
+        return view('Mails.guest.InviteToInWebapp', ['hotel' => $hotel]);
     }
 
     
