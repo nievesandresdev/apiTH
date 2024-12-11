@@ -153,13 +153,14 @@
         }
     }
     </style>
+    @include('components.mails.stayCheckDateStyles')
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
     <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">[NOMBRE HOTEL]</span>
         </div>
-
+        {{$urlQr}}
         @include('components.mails.headerBye')
 
         @include('components.mails.feedback')
