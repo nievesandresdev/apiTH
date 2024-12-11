@@ -16,16 +16,19 @@ class GuestHosterService {
     public $mailService;
     public $guestService;
     public $staySettingsServices;
+    public $utilsHosterServices;
 
     function __construct(
         MailService $_MailService,
         GuestService $_GuestService,
-        StaySettingsServices $_StaySettingsServices
+        StaySettingsServices $_StaySettingsServices,
+        UtilsHosterServices $_UtilsHosterServices
     )
     {
         $this->mailService = $_MailService;
         $this->guestService = $_GuestService;
         $this->staySettingsServices = $_StaySettingsServices;
+        $this->utilsHosterServices = $_UtilsHosterServices;
     }
 
     public function inviteToHotel($data, $hotelId)
@@ -35,7 +38,7 @@ class GuestHosterService {
             // $settings =  $this->staySettingsServices->getAll($hotelId);
             
             $hotel = Hotel::find($hotelId);
-            
+
             // //prepare msg
             // $link = url('webapp?g='.$guest->id);
             // $link =  includeSubdomainInUrlHuesped($link, $hotel);

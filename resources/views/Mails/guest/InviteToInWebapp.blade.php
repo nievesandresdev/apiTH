@@ -16,9 +16,9 @@
                 display: none;
             }
 
-            .stay-checkdates{
+            /* .stay-checkdates{
                 margin-top: 48px;
-            }
+            } */
 
             .width-separator{
 
@@ -42,7 +42,7 @@
     {{-- name hotel --}}
     <section style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
         <div style="padding: 24px 0; text-align: center">
-            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;font-family:Arial;">1243{{$hotel->name}}</span>
+            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;font-family:Arial;">{{$hotel->name}}</span>
         </div>
     </section>
 
@@ -69,9 +69,9 @@
         </table>
     </section>
 
-    <section class="stay-checkdates">
+    {{-- <section class="stay-checkdates">
         @include('components.mails.stayCheckDate')
-    </section>
+    </section> --}}
 
     <div style="max-width: 478px;margin: 48px auto;background-color:#E9E9E9;height: 1px;"></div>
 </body>

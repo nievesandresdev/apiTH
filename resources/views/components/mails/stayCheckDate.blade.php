@@ -11,11 +11,13 @@
                         <table style="width: 100%;">
                             <tr>
                                 <td>
-                                    <h1 class="h1" style="margin:0;color:#858181;font-family: arial;font-weight: 600;">19</h1>
+                                    <h1 class="h1" style="margin:0;color:#858181;font-family: arial;font-weight: 600;">
+                                        {{$formatCheckin['dayDate']}}
+                                    </h1>
                                 </td>
-                                <td>
-                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">Martes</h5>
-                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">NOV</h2>
+                                <td style="padding-left: 2px;">
+                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">{{$formatCheckin['weekDay']}}</h5>
+                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;text-transform: uppercase;">{{$formatCheckin['month']}}</h2>
                                 </td>
                             </tr>
                         </table>
@@ -31,11 +33,13 @@
                         <table style="width: 100%;">
                             <tr>
                                 <td>
-                                    <h1 class="h1" style="margin:0;color:#858181;font-family: arial;font-weight: 600;">19</h1>
+                                    <h1 class="h1" style="margin:0;color:#858181;font-family: arial;font-weight: 600;">
+                                        {{$formatCheckout['dayDate']}}
+                                    </h1>
                                 </td>
-                                <td>
-                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">Martes</h5>
-                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">NOV</h2>
+                                <td style="padding-left: 2px;">
+                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">{{$formatCheckout['weekDay']}}</h5>
+                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;text-transform: uppercase;">{{$formatCheckout['month']}}</h2>
                                 </td>
                             </tr>
                         </table>

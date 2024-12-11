@@ -55,10 +55,7 @@
         }
         
         .dates-container{
-            padding:14px 17px 40px 27px;
-            /*improvisado: margenes para moviles*/
-            margin-left: 12px !important;
-            margin-right: 12px !important;
+            padding:14px 0px 40px 0px;
         }
 
         .checkin-title,

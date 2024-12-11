@@ -19,6 +19,7 @@ use App\Services\Hoster\Chat\ChatSettingsServices;
 use App\Services\Hoster\RequestReviews\RequestReviewsSettingsServices;
 use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\Hoster\Users\UserServices;
+use App\Services\Hoster\UtilsHosterServices;
 use App\Services\QuerySettingsServices;
 use Illuminate\Support\Facades\Hash;
 
@@ -38,13 +39,15 @@ class UtilsController extends Controller
     public $chatService;
     public $chatSettingsServices;
     public  $requestReviewsSettingsServices;
+    public  $utilsHosterServices;
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
         UserServices $userServices,
         ChatService $_ChatService,
         StaySettingsServices $_StaySettingsServices,
         ChatSettingsServices $_ChatSettingsServices,
-        RequestReviewsSettingsServices $_RequestReviewsSettingsServices
+        RequestReviewsSettingsServices $_RequestReviewsSettingsServices,
+        UtilsHosterServices $_UtilsHosterServices
     )
     {
         $this->settings = $_QuerySettingsServices;
@@ -53,6 +56,7 @@ class UtilsController extends Controller
         $this->staySettings = $_StaySettingsServices;
         $this->chatSettingsServices = $_ChatSettingsServices;
         $this->requestReviewsSettingsServices = $_RequestReviewsSettingsServices;
+        $this->utilsHosterServices = $_UtilsHosterServices;
     }
 
     public function authPusher(Request $request)
@@ -80,7 +84,16 @@ class UtilsController extends Controller
     public function testTemplateEmail()
     {
         $hotel = hotel::find(191);
-        return view('Mails.guest.InviteToInWebapp', ['hotel' => $hotel]);
+        $stay = Stay::find(460);
+
+        
+        $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
+        $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
+        return view('Mails.guest.InviteToInWebapp', [
+            'hotel' => $hotel,
+            'formatCheckin' => $formatCheckin,
+            'formatCheckout' => $formatCheckout
+        ]);
     }
 
     
