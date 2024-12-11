@@ -108,3 +108,31 @@ jobs:
       # Empujar la imagen a GHCR
       - name: Push Docker image to GHCR
         run: docker push ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+
+      # 1. Login a Azure
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 2. Seleccionar la suscripción de Azure
+      - name: Set Azure subscription
+        run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # 3. Configurar el registro privado (GHCR) en la Container App si no está configurado
+      - name: Set GHCR Registry
+        run: |
+          az containerapp registry set \
+            --resource-group th-test-resources \
+            --name th-test-api \
+            --server ghcr.io \
+            --username ${{ secrets.GHCR_ACTOR }} \
+            --password ${{ secrets.GHCR_PAT }}
+
+      # 4. Actualizar la Container App con la imagen versionada
+      - name: Update Azure Container App image
+        run: |
+          az containerapp update \
+            --name th-test-api \
+            --resource-group th-test-resources \
+            --image ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
