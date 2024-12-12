@@ -9,6 +9,7 @@ use App\Models\StayNotificationSetting;
 use App\Services\GuestService;
 use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\MailService;
+use App\Services\UtilityService;
 use Illuminate\Support\Facades\Log;
 
 class GuestHosterService {
@@ -17,18 +18,21 @@ class GuestHosterService {
     public $guestService;
     public $staySettingsServices;
     public $utilsHosterServices;
+    public $utilityService;
 
     function __construct(
         MailService $_MailService,
         GuestService $_GuestService,
         StaySettingsServices $_StaySettingsServices,
-        UtilsHosterServices $_UtilsHosterServices
+        UtilsHosterServices $_UtilsHosterServices,
+        UtilityService $_UtilityService
     )
     {
         $this->mailService = $_MailService;
         $this->guestService = $_GuestService;
         $this->staySettingsServices = $_StaySettingsServices;
         $this->utilsHosterServices = $_UtilsHosterServices;
+        $this->utilityService = $_UtilityService;
     }
 
     public function inviteToHotel($data, $hotelId)
@@ -46,7 +50,10 @@ class GuestHosterService {
             // $msg = str_replace('[nombre]', $guest->name, $msg);
             // $msg = str_replace('[nombre_del_hotel]', $hotel->name, $msg);
             // $msg = str_replace('[URL]', $link, $msg);
-            $this->mailService->sendEmail(new InviteToInWebapp($hotel), "andresdreamerf@gmail.com");
+
+            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
+
+            $this->mailService->sendEmail(new InviteToInWebapp($hotel,$crosselling), "andresdreamerf@gmail.com");
             // return $guest;
         } catch (\Exception $e) {
             return $e;

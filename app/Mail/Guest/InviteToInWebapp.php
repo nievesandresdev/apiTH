@@ -12,14 +12,16 @@ class InviteToInWebapp extends Mailable
     use Queueable, SerializesModels;
     
     public $hotel;
+    public $crosselling;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($hotel)
+    public function __construct($hotel,$crosselling)
     {
         $this->hotel = $hotel;
+        $this->crosselling = $crosselling;
 
     }
 
