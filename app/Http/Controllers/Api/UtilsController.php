@@ -21,6 +21,7 @@ use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\Hoster\Users\UserServices;
 use App\Services\Hoster\UtilsHosterServices;
 use App\Services\QuerySettingsServices;
+use App\Services\UtilityService;
 use Illuminate\Support\Facades\Hash;
 
 use Carbon\Carbon;
@@ -40,6 +41,8 @@ class UtilsController extends Controller
     public $chatSettingsServices;
     public  $requestReviewsSettingsServices;
     public  $utilsHosterServices;
+    public  $utilityService;
+
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
         UserServices $userServices,
@@ -47,7 +50,8 @@ class UtilsController extends Controller
         StaySettingsServices $_StaySettingsServices,
         ChatSettingsServices $_ChatSettingsServices,
         RequestReviewsSettingsServices $_RequestReviewsSettingsServices,
-        UtilsHosterServices $_UtilsHosterServices
+        UtilsHosterServices $_UtilsHosterServices,
+        UtilityService $_UtilityService
     )
     {
         $this->settings = $_QuerySettingsServices;
@@ -57,6 +61,7 @@ class UtilsController extends Controller
         $this->chatSettingsServices = $_ChatSettingsServices;
         $this->requestReviewsSettingsServices = $_RequestReviewsSettingsServices;
         $this->utilsHosterServices = $_UtilsHosterServices;
+        $this->utilityService = $_UtilityService;
     }
 
     public function authPusher(Request $request)
@@ -83,16 +88,20 @@ class UtilsController extends Controller
 
     public function testTemplateEmail()
     {
+        
         $hotel = hotel::find(191);
         $stay = Stay::find(460);
+        $chainSubdomain = $hotel->subdomain;
 
-        
         $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
         $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
+        $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+
         return view('Mails.guest.InviteToInWebapp', [
             'hotel' => $hotel,
             'formatCheckin' => $formatCheckin,
-            'formatCheckout' => $formatCheckout
+            'formatCheckout' => $formatCheckout,
+            'crosselling' => $crosselling
         ]);
     }
 

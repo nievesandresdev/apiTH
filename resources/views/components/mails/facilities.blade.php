@@ -13,66 +13,31 @@
                 <col class="col-space">
             </colgroup>
             <tr>
-                <td>
-                    <div style="border-radius: 4px;border: 1px solid #F3F3F3;background: #FFF;padding:1px;">
-                        <img 
-                            class="card-facility"
-                            src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" 
-                            alt="Catedral de Sevilla" 
-                            style="display:block;border-radius:3px 3px 0 0"
-                        >
-                        <div style="padding: 8px;">
-                            <h2 style="margin: 0;height: 28px;color: #333;font-family: Arial, sans-serif;font-size: 14px;font-weight: 500;line-height: 200%;overflow: hidden;text-overflow: ellipsis;width: 100%;">
-                                Piscina exterior Piscina
-                            </h2>
-                            <div style="text-align: right;margin-top:8px;margin-bottom:15px;">
-                                <a style="color:#333;font-family: Arial;font-size: 10.5px;font-weight: 700;line-height: 114.286%;text-decoration: underline;" href="">
-                                    Ver en la WebApp
-                                </a>
+                @foreach ($crosselling['facilities'] as $key => $item)
+                    <td class="{{ $key == 2 ? 'col-3-desktop' : '' }}">
+                        <div style="border-radius: 4px;border: 1px solid #F3F3F3;background: #FFF;padding:1px;">
+                            <img 
+                                class="card-facility"
+                                src="{{$item['url_image']}}" 
+                                alt="Catedral de Sevilla" 
+                                style="display:block;border-radius:3px 3px 0 0"
+                            >
+                            <div style="padding: 8px;">
+                                <h2 class="title-card">
+                                    {!! $item['title'] !!}
+                                </h2>
+                                <div style="text-align: right;margin-top:8px;margin-bottom:15px;">
+                                    <a 
+                                        style="color:#333;font-family: Arial;font-size: 10.5px;font-weight: 700;line-height: 114.286%;text-decoration: underline;" 
+                                        href="{{ $item['url_webapp'] }}"
+                                    >
+                                        Ver en la WebApp
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <div style="border-radius: 4px;border: 1px solid #F3F3F3;background: #FFF;padding:1px;">
-                        <img 
-                            class="card-facility"
-                            src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" 
-                            alt="Catedral de Sevilla" 
-                            style="display:block;border-radius:3px 3px 0 0"
-                        >
-                        <div style="padding: 8px;">
-                            <h2 style="margin: 0;height: 28px;color: #333;font-family: Arial, sans-serif;font-size: 14px;font-weight: 500;line-height: 200%;overflow: hidden;text-overflow: ellipsis;width: 100%;">
-                                Piscina exterior Piscina
-                            </h2>
-                            <div style="text-align: right;margin-top:8px;margin-bottom:15px;">
-                                <a style="color:#333;font-family: Arial;font-size: 10.5px;font-weight: 700;line-height: 114.286%;text-decoration: underline;" href="">
-                                    Ver en la WebApp
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </td>
-                <td class="col-3-desktop">
-                    <div style="border-radius: 4px;border: 1px solid #F3F3F3;background: #FFF;padding:1px;">
-                        <img 
-                            class="card-facility"
-                            src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" 
-                            alt="Catedral de Sevilla" 
-                            style="display:block;border-radius:3px 3px 0 0"
-                        >
-                        <div style="padding: 8px;">
-                            <h2 style="margin: 0;height: 28px;color: #333;font-family: Arial, sans-serif;font-size: 14px;font-weight: 500;line-height: 200%;overflow: hidden;text-overflow: ellipsis;width: 100%;">
-                                Piscina exterior Piscina
-                            </h2>
-                            <div style="text-align: right;margin-top:8px;margin-bottom:15px;">
-                                <a style="color:#333;font-family: Arial;font-size: 10.5px;font-weight: 700;line-height: 114.286%;text-decoration: underline;" href="">
-                                    Ver en la WebApp
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </td>
+                    </td>
+                @endforeach
             </tr>
         </table>
     </div>

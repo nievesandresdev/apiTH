@@ -23,7 +23,7 @@ class FacilityService {
 
     }
 
-    public function getCrosselling ($modelHotel) {
+    public function getCrosselling ($modelHotel, $limit = 12) {
         try {
 
             $facilities = FacilityHoster::with('images', 'translate')
@@ -32,7 +32,7 @@ class FacilityService {
                             ->where('select',1)
                             ->orderBy('order')
                             ->orderBy('updated_at', 'desc')
-                            ->limit(12)
+                            ->limit($limit)
                             ->get();
 
             return $facilities;
@@ -41,6 +41,7 @@ class FacilityService {
             return $e;
         }
     }
+
 
     public function getAll ($request, $modelHotel) {
         try {

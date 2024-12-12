@@ -22,7 +22,7 @@
                             style="display:block;border-radius:3px 3px 0 0"
                         >
                         <div style="padding: 8px;">
-                            <h2 style="margin: 0;height: 28px;color: #333;font-family: Arial, sans-serif;font-size: 14px;font-weight: 500;line-height: 200%;overflow: hidden;text-overflow: ellipsis;width: 100%;">
+                            <h2 class="title-card">
                                 Catedral de Sevilla
                             </h2>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="width: auto;">
@@ -52,7 +52,7 @@
                             style="display:block;border-radius:3px 3px 0 0"
                         >
                         <div style="padding: 8px;">
-                            <h2 style="margin: 0;height: 28px;color: #333;font-family: Arial, sans-serif;font-size: 14px;font-weight: 500;line-height: 200%;overflow: hidden;text-overflow: ellipsis;width: 100%;">
+                            <h2 class="title-card">
                                 Catedral de Sevilla
                             </h2>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="width: auto;">
@@ -82,7 +82,7 @@
                             style="display:block;border-radius:3px 3px 0 0"
                         >
                         <div style="padding: 8px;">
-                            <h2 style="margin: 0;height: 28px;color: #333;font-family: Arial, sans-serif;font-size: 14px;font-weight: 500;line-height: 200%;overflow: hidden;text-overflow: ellipsis;width: 100%;">
+                            <h2 class="title-card">
                                 Catedral de Sevilla
                             </h2>
                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="width: auto;">
