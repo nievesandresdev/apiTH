@@ -347,7 +347,7 @@ class UsersController extends Controller
             $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
 
             // Obtener la URL pública del archivo guardado
-            $urlQr = Storage::disk('s3')->url($storage);
+            $urlQr = Storage::disk('s3')->url($rutaArchivo);
             //$urlQr= 'wwww';
 
             $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name,false,$urlQr), 'francisco20990@gmail.com');
