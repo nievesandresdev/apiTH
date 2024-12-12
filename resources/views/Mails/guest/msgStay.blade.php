@@ -168,6 +168,8 @@
 
         @include('components.mails.places')
 
+        @include('components.mails.experiences')
+
 
 
 

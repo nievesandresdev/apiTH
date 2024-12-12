@@ -344,10 +344,10 @@ class UsersController extends Controller
 
             // Definir la ruta completa donde se guardará el QR en S3
             $rutaArchivo = 'qrcodes/' . $nombreArchivo;
-            Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
+            $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
 
             // Obtener la URL pública del archivo guardado
-            $urlQr = Storage::disk('s3')->url($rutaArchivo);
+            $urlQr = Storage::disk('s3')->url($storage);
             //$urlQr= 'wwww';
 
             $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name,false,$urlQr), 'francisco20990@gmail.com');
