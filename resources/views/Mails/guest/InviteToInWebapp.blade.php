@@ -20,8 +20,8 @@
                 margin-top: 48px;
             } */
 
-            .width-separator{
-
+            .facilities{
+                margin-top: 48px;
             }
         }
         @media only screen and (max-width: 600px) {
@@ -37,6 +37,7 @@
         }
     </style>
     @include('components.mails.stayCheckDateStyles')
+    @include('components.mails.facilitiesAndPlacesStyles')
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
     {{-- name hotel --}}
@@ -53,7 +54,7 @@
                 <td style="vertical-align: top;">
                     <img class="img-mobile" style="width: 100%;height: 168px;padding-bottom:24px;" src="{{ asset('mails/invitar-a-huesped-sass-mobile.png') }}" alt="">
                     <div class="container-text">
-                        <h1 style="margin:0;font-size: 26px;font-weight: 600;line-height: 110%;font-family:Arial;">Únete ahora a la WebApp de [nombreHotel]</h1>
+                        <h1 style="margin:0;font-size: 26px;font-weight: 600;line-height: 110%;font-family:Arial;">Únete ahora a la WebApp de {{$hotel->name}}</h1>
                         <p class="description" style="margin:0;color: #333;font-size: 16px;font-weight: 400;line-height: 28px;margin-top:24px;font-family:Arial;">
                             Únete a la WebApp de {{$hotel->name}} y descubre cómo aprovechar tu viaje al máximo.
                         </p>
@@ -73,6 +74,16 @@
         @include('components.mails.stayCheckDate')
     </section> --}}
 
-    <div style="max-width: 478px;margin: 48px auto;background-color:#E9E9E9;height: 1px;"></div>
+    <section class="facilities">
+        @include('components.mails.places')
+    </section>
+
+    <section class="facilities">
+        @include('components.mails.facilities')
+    </section>
+    {{-- este es el ancho del aproximado gmail en movil --}}
+    {{-- <div style="max-width: 326px;background-color:#9f1a1a;height: 140px;"></div> --}}
+
+    <div style="max-width: 474px;margin: 48px auto;background-color:#E9E9E9;height: 1px;"></div>
 </body>
 </html>
