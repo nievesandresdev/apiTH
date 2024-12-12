@@ -350,7 +350,7 @@ class UsersController extends Controller
             $urlQr = Storage::disk('s3')->url($storage);
             //$urlQr= 'wwww';
 
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name,false,$urlQr), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name,false,$storage), 'francisco20990@gmail.com');
 
 
 
