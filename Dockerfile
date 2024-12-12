@@ -4,7 +4,7 @@ FROM php:8.2-apache
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
 
-# Instalar dependencias del sistema necesarias para Laravel
+# Instalar dependencias del sistema necesarias para Laravel y Imagick
 RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
@@ -16,13 +16,14 @@ RUN apt-get update && apt-get install -y \
     vim \
     unzip \
     git \
-    curl && \
+    curl \
+    libmagickwand-dev --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalar extensiones de PHP necesarias para Laravel
+# Instalar extensiones de PHP necesarias para Laravel, incluyendo Imagick
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
-    install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap
+    install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap imagick
 
 # Instalar Composer (administrador de dependencias de PHP)
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
@@ -46,8 +47,13 @@ RUN a2ensite 000-default.conf
 # Copiar todos los archivos del proyecto al contenedor
 COPY . /var/www/html
 
-# Dar permisos a la carpeta de Laravel
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Crear directorios necesarios y dar permisos a las carpetas de Laravel
+RUN mkdir -p /var/www/html/storage/framework/cache \
+    /var/www/html/storage/framework/sessions \
+    /var/www/html/storage/framework/views \
+    /var/www/html/bootstrap/cache && \
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Instalar dependencias de Laravel con Composer
 RUN composer install --no-dev --optimize-autoloader

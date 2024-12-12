@@ -16,12 +16,13 @@ class MsgStay extends Mailable
     public $guest_name;
     public $link;
     public $create;
+    public $urlQr;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($msg, $hotel,$link = null,$guest = false,$guest_name = null,$create = false)
+    public function __construct($msg, $hotel,$link = null,$guest = false,$guest_name = null,$create = false,$urlQr = null)
     {
         $this->msg = $msg;
         $this->hotel = $hotel;
@@ -29,6 +30,7 @@ class MsgStay extends Mailable
         $this->guest = $guest;
         $this->guest_name = $guest_name;
         $this->create = $create;
+        $this->urlQr = $urlQr;
 
     }
 
@@ -46,7 +48,7 @@ class MsgStay extends Mailable
         }else{
             $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
         }
-        
+
         $senderName = $this->hotel['sender_for_sending_email'];
         $senderEmail = "no-reply@thehoster.es";
         if($this->hotel['sender_mail_mask']){

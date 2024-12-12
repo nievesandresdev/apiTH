@@ -101,6 +101,9 @@ jobs:
             echo "FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID_MAIN }}" >> .env
             echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET_MAIN }}" >> .env
             echo "FACEBOOK_REDIRECT=${{ secrets.FACEBOOK_REDIRECT_MAIN }}" >> .env
+
+            echo "PASSPORT_PRIVATE_KEY=${{ secrets.PASSPORT_PRIVATE_KEY_MAIN }}" >> .env
+            echo "PASSPORT_PUBLIC_KEY=${{ secrets.PASSPORT_PUBLIC_KEY_MAIN }}" >> .env
           else
             echo "APP_DEBUG=${{ secrets.APP_DEBUG_TEST }}" >> .env
             echo "APP_URL=${{ secrets.APP_URL_TEST }}" >> .env
@@ -151,12 +154,16 @@ jobs:
             echo "FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID_TEST }}" >> .env
             echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET_TEST }}" >> .env
             echo "FACEBOOK_REDIRECT=${{ secrets.FACEBOOK_REDIRECT_TEST }}" >> .env
+
+            echo "PASSPORT_PRIVATE_KEY=\"${{ secrets.PASSPORT_PRIVATE_KEY_TEST }}\"" >> .env
+            echo "PASSPORT_PUBLIC_KEY=\"${{ secrets.PASSPORT_PUBLIC_KEY_TEST }}\"" >> .env
+
           fi
           echo "MIX_AWS_STORAGE_PATH=${AWS_STORAGE_PATH}" >> .env
           echo "ASSET_URL='${APP_URL}'" >> .env
           echo "LOG_CHANNEL=stack" >> .env
           echo "LOG_LEVEL=debug" >> .env
-
+      
       # Configuración de Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -191,9 +198,9 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }} 
 
-      # 2. Seleccionar la suscripción de Azure
+      # 2. Seleccionar la suscripción de Azure 
       - name: Set Azure subscription
         run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 

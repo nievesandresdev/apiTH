@@ -1,4 +1,4 @@
-<div>
+<div style="margin-top: 32px">
     <h1 class="title-section" style="margin: 0 auto;color:#333;font-family: arial;font-weight: 600;font-size: 22px;line-height: 150%;">
         Datos de nuestra estancia en {{$hotel->name}}
     </h1>
