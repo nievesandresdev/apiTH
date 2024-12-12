@@ -14,11 +14,16 @@ use App\Models\Stay;
 
 use App\Http\Resources\FacilityResource;
 
+
 class UtilityService {
 
-    function __construct()
-    {
+    public $facilityService;
 
+    function __construct(
+        FacilityService $_FacilityService
+    )
+    {
+        $this->facilityService = $_FacilityService;
     }
 
     public function getExpAndPlace ($request, $modelHotel) {
@@ -42,4 +47,32 @@ class UtilityService {
         }
 
     }
+
+    public function getCrossellingHotelForMail ($modelHotel, $chainSubdomain) {
+
+        try {
+            $url_bucket  = config('app.url_bucket');
+            $facilities = [];
+            
+            if($modelHotel->show_facilities){
+                $facilities = $this->facilityService->getCrosselling($modelHotel, 3);
+                $facilities = $facilities->map(function ($item) use($modelHotel, $chainSubdomain, $url_bucket){
+                    return [
+                        'title' => $item->title,
+                        'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"ver-instalacion/{$item->id}"),
+                        'url_image' => $url_bucket.$item->images[0]->url
+                    ];
+                });
+            }
+            //
+            return [
+                'facilities' => $facilities
+            ];
+        } catch (\Exception $e) {
+            $e;
+        }
+
+    }
+
+    
 }
