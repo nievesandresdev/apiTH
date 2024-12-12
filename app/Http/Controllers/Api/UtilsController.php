@@ -97,11 +97,16 @@ class UtilsController extends Controller
         $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
         $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
+        $webappLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
+        $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
+
         return view('Mails.guest.InviteToInWebapp', [
             'hotel' => $hotel,
             'formatCheckin' => $formatCheckin,
             'formatCheckout' => $formatCheckout,
-            'crosselling' => $crosselling
+            'crosselling' => $crosselling,
+            'webappLink' => $webappLink,
+            'webappChatLink' => $webappChatLink,
         ]);
     }
 
