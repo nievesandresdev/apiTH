@@ -48,8 +48,8 @@ jobs:
           echo "PUSHER_APP_KEY=${{ secrets.PUSHER_APP_KEY }}" >> .env
           echo "PUSHER_APP_SECRET=${{ secrets.PUSHER_APP_SECRET }}" >> .env
           echo "PUSHER_APP_CLUSTER=us2" >> .env
-          echo "MIX_PUSHER_APP_KEY=${PUSHER_APP_KEY}" >> .env
-          echo "MIX_PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER}" >> .env
+          echo "MIX_PUSHER_APP_KEY=${{ secrets.PUSHER_APP_KEY }}" >> .env
+          echo "MIX_PUSHER_APP_CLUSTER=us2" >> .env
 
           if [ "${{ github.ref_name }}" == "main" ]; then
             echo "APP_DEBUG=${{ secrets.APP_DEBUG_MAIN }}" >> .env
@@ -69,6 +69,7 @@ jobs:
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_MAIN }}" >> .env
 
             echo "AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_MAIN }}" >> .env
+            echo "MIX_AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_MAIN }}" >> .env
 
             echo "STRIPE_KEY=${{ secrets.STRIPE_KEY_MAIN }}" >> .env
             echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_MAIN }}" >> .env
@@ -124,6 +125,7 @@ jobs:
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_TEST }}" >> .env
 
             echo "AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_TEST }}" >> .env
+            echo "MIX_AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_TEST }}" >> .env
 
             echo "STRIPE_KEY=${{ secrets.STRIPE_KEY_TEST }}" >> .env
             echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_TEST }}" >> .env
@@ -162,7 +164,7 @@ jobs:
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
           fi
-          echo "MIX_AWS_STORAGE_PATH=${AWS_STORAGE_PATH}" >> .env
+          
           echo "ASSET_URL='${APP_URL}'" >> .env
           echo "LOG_CHANNEL=stack" >> .env
           echo "LOG_LEVEL=debug" >> .env
