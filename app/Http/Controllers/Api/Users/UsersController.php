@@ -354,19 +354,17 @@ class UsersController extends Controller
             // Obtener la URL pública del archivo guardado
             $urlQr = Storage::disk('s3')->url($rutaArchivo);
 
-           /*  return bodyResponseRequest(EnumResponse::SUCCESS, [
+            /* return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
                 'data' => [
-                    'msg' => $msg,
+                    'msg' => $guest->name,
                     'link' => $link,
-                    'qr' => $qr,
-                    'urlQr' => $urlQr,
-                    'storage' => $storage,
+
                 ]
             ]); */
             //$urlQr= 'wwww';
 
-            $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name,false,$urlQr), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new MsgStay(false,$hotel,$link,false,$guest->name,false,$urlQr,true), 'francisco20990@gmail.com');
 
 
 

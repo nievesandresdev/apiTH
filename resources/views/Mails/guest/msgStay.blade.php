@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Bienvenido a Thehoster</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <style>
 
         body {
@@ -159,9 +159,10 @@
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
     <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
-            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">[NOMBRE HOTEL]</span>
+            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }} </span>
         </div>
-        @include('components.mails.headerBye')
+        @include('components.mails.headerByeAfter',['guest_name' => $guest_name,'hotel_name' => $hotel->name])
+        @include('components.mails.headerBye',['guest_name' => $guest_name])
 
         {{-- @include('components.mails.stayCheckDate') --}}
 
