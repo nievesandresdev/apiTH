@@ -143,7 +143,7 @@ class StayService {
                 $msg = prepareMessage($data,$hotel,'&subject=invited');
                 $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link), $guest->email);
+                // $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link), $guest->email);
             }
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
