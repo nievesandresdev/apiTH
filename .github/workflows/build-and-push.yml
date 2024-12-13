@@ -216,7 +216,7 @@ jobs:
             --server ghcr.io \
             --username ${{ secrets.GHCR_ACTOR }} \
             --password ${{ secrets.GHCR_PAT }}
-
+ 
       # 4. Actualizar la Container App con la imagen versionada
       - name: Update Azure Container App image
         run: |
