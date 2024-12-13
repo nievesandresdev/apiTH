@@ -337,7 +337,8 @@ class UsersController extends Controller
                 'hotel_id' => 3,
             ];
             $msg = prepareMessage($data,$hotel);
-            $link = prepareLink($data,$hotel);
+            $link = buildUrlWebApp($hotel->subdomain, $hotel->subdomain);
+
             $qr = QrCode::format('png')->size(300)->generate($link);
             // Definir el nombre del archivo con una marca de tiempo única
             $nombreArchivo = 'qr_' . $hotel->subdomain . '.png';
