@@ -12,18 +12,29 @@ use App\Models\FacilityHoster;
 use App\Models\User;
 use App\Models\Stay;
 
-use App\Http\Resources\FacilityResource;
+use App\Http\Resources\{PlaceResource};
+
+
 
 
 class UtilityService {
 
     public $facilityService;
+    public $serviceExperience;
+    public $cityService;
+    public $servicePlace;
 
     function __construct(
-        FacilityService $_FacilityService
+        FacilityService $_FacilityService,
+        ExperienceService $_ExperienceService,
+        CityService $_CityService,
+        PlaceService $_PlaceService
     )
     {
         $this->facilityService = $_FacilityService;
+        $this->serviceExperience = $_ExperienceService;
+        $this->cityService = $_CityService;
+        $this->servicePlace = $_PlaceService;
     }
 
     public function getExpAndPlace ($request, $modelHotel) {
@@ -35,7 +46,7 @@ class UtilityService {
 
             $data = collect([]);
             $total_length = 8;
-            
+
             if($routeName == 'places.list' || $route_name == 'places.show'){
                 $data = $this->service->getPlacesBySearch ($search, $placelang, $total_length, $city, $hotel, $user);
             }else{
@@ -53,9 +64,20 @@ class UtilityService {
         try {
             $url_bucket  = config('app.url_bucket');
             $facilities = [];
-            
+            $citySlug = \Str::slug($modelHotel->zone);
+            $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+
             if($modelHotel->show_facilities){
                 $facilities = $this->facilityService->getCrosselling($modelHotel, 3);
+                $experiences = $this->serviceExperience->getCrosselling($modelHotel, $cityData);
+                $placesLeisure = $this->servicePlace->getCrosselling('Ocio', $modelHotel);
+                //$crossellingPlacesLeisure = PlaceResource::collection($placesLeisure)->toArray(request());
+
+                $placesWhereeat = $this->servicePlace->getCrosselling('Dónde comer', $modelHotel);
+                //$crossellingPlacesWhereeat = PlaceResource::collection($placesWhereeat)->toArray(request());
+
+                $placesWhatvisit = $this->servicePlace->getCrosselling('Qué visitar', $modelHotel);
+                //$crossellingPlacesWhatvisit = PlaceResource::collection($placesWhatvisit)->toArray(request());
                 $facilities = $facilities->map(function ($item) use($modelHotel, $chainSubdomain, $url_bucket){
                     return [
                         'title' => $item->title,
@@ -66,7 +88,11 @@ class UtilityService {
             }
             //
             return [
-                'facilities' => $facilities
+                'facilities' => $facilities,
+                'experiences' => $experiences,
+                'placesLeisure' => $placesLeisure,
+                'placesWhereeat' => $placesWhereeat,
+                'placesWhatvisit' => $placesWhatvisit
             ];
         } catch (\Exception $e) {
             $e;
@@ -74,5 +100,5 @@ class UtilityService {
 
     }
 
-    
+
 }

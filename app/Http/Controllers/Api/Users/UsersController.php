@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\Guest\MsgStay;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Services\UtilityService;
+
 
 
 class UsersController extends Controller
@@ -35,6 +37,7 @@ class UsersController extends Controller
     protected $settings;
     protected $api_review_service;
     protected $chatService;
+    protected $utilityService;
 
 
     public function __construct(
@@ -44,7 +47,8 @@ class UsersController extends Controller
         QueryServices $serviceQuery,
         QuerySettingsServices $_QuerySettingsServices,
         ApiReviewServices $_api_review_service,
-        ChatService $_ChatService
+        ChatService $_ChatService,
+        UtilityService $_UtilityService,
     )
     {
         $this->userServices = $userServices;
@@ -54,6 +58,7 @@ class UsersController extends Controller
         $this->settings = $_QuerySettingsServices;
         $this->api_review_service = $_api_review_service;
         $this->chatService = $_ChatService;
+        $this->utilityService = $_UtilityService;
     }
 
     public function getUsers()
@@ -339,7 +344,7 @@ class UsersController extends Controller
             $msg = prepareMessage($data,$hotel);
             $link = buildUrlWebApp($hotel->subdomain);
 
-            $qr = QrCode::format('png')->size(300)->generate($link);
+            /* $qr = QrCode::format('png')->size(300)->generate($link);
             // Definir el nombre del archivo con una marca de tiempo única
             $nombreArchivo = 'qr_' . $hotel->subdomain . '.png';
 
@@ -353,17 +358,22 @@ class UsersController extends Controller
             $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
 
             // Obtener la URL pública del archivo guardado
-            $urlQr = Storage::disk('s3')->url($rutaArchivo);
+            $urlQr = Storage::disk('s3')->url($rutaArchivo); */
 
-            /* return bodyResponseRequest(EnumResponse::SUCCESS, [
+            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
+
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
                 'data' => [
                     'msg' => $guest->name,
                     'link' => $link,
+                    'crosselling' => $crosselling,
 
                 ]
-            ]); */
-            //$urlQr= 'wwww';
+            ]);
+
+            $urlQr= 'wwww';
 
             $this->mailService->sendEmail(new MsgStay(false,$hotel,$link,false,$guest->name,false,$urlQr,true), 'francisco20990@gmail.com');
 
