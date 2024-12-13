@@ -31,7 +31,7 @@
             color: #FFFF;
             font-family: Roboto, sans-serif;
             font-size: 18px;
-            padding: 12px 29px;
+            padding-bottom: 12px;
             border-radius: 6px;
             display: inline-block;
             width: 260px;

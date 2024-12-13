@@ -338,7 +338,7 @@ class UsersController extends Controller
             ];
             $msg = prepareMessage($data,$hotel);
             $link = prepareLink($data,$hotel);
-            $qr = QrCode::format('png')->size(300)->generate($link);
+            /* $qr = QrCode::format('png')->size(300)->generate($link);
             // Definir el nombre del archivo con una marca de tiempo única
             $nombreArchivo = 'qr_' . $hotel->subdomain . '.png';
 
@@ -347,12 +347,12 @@ class UsersController extends Controller
 
             if (Storage::disk('s3')->exists($rutaArchivo)) {
                 Storage::disk('s3')->delete($rutaArchivo);
-            }
+            } */
 
-            $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
+            //$storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
 
             // Obtener la URL pública del archivo guardado
-            $urlQr = Storage::disk('s3')->url($rutaArchivo);
+            //$urlQr = Storage::disk('s3')->url($rutaArchivo);
 
            /*  return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
@@ -364,7 +364,7 @@ class UsersController extends Controller
                     'storage' => $storage,
                 ]
             ]); */
-            //$urlQr= 'wwww';
+            $urlQr= 'wwww';
 
             $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,$guest->name,false,$urlQr), 'francisco20990@gmail.com');
 
