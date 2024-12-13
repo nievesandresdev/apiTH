@@ -12,12 +12,12 @@
                             <tr>
                                 <td>
                                     <h1 class="h1" style="margin:0;color:#858181;font-family: arial;font-weight: 600;">
-                                        {{$formatCheckin['dayDate']}}
+                                        {{$formatCheckin['dayDate'] ?? '02-05-1993'}}
                                     </h1>
                                 </td>
                                 <td style="padding-left: 2px;">
-                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">{{$formatCheckin['weekDay']}}</h5>
-                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;text-transform: uppercase;">{{$formatCheckin['month']}}</h2>
+                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">{{$formatCheckin['weekDay'] ?? 12}}</h5>
+                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;text-transform: uppercase;">{{$formatCheckin['month'] ?? 5}}</h2>
                                 </td>
                             </tr>
                         </table>
@@ -34,12 +34,12 @@
                             <tr>
                                 <td>
                                     <h1 class="h1" style="margin:0;color:#858181;font-family: arial;font-weight: 600;">
-                                        {{$formatCheckout['dayDate']}}
+                                        {{$formatCheckout['dayDate'] ?? 10}}
                                     </h1>
                                 </td>
                                 <td style="padding-left: 2px;">
-                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">{{$formatCheckout['weekDay']}}</h5>
-                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;text-transform: uppercase;">{{$formatCheckout['month']}}</h2>
+                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">{{$formatCheckout['weekDay'] ?? 12}}</h5>
+                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;text-transform: uppercase;">{{$formatCheckout['month'] ?? 5}}</h2>
                                 </td>
                             </tr>
                         </table>
