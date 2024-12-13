@@ -154,6 +154,7 @@
     }
     </style>
     @include('components.mails.stayCheckDateStyles')
+    @include('components.mails.facilitiesAndPlacesStyles')
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
     <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
