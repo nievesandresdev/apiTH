@@ -1,4 +1,4 @@
-<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f9f9f9; padding: 20px; font-family: Arial, sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="padding: 20px; font-family: Arial, sans-serif;">
     <tr>
       <td align="center">
         <table cellpadding="0" cellspacing="0" border="0" style="border-radius: 3px 3px 25px 3px; background: #F3F3F3; padding: 20px; width: 400px;">
