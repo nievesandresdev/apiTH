@@ -5,7 +5,7 @@
           <tr>
             <!-- QR Code -->
             <td style="width: 40%; text-align: center;">
-              <img src="{{ $urlQr }}" alt="Código QR" width="100" height="100" style="display: block; margin: 0 auto; border: 1px solid #dddddd; border-radius: 8px;" />
+              <img src="{{ $urlQr }}" alt="Código QR" width="100" height="100" style="display: block; margin: 0 auto; border: 3px solid #000000; border-radius: 8px;" />
             </td>
             <!-- Text -->
             <td style="width: 60%; text-align: left; vertical-align: middle; padding-left: 10px;">
