@@ -1,8 +1,15 @@
 <section style="margin: 12px; background: #FFFFFF; border-radius: 3px;">
-    <!-- Texto y preguntas -->
-    <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 16px; line-height: 24px; margin: 0;">
-        ¿Cómo ha sido tu estancia con nosotros?
-    </p>
+    <!-- Título -->
+    <div style="padding-right:20px;padding-left:20px">
+        <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 20px; font-style: normal; font-weight: 500; line-height: 24px; margin: 0;">
+            ¿Cómo ha sido tu estancia con nosotros?
+        </p>
+        <!-- Subtítulo -->
+        <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 16px; font-style: normal; font-weight: 400; line-height: 24px; margin: 8px 0 0;">
+            Cuéntanos tu experiencia.
+        </p>
+    </div>
+
 
     <!-- Tabla de íconos -->
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-left: 40px; padding-right: 50px">

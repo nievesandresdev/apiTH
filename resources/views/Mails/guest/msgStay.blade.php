@@ -159,10 +159,13 @@
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
     <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
-            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }} {{ $link }}</span>
+            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
         </div>
-        @include('components.mails.headerByeAfter',['guest_name' => $guest_name,'hotel_name' => $hotel->name])
-        @include('components.mails.headerBye',['guest_name' => $guest_name])
+        @if($after)
+            @include('components.mails.headerByeAfter',['guest_name' => $guest_name,'hotel_name' => $hotel->name])
+        @else
+            @include('components.mails.headerBye',['guest_name' => $guest_name])
+        @endif
 
         {{-- @include('components.mails.stayCheckDate') --}}
 
