@@ -33,12 +33,12 @@ class ApiHelpersServices {
 
         $http_client_service = new HttpClientService();
         /* $headers = ['x-api-key' => $this->KEY_API_REVIEW]; */
-        $response_request = $http_client_service->make_request('post', "$URL_BASE_API_HELPERS/hotels/getSummaryReviewsOtas", $body, [], 60);
+        $response_request = $http_client_service->make_request('post', "$URL_BASE_API_HELPERS/place/getCrosselling", $body, [], 60);
         return [
             'response_request' => $response_request,
-            'hotel' => $hotel,
-            'cid' => $body,
-            'url' => $URL_BASE_API_HELPERS.'/hotels/getSummaryReviewsOtas',
+            /* 'hotel' => $hotel,
+            'cid' => $body, */
+            'url' => $URL_BASE_API_HELPERS.'/place/getCrosselling',
 
         ];
         // $response_request = null;
