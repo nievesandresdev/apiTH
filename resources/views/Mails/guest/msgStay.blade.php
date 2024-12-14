@@ -173,7 +173,7 @@
 
         @include('components.mails.places')
 
-        @include('components.mails.experiences')
+        @include('components.mails.experiences', ['data' => $data['helpers']['crosselling_experiences']])
 
         @include('components.mails.qrHotel', ['urlQr' => $urlQr])
 
