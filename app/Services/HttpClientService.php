@@ -11,7 +11,7 @@ class HttpClientService
         try {
             $response = Http::timeout($timeout)
             ->withHeaders($headers)
-           /*  ->withoutVerifying() */
+            ->withoutVerifying()
             ->{$method}($url, $data);
             if ($response->successful()) {
                 return $response->json();
