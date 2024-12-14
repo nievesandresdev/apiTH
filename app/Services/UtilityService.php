@@ -13,9 +13,8 @@ use App\Models\User;
 use App\Models\Stay;
 
 use App\Http\Resources\{PlaceResource};
-
-
-
+use App\Services\Apis\ApiHelpersServices;
+use Google\Service\ApigeeRegistry\Api;
 
 class UtilityService {
 
@@ -23,18 +22,22 @@ class UtilityService {
     public $serviceExperience;
     public $cityService;
     public $servicePlace;
+    public $api_helpers_service;
+
 
     function __construct(
         FacilityService $_FacilityService,
         ExperienceService $_ExperienceService,
         CityService $_CityService,
-        PlaceService $_PlaceService
+        PlaceService $_PlaceService,
+        ApiHelpersServices $_api_helpers_service
     )
     {
         $this->facilityService = $_FacilityService;
         $this->serviceExperience = $_ExperienceService;
         $this->cityService = $_CityService;
         $this->servicePlace = $_PlaceService;
+        $this->api_helpers_service = $_api_helpers_service;
     }
 
     public function getExpAndPlace ($request, $modelHotel) {
@@ -69,14 +72,10 @@ class UtilityService {
 
             if($modelHotel->show_facilities){
                 $facilities = $this->facilityService->getCrosselling($modelHotel, 3);
-                $experiences = $this->serviceExperience->getCrosselling($modelHotel, $cityData);
-                $placesLeisure = $this->servicePlace->getCrosselling('Ocio', $modelHotel);
-                //$crossellingPlacesLeisure = PlaceResource::collection($placesLeisure)->toArray(request());
 
-                $placesWhereeat = $this->servicePlace->getCrosselling('Dónde comer', $modelHotel);
-                //$crossellingPlacesWhereeat = PlaceResource::collection($placesWhereeat)->toArray(request());
+                $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);
 
-                $placesWhatvisit = $this->servicePlace->getCrosselling('Qué visitar', $modelHotel);
+
                 //$crossellingPlacesWhatvisit = PlaceResource::collection($placesWhatvisit)->toArray(request());
                 $facilities = $facilities->map(function ($item) use($modelHotel, $chainSubdomain, $url_bucket){
                     return [
@@ -89,10 +88,8 @@ class UtilityService {
             //
             return [
                 'facilities' => $facilities,
-                'experiences' => $experiences,
-                'placesLeisure' => $placesLeisure,
-                'placesWhereeat' => $placesWhereeat,
-                'placesWhatvisit' => $placesWhatvisit
+                'helpers' => $helpers
+
             ];
         } catch (\Exception $e) {
             $e;

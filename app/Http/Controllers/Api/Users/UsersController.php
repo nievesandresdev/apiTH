@@ -368,7 +368,9 @@ class UsersController extends Controller
                 'data' => [
                     'msg' => $guest->name,
                     'link' => $link,
+                    'hotel' => $hotel,
                     'crosselling' => $crosselling,
+                    'stay' => $stay
 
                 ]
             ]);
