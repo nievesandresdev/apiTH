@@ -73,9 +73,6 @@ class UtilityService {
             if($modelHotel->show_facilities){
                 $facilities = $this->facilityService->getCrosselling($modelHotel, 3);
 
-                $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);
-
-
                 //$crossellingPlacesWhatvisit = PlaceResource::collection($placesWhatvisit)->toArray(request());
                 $facilities = $facilities->map(function ($item) use($modelHotel, $chainSubdomain, $url_bucket){
                     return [
@@ -85,6 +82,7 @@ class UtilityService {
                     ];
                 });
             }
+            $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);
             //
             return [
                 'facilities' => $facilities,

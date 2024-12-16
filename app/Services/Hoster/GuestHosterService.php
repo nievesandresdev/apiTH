@@ -4,6 +4,7 @@ namespace App\Services\Hoster;
 
 use App\Mail\Guest\InviteToInWebapp;
 use App\Mail\Guest\MsgStay;
+use App\Models\Guest;
 use App\Models\Hotel;
 use App\Models\StayNotificationSetting;
 use App\Services\GuestService;
@@ -35,30 +36,56 @@ class GuestHosterService {
         $this->utilityService = $_UtilityService;
     }
 
+
     public function inviteToHotel($data, $hotelId)
     {
         try {
-            // $guest = $this->guestService->saveOrUpdate($data);
-            // $settings =  $this->staySettingsServices->getAll($hotelId);
-            
-            $hotel = Hotel::find($hotelId);
-
-            // //prepare msg
-            // $link = url('webapp?g='.$guest->id);
-            // $link =  includeSubdomainInUrlHuesped($link, $hotel);
-            // $msg = $settings->guestcreate_msg_email[$guest->lang_web];
-            // $msg = str_replace('[nombre]', $guest->name, $msg);
-            // $msg = str_replace('[nombre_del_hotel]', $hotel->name, $msg);
-            // $msg = str_replace('[URL]', $link, $msg);
-
+            $hotel = Hotel::find($hotelId);        
+            $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
+            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            $guest = Guest::find(9);
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
 
-            $this->mailService->sendEmail(new InviteToInWebapp($hotel,$crosselling), "andresdreamerf@gmail.com");
-            // return $guest;
+            $this->mailService->sendEmail(new MsgStay(
+                false, 
+                $hotel, 
+                $urlWebapp, 
+                false, 
+                $guest->name, 
+                false,
+                $urlQr,
+                true,
+                $crosselling
+        ), 'andresdreamerf@gmail.com');
         } catch (\Exception $e) {
             return $e;
         }
     }
+
+    // public function inviteToHotel($data, $hotelId)
+    // {
+    //     try {
+    //         // $guest = $this->guestService->saveOrUpdate($data);
+    //         // $settings =  $this->staySettingsServices->getAll($hotelId);
+            
+    //         $hotel = Hotel::find($hotelId);
+
+    //         // //prepare msg
+    //         // $link = url('webapp?g='.$guest->id);
+    //         // $link =  includeSubdomainInUrlHuesped($link, $hotel);
+    //         // $msg = $settings->guestcreate_msg_email[$guest->lang_web];
+    //         // $msg = str_replace('[nombre]', $guest->name, $msg);
+    //         // $msg = str_replace('[nombre_del_hotel]', $hotel->name, $msg);
+    //         // $msg = str_replace('[URL]', $link, $msg);
+
+    //         $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
+
+    //         $this->mailService->sendEmail(new InviteToInWebapp($hotel,$crosselling), "andresdreamerf@gmail.com");
+    //         // return $guest;
+    //     } catch (\Exception $e) {
+    //         return $e;
+    //     }
+    // }
 
    
 

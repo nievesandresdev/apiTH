@@ -24,7 +24,17 @@ class MsgStay extends Mailable
      *
      * @return void
      */
-    public function __construct($msg = false, $hotel,$link = null,$guest = false,$guest_name = null,$create = false,$urlQr = null,$after = false, $data = null)
+    public function __construct(
+        $msg = false, 
+        $hotel, 
+        $link = null,
+        $guest = false,
+        $guest_name = null,
+        $create = false,
+        $urlQr = null,
+        $after = false, 
+        $data = null
+    )
     {
         $this->msg = $msg;
         $this->hotel = $hotel;

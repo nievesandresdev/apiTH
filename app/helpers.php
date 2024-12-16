@@ -14,7 +14,8 @@ use App\Models\ImagesHotels;
 use App\Models\ImageGallery;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('bodyResponseRequest')) {
     /**
@@ -953,3 +954,26 @@ function saveImageToS3($imgFile, $path) {
 function getImageSavePath($model, $name_file) {
     return 'storage/'.$model.'/'.$name_file;
 }
+
+if (! function_exists('generateQr')) {
+    function generateQr($concept, $content) {
+
+        $qr = QrCode::format('png')->size(300)->generate($content);
+        // Definir el nombre del archivo con una marca de tiempo única
+        $nombreArchivo = 'qr_' . $concept . '.png';
+
+        // Definir la ruta completa donde se guardará el QR en S3
+        $rutaArchivo = 'qrcodes/' . $nombreArchivo;
+
+        if (Storage::disk('s3')->exists($rutaArchivo)) {
+            Storage::disk('s3')->delete($rutaArchivo);
+        }
+
+        $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
+
+        // Obtener la URL pública del archivo guardado
+        return $urlQr = Storage::disk('s3')->url($rutaArchivo);
+    }
+}
+
+            
