@@ -12,6 +12,8 @@ use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\MailService;
 use App\Services\UtilityService;
 use Illuminate\Support\Facades\Log;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
 
 class GuestHosterService {
 
@@ -40,23 +42,48 @@ class GuestHosterService {
     public function inviteToHotel($data, $hotelId)
     {
         try {
-            $hotel = Hotel::find($hotelId);        
-            $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
-            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-            $guest = Guest::find(9);
-            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
 
-            $this->mailService->sendEmail(new MsgStay(
-                false, 
-                $hotel, 
-                $urlWebapp, 
-                false, 
-                $guest->name, 
-                false,
-                $urlQr,
-                true,
-                $crosselling
-        ), 'andresdreamerf@gmail.com');
+            $hotel = Hotel::find($hotelId);        
+            Log::info('hotel '. json_encode($hotel));
+            $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
+            Log::info('urlWebapp '. json_encode($urlWebapp));
+
+            $qr = QrCode::format('png')->size(300)->generate($urlWebapp);
+            // Definir el nombre del archivo con una marca de tiempo única
+            $nombreArchivo = 'qr_' . $hotel->subdomain . '.png';
+
+            // Definir la ruta completa donde se guardará el QR en S3
+            $rutaArchivo = 'qrcodes/' . $nombreArchivo;
+
+            if (Storage::disk('s3')->exists($rutaArchivo)) {
+                Storage::disk('s3')->delete($rutaArchivo);
+            }
+
+            $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
+
+            // Obtener la URL pública del archivo guardado
+            $urlQr = Storage::disk('s3')->url($rutaArchivo);
+            Log::info('urlQr '. json_encode($urlQr));
+        
+            
+            //     $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            //     Log::info('urlQr '. json_encode($urlQr));
+            //     $guest = Guest::find(9);
+            //     Log::info('guest '. json_encode($guest));
+            //     $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
+            //     Log::info('crosselling '. json_encode($crosselling));
+
+            //     $this->mailService->sendEmail(new MsgStay(
+            //         false, 
+            //         $hotel, 
+            //         $urlWebapp, 
+            //         false, 
+            //         $guest->name, 
+            //         false,
+            //         $urlQr,
+            //         true,
+            //         $crosselling
+            // ), 'andresdreamerf@gmail.com');
         } catch (\Exception $e) {
             return $e;
         }
