@@ -18,12 +18,23 @@ class MsgStay extends Mailable
     public $create;
     public $urlQr;
     public $after;
+    public $data;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($msg = false, $hotel,$link = null,$guest = false,$guest_name = null,$create = false,$urlQr = null,$after = false)
+    public function __construct(
+        $msg = false, 
+        $hotel, 
+        $link = null,
+        $guest = false,
+        $guest_name = null,
+        $create = false,
+        $urlQr = null,
+        $after = false, 
+        $data = null
+    )
     {
         $this->msg = $msg;
         $this->hotel = $hotel;
@@ -33,6 +44,7 @@ class MsgStay extends Mailable
         $this->create = $create;
         $this->urlQr = $urlQr;
         $this->after = $after;
+        $this->data = $data;
 
     }
 

@@ -344,7 +344,7 @@ class UsersController extends Controller
             $msg = prepareMessage($data,$hotel);
             $link = buildUrlWebApp($hotel->subdomain);
 
-            /* $qr = QrCode::format('png')->size(300)->generate($link);
+            $qr = QrCode::format('png')->size(300)->generate($link);
             // Definir el nombre del archivo con una marca de tiempo única
             $nombreArchivo = 'qr_' . $hotel->subdomain . '.png';
 
@@ -358,24 +358,23 @@ class UsersController extends Controller
             $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
 
             // Obtener la URL pública del archivo guardado
-            $urlQr = Storage::disk('s3')->url($rutaArchivo); */
+            $urlQr = Storage::disk('s3')->url($rutaArchivo);
 
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
 
 
-            return bodyResponseRequest(EnumResponse::SUCCESS, [
+           /*  return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
                 'data' => [
-                    'msg' => $guest->name,
-                    'link' => $link,
                     'crosselling' => $crosselling,
+                    'stay' => $stay
 
                 ]
-            ]);
+            ]); */
 
-            $urlQr= 'wwww';
+            //$urlQr= 'wwww';
 
-            $this->mailService->sendEmail(new MsgStay(false,$hotel,$link,false,$guest->name,false,$urlQr,true), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new MsgStay(false,$hotel,$link,false,$guest->name,false,$urlQr,true,$crosselling), 'francisco20990@gmail.com');
 
 
 
@@ -412,6 +411,7 @@ class UsersController extends Controller
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
                 'data' => [
+                    'data' => $crosselling,
                     'queryUsers' => $queryUsers,
                     'unansweredLastMessageData' => $unansweredLastMessageData,
                     //'emailArray' => $emailArray,

@@ -161,21 +161,22 @@
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
         </div>
-        @if($after)
+        hola
+        {{-- @if($after)
             @include('components.mails.headerByeAfter',['guest_name' => $guest_name,'hotel_name' => $hotel->name])
         @else
             @include('components.mails.headerBye',['guest_name' => $guest_name])
-        @endif
+        @endif --}}
 
         {{-- @include('components.mails.stayCheckDate') --}}
 
-        @include('components.mails.feedback')
+        {{-- @include('components.mails.feedback') --}}
 
-        @include('components.mails.places')
+        {{-- @include('components.mails.places') --}}
 
-        @include('components.mails.experiences')
+        {{-- @include('components.mails.experiences', ['data' => $data['helpers']['crosselling_experiences']])
 
-        @include('components.mails.qrHotel', ['urlQr' => $urlQr])
+        @include('components.mails.qrHotel', ['urlQr' => $urlQr]) --}}
 
 
 
