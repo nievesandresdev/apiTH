@@ -117,21 +117,23 @@ class UtilsController extends Controller
     public function test()
     {
         
-        $qr = QrCode::format('png')->size(300)->generate('teteo');
-        // Definir el nombre del archivo con una marca de tiempo única
-        $nombreArchivo = 'qr_testeo.png';
+        $hotel = Hotel::find(191);        
+            $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
+            return $urlQr = generateQr($hotel->subdomain, $urlWebapp);
 
-        // Definir la ruta completa donde se guardará el QR en S3
-        $rutaArchivo = 'qrcodes/' . $nombreArchivo;
-
-        if (Storage::disk('s3')->exists($rutaArchivo)) {
-            Storage::disk('s3')->delete($rutaArchivo);
-        }
-
-        $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
-
-        // Obtener la URL pública del archivo guardado
-        return $urlQr = Storage::disk('s3')->url($rutaArchivo);
+            // $guest = Guest::find(9);
+            // $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
+            // $this->mailService->sendEmail(new MsgStay(
+            //     false, 
+            //     $hotel, 
+            //     $urlWebapp, 
+            //     false, 
+            //     $guest->name, 
+            //     false,
+            //     $urlQr,
+            //     true,
+            //     $crosselling
+            // ), 'andresdreamerf@gmail.com');
     }
 
 
