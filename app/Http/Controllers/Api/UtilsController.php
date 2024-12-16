@@ -8,7 +8,7 @@ use App\Jobs\Chat\NofityPendingChat;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Guest;
-use App\Models\hotel;
+use App\Models\Hotel;
 use App\Models\NoteGuest;
 use App\Models\Query;
 use App\Models\RequestSettingsHistory;
