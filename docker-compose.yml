@@ -19,6 +19,8 @@ services:
       DB_USER: thehoster_test
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
+      QUEUE_CONNECTION: redis
+      APP_ENV: production
       
 networks:
   hoster-db_hoster_network_test:
