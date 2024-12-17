@@ -15,7 +15,6 @@ class LoadHotel
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Log::info('Hola Mundo - Pasó por el middleware LogHolaMundo');
         //subdimio de cadena agregado desde la webapp
         if ($request->header('chainSubdomain')) {
             $request->attributes->add(['chainSubdomain' => $request->header('chainSubdomain')]);
