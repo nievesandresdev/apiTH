@@ -70,7 +70,8 @@ class StayController extends Controller
     public function createAndInviteGuest (Request $request) {
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->createAndInviteGuest($hotel,$request);
+            $chainSubdomain = $request->attributes->get('chainSubdomain');
+            $model = $this->service->createAndInviteGuest($hotel, $chainSubdomain, $request);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

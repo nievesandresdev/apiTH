@@ -40,8 +40,17 @@
             line-height: 44px;
         }
 
-
+        @media only screen and (min-width: 601px) {
+            .container{
+                padding:0;
+            }
+        }
         @media only screen and (max-width: 600px) {
+            
+            .container{
+                padding:0 24px;
+            }
+        
             body {
                 background-color: #ffffff !important;
             }
@@ -91,10 +100,6 @@
                 display: none;
             }
 
-            .div-responsive {
-                display: block !important;
-            }
-
             .responsive-section {
                 margin: 0 !important; /* Elimina el margen en pantallas pequeñas */
             }
@@ -112,79 +117,61 @@
             }
         }
 
-        .div-responsive {
-            display: none;
-        }
-
-            /* Mostrar 3 Cards en pantallas grandes */
-    .desktop-only {
-        display: block;
-    }
-
-    /* Mostrar 2 Cards en pantallas pequeñas */
-    .mobile-only {
-        display: none;
-    }
-
-    @media only screen and (max-width: 1024px) {
-        .desktop-only {
-            display: none !important;
-        }
-        .mobile-only {
-            display: block !important;
-        }
-    }
-
-    @media only screen and (max-width: 768px) {
-        .desktop-only {
-            display: none !important;
-        }
-        .mobile-only {
-            display: block !important;
-        }
-    }
-
-    @media only screen and (max-width: 480px) {
-        .desktop-only {
-            display: none !important;
-        }
-        .mobile-only {
-            display: block !important;
-        }
-    }
     </style>
     @include('components.mails.stayCheckDateStyles')
     @include('components.mails.facilitiesAndPlacesStyles')
+    @include('components.mails.experiencesStyles')
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
-    <div style="width: 100%; max-width: 600px; margin: 0 auto;background-color: #ffff;">
+    <div style="max-width: 568px; margin: 0 auto">
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
         </div>
-        hola
-        {{-- @if($after)
-            @include('components.mails.headerByeAfter',['guest_name' => $guest_name,'hotel_name' => $hotel->name])
+        @if($type == 'welcome')
+            @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name])
         @else
-            @include('components.mails.headerBye',['guest_name' => $guest_name])
-        @endif --}}
-
-        {{-- @include('components.mails.stayCheckDate') --}}
-
-        {{-- @include('components.mails.feedback') --}}
-
-        {{-- @include('components.mails.places') --}}
-
-        {{-- @include('components.mails.experiences', ['data' => $data['helpers']['crosselling_experiences']])
-
-        @include('components.mails.qrHotel', ['urlQr' => $urlQr]) --}}
-
-
-
-
-
-
-        <!-- Footer -->
-        {{-- @include('components.mails.footer',['showNotify' => false]) --}}
+            {{-- @include('components.mails.headerBye',['guest_name' => $guest->name]) --}}
+        @endif
     </div>
+    <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
+
+        @if($type == 'welcome')
+            @include('components.mails.stayCheckDate',[
+                'title' => $data['checkData']['title'],
+                'formatCheckin' => $data['checkData']['formatCheckin'],
+                'formatCheckout' => $data['checkData']['formatCheckout'],
+                'editUrl' => $data['checkData']['editStayUrl']
+            ])
+        @endif
+
+        @if($type == 'welcome' && $data['queryData'] && $data['queryData']['showQuerySection'])
+        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+        
+            @include('components.mails.feedback',[
+                'currentPeriod' => $data['queryData']['currentPeriod'],
+                'webappLinkInbox' => $data['queryData']['webappLinkInbox'],
+                'webappLinkInboxGoodFeel' => $data['queryData']['webappLinkInboxGoodFeel'],
+            ])
+        @endif
+        
+        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+        @include('components.mails.places',['places' => $data['places']])
+
+        @include('components.mails.experiences', ['exp' => $data['experiences']])
+        
+        @include('components.mails.facilities', ['facilities' => $data['facilities']])
+        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+        
+
+        @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
+        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+        @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
+
+
+        
+    </div>
+
+    <!-- Footer -->
+    @include('components.mails.footerRed')
 </body>
 </html>

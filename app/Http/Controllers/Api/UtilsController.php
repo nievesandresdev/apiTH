@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\Chat\NotifyUnreadMsg;
 use App\Http\Controllers\Controller;
 use App\Jobs\Chat\NofityPendingChat;
+use App\Mail\Guest\MsgStay;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Guest;
@@ -20,7 +21,9 @@ use App\Services\Hoster\RequestReviews\RequestReviewsSettingsServices;
 use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\Hoster\Users\UserServices;
 use App\Services\Hoster\UtilsHosterServices;
+use App\Services\MailService;
 use App\Services\QuerySettingsServices;
+use App\Services\StayService;
 use App\Services\UtilityService;
 use Illuminate\Support\Facades\Hash;
 
@@ -45,6 +48,8 @@ class UtilsController extends Controller
     public  $requestReviewsSettingsServices;
     public  $utilsHosterServices;
     public  $utilityService;
+    public  $mailService;
+    public  $stayServices;
 
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
@@ -54,7 +59,9 @@ class UtilsController extends Controller
         ChatSettingsServices $_ChatSettingsServices,
         RequestReviewsSettingsServices $_RequestReviewsSettingsServices,
         UtilsHosterServices $_UtilsHosterServices,
-        UtilityService $_UtilityService
+        UtilityService $_UtilityService,
+        MailService $_MailService,
+        StayService $_StayService,
     )
     {
         $this->settings = $_QuerySettingsServices;
@@ -65,6 +72,8 @@ class UtilsController extends Controller
         $this->requestReviewsSettingsServices = $_RequestReviewsSettingsServices;
         $this->utilsHosterServices = $_UtilsHosterServices;
         $this->utilityService = $_UtilityService;
+        $this->mailService = $_MailService;
+        $this->stayServices = $_StayService;
     }
 
     public function authPusher(Request $request)
@@ -90,50 +99,36 @@ class UtilsController extends Controller
     }
 
     public function testTemplateEmail()
-    {
-        
+    {   
         $hotel = hotel::find(191);
-        $stay = Stay::find(460);
+        $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
-
-        $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
-        $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
-        $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
-
-        $webappLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
-        $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
-
-        return view('Mails.guest.InviteToInWebapp', [
-            'hotel' => $hotel,
-            'formatCheckin' => $formatCheckin,
-            'formatCheckout' => $formatCheckout,
-            'crosselling' => $crosselling,
-            'webappLink' => $webappLink,
-            'webappChatLink' => $webappChatLink,
-        ]);
+        $stay = Stay::find(460);
+        $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+        // return view('Mails.guest.msgStay', $data);
+        return 'enviado';
     }
 
     
     public function test()
     {
-        
+        return 'asdasd';
         $hotel = Hotel::find(191);        
-            $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
-            return $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+        $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
+        // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+        $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
-            // $guest = Guest::find(9);
-            // $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
-            // $this->mailService->sendEmail(new MsgStay(
-            //     false, 
-            //     $hotel, 
-            //     $urlWebapp, 
-            //     false, 
-            //     $guest->name, 
-            //     false,
-            //     $urlQr,
-            //     true,
-            //     $crosselling
-            // ), 'andresdreamerf@gmail.com');
+        $guest = Guest::find(9);
+        $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
+        $this->mailService->sendEmail(new MsgStay(
+            'welcome', 
+            $hotel, 
+            $urlWebapp,
+            $guest,
+            $urlQr,
+            ['crosselling'=>$crosselling]
+        ), 'andresdreamerf@gmail.com');
+        return 'hecho'.time();
     }
 
 
