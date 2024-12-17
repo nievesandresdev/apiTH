@@ -154,8 +154,8 @@ class StayService {
                 // $msg = prepareMessage($data,$hotel,'&subject=invited');
                 // $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                // $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
-                SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
+                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+                // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
             }
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
@@ -458,6 +458,7 @@ class StayService {
             $checkData = [];
             $queryData = [];
             //stay section
+            Log::info('guestWelcomeEmail log 1 ');
             if($type == 'welcome'){
                 if($stay->check_in && $stay->check_out){
                     $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
@@ -465,7 +466,7 @@ class StayService {
                 }
                 $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
                 //
-
+                Log::info('guestWelcomeEmail log 2 ');
                 $checkData = [
                     'title' => "Datos de tu estancia en {$hotel->name}",
                     'formatCheckin' => $formatCheckin,
@@ -480,6 +481,7 @@ class StayService {
                 $querySettings = $this->querySettingsServices->getAll($hotel->id);
                 $hoursAfterCheckin = $this->calculateHoursAfterCheckin($hotel, $stay);
                 $showQuerySection = true;
+                Log::info('guestWelcomeEmail log 3 ');
                 if(
                     $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate || 
                     $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
@@ -505,8 +507,9 @@ class StayService {
             //
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
             //
-
+            Log::info('guestWelcomeEmail log 4 ');
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+            Log::info('guestWelcomeEmail log 5 ');
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
