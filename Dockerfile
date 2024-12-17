@@ -39,8 +39,9 @@ RUN { \
         echo "memory_limit = 512M"; \
     } > /usr/local/etc/php/conf.d/uploads.ini
 
-# Copiar el archivo de configuración de Apache
+# Copiar archivos de configuración
 COPY 000-default.conf /etc/apache2/sites-available/
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Habilitar el sitio Apache
 RUN a2ensite 000-default.conf
@@ -48,11 +49,7 @@ RUN a2ensite 000-default.conf
 # Copiar archivos del proyecto
 COPY . /var/www/html
 
-# Configurar Supervisor
-RUN mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Crear directorios necesarios y dar permisos a las carpetas de Laravel
+# Configurar permisos de Laravel
 RUN mkdir -p /var/www/html/storage/framework/cache \
     /var/www/html/storage/framework/sessions \
     /var/www/html/storage/framework/views \
@@ -66,12 +63,12 @@ RUN composer install --no-dev --optimize-autoloader
 # Crear y establecer la clave de la aplicación
 RUN php artisan key:generate
 
-# Cachear configuración de Laravel (opcional, mejora el rendimiento)
+# Cachear configuración de Laravel
 RUN php artisan config:cache
 RUN php artisan route:cache
 
 # Exponer el puerto 80
 EXPOSE 80
 
-# Comando por defecto para iniciar Supervisor (Apache y Workers)
-CMD ["/usr/bin/supervisord"]
+# Comando por defecto para iniciar Supervisor con la configuración especificada
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
