@@ -4,7 +4,7 @@ FROM php:8.2-apache
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
 
-# Instalar dependencias del sistema necesarias para Laravel y Supervisor
+# Instalar dependencias del sistema necesarias para Laravel y Imagick
 RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    supervisor \
     libmagickwand-dev --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -39,17 +38,16 @@ RUN { \
         echo "memory_limit = 512M"; \
     } > /usr/local/etc/php/conf.d/uploads.ini
 
-# Copiar archivos de configuración
+# Copiar el archivo de configuración de Apache
 COPY 000-default.conf /etc/apache2/sites-available/
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Habilitar el sitio Apache
 RUN a2ensite 000-default.conf
 
-# Copiar archivos del proyecto
+# Copiar todos los archivos del proyecto al contenedor
 COPY . /var/www/html
 
-# Configurar permisos de Laravel
+# Crear directorios necesarios y dar permisos a las carpetas de Laravel
 RUN mkdir -p /var/www/html/storage/framework/cache \
     /var/www/html/storage/framework/sessions \
     /var/www/html/storage/framework/views \
@@ -63,12 +61,12 @@ RUN composer install --no-dev --optimize-autoloader
 # Crear y establecer la clave de la aplicación
 RUN php artisan key:generate
 
-# Cachear configuración de Laravel
+# Cachear configuración de Laravel (opcional, mejora el rendimiento)
 RUN php artisan config:cache
 RUN php artisan route:cache
 
 # Exponer el puerto 80
 EXPOSE 80
 
-# Comando por defecto para iniciar Supervisor con la configuración especificada
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Comando por defecto para iniciar Apache
+CMD ["apache2-foreground"]
