@@ -155,11 +155,17 @@
         @endif
         
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @include('components.mails.places',['places' => $data['places']])
+        @if(count($data['places']) > 0)
+            @include('components.mails.places',['places' => $data['places']])
+        @endif
 
-        @include('components.mails.experiences', ['exp' => $data['experiences']])
-        
-        @include('components.mails.facilities', ['facilities' => $data['facilities']])
+        @if(count($data['experiences']) > 0)
+            @include('components.mails.experiences', ['exp' => $data['experiences']])
+        @endif
+
+        @if(count($data['facilities']) > 0)
+            @include('components.mails.facilities', ['facilities' => $data['facilities']])
+        @endif
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         
 

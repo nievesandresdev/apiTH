@@ -348,17 +348,15 @@ class GuestService {
         $colorsExistsArray = $colorsExists->toArray();
 
         // Log para ver qué contiene $colorsExistsArray
-        Log::info('$colors '.json_encode($colors));
-        Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
+        // Log::info('$colors '.json_encode($colors));
+        // Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
 
         // Filtrar colores para encontrar aquellos que no están en $colorsExistsArray
         $availableColors = array_diff($colors, $colorsExistsArray);
-        Log::info('$availableColors '.json_encode($availableColors));
+        // Log::info('$availableColors '.json_encode($availableColors));
 
         // Verificar si hay colores disponibles
         if (!empty($availableColors)) {
-            Log::info('if');
-            Log::info('if '.$availableColors[array_rand($availableColors)]);
             // Seleccionar un color al azar de los colores disponibles
             return $availableColors[array_rand($availableColors)];
         } else {
