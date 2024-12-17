@@ -4,7 +4,7 @@ FROM php:8.2-apache
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
 
-# Instalar dependencias del sistema necesarias para Laravel y Imagick
+# Instalar dependencias del sistema necesarias para Laravel y Supervisor
 RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
+    supervisor \
     libmagickwand-dev --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -44,8 +45,12 @@ COPY 000-default.conf /etc/apache2/sites-available/
 # Habilitar el sitio Apache
 RUN a2ensite 000-default.conf
 
-# Copiar todos los archivos del proyecto al contenedor
+# Copiar archivos del proyecto
 COPY . /var/www/html
+
+# Configurar Supervisor
+RUN mkdir -p /var/log/supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Crear directorios necesarios y dar permisos a las carpetas de Laravel
 RUN mkdir -p /var/www/html/storage/framework/cache \
@@ -68,5 +73,5 @@ RUN php artisan route:cache
 # Exponer el puerto 80
 EXPOSE 80
 
-# Comando por defecto para iniciar Apache
-CMD ["apache2-foreground"]
+# Comando por defecto para iniciar Supervisor (Apache y Workers)
+CMD ["/usr/bin/supervisord"]
