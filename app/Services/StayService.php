@@ -511,22 +511,22 @@ class StayService {
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
-            $this->mailService->sendEmail(new MsgStay(
-                $type,
-                $hotel,
-                $guest,
-                [
-                    'checkData' => $checkData,
-                    'queryData' => $queryData,
-                    'places' => $crosselling['places'],
-                    'experiences' => $crosselling['experiences'],
-                    'facilities' => $crosselling['facilities'],
-                    'webappChatLink' => $webappChatLink,
-                    'urlQr' => $urlQr,
-                ]  
-            ), "andresdreamerf@gmail.com");
+            $dataEmail = [
+                'checkData' => $checkData,
+                'queryData' => $queryData,
+                'places' => $crosselling['places'],
+                'experiences' => $crosselling['experiences'],
+                'facilities' => $crosselling['facilities'],
+                'webappChatLink' => $webappChatLink,
+                'urlQr' => $urlQr,
+            ];
+            Log::info('dataEmail '.json_encode($dataEmail));
+            Log::info('hotelid '.json_encode($hotel->id));
+            Log::info('guest '.json_encode($guest));
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "andresdreamerf@gmail.com");
 
         } catch (\Exception $e) {
+            Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
             DB::rollback();
             return $e;
         }
