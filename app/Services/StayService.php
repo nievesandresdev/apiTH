@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\Stay\SendEmailGuest;
 use App\Mail\Guest\MsgStay;
 use App\Models\Guest;
 use App\Models\hotel;
@@ -140,29 +141,31 @@ class StayService {
             }
 
 
-            $data = [
-                'stay_id' => $stay->id,
-                'guest_id' => $guest->id,
-                'stay_lang' => $guest->lang_web,
-                'msg_text' => $settings->guestcreate_msg_email[$guest->lang_web],
-                'guest_name' => $guest->name,
-                'hotel_name' => $hotel->name,
-                'hotel_id' => $hotel->id,
-            ];
+            // $data = [
+            //     'stay_id' => $stay->id,
+            //     'guest_id' => $guest->id,
+            //     'stay_lang' => $guest->lang_web,
+            //     'msg_text' => $settings->guestcreate_msg_email[$guest->lang_web],
+            //     'guest_name' => $guest->name,
+            //     'hotel_name' => $hotel->name,
+            //     'hotel_id' => $hotel->id,
+            // ];
             if($settings->guestcreate_check_email){
-                $msg = prepareMessage($data,$hotel,'&subject=invited');
-                $link = prepareLink($data,$hotel,'&subject=invited');
+                // $msg = prepareMessage($data,$hotel,'&subject=invited');
+                // $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+                // $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+                SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
             }
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
             $color = $this->guestService->updateColorGuestForStay($colorsExists);
             if($color){
-                Log::info('se agregar el color al huesped '.$color);
+                // Log::info('se agregar el color al huesped '.$color);
                 $guest->color = $color;
                 $guest->save();
             }
+            Log::info('stay 1'.json_encode($stay));
             DB::commit();
             //por ahora ya no se invitan huespedes
             //adjutar huespedes y enviar correos
@@ -201,103 +204,106 @@ class StayService {
             //     DB::commit();
             // }
             //actualizar accesos
-            $currentStayAccesses = StayAccess::where('stay_id', $stay->id)
-                    ->distinct('guest_id')
-                    ->count(['guest_id']);
-            $stay = Stay::find($stay->id);
-            if($currentStayAccesses > intval($stay->number_guests)){
-                $stay->number_guests = $currentStayAccesses;
-                $stay->save();
-            }
-
+            // $currentStayAccesses = StayAccess::where('stay_id', $stay->id)
+            //         ->distinct('guest_id')
+            //         ->count(['guest_id']);
+            // $stay = Stay::find($stay->id);
+            // if($currentStayAccesses > intval($stay->number_guests)){
+            //     $stay->number_guests = $currentStayAccesses;
+            //     $stay->save();
+            // }
+            Log::info('stay 2'.json_encode($stay));
+            // $stay->refresh();
+            // Log::info('stay 3'.json_encode($stay));
             // sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
             sendEventPusher('private-update-stay-list-hotel.' . $hotel->id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
             return $stay;
 
         } catch (\Exception $e) {
+            Log::error('Error service createAndInviteGuest: ' . $e->getMessage());
             DB::rollback();
             return $e;
         }
     }
 
-    public function existingStayThenMatch($currentStayId,$invitedEmail,$hotel){
-        Log::info("existingStayThenMatch");
-        if (!$currentStayId || !$invitedEmail || !$hotel) return;
-        try {
-            $invited = Guest::where('email',$invitedEmail)->first();
-            Log::info("invited:".$invited);
-            $invitedStay = $this->guestService->findAndValidLastStay($invited->id,$hotel);
-            $currentStayData = Stay::find($currentStayId);
+    // public function existingStayThenMatch($currentStayId,$invitedEmail,$hotel){
+    //     Log::info("existingStayThenMatch");
+    //     if (!$currentStayId || !$invitedEmail || !$hotel) return;
+    //     try {
+    //         $invited = Guest::where('email',$invitedEmail)->first();
+    //         Log::info("invited:".$invited);
+    //         $invitedStay = $this->guestService->findAndValidLastStay($invited->id,$hotel);
+    //         $currentStayData = Stay::find($currentStayId);
 
-            $invitedStayCheckout =  $invitedStay ? $invitedStay->check_out : null;
-            $currentStayCheckout =  $currentStayData ? $currentStayData->check_out : null;
-            $invitedStayValid = $this->validateCheckoutOfStay($invitedStayCheckout);
-            $currentStayValid = $this->validateCheckoutOfStay($currentStayCheckout);
-            if(!$invitedStayValid)  $invitedStay = null;
-            if(!$currentStayValid)  $currentStayData = null;
-            // Log::info("currentStayId:".$currentStayId);
-            // Log::info("invitedStay:".$invitedStay);
-            if($invitedStay && (intval($invitedStay->id) !== intval($currentStayId))){
-                Log::info("matcheo de estancia");
-                DB::beginTransaction();
-                //suma de accesos entre las dos estancias
-                $currentStayAccesses = StayAccess::where('stay_id', $currentStayData->id)
-                    ->distinct('guest_id')
-                    ->count(['guest_id']);
-                $invitedStayAccesses = StayAccess::where('stay_id', $invitedStay->id)
-                    ->distinct('guest_id')
-                    ->count(['guest_id']);
-                $accessesSum = $currentStayAccesses + $invitedStayAccesses;
-                //tomo el numero maximo de huespedes añadido entre las dos estancias para actulizar la actual
-                //si los accesos son mayores al numero de huespedes guardado se iguala a n de accesos y se actualiza
-                $currentNumberGuest = $currentStayData->number_guests ?? 1;
-                $invitedNumberGuest = $invitedStay->number_guests ?? 1;
-                $maxNumberGuests = max($currentNumberGuest, $invitedNumberGuest);
-                if($maxNumberGuests < $accessesSum){
-                    $maxNumberGuests = $accessesSum;
-                }
-                $invitedStay->number_guests = $maxNumberGuests;
-                $invitedStay->save();
-                //relacionar huespedes actuales a la estancia del invitado
-                $currentStayData->guests()->update(['stay_id'=> $invitedStay->id]);
-                //relacionar accesos actuales a la estancia del invitado
-                $currentStayData->accesses()->update(['stay_id'=> $invitedStay->id]);
-                //relacionar queries actuales a la estancia del invitado
-                $currentStayData->queries()->update(['stay_id'=> $invitedStay->id]);
-                //relacionar chats actuales a la estancia del invitado
-                $currentStayData->chats()->update(['stay_id'=> $invitedStay->id]);
-                //relacionar notas actuales a la estancia del invitado
-                $currentStayData->notes()->update(['stay_id'=> $invitedStay->id]);
-                //relacionar notas de huespedes de la estancia actual a la estancia del invitado
-                $currentStayData->guestNotes()->update(['stay_id'=> $invitedStay->id]);
-                //eliminar estancia
-                $currentStayData->delete();
-                //retorna la estancia del invitado como nueva estancia para la sesion actual
-                DB::commit();
-                return $invitedStay;
-            }else{
-                Log::info("creacion de acccesos para estancia");
-                //agregar acceso del invitado
-                if($currentStayData){
-                    $this->stayAccessService->save($currentStayData->id,$invited->id);
-                    //agregar relacion a estancia
-                    $invited->stays()->syncWithoutDetaching([$currentStayData->id]);
-                    $colorsExists = $currentStayData->guests()->select('color')->pluck('color');
-                    $color = $this->guestService->updateColorGuestForStay($colorsExists);
-                    if($color){
-                        Log::info('se agregar el color al huesped invitado'.$color);
-                        $invited->color = $color;
-                        $invited->save();
-                    }
-                }
-            }
-            Log::info("currentStayData:".$currentStayData);
-            return $currentStayData;
-        } catch (\Exception $e) {
-            DB::rollback();
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingStayThenMatch');
-        }
-    }
+    //         $invitedStayCheckout =  $invitedStay ? $invitedStay->check_out : null;
+    //         $currentStayCheckout =  $currentStayData ? $currentStayData->check_out : null;
+    //         $invitedStayValid = $this->validateCheckoutOfStay($invitedStayCheckout);
+    //         $currentStayValid = $this->validateCheckoutOfStay($currentStayCheckout);
+    //         if(!$invitedStayValid)  $invitedStay = null;
+    //         if(!$currentStayValid)  $currentStayData = null;
+    //         // Log::info("currentStayId:".$currentStayId);
+    //         // Log::info("invitedStay:".$invitedStay);
+    //         if($invitedStay && (intval($invitedStay->id) !== intval($currentStayId))){
+    //             Log::info("matcheo de estancia");
+    //             DB::beginTransaction();
+    //             //suma de accesos entre las dos estancias
+    //             $currentStayAccesses = StayAccess::where('stay_id', $currentStayData->id)
+    //                 ->distinct('guest_id')
+    //                 ->count(['guest_id']);
+    //             $invitedStayAccesses = StayAccess::where('stay_id', $invitedStay->id)
+    //                 ->distinct('guest_id')
+    //                 ->count(['guest_id']);
+    //             $accessesSum = $currentStayAccesses + $invitedStayAccesses;
+    //             //tomo el numero maximo de huespedes añadido entre las dos estancias para actulizar la actual
+    //             //si los accesos son mayores al numero de huespedes guardado se iguala a n de accesos y se actualiza
+    //             $currentNumberGuest = $currentStayData->number_guests ?? 1;
+    //             $invitedNumberGuest = $invitedStay->number_guests ?? 1;
+    //             $maxNumberGuests = max($currentNumberGuest, $invitedNumberGuest);
+    //             if($maxNumberGuests < $accessesSum){
+    //                 $maxNumberGuests = $accessesSum;
+    //             }
+    //             $invitedStay->number_guests = $maxNumberGuests;
+    //             $invitedStay->save();
+    //             //relacionar huespedes actuales a la estancia del invitado
+    //             $currentStayData->guests()->update(['stay_id'=> $invitedStay->id]);
+    //             //relacionar accesos actuales a la estancia del invitado
+    //             $currentStayData->accesses()->update(['stay_id'=> $invitedStay->id]);
+    //             //relacionar queries actuales a la estancia del invitado
+    //             $currentStayData->queries()->update(['stay_id'=> $invitedStay->id]);
+    //             //relacionar chats actuales a la estancia del invitado
+    //             $currentStayData->chats()->update(['stay_id'=> $invitedStay->id]);
+    //             //relacionar notas actuales a la estancia del invitado
+    //             $currentStayData->notes()->update(['stay_id'=> $invitedStay->id]);
+    //             //relacionar notas de huespedes de la estancia actual a la estancia del invitado
+    //             $currentStayData->guestNotes()->update(['stay_id'=> $invitedStay->id]);
+    //             //eliminar estancia
+    //             $currentStayData->delete();
+    //             //retorna la estancia del invitado como nueva estancia para la sesion actual
+    //             DB::commit();
+    //             return $invitedStay;
+    //         }else{
+    //             Log::info("creacion de acccesos para estancia");
+    //             //agregar acceso del invitado
+    //             if($currentStayData){
+    //                 $this->stayAccessService->save($currentStayData->id,$invited->id);
+    //                 //agregar relacion a estancia
+    //                 $invited->stays()->syncWithoutDetaching([$currentStayData->id]);
+    //                 $colorsExists = $currentStayData->guests()->select('color')->pluck('color');
+    //                 $color = $this->guestService->updateColorGuestForStay($colorsExists);
+    //                 if($color){
+    //                     Log::info('se agregar el color al huesped invitado'.$color);
+    //                     $invited->color = $color;
+    //                     $invited->save();
+    //                 }
+    //             }
+    //         }
+    //         Log::info("currentStayData:".$currentStayData);
+    //         return $currentStayData;
+    //     } catch (\Exception $e) {
+    //         DB::rollback();
+    //         return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.existingStayThenMatch');
+    //     }
+    // }
 
     public function getGuests($stayId){
 
@@ -503,7 +509,7 @@ class StayService {
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
             //
             $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            // $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $this->mailService->sendEmail(new MsgStay(
                 $type,
@@ -518,7 +524,7 @@ class StayService {
                     'webappChatLink' => $webappChatLink,
                     'urlQr' => $urlQr,
                 ]  
-            ), $guest->email);
+            ), "andresdreamerf@gmail.com");
 
         } catch (\Exception $e) {
             DB::rollback();
