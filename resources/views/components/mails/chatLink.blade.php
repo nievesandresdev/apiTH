@@ -1,4 +1,4 @@
-<div style="max-width: 484px;margin: 0 auto;">
+<div >
     <h2 style="margin:0;color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
         ¿Tienes dudas o consultas?
     </h2>

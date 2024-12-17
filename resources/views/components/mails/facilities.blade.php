@@ -1,4 +1,4 @@
-<div style="max-width: 488px;margin:0 auto;padding:0 24px;">
+<div style="margin-top:32px">
     <!-- Título -->
     <h2 style="color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
         Disfrutarás de estas instalaciones y más
@@ -10,17 +10,16 @@
             <colgroup>
                 <col class="col-space">
                 <col class="col-space">
-                <col class="col-space">
+                <col class="col-space hidden-mobile">
             </colgroup>
             <tr>
-                @foreach ($crosselling['facilities'] as $key => $item)
+                @foreach ($facilities as $key => $item)
                     <td class="{{ $key == 2 ? 'col-3-desktop' : '' }}">
                         <div style="border-radius: 4px;border: 1px solid #F3F3F3;background: #FFF;padding:1px;">
                             <img 
-                                class="card-facility"
                                 src="{{$item['url_image']}}" 
                                 alt="Catedral de Sevilla" 
-                                style="display:block;border-radius:3px 3px 0 0"
+                                style="display:block;border-radius:3px 3px 0 0;width:100%;height:148px"
                             >
                             <div style="padding: 8px;">
                                 <h2 class="title-card">

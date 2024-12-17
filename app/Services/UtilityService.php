@@ -82,11 +82,57 @@ class UtilityService {
                     ];
                 });
             }
+
             $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);
-            //
+            //places
+            $placesArr = [];
+            if($helpers['crosselling_places_whatvisit']) {
+                array_push($placesArr, $helpers['crosselling_places_whatvisit'][0]);
+            }
+            if($helpers['crosselling_places_whereeat']) {
+                array_push($placesArr, $helpers['crosselling_places_whereeat'][0]);
+            }
+            if($helpers['crosselling_places_leisure']) {
+                array_push($placesArr, $helpers['crosselling_places_leisure'][0]);
+            }
+
+            $placesArr = array_map(function($item) use($modelHotel, $chainSubdomain, $url_bucket){
+                $img = null;
+                if($item['place_images']){
+                    $img = $url_bucket."/storage/places/".$item['place_images'][0]['image'];
+                }
+                
+                return [
+                    'title' => $item['title'],
+                    'image' => $img,
+                    'num_stars' => $item['num_stars'],
+                    'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"lugares/{$item['id']}"),
+                ];
+            }, $placesArr);
+
+            //experiences
+            $experiences = $helpers['crosselling_experiences'];
+            $experiencesArr = [];
+            if($experiences) {
+                array_push($experiencesArr, $experiences[0]);
+            }
+            if($experiences && $experiences[1]) {
+                array_push($experiencesArr, $experiences[1]);
+            }
+            $experiences = array_map(function($item) use($modelHotel, $chainSubdomain, $url_bucket){
+                $formattedRating = number_format($item['reviews']['combined_average_rating'], 1);
+                return [
+                    'title' => $item['title'],
+                    'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"experiencias/{$item['slug']}"),
+                    'image_url' => $item['image']['url'],
+                    'num_stars' => $formattedRating
+                ];
+            }, $experiencesArr);
+            
             return [
                 'facilities' => $facilities,
-                'helpers' => $helpers
+                'places' => $placesArr,
+                'experiences' => $experiences
 
             ];
         } catch (\Exception $e) {
