@@ -37,7 +37,7 @@ services:
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
     # Comando para el worker de colas (sin supervisord, solo artisan)
-    command: ["php", "/var/www/html/artisan", "queue:work", "-vvv", "--sleep=3", "--tries=3", "--timeout=90"]
+    command: ["/usr/bin/supervisord -c /etc/supervisor/supervisord.conf"]
 
   cron:
     image: api:latest
