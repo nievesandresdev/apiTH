@@ -104,7 +104,8 @@ class UtilsController extends Controller
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(460);
-        $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+        return $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+        // $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
         // return view('Mails.guest.msgStay', $data);
         return 'enviado';
     }
