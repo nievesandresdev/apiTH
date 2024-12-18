@@ -99,6 +99,13 @@ class UtilsController extends Controller
     }
 
     public function testTemplateEmail()
+    {
+        echo "key: ".config('services.pusher.key')."</br></br>";
+        echo "secret: ".config('services.pusher.secret')."</br></br>";
+        echo "id: ".config('services.pusher.id')."</br></br>";
+        return 'listo';
+    }
+    public function emailwelcometest()
     {   
         $type = 'welcome';
         $hotel = hotel::find(280);
