@@ -100,12 +100,17 @@ class UtilsController extends Controller
 
     public function testTemplateEmail()
     {
-        echo "key: ".config('services.pusher.key')."</br></br>";
-        echo "secret: ".config('services.pusher.secret')."</br></br>";
-        echo "id: ".config('services.pusher.id')."</br></br>";
-        echo "cluster: ".config('services.pusher.cluster')."</br></br>";
+        // echo "key: ".config('services.pusher.key')."</br></br>";
+        // echo "secret: ".config('services.pusher.secret')."</br></br>";
+        // echo "id: ".config('services.pusher.id')."</br></br>";
+        // echo "cluster: ".config('services.pusher.cluster')."</br></br>";
         
-        return 'listo';
+        // return 'listo';
+        $guestId = 332;
+        sendEventPusher('private-logout-webapp-guest.' . $guestId, 'App\Events\LogoutWebappGuest', [
+            'guestId' => $guestId
+        ]);
+        return 'manddo';
     }
     public function emailwelcometest()
     {   
