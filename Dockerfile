@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libmagickwand-dev \
+    supervisor \
     cron \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -67,7 +68,12 @@ RUN php artisan route:cache
 COPY crontab /etc/cron.d/my-cron-jobs
 RUN chmod 0644 /etc/cron.d/my-cron-jobs && crontab /etc/cron.d/my-cron-jobs
 
+RUN mkdir -p /etc/supervisor/conf.d
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
+
+
 # Exponer el puerto 80
 EXPOSE 80
 
-# No especificamos CMD, lo definiremos en docker-compose según el servicio.
+# No especificamos CMD porque lo definiremos en docker-compose para cada servicio
