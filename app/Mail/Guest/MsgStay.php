@@ -44,14 +44,15 @@ class MsgStay extends Mailable
      */
     public function build()
     {
-        $subject = 'test';
+        $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
+
         // if($this->type == 'welcome'){
         //     $subject = 'Hola '.$this->guest_name.', prueba la WebApp de '.$this->hotel->name.' ' ;
         // }
         // else if($this->create){
         //     $subject = 'Explora y disfruta la ciudad junto a '. $this->hotel->name;
         // }else{
-        //     $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
+        // $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';    
         // }
 
         $senderName = $this->hotel['sender_for_sending_email'];
