@@ -100,6 +100,9 @@ class UtilsController extends Controller
 
     public function testTemplateEmail()
     {   
+        
+        echo config('app.url_base_helpers');
+        echo "acontinuacion: </br></br>";
         $hotel = hotel::find(191);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
