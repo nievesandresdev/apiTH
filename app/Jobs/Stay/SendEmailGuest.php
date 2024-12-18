@@ -39,14 +39,6 @@ class SendEmailGuest implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('inicio SendEmailGuest');
-        // Aquí invocas el método que envía el email
-        Log::info('type '.json_encode($this->type));
-        Log::info('chainSubdomain '.json_encode($this->chainSubdomain));
-        Log::info('hotel '.json_encode($this->hotel));
-        Log::info('guest '.json_encode($this->guest));
-        Log::info('stay '.json_encode($this->stay));
-
         // $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
         app('App\Services\StayService')->guestWelcomeEmail($this->type, $this->chainSubdomain, $this->hotel, $this->guest, $this->stay);
     }
