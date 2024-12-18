@@ -14,8 +14,8 @@
         .title-card,.title-card *{
             font-size: 14px;
         }
-        .hidden-mobile{
-            display: none;
+        .col-space{
+            width: 157px;
         }
     }
     @media only screen and (max-width: 600px) {
@@ -28,6 +28,9 @@
         .title-card,.title-card *{
             font-size: 13px;
             word-spacing: 0px;
+        }
+        .hidden-mobile{
+            display: none;
         }
     }
     

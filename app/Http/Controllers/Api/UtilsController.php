@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Storage;
 class UtilsController extends Controller
 {   
 
-    public $settings;
+    public $querySettingsServices;
     public $staySettings;
     public $userServices;
     public $chatService;
@@ -64,7 +64,7 @@ class UtilsController extends Controller
         StayService $_StayService,
     )
     {
-        $this->settings = $_QuerySettingsServices;
+        $this->querySettingsServices = $_QuerySettingsServices;
         $this->userServices = $userServices;
         $this->chatService = $_ChatService;
         $this->staySettings = $_StaySettingsServices;
@@ -100,17 +100,89 @@ class UtilsController extends Controller
 
     public function testTemplateEmail()
     {   
-        
-        echo config('app.url_base_helpers');
-        echo "acontinuacion: </br></br>";
-        $hotel = hotel::find(191);
+        $type = 'welcome';
+        $hotel = hotel::find(280);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
-        $stay = Stay::find(460);
-        return $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
-        // $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
-        // return view('Mails.guest.msgStay', $data);
-        return 'enviado';
+        $stay = Stay::find(535);
+
+        $checkData = [];
+            $queryData = [];
+            //stay section
+            
+            if($type == 'welcome'){
+                if($stay->check_in && $stay->check_out){
+                    $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
+                    $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
+                }
+                $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
+                //
+                
+                $checkData = [
+                    'title' => "Datos de tu estancia en {$hotel->name}",
+                    'formatCheckin' => $formatCheckin,
+                    'formatCheckout' => $formatCheckout,
+                    'editStayUrl' => $webappEditStay
+                ];
+            }
+
+        //     //query section
+            if($type == 'welcome'){
+                $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);    
+                $querySettings = $this->querySettingsServices->getAll($hotel->id);
+                $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
+                $showQuerySection = true;
+                
+                if(
+                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate || 
+                    $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
+                    $currentPeriod == 'post-stay'
+                ){
+                    $showQuerySection = false;
+                }    
+                //        
+                $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
+                $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
+
+                $queryData = [
+                    'showQuerySection' => $showQuerySection,
+                    'currentPeriod' => $currentPeriod,
+                    'webappLinkInbox' => $webappLinkInbox,
+                    'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
+                    
+                ];
+            }
+
+            $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
+
+            //
+            $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
+            //
+            
+            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+            
+            //
+            // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+
+            $dataEmail = [
+                'checkData' => $checkData,
+                'queryData' => $queryData,
+                'places' => $crosselling['places'],
+                'experiences' => $crosselling['experiences'],
+                'facilities' => $crosselling['facilities'],
+                'webappChatLink' => $webappChatLink,
+                'urlQr' => $urlQr,
+            ];
+            
+            return view('Mails.guest.msgStay', [
+                'type' => $type,
+                'hotel' => $hotel,
+                'guest' => $guest,
+                'data'=> $dataEmail
+            ]);
+            // $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "andresdreamerf@gmail.com");
+        
     }
 
     
