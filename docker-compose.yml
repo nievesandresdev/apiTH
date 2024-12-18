@@ -1,11 +1,11 @@
 services:
   api:
-    image: api:latest
-    container_name: thehoster-app-api-backend
-    restart: always
     build:
       context: .
       dockerfile: Dockerfile
+    image: api:latest
+    container_name: thehoster-app-api-backend
+    restart: always
     volumes:
       - ../api:/var/www/html
       - ../api/vendor:/var/www/html/vendor
@@ -14,12 +14,46 @@ services:
     networks:
       - hoster-db_hoster_network_test
     environment:
-      DB_HOST: 10.0.2.4   # IP privada de la VM donde corre MySQL
-      DB_PORT: 3307       # Puerto expuesto en la VM
+      DB_HOST: 10.0.2.4
+      DB_PORT: 3307
       DB_USER: thehoster_test
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
-      
+    # Comando del contenedor API: iniciar Apache
+    command: ["apache2-foreground"]
+
+  worker:
+    image: api:latest
+    container_name: thehoster-app-worker
+    depends_on:
+      - api
+    networks:
+      - hoster-db_hoster_network_test
+    environment:
+      DB_HOST: 10.0.2.4
+      DB_PORT: 3307
+      DB_USER: thehoster_test
+      DB_PASSWORD: w2449daHK-n2T
+      DB_DATABASE: hoster_db
+    # Comando para el worker de colas
+    command: ["php", "/var/www/html/artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=90"]
+
+  cron:
+    image: api:latest
+    container_name: thehoster-app-cron
+    depends_on:
+      - api
+    networks:
+      - hoster-db_hoster_network_test
+    environment:
+      DB_HOST: 10.0.2.4
+      DB_PORT: 3307
+      DB_USER: thehoster_test
+      DB_PASSWORD: w2449daHK-n2T
+      DB_DATABASE: hoster_db
+    # Comando para ejecutar cron en primer plano
+    command: ["cron", "-f"]
+
 networks:
   hoster-db_hoster_network_test:
     external: true

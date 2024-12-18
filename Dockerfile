@@ -4,7 +4,7 @@ FROM php:8.2-apache
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
 
-# Instalar dependencias del sistema necesarias
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
@@ -64,21 +64,11 @@ RUN php artisan key:generate
 RUN php artisan config:cache
 RUN php artisan route:cache
 
-# Copiar configuración de Supervisor
-# Este archivo principal incluirá los programas
-COPY supervisord.conf /etc/supervisor/supervisord.conf
-
-# Copiar configuración del worker de Laravel (queue)
-COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
-
 # Configurar tus crons
-# Ejemplo: llama a artisan cada día a las 4am para alguna tarea
-# Ajusta la ruta a artisan y el comando, usuario y horario según tu necesidad
 COPY crontab /etc/cron.d/my-cron-jobs
 RUN chmod 0644 /etc/cron.d/my-cron-jobs && crontab /etc/cron.d/my-cron-jobs
 
 # Exponer el puerto 80
 EXPOSE 80
 
-# Iniciar supervisor que a su vez iniciará Apache, cron y el worker
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+# No especificamos CMD porque lo definiremos en docker-compose para cada servicio
