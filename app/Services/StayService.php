@@ -526,7 +526,7 @@ class StayService {
             // Log::info('dataEmail '.json_encode($dataEmail));
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "andresdreamerf@gmail.com");
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), $guest->email);
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
