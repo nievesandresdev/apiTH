@@ -86,14 +86,14 @@ class UtilityService {
             $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);
             //places
             $placesArr = [];
-            if($helpers['crosselling_places_whatvisit']) {
-                array_push($placesArr, $helpers['crosselling_places_whatvisit'][0]);
+            if (!empty($helpers['crosselling_places_whatvisit'][0])) {
+                $placesArr[] = $helpers['crosselling_places_whatvisit'][0];
             }
-            if($helpers['crosselling_places_whereeat']) {
-                array_push($placesArr, $helpers['crosselling_places_whereeat'][0]);
+            if (!empty($helpers['crosselling_places_whereeat'][0])) {
+                $placesArr[] = $helpers['crosselling_places_whereeat'][0];
             }
-            if($helpers['crosselling_places_leisure']) {
-                array_push($placesArr, $helpers['crosselling_places_leisure'][0]);
+            if (!empty($helpers['crosselling_places_leisure'][0])) {
+                $placesArr[] = $helpers['crosselling_places_leisure'][0];
             }
 
             $placesArr = array_map(function($item) use($modelHotel, $chainSubdomain, $url_bucket){
@@ -111,13 +111,14 @@ class UtilityService {
             }, $placesArr);
 
             //experiences
-            $experiences = $helpers['crosselling_experiences'];
+            $experiences = $helpers['crosselling_experiences'] ?? [];
             $experiencesArr = [];
-            if($experiences) {
-                array_push($experiencesArr, $experiences[0]);
+
+            if (!empty($experiences[0])) {
+                $experiencesArr[] = $experiences[0];
             }
-            if($experiences && $experiences[1]) {
-                array_push($experiencesArr, $experiences[1]);
+            if (!empty($experiences[1])) {
+                $experiencesArr[] = $experiences[1];
             }
             $experiences = array_map(function($item) use($modelHotel, $chainSubdomain, $url_bucket){
                 $formattedRating = number_format($item['reviews']['combined_average_rating'], 1);
@@ -136,6 +137,7 @@ class UtilityService {
 
             ];
         } catch (\Exception $e) {
+            Log::error('Error service getCrossellingHotelForMail: ' . $e->getMessage());
             $e;
         }
 
