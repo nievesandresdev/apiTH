@@ -37,7 +37,7 @@ services:
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
     # Comando para el worker de colas (sin supervisord, solo artisan)
-    command: ["/usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf"]
+    command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
 
   cron:
     image: api:latest
