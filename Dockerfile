@@ -64,13 +64,15 @@ RUN php artisan key:generate
 RUN php artisan config:cache
 RUN php artisan route:cache
 
-# Configurar tus crons
+# Configurar crons
 COPY crontab /etc/cron.d/my-cron-jobs
-RUN chmod 0644 /etc/cron.d/my-cron-jobs && crontab /etc/cron.d/my-cron-jobs
+RUN chmod 0644 /etc/cron.d/my-cron-jobs && chown root:root /etc/cron.d/my-cron-jobs
 
-RUN mkdir -p /etc/supervisor/conf.d
+# Configurar Supervisor
+RUN mkdir -p /etc/supervisor/conf.d /var/run/supervisor
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
+RUN chmod 644 /etc/supervisor/supervisord.conf /etc/supervisor/conf.d/laravel-worker.conf
 
 
 # Exponer el puerto 80
