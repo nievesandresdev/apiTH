@@ -21,6 +21,8 @@ jobs:
         run: |
           echo "APP_NAME=TheHoster" >> .env
           echo "APP_KEY=" >> .env
+          echo "LOG_CHANNEL=stack" >> .env
+          echo "LOG_LEVEL=debug" >> .env
           echo "PRODUCTION=true" >> .env
           echo "DB_CONNECTION=mysql" >> .env
           echo "BROADCAST_DRIVER=pusher" >> .env
@@ -108,6 +110,7 @@ jobs:
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
           else
+            echo "ASSET_URL=${{ secrets.APP_URL_TEST }}" >> .env
             echo "APP_DEBUG=${{ secrets.APP_DEBUG_TEST }}" >> .env
             echo "APP_URL=${{ secrets.APP_URL_TEST }}" >> .env
             echo "APP_ENV=${{secrets.APP_ENV_TEST}}" >> .env
@@ -167,9 +170,8 @@ jobs:
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
           fi
 
-          echo "ASSET_URL='${APP_URL}'" >> .env
-          echo "LOG_CHANNEL=stack" >> .env
-          echo "LOG_LEVEL=debug" >> .env
+          
+          
 
       # Configuración de Docker Buildx
       - name: Set up Docker Buildx

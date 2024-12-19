@@ -54,15 +54,18 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['stderr', 'daily'],
+            'channels' => ['stderr', 'single'],
             'ignore_exceptions' => false,
         ],
 
         'stderr' => [
             'driver' => 'monolog',
+            'level' => env('LOG_LEVEL', 'debug'),
             'handler' => StreamHandler::class,
+            'formatter' => 'default',
             'with' => [
-                'stream' => 'php://stderr',
+                'stream' => 'php://stdout',
+                'level' => 'debug',
             ],
         ],
 
@@ -76,7 +79,7 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'replace_placeholders' => true,
+            //'replace_placeholders' => true,
         ],
 
         'slack' => [
