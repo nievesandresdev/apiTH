@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libmagickwand-dev \
+    supervisor \
     cron \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -63,11 +64,23 @@ RUN php artisan key:generate
 RUN php artisan config:cache
 RUN php artisan route:cache
 
-# Configurar tus crons
+# Copiar el archivo de crons y configurar permisos
 COPY crontab /etc/cron.d/my-cron-jobs
-RUN chmod 0644 /etc/cron.d/my-cron-jobs && crontab /etc/cron.d/my-cron-jobs
+#RUN chmod 0644 /etc/cron.d/my-cron-jobs && \
+#    chown root:root /etc/cron.d/my-cron-jobs && \
+#    crontab /etc/cron.d/my-cron-jobs
+
+# Configurar Supervisor
+RUN mkdir -p /var/log/supervisor /var/run/supervisor && \
+    touch /var/log/supervisor/supervisord.log /var/log/supervisor/supervisord.err /var/log/supervisor/laravel-worker.err && \
+    chown -R www-data:www-data /var/log/supervisor && \
+    chown -R www-data:www-data /var/run/supervisor
+
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
 
 # Exponer el puerto 80
 EXPOSE 80
 
-# No especificamos CMD, lo definiremos en docker-compose según el servicio.
+# Ejecutar supervisord para gestionar Apache, cron y workers
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
