@@ -1,5 +1,5 @@
 # Use PHP 8.2 Apache como imagen base
-FROM php:8.2-apache
+FROM php:8.2-fpm
 
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
