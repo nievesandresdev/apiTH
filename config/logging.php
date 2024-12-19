@@ -58,11 +58,14 @@ return [
             'ignore_exceptions' => false,
         ],
 
-        'memory' => [
+        'stderr' => [
             'driver' => 'monolog',
-            'handler' => Monolog\Handler\StreamHandler::class,
+            'level' => env('LOG_LEVEL', 'debug'),
+            'handler' => StreamHandler::class,
+            'formatter' => 'default',
             'with' => [
-                'stream' => 'php://stderr',
+                'stream' => 'php://stdout',
+                'level' => 'debug',
             ],
         ],
 
