@@ -1,5 +1,2 @@
-# Cada día a las 4 AM ejecutar un comando artisan
 0 4 * * * www-data /usr/local/bin/php /var/www/html/artisan freetrealcommand >> /dev/stdout 2>&1
-
-# Cada hora ejecutar otro comando artisan
 0 * * * * www-data /usr/local/bin/php /var/www/html/artisan send-post-stay-emails >> /dev/stdout 2>&1

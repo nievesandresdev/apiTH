@@ -66,9 +66,9 @@ RUN php artisan route:cache
 
 # Copiar el archivo de crons y configurar permisos
 COPY crontab /etc/cron.d/my-cron-jobs
-RUN chmod 0644 /etc/cron.d/my-cron-jobs && \
-    chown root:root /etc/cron.d/my-cron-jobs && \
-    crontab /etc/cron.d/my-cron-jobs
+#RUN chmod 0644 /etc/cron.d/my-cron-jobs && \
+#    chown root:root /etc/cron.d/my-cron-jobs && \
+#    crontab /etc/cron.d/my-cron-jobs
 
 # Configurar Supervisor
 RUN mkdir -p /var/log/supervisor /var/run/supervisor && \
