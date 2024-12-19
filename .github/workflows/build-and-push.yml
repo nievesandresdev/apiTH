@@ -168,7 +168,7 @@ jobs:
           fi
 
           echo "ASSET_URL='${APP_URL}'" >> .env
-          echo "LOG_CHANNEL=stderr" >> .env
+          echo "LOG_CHANNEL=stack" >> .env
           echo "LOG_LEVEL=debug" >> .env
 
       # Configuración de Docker Buildx
