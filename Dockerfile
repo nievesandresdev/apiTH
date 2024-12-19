@@ -4,18 +4,8 @@ FROM php:8.2-apache
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
 
-# Agregar el repositorio Sury para PHP
+# Actualizar el sistema e instalar herramientas básicas
 RUN apt-get update && apt-get install -y \
-    gnupg \
-    apt-transport-https \
-    lsb-release \
-    ca-certificates && \
-    curl -sSL https://packages.sury.org/php/apt.gpg | apt-key add - && \
-    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list && \
-    apt-get update
-
-# Instalar dependencias del sistema y PHP-FPM
-RUN apt-get install -y \
     libonig-dev \
     libzip-dev \
     libpng-dev \
@@ -28,13 +18,15 @@ RUN apt-get install -y \
     git \
     curl \
     libmagickwand-dev \
-    php8.2-fpm \
     supervisor \
     cron \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalar extensiones de PHP
+# Instalar PHP-FPM usando docker-php-ext-install
+RUN docker-php-ext-install fpm
+
+# Instalar extensiones de PHP adicionales
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
     install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap imagick
