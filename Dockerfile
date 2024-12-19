@@ -64,10 +64,11 @@ RUN php artisan key:generate
 RUN php artisan config:cache
 RUN php artisan route:cache
 
-# Configurar crons
+# Copiar el archivo de crons y configurar permisos
 COPY crontab /etc/cron.d/my-cron-jobs
-RUN chmod 0644 /etc/cron.d/my-cron-jobs && chown root:root /etc/cron.d/my-cron-jobs
-RUN crontab /etc/cron.d/my-cron-jobs
+#RUN chmod 0644 /etc/cron.d/my-cron-jobs && \
+#    chown root:root /etc/cron.d/my-cron-jobs && \
+#    crontab /etc/cron.d/my-cron-jobs
 
 # Configurar Supervisor
 RUN mkdir -p /var/log/supervisor && \
@@ -76,6 +77,8 @@ RUN mkdir -p /var/log/supervisor && \
 RUN mkdir -p /var/run/supervisor && chown -R www-data:www-data /var/run/supervisor
 RUN mkdir -p /etc/supervisor/conf.d
 COPY supervisord.conf /etc/supervisor/supervisord.conf
+
+
 COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
 RUN chmod 644 /etc/supervisor/supervisord.conf /etc/supervisor/conf.d/laravel-worker.conf
 
