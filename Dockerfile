@@ -6,6 +6,7 @@ WORKDIR /var/www/html
 
 # Agregar el repositorio Sury para PHP
 RUN apt-get update && apt-get install -y \
+    gnupg \
     apt-transport-https \
     lsb-release \
     ca-certificates && \
