@@ -54,13 +54,13 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['stderr', 'daily'],
+            'channels' => ['memory', 'daily'],
             'ignore_exceptions' => false,
         ],
 
-        'stderr' => [
+        'memory' => [
             'driver' => 'monolog',
-            'handler' => StreamHandler::class,
+            'handler' => Monolog\Handler\StreamHandler::class,
             'with' => [
                 'stream' => 'php://stderr',
             ],
