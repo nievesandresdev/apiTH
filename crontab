@@ -1,2 +1,3 @@
-0 4 * * * www-data /usr/local/bin/php /var/www/html/artisan freetrealcommand >> /dev/stdout 2>&1
-0 * * * * www-data /usr/local/bin/php /var/www/html/artisan send-post-stay-emails >> /dev/stdout 2>&1
+0 4 * * * /usr/local/bin/php /var/www/html/artisan freetrealcommand >> /dev/stdout 2>&1
+0 * * * * /usr/local/bin/php /var/www/html/artisan send-post-stay-emails >> /dev/stdout 2>&1
+* * * * * echo "$(date): Prueba de cron ejecutado correctamente" >> /var/log/cron.log 2>&1
