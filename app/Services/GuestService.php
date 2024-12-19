@@ -255,10 +255,10 @@ class GuestService {
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
             $guest->acronym = $acronym;
 
-            Log::info('pass '.$data->password);
+            // Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
                 $guest->password = bcrypt($data->password);
-                Log::info('update pass'. $guest->password);
+                // Log::info('update pass'. $guest->password);
             }
 
             $guest->save();
