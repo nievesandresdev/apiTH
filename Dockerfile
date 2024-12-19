@@ -4,8 +4,17 @@ FROM php:8.2-apache
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
 
-# Instalar dependencias del sistema
+# Agregar el repositorio Sury para PHP
 RUN apt-get update && apt-get install -y \
+    apt-transport-https \
+    lsb-release \
+    ca-certificates && \
+    curl -sSL https://packages.sury.org/php/apt.gpg | apt-key add - && \
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list && \
+    apt-get update
+
+# Instalar dependencias del sistema y PHP-FPM
+RUN apt-get install -y \
     libonig-dev \
     libzip-dev \
     libpng-dev \
