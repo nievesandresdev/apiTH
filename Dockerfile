@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libmagickwand-dev \
+    php8.2-fpm \
     supervisor \
     cron \
     --no-install-recommends && \
@@ -71,7 +72,12 @@ RUN crontab /etc/cron.d/my-cron-jobs
 
 # Configurar Supervisor
 RUN mkdir -p /var/log/supervisor && \
-    touch /var/log/supervisor/supervisord.log /var/log/supervisor/supervisord.err && \
+    touch /var/log/supervisor/supervisord.log \
+          /var/log/supervisor/supervisord.err \
+          /var/log/supervisor/php-fpm.log \
+          /var/log/supervisor/php-fpm.err \
+          /var/log/supervisor/cron.log \
+          /var/log/supervisor/cron.err && \
     chown -R www-data:www-data /var/log/supervisor
 RUN mkdir -p /var/run/supervisor && chown -R www-data:www-data /var/run/supervisor
 RUN mkdir -p /etc/supervisor/conf.d
@@ -79,8 +85,7 @@ COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
 RUN chmod 644 /etc/supervisor/supervisord.conf /etc/supervisor/conf.d/laravel-worker.conf
 
-
-# Exponer el puerto 80
-EXPOSE 80
+# Exponer los puertos necesarios
+EXPOSE 80 9000
 
 # No especificamos CMD porque lo definiremos en docker-compose para cada servicio
