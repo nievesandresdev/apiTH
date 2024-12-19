@@ -1,10 +1,10 @@
 # Use PHP 8.2 Apache como imagen base
-FROM php:8.2-fpm
+FROM php:8.2-apache
 
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
 
-# Actualizar el sistema e instalar herramientas básicas
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
@@ -23,10 +23,7 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalar PHP-FPM usando docker-php-ext-install
-RUN docker-php-ext-install fpm
-
-# Instalar extensiones de PHP adicionales
+# Instalar extensiones de PHP
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
     install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap imagick
@@ -74,12 +71,7 @@ RUN crontab /etc/cron.d/my-cron-jobs
 
 # Configurar Supervisor
 RUN mkdir -p /var/log/supervisor && \
-    touch /var/log/supervisor/supervisord.log \
-          /var/log/supervisor/supervisord.err \
-          /var/log/supervisor/php-fpm.log \
-          /var/log/supervisor/php-fpm.err \
-          /var/log/supervisor/cron.log \
-          /var/log/supervisor/cron.err && \
+    touch /var/log/supervisor/supervisord.log /var/log/supervisor/supervisord.err && \
     chown -R www-data:www-data /var/log/supervisor
 RUN mkdir -p /var/run/supervisor && chown -R www-data:www-data /var/run/supervisor
 RUN mkdir -p /etc/supervisor/conf.d
@@ -87,7 +79,8 @@ COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
 RUN chmod 644 /etc/supervisor/supervisord.conf /etc/supervisor/conf.d/laravel-worker.conf
 
-# Exponer los puertos necesarios
-EXPOSE 80 9000
+
+# Exponer el puerto 80
+EXPOSE 80
 
 # No especificamos CMD porque lo definiremos en docker-compose para cada servicio
