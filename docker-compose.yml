@@ -20,8 +20,7 @@ services:
       DB_USER: thehoster_test
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
-    # Comando del contenedor API: iniciar Apache
-    command: ["apache2-foreground"]
+    command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
   worker:
     image: api:latest
@@ -36,8 +35,7 @@ services:
       DB_USER: thehoster_test
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
-    # Comando para el worker de colas (sin supervisord, solo artisan)
-    command: ["/usr/bin/supervisord -c /etc/supervisor/supervisord.conf"]
+    command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
   cron:
     image: api:latest
@@ -52,8 +50,7 @@ services:
       DB_USER: thehoster_test
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
-    # Comando para ejecutar cron en primer plano
-    command: ["cron", "-f"]
+    command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
 networks:
   hoster-db_hoster_network_test:
