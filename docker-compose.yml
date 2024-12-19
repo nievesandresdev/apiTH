@@ -1,5 +1,5 @@
+version: '3'
 services:
-  # Contenedor principal para Laravel con Apache
   api:
     build:
       context: .
@@ -20,23 +20,7 @@ services:
       DB_USER: thehoster_test
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
-    command: ["apache2-foreground"]
-
-  # Contenedor dedicado para cron jobs y workers (gestionados por Supervisor)
-  cron:
-    image: api:latest
-    container_name: thehoster-app-cron
-    depends_on:
-      - api
-    networks:
-      - hoster-db_hoster_network_test
-    environment:
-      DB_HOST: 10.0.2.4
-      DB_PORT: 3307
-      DB_USER: thehoster_test
-      DB_PASSWORD: w2449daHK-n2T
-      DB_DATABASE: hoster_db
-    # Inicia Supervisor que gestiona tanto los cron jobs como los workers
+    # Supervisord gestionará todos los procesos en este contenedor
     command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
 networks:

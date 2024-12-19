@@ -66,9 +66,9 @@ RUN php artisan route:cache
 
 # Copiar el archivo de crons y configurar permisos
 COPY crontab /etc/cron.d/my-cron-jobs
-#RUN chmod 0644 /etc/cron.d/my-cron-jobs && \
-#    chown root:root /etc/cron.d/my-cron-jobs && \
-#    crontab /etc/cron.d/my-cron-jobs
+RUN chmod 0644 /etc/cron.d/my-cron-jobs && \
+    chown root:root /etc/cron.d/my-cron-jobs && \
+    crontab /etc/cron.d/my-cron-jobs
 
 # Configurar Supervisor
 RUN mkdir -p /var/log/supervisor /var/run/supervisor && \
@@ -76,15 +76,11 @@ RUN mkdir -p /var/log/supervisor /var/run/supervisor && \
     chown -R www-data:www-data /var/log/supervisor && \
     chown -R www-data:www-data /var/run/supervisor
 
-RUN mkdir -p /etc/supervisor/conf.d
 COPY supervisord.conf /etc/supervisor/supervisord.conf
-
-
 COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
-RUN chmod 644 /etc/supervisor/supervisord.conf /etc/supervisor/conf.d/laravel-worker.conf
-
 
 # Exponer el puerto 80
 EXPOSE 80
 
-# No especificamos CMD porque lo definiremos en docker-compose para cada servicio
+# Ejecutar supervisord para gestionar Apache, cron y workers
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
