@@ -73,7 +73,8 @@ COPY crontab /etc/cron.d/my-cron-jobs
 # Configurar Supervisor
 RUN mkdir -p /var/log/supervisor && \
     touch /var/log/supervisor/supervisord.log /var/log/supervisor/supervisord.err && \
-    chown -R www-data:www-data /var/log/supervisor
+    chown -R www-data:www-data /var/log/supervisor \
+    chown -R www-data:www-data /var/run/supervisor
 RUN mkdir -p /var/run/supervisor && chown -R www-data:www-data /var/run/supervisor
 RUN mkdir -p /etc/supervisor/conf.d
 COPY supervisord.conf /etc/supervisor/supervisord.conf

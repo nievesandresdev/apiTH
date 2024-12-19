@@ -41,4 +41,4 @@ services:
 
 networks:
   hoster-db_hoster_network_test:
-    #external: true
+    external: true
