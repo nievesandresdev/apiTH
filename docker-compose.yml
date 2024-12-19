@@ -1,4 +1,3 @@
-version: '3'
 services:
   api:
     build:
@@ -20,7 +19,6 @@ services:
       DB_USER: thehoster_test
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
-    command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
   worker:
     image: api:latest
@@ -35,7 +33,6 @@ services:
       DB_USER: thehoster_test
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
-    command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
   cron:
     image: api:latest
@@ -50,7 +47,6 @@ services:
       DB_USER: thehoster_test
       DB_PASSWORD: w2449daHK-n2T
       DB_DATABASE: hoster_db
-    command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
 networks:
   hoster-db_hoster_network_test:

@@ -84,3 +84,4 @@ RUN chmod 644 /etc/supervisor/supervisord.conf /etc/supervisor/conf.d/laravel-wo
 EXPOSE 80
 
 # No especificamos CMD porque lo definiremos en docker-compose para cada servicio
+CMD ["/usr/local/bin/start.sh"]
