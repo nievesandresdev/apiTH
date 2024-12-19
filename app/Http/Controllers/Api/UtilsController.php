@@ -106,7 +106,7 @@ class UtilsController extends Controller
         // echo "cluster: ".config('services.pusher.cluster')."</br></br>";
         
         // return 'listo';
-        $guestId = 334;
+        $guestId = 123;
         sendEventPusher('private-logout-webapp-guest.' . $guestId, 'App\Events\LogoutWebappGuest', [
             'guestId' => $guestId
         ]);
