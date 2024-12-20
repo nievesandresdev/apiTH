@@ -38,7 +38,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
 
 class UtilsController extends Controller
-{   
+{
 
     public $querySettingsServices;
     public $staySettings;
@@ -79,18 +79,18 @@ class UtilsController extends Controller
     public function authPusher(Request $request)
     {
         $user = auth()->user(); // O tu lógica de autenticación personalizada
-        
+
         // if ($user) {
             $pusher = new Pusher(
-                config('services.pusher.key'), 
-                config('services.pusher.secret'), 
-                config('services.pusher.id'), 
+                config('services.pusher.key'),
+                config('services.pusher.secret'),
+                config('services.pusher.id'),
                 [
                     'cluster' => config('services.pusher.cluster'),
                     'useTLS' => true
                 ]
             );
-    
+
             $authResponse = $pusher->socket_auth($request->input('channel_name'), $request->input('socket_id'));
             return response($authResponse, 200)->header('Content-Type', 'application/json');
         // } else {
@@ -99,17 +99,17 @@ class UtilsController extends Controller
     }
 
     public function testTemplateEmail()
-    {   
-        $type = 'inviteGuestFromSaas';
-        $hotel = hotel::find(280);
+    {
+        $type = 'welcome';
+        $hotel = Hotel::find(191);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
-        $stay = Stay::find(535);
+        $stay = Stay::find(449);
 
         $checkData = [];
             $queryData = [];
             //stay section
-            
+
             if($type == 'welcome'){
                 if($stay->check_in && $stay->check_out){
                     $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
@@ -117,7 +117,7 @@ class UtilsController extends Controller
                 }
                 $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
                 //
-                
+
                 $checkData = [
                     'title' => "Datos de tu estancia en {$hotel->name}",
                     'formatCheckin' => $formatCheckin,
@@ -128,19 +128,19 @@ class UtilsController extends Controller
 
         //     //query section
             if($type == 'welcome'){
-                $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);    
+                $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
                 $querySettings = $this->querySettingsServices->getAll($hotel->id);
                 $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
                 $showQuerySection = true;
-                
+
                 if(
-                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate || 
+                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
                     $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
                     $currentPeriod == 'post-stay'
                 ){
                     $showQuerySection = false;
-                }    
-                //        
+                }
+                //
                 $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
 
@@ -149,7 +149,7 @@ class UtilsController extends Controller
                     'currentPeriod' => $currentPeriod,
                     'webappLinkInbox' => $webappLinkInbox,
                     'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-                    
+
                 ];
             }
 
@@ -158,9 +158,9 @@ class UtilsController extends Controller
             //
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
             //
-            
+
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
-            
+
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
@@ -175,7 +175,7 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp
             ];
-            
+
             return view('Mails.guest.msgStay', [
                 'type' => $type,
                 'hotel' => $hotel,
@@ -183,14 +183,14 @@ class UtilsController extends Controller
                 'data'=> $dataEmail
             ]);
             // $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "andresdreamerf@gmail.com");
-        
+
     }
 
-    
+
     public function test()
     {
         return 'asdasd';
-        $hotel = Hotel::find(191);        
+        $hotel = Hotel::find(191);
         $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
         // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
         $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
@@ -198,8 +198,8 @@ class UtilsController extends Controller
         $guest = Guest::find(9);
         $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
         $this->mailService->sendEmail(new MsgStay(
-            'welcome', 
-            $hotel, 
+            'welcome',
+            $hotel,
             $urlWebapp,
             $guest,
             $urlQr,
