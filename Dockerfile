@@ -84,6 +84,12 @@ RUN mkdir -p /var/log/supervisor /var/run/supervisor && \
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
 
+# Copiar el archivo de tareas al contenedor
+COPY tasks.sh /usr/local/bin/tasks.sh
+
+# Dar permisos de ejecución al archivo
+RUN chmod +x /usr/local/bin/tasks.sh
+
 # Exponer el puerto 80
 EXPOSE 80
 
