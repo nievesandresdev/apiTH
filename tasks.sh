@@ -6,10 +6,11 @@ echo "Ejecutando tareas programadas..."
 echo "Ejecutando migraciones..."
 php /var/www/html/artisan migrate --force
 
-# Ejecutar seeders
+# Ejecutar seeders sprint 4
 echo "Ejecutando seeders..."
 #php /var/www/html/artisan db:seed --force
 
+#Ejecutar custom commmands sprint 4
 echo "Ejecutando customs commands..."
 # php /var/www/html/artisan custom:command
 
