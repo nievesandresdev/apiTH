@@ -47,68 +47,11 @@ class GuestHosterService {
     }
 
 
-    public function inviteToHotel($data, $hotelId)
+    public function inviteToHotel($data, $hotel, $chainSubdomain)
     {
-        try {
-            // $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
-            // return $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+        $guest = $this->guestService->saveOrUpdate($data);
 
-            $hotel = Hotel::find($hotelId);
-            $guest = Guest::find(9);
-            $stay =  $this->stayServices->findbyId(460);
-
-            $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
-            $querySettings = $this->querySettingsServices->getAll($hotel->id);
-            $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
-            $showQuerySection = true;
-            if(
-                $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate || 
-                $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
-                $currentPeriod == 'post-stay'
-            ){
-                $showQuerySection = false;
-            }
-            
-            $chainSubdomain = $hotel->subdomain;
-    
-            $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
-            $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
-            
-    
-            // $webappLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
-            $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
-            $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
-            //        
-            $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
-            $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
-            
-            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
-
-            $this->mailService->sendEmail(new MsgStay(
-                'welcome',
-                $hotel,
-                $guest,
-                [
-                    'checkData' => [
-                        'title' => "Datos de tu estancia en {$hotel->name}",
-                        'formatCheckin' => $formatCheckin,
-                        'formatCheckout' => $formatCheckout,
-                        'editStayUrl' => $webappEditStay
-                    ],
-                    'queryData' => [
-                        'showQuerySection' => $showQuerySection,
-                        'currentPeriod' => $currentPeriod,
-                        'webappLinkInbox' => $webappLinkInbox,
-                        'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-                    ],
-                    'places' => $crosselling['places'],
-                    'experiences' => $crosselling['experiences'],
-                    'facilities' => $crosselling['facilities'],
-                ]  
-            ), 'andresdreamerf@gmail.com');
-        } catch (\Exception $e) {
-            return $e;
-        }
+        $this->stayServices->guestWelcomeEmail('inviteGuestFromSaas',$chainSubdomain, $hotel, $guest);
     }
 
     // public function inviteToHotel($data, $hotelId)
