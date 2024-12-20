@@ -13,7 +13,7 @@ services:
     ports:
       - "8001:80"
     networks:
-      - hoster-db_hoster_network_test
+      - bd-data_hoster_network
     environment:
       DB_HOST: 10.0.2.4
       DB_PORT: 3307
@@ -24,5 +24,5 @@ services:
     command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
 networks:
-  hoster-db_hoster_network_test:
+  bd-data_hoster_network:
     external: true

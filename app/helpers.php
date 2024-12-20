@@ -724,13 +724,14 @@ if (! function_exists('postStayqueriesTextDefault')) {
     function postStayqueriesTextDefault(){
         $queriesTextDefault = new stdClass();
         $queriesTextDefault->post_stay_thanks_good = [
-            "es" => "Mención destacada a miembros del hotel:",
-            "en" => "Special mention to hotel staff:",
-            "fr" => "Mention spéciale aux membres du personnel de l'hôtel :",
-            "pt" => "Menção especial aos membros da equipe do hotel:",
-            "it" => "Menzione speciale ai membri dello staff dell'hotel:",
-            "de" => "Besondere Erwähnung für die Mitarbeiter des Hotels:"
-        ];       
+            "es" => "¡Nos alegra que hayas disfrutado con nosotros!",
+            "en" => "We're glad you enjoyed your stay with us!",
+            "fr" => "Nous sommes ravis que vous ayez apprécié votre séjour chez nous!",
+            "pt" => "Estamos felizes que você tenha gostado da sua estadia conosco!",
+            "it" => "Siamo lieti che tu abbia gradito il tuo soggiorno con noi!",
+            "de" => "Wir freuen uns, dass Sie Ihren Aufenthalt bei uns genossen haben!"
+        ];
+        
         $queriesTextDefault->post_stay_assessment_good_activate = true;
         $queriesTextDefault->post_stay_assessment_good = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
