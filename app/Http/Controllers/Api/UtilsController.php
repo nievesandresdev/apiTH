@@ -99,22 +99,8 @@ class UtilsController extends Controller
     }
 
     public function testTemplateEmail()
-    {
-        // echo "key: ".config('services.pusher.key')."</br></br>";
-        // echo "secret: ".config('services.pusher.secret')."</br></br>";
-        // echo "id: ".config('services.pusher.id')."</br></br>";
-        // echo "cluster: ".config('services.pusher.cluster')."</br></br>";
-        
-        // return 'listo';
-        $guestId = 123;
-        sendEventPusher('private-logout-webapp-guest.' . $guestId, 'App\Events\LogoutWebappGuest', [
-            'guestId' => $guestId
-        ]);
-        return 'mando a '.$guestId;
-    }
-    public function emailwelcometest()
     {   
-        $type = 'welcome';
+        $type = 'inviteGuestFromSaas';
         $hotel = hotel::find(280);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
@@ -187,6 +173,7 @@ class UtilsController extends Controller
                 'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
+                'urlWebapp' => $urlWebapp
             ];
             
             return view('Mails.guest.msgStay', [
