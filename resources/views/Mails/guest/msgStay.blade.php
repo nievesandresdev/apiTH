@@ -121,6 +121,7 @@
     @include('components.mails.stayCheckDateStyles')
     @include('components.mails.facilitiesAndPlacesStyles')
     @include('components.mails.experiencesStyles')
+    @include('components.mails.inviteGuestFromSaasStyles')
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
     <div style="max-width: 568px; margin: 0 auto">
@@ -131,6 +132,9 @@
             @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name])
         @else
             {{-- @include('components.mails.headerBye',['guest_name' => $guest->name]) --}}
+        @endif
+        @if($type == 'inviteGuestFromSaas')
+            @include('components.mails.inviteGuestFromSaas',['urlWebapp' => $data['urlWebapp']])
         @endif
     </div>
     <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">

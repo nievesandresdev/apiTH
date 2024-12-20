@@ -223,33 +223,6 @@ class UserServices
 
 
 
-    /* function getUsersHotelBasicData($hotelId, $notificationFilters = [])
-    {
-        $queryUsers = User::whereHas('hotel', function ($query) use ($hotelId) {
-                $query->where('hotel_id', $hotelId);
-            })
-            ->select('id', 'email', 'name', 'notifications', 'permissions', 'periodicity_chat', 'periodicity_stay', 'status', 'del')
-            ->whereNotNull('notifications')
-            ->where('del', 0)
-            ->where('status', 1);
-
-        // Agregar filtros dinámicos basados en las notificaciones
-        if (!empty($notificationFilters)) {
-            foreach ($notificationFilters as $key => $value) {
-                $queryUsers->where("notifications->$key", $value);
-            }
-        }
-
-        $queryUsers = $queryUsers->orderBy('created_at', 'desc')->get();
-
-        if ($queryUsers->isEmpty()) {
-            return collect(); // Retorna una colección vacía para poder usar métodos de colección posteriormente
-        }
-
-        // No es necesario mapear los datos si no vas a transformarlos
-        return $queryUsers;
-    } */
-
     function getUsersHotelBasicData($hotelId, $notificationFilters = [], $specificChannels = [])
     {
         // Validar que $specificChannels sea un array

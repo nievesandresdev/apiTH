@@ -522,6 +522,7 @@ class StayService {
                 'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
+                'urlWebapp' => $urlWebapp
             ];
             // Log::info('dataEmail '.json_encode($dataEmail));
             // Log::info('hotelid '.json_encode($hotel->id));
