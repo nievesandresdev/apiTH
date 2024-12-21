@@ -42,6 +42,69 @@ class SendPostStayEmails extends Command
 
     public function handle()
     {
+        //$this->handleSendEmail();
+        $this->handleSendEmailCheckout();
+    }
+
+    public function handleSendEmailCheckout()
+    {
+        Log::info('Inicia handleSendEmailCheckout');
+
+        // Definir el rango de tiempo actual (última hora hasta ahora)
+        $startTime = Carbon::now()->startOfHour(); // Inicio de la hora actual (7:00)
+        $endTime = Carbon::now()->addHour()->startOfHour(); // Inicio de la siguiente hora (8:00)
+
+
+        Log::info('Rango de tiempo: ' . $startTime . ' - ' . $endTime);
+
+        // Filtrar estancias con checkout dentro del rango actual
+        $stays = Stay::select('id', 'hotel_id', 'check_out')
+            ->whereHas('hotel')
+            ->whereBetween('check_out', [$startTime->toDateString(), $endTime->toDateString()])
+            ->with([
+                'queries' => function ($query) {
+                    $query->select('id', 'stay_id', 'guest_id', 'answered', 'qualification')
+                        ->where('period', 'post-stay');
+                },
+                'queries.guest' => function ($query) {
+                    $query->select('guests.id', 'guests.name', 'guests.email'); // Calificamos las columnas necesarias
+                },
+                'hotel' => function ($query) {
+                    $query->select('hotels.id', 'hotels.name', 'hotels.checkout'); // Calificamos solo las necesarias
+                }
+            ])
+            ->get()
+            ->filter(function ($stay) use ($startTime, $endTime) {
+                // Combinar `check_out` de la estancia con `checkout` del hotel para obtener el datetime completo
+                $checkoutDateTime = Carbon::parse($stay->check_out . ' ' . $stay->hotel->checkout);
+                return $checkoutDateTime->between($startTime, $endTime);
+            });
+
+        Log::info('Estancias filtradas: ' . $stays->count());
+
+        foreach ($stays as $stay) {
+            foreach ($stay->queries as $query) {
+                try {
+                    $queries_url = url('consultas?e=' . $stay->id . '&lang=' . $query->guest->lang_web . '&g=' . $query->guest->id);
+                    $link = includeSubdomainInUrlHuesped($queries_url, $stay->hotel);
+
+                    // Enviar correo de despedida
+                    Mail::to($query->guest->email)->send(new InsistencePostStayResponse($link, $stay->hotel));
+
+
+                    Log::info('Correo enviado a ' . $query->guest->email . ' para la estancia ' . $stay->id);
+                } catch (\Exception $e) {
+                    Log::error('Error al enviar correo a ' . $query->guest->email . ': ' . $e->getMessage());
+                }
+            }
+        }
+
+        Log::info('Finaliza handleSendEmailCheckout');
+    }
+
+
+    public function handleSendEmail()
+    {
         Log::info('inicia send-post-stay-emails');
         $startTime = Carbon::now()->subHours(72)->startOfHour();
         $endTime = Carbon::now()->subHours(24)->startOfHour();
@@ -85,10 +148,6 @@ class SendPostStayEmails extends Command
                     $goodArr = ['GOOD','VERYGOOD'];
                     $normalArr = ['GOOD','VERYGOOD','NORMAL'];
 
-                    // Log::info('inArrayCondition '.json_encode($inArrayCondition));
-                    // Log::info('include goodArr '.json_encode(in_array($query->qualification,$goodArr)));
-                    // Log::info('include goodArr '.json_encode(in_array($query->qualification,$normalArr)));
-
                     $condition1 = (!$inArrayCondition) && in_array($query->qualification,$goodArr) && boolval($query->answered);
                     $condition2 = ($inArrayCondition) && in_array($query->qualification,$normalArr) && boolval($query->answered);
                     $condition3 = ($inArrayCondition) && !boolval($query->answered);
@@ -103,5 +162,6 @@ class SendPostStayEmails extends Command
                 }
             }
         }
+
     }
 }

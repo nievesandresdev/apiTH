@@ -24,8 +24,8 @@ class MsgStay extends Mailable
      * @return void
      */
     public function __construct(
-        $type, 
-        $hotel, 
+        $type,
+        $hotel,
         $guest,
         $data = null
     )
@@ -44,6 +44,7 @@ class MsgStay extends Mailable
      */
     public function build()
     {
+        dd($this->data);
         $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
 
         // if($this->type == 'welcome'){
@@ -52,7 +53,7 @@ class MsgStay extends Mailable
         // else if($this->create){
         //     $subject = 'Explora y disfruta la ciudad junto a '. $this->hotel->name;
         // }else{
-        // $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';    
+        // $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
         // }
 
         $senderName = $this->hotel['sender_for_sending_email'];
