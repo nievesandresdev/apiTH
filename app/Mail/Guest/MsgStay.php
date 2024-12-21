@@ -44,7 +44,6 @@ class MsgStay extends Mailable
      */
     public function build()
     {
-        dd($this->data);
         $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
 
         // if($this->type == 'welcome'){
