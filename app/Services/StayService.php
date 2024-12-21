@@ -150,13 +150,13 @@ class StayService {
             //     'hotel_name' => $hotel->name,
             //     'hotel_id' => $hotel->id,
             // ];
-            if($settings->guestcreate_check_email){
+            //if($settings->guestcreate_check_email){
                 // $msg = prepareMessage($data,$hotel,'&subject=invited');
                 // $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
                 $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
                 // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
-            }
+            //}
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
             $color = $this->guestService->updateColorGuestForStay($colorsExists);
@@ -538,7 +538,7 @@ class StayService {
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), $guest->email);
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
