@@ -255,10 +255,10 @@ class GuestService {
             $guest->lang_web = $data->lang_web ?? $guest->lang_web;
             $guest->acronym = $acronym;
 
-            Log::info('pass '.$data->password);
+            // Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
                 $guest->password = bcrypt($data->password);
-                Log::info('update pass'. $guest->password);
+                // Log::info('update pass'. $guest->password);
             }
 
             $guest->save();
@@ -348,17 +348,15 @@ class GuestService {
         $colorsExistsArray = $colorsExists->toArray();
 
         // Log para ver qué contiene $colorsExistsArray
-        Log::info('$colors '.json_encode($colors));
-        Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
+        // Log::info('$colors '.json_encode($colors));
+        // Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
 
         // Filtrar colores para encontrar aquellos que no están en $colorsExistsArray
         $availableColors = array_diff($colors, $colorsExistsArray);
-        Log::info('$availableColors '.json_encode($availableColors));
+        // Log::info('$availableColors '.json_encode($availableColors));
 
         // Verificar si hay colores disponibles
         if (!empty($availableColors)) {
-            Log::info('if');
-            Log::info('if '.$availableColors[array_rand($availableColors)]);
             // Seleccionar un color al azar de los colores disponibles
             return $availableColors[array_rand($availableColors)];
         } else {
@@ -554,4 +552,5 @@ class GuestService {
             return $e;
         }
     }
+
 }

@@ -48,10 +48,6 @@
     @media only screen and (max-width: 600px) {
         .title-section{
             padding-bottom:32px;
-            max-width:312px;
-            /*improvisado: margenes para moviles*/
-            padding-left: 12px;
-            padding-right: 12px;
         }
         
         .dates-container{

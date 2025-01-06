@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Events\Chat\NotifyUnreadMsg;
 use App\Http\Controllers\Controller;
 use App\Jobs\Chat\NofityPendingChat;
+use App\Mail\Guest\MsgStay;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Guest;
-use App\Models\hotel;
+use App\Models\Hotel;
 use App\Models\NoteGuest;
 use App\Models\Query;
 use App\Models\RequestSettingsHistory;
@@ -20,7 +21,9 @@ use App\Services\Hoster\RequestReviews\RequestReviewsSettingsServices;
 use App\Services\Hoster\Stay\StaySettingsServices;
 use App\Services\Hoster\Users\UserServices;
 use App\Services\Hoster\UtilsHosterServices;
+use App\Services\MailService;
 use App\Services\QuerySettingsServices;
+use App\Services\StayService;
 use App\Services\UtilityService;
 use Illuminate\Support\Facades\Hash;
 
@@ -31,10 +34,13 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Pusher\Pusher;
 
-class UtilsController extends Controller
-{   
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
 
-    public $settings;
+class UtilsController extends Controller
+{
+
+    public $querySettingsServices;
     public $staySettings;
     public $userServices;
     public $chatService;
@@ -42,6 +48,8 @@ class UtilsController extends Controller
     public  $requestReviewsSettingsServices;
     public  $utilsHosterServices;
     public  $utilityService;
+    public  $mailService;
+    public  $stayServices;
 
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
@@ -51,10 +59,12 @@ class UtilsController extends Controller
         ChatSettingsServices $_ChatSettingsServices,
         RequestReviewsSettingsServices $_RequestReviewsSettingsServices,
         UtilsHosterServices $_UtilsHosterServices,
-        UtilityService $_UtilityService
+        UtilityService $_UtilityService,
+        MailService $_MailService,
+        StayService $_StayService,
     )
     {
-        $this->settings = $_QuerySettingsServices;
+        $this->querySettingsServices = $_QuerySettingsServices;
         $this->userServices = $userServices;
         $this->chatService = $_ChatService;
         $this->staySettings = $_StaySettingsServices;
@@ -62,23 +72,25 @@ class UtilsController extends Controller
         $this->requestReviewsSettingsServices = $_RequestReviewsSettingsServices;
         $this->utilsHosterServices = $_UtilsHosterServices;
         $this->utilityService = $_UtilityService;
+        $this->mailService = $_MailService;
+        $this->stayServices = $_StayService;
     }
 
     public function authPusher(Request $request)
     {
         $user = auth()->user(); // O tu lógica de autenticación personalizada
-        
+
         // if ($user) {
             $pusher = new Pusher(
-                config('services.pusher.key'), 
-                config('services.pusher.secret'), 
-                config('services.pusher.id'), 
+                config('services.pusher.key'),
+                config('services.pusher.secret'),
+                config('services.pusher.id'),
                 [
                     'cluster' => config('services.pusher.cluster'),
                     'useTLS' => true
                 ]
             );
-    
+
             $authResponse = $pusher->socket_auth($request->input('channel_name'), $request->input('socket_id'));
             return response($authResponse, 200)->header('Content-Type', 'application/json');
         // } else {
@@ -88,111 +100,116 @@ class UtilsController extends Controller
 
     public function testTemplateEmail()
     {
-        
-        $hotel = hotel::find(191);
-        $stay = Stay::find(460);
+        $type = 'welcome';
+        $hotel = Hotel::find(191);
+        $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
+        $stay = Stay::find(449);
 
-        $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
-        $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
-        $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+        $checkData = [];
+            $queryData = [];
+            //stay section
 
-        return view('Mails.guest.InviteToInWebapp', [
-            'hotel' => $hotel,
-            'formatCheckin' => $formatCheckin,
-            'formatCheckout' => $formatCheckout,
-            'crosselling' => $crosselling
-        ]);
+            if($type == 'welcome'){
+                if($stay->check_in && $stay->check_out){
+                    $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
+                    $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
+                }
+                $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
+                //
+
+                $checkData = [
+                    'title' => "Datos de tu estancia en {$hotel->name}",
+                    'formatCheckin' => $formatCheckin,
+                    'formatCheckout' => $formatCheckout,
+                    'editStayUrl' => $webappEditStay
+                ];
+            }
+
+        //     //query section
+            if($type == 'welcome'){
+                $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
+                $querySettings = $this->querySettingsServices->getAll($hotel->id);
+                $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
+                $showQuerySection = true;
+
+                if(
+                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
+                    $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
+                    $currentPeriod == 'post-stay'
+                ){
+                    $showQuerySection = false;
+                }
+                //
+                $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
+                $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
+
+                $queryData = [
+                    'showQuerySection' => $showQuerySection,
+                    'currentPeriod' => $currentPeriod,
+                    'webappLinkInbox' => $webappLinkInbox,
+                    'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
+
+                ];
+            }
+
+            $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
+
+            //
+            $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
+            //
+
+            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+
+            //
+            // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+
+            $dataEmail = [
+                'checkData' => $checkData,
+                'queryData' => $queryData,
+                'places' => $crosselling['places'],
+                'experiences' => $crosselling['experiences'],
+                'facilities' => $crosselling['facilities'],
+                'webappChatLink' => $webappChatLink,
+                'urlQr' => $urlQr,
+                'urlWebapp' => $urlWebapp
+            ];
+
+
+            //$this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "francisco20990@gmail.com");
+
+
+            return view('Mails.guest.msgStay', [
+                'type' => $type,
+                'hotel' => $hotel,
+                'guest' => $guest,
+                'data'=> $dataEmail
+            ]);
+
     }
 
-    
+
     public function test()
     {
-        // //cuando presione en muy buena
-        // $caritaMuyBuena = true;
-        // //cuando presione cualquiera de las otras
-        // // $caritaMuyBuena = false;
+        return 'asdasd';
+        $hotel = Hotel::find(191);
+        $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
+        // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+        $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
-        // $gooFeel = $caritaMuyBuena ? "&fill=VERYGOOD" : '';
-        // $chainSubdomain = "nobuhotelsevillatex";
-        // $subdomainHotel = "nobuhotelsevillatex";
-        // $guestId = 322;
-        // $stayId = 460;
-        // return buildUrlWebApp($chainSubdomain, $subdomainHotel,'inbox',"e={$stayId}&g={$guestId}{$gooFeel}");
-
-
-
-        
-        Log::info('inicia send-post-stay-emails');
-        $startTime = Carbon::now()->subHours(72)->startOfHour();
-        $endTime = Carbon::now()->subHours(24)->startOfHour();
-        Log::info('$startTime'.$startTime);
-        Log::info('$endTime'.$endTime);
-        // Filtra las estancias dentro de este rango de tiempo
-        $stays = Stay::select('id','hotel_id','check_out')->whereHas('hotel')
-            ->whereBetween('check_out', [$startTime->toDateString(), $endTime->toDateString()])
-            ->with([
-                'queries' => function($query) {
-                    $query->select('id', 'stay_id','guest_id','answered','qualification')->where('period', 'post-stay');
-                },
-                'queries.guest' => function($query) {
-                    $query->select('id', 'name','email');
-                }
-            ])
-            ->get();
-        Log::info('$stays'.$stays);
-        foreach($stays as $stay){
-
-            
-            $checkOutDate = Carbon::parse($stay->check_out);
-            $Time = $stay->hotel->checkout ?? '05:00'; 
-            $Hour = explode(':', $Time)[0]; 
-            $Minute = explode(':', $Time)[1];
-            $checkOutDateTime = $checkOutDate->copy()->setTime($Hour, $Minute);
-
-            $now = Carbon::now();
-            $hoursDifference = $now->diffInHours($checkOutDateTime);
-            Log::info('$stay'.$stay);
-            Log::info('$hoursDifference'.$hoursDifference);
-            foreach($stay->queries as $query){
-                
-                Log::info('$query '.json_encode($query));
-                $queries_url = url('consultas?e='.$stay->id.'&lang='.$query->guest->lang_web.'&g='.$query->guest->id);
-                $link = includeSubdomainInUrlHuesped($queries_url, $stay->hotel);
-                Log::info('$link'.$link);
-                return $hoursDifference;
-                if(intval($hoursDifference) == 49){
-                    Log::info('answered '.boolval($query->answered));
-                    if(!boolval($query->answered)){
-                        Log::info('enviado a '.$query->guest->email);
-                        // Mail::to($query->guest->email)->send(new InsistencePostStayResponse($link, $stay->hotel));
-                    }
-                    
-                    $requestSettings = $this->requestSettings->getAll($stay->hotel->id);
-                    $arr = json_decode($requestSettings->request_to);
-                    $inArrayCondition = in_array('NORMAL',$arr);
-                    Log::info('$requestSettings->request_to '.$requestSettings->request_to);
-                    $goodArr = ['GOOD','VERYGOOD'];
-                    $normalArr = ['GOOD','VERYGOOD','NORMAL'];
-
-                    // Log::info('inArrayCondition '.json_encode($inArrayCondition));
-                    // Log::info('include goodArr '.json_encode(in_array($query->qualification,$goodArr)));
-                    // Log::info('include goodArr '.json_encode(in_array($query->qualification,$normalArr)));
-
-                    $condition1 = (!$inArrayCondition) && in_array($query->qualification,$goodArr) && boolval($query->answered);
-                    $condition2 = ($inArrayCondition) && in_array($query->qualification,$normalArr) && boolval($query->answered);
-                    $condition3 = ($inArrayCondition) && !boolval($query->answered);
-
-                    Log::info('$condition1 '.json_encode($condition1));
-                    Log::info('$condition2 '.json_encode($condition2));
-                    Log::info('$condition3 '.json_encode($condition3));
-
-                    if($condition1 || $condition2 || $condition3){
-                        Mail::to($query->guest->email)->send(new RequestReviewGuest($link, $stay->hotel));        
-                    }
-                }
-            }
-        }
+        $guest = Guest::find(9);
+        $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
+        $this->mailService->sendEmail(new MsgStay(
+            'welcome',
+            $hotel,
+            $urlWebapp,
+            $guest,
+            $urlQr,
+            ['crosselling'=>$crosselling]
+        ), 'andresdreamerf@gmail.com');
+        return 'hecho'.time();
     }
 
 

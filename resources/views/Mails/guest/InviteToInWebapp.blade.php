@@ -20,7 +20,7 @@
                 margin-top: 48px;
             } */
 
-            .facilities{
+            .margin-top-sections{
                 margin-top: 48px;
             }
         }
@@ -56,12 +56,15 @@
                     <div class="container-text">
                         <h1 style="margin:0;font-size: 26px;font-weight: 600;line-height: 110%;font-family:Arial;">Únete ahora a la WebApp de {{$hotel->name}}</h1>
                         <p class="description" style="margin:0;color: #333;font-size: 16px;font-weight: 400;line-height: 28px;margin-top:24px;font-family:Arial;">
-                            Únete a la WebApp de {{$hotel->name}} y descubre cómo aprovechar tu viaje al máximo.
+                            Únete a la WebApp de {{$hotel->name}} y descubre cómo aprovechar tu viaje al máximo. 
                         </p>
                     </div>
-                    <div style="margin:0;border-radius: 6px;background-color: #333;padding: 12px 51px;text-align:center;color:#F3F3F3;font-size: 18px;font-weight: 600;line-height: 110%;font-family:Arial;margin-top:16px;">
+                    <a 
+                        href="{{$webappLink}}"
+                        style="margin:0;border-radius: 6px;background-color: #333;padding: 12px 51px;text-align:center;color:#F3F3F3;font-size: 18px;font-weight: 600;line-height: 110%;font-family:Arial;margin-top:16px;display:block;text-decoration: none;"
+                    >
                         Explorar la WebApp
-                    </div>
+                    </a>
                 </td>
                 <td class="td-desktop" style="padding-left: 24px;">
                     <img class="img-desktop" style="width: 208px;height: 247px;" src="{{ asset('mails/invitar-a-huesped-sass-desktop.png') }}" alt="">
@@ -74,15 +77,35 @@
         @include('components.mails.stayCheckDate')
     </section> --}}
 
-    <section class="facilities">
+    <section class="margin-top-sections">
         @include('components.mails.places')
     </section>
 
-    <section class="facilities">
+    {{-- <section class="margin-top-sections">
+        @include('components.mails.experiences')
+    </section> --}}
+
+    <section class="margin-top-sections">
         @include('components.mails.facilities')
     </section>
+
+    <section class="margin-top-sections" style="max-width:260px;margin:0 auto;">
+        <a 
+            href="{{$webappLink}}"
+            style="margin:0;border-radius: 6px;background-color: #333;padding: 12px 0;text-align:center;color:#F3F3F3;font-size: 18px;font-weight: 600;line-height: 110%;font-family:Arial;margin-top:16px;display:block;text-decoration: none;width:100%"
+        >
+            Explorar la WebApp
+        </a>
+    </section>
+    
     {{-- este es el ancho del aproximado gmail en movil --}}
     {{-- <div style="max-width: 326px;background-color:#9f1a1a;height: 140px;"></div> --}}
+
+    <div style="max-width: 474px;margin: 48px auto;background-color:#E9E9E9;height: 1px;"></div>
+
+    <section>
+        @include('components.mails.chatLink')
+    </section>
 
     <div style="max-width: 474px;margin: 48px auto;background-color:#E9E9E9;height: 1px;"></div>
 </body>

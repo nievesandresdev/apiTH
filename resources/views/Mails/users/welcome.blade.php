@@ -42,13 +42,6 @@
                 display: none;
             }
 
-            .div-responsive {
-                display: block !important;
-            }
-        }
-
-        .div-responsive {
-            display: none;
         }
     </style>
 </head>
