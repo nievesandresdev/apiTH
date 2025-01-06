@@ -5,6 +5,7 @@
 /public/storage
 /vendor
 /storage/*.key
+!storage/app/phone-codes.json
 .env
 .env.backup
 .env.production
@@ -17,6 +18,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+.rnd 
 
 # Ignorar archivos y carpetas relacionados con MadelineProto
 MadelineProto.log
