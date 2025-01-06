@@ -1,5 +1,5 @@
 0 4 * * * /usr/local/bin/php /var/www/html/artisan freetrealcommand >> /var/log/cron.log 2>&1 #diariamente a las 4 am
-0 * * * * /usr/local/bin/php /var/www/html/artisan send-post-stay-emails >> /var/log/cron.log 2>&1 #diariamente cada hora en punto
+ * * * * /usr/local/bin/php /var/www/html/artisan send-post-stay-emails >> /var/log/cron.log 2>&1 #diariamente cada hora en punto
 #0 5 * * * /usr/local/bin/php /var/www/html/artisan arrivalhotel >> /var/log/cron.log 2>&1 #diariamente 5 am
 #5 5 * * * /usr/local/bin/php /var/www/html/artisan pre-out-hotel >> /var/log/cron.log 2>&1 #diariamente 5:05 am
 #10 5 * * * /usr/local/bin/php /var/www/html/artisan welcomecreatestay >> /var/log/cron.log 2>&1 #diariamente 5:10 am
