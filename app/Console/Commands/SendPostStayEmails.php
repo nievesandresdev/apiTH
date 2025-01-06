@@ -42,7 +42,7 @@ class SendPostStayEmails extends Command
 
     public function handle()
     {
-        //$this->handleSendEmail();
+        $this->handleSendEmail();
         $this->handleSendEmailCheckout();
     }
 
