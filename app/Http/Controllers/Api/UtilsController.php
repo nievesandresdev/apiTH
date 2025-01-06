@@ -176,9 +176,10 @@ class UtilsController extends Controller
                 'urlWebapp' => $urlWebapp
             ];
 
-            //dd($dataEmail);
 
-            $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            //$this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "francisco20990@gmail.com");
+
 
             return view('Mails.guest.msgStay', [
                 'type' => $type,
@@ -186,7 +187,6 @@ class UtilsController extends Controller
                 'guest' => $guest,
                 'data'=> $dataEmail
             ]);
-            // $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "andresdreamerf@gmail.com");
 
     }
 
