@@ -129,7 +129,7 @@ class StayService {
             $guest->stays()->syncWithoutDetaching([
                 $stay->id => ['chain_id' => $hotel->chain_id]
             ]);
-            
+
             //guardar acceso
             $this->stayAccessService->save($stay->id,$guestId);
 
@@ -150,10 +150,13 @@ class StayService {
             //     'hotel_name' => $hotel->name,
             //     'hotel_id' => $hotel->id,
             // ];
-            if($settings->guestcreate_check_email){
+            //if($settings->guestcreate_check_email){
+                // $msg = prepareMessage($data,$hotel,'&subject=invited');
+                // $link = prepareLink($data,$hotel,'&subject=invited');
+                // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
                 $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
                 // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
-            }
+            //}
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
             $color = $this->guestService->updateColorGuestForStay($colorsExists);
@@ -162,7 +165,7 @@ class StayService {
                 $guest->color = $color;
                 $guest->save();
             }
-            
+
             DB::commit();
             //por ahora ya no se invitan huespedes
             //adjutar huespedes y enviar correos
@@ -209,7 +212,7 @@ class StayService {
             //     $stay->number_guests = $currentStayAccesses;
             //     $stay->save();
             // }
-            
+
             // $stay->refresh();
             // Log::info('stay 3'.json_encode($stay));
             // sendEventPusher('private-create-stay.' . $hotel->id, 'App\Events\CreateStayEvent', null);
@@ -313,6 +316,16 @@ class StayService {
         }
     }
 
+    public function getCheckoutDateTime($stayId){
+        $stay = Stay::where('id',$stayId)->first();
+        $checkOutDate = Carbon::parse($stay->check_out);
+        $Time = $stay->hotel->checkout ?? '05:00';
+        $Hour = explode(':', $Time)[0];
+        $Minute = explode(':', $Time)[1];
+        $checkOutDateTime = $checkOutDate->copy()->setTime($Hour, $Minute);
+        return $checkOutDateTime;
+    }
+
     public function updateStayData($request){
 
         try{
@@ -382,7 +395,7 @@ class StayService {
 
     public function getCurrentPeriod($hotel, $stay) {
         try {
-            
+
             $dayCheckin = $stay->check_in;
             $dayCheckout = $stay->check_out;
             $hourCheckin = $hotel->checkin ?? '16:00';
@@ -455,7 +468,7 @@ class StayService {
             $checkData = [];
             $queryData = [];
             //stay section
-            
+
             if($type == 'welcome'){
                 if($stay->check_in && $stay->check_out){
                     $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
@@ -463,7 +476,7 @@ class StayService {
                 }
                 $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
                 //
-                
+
                 $checkData = [
                     'title' => "Datos de tu estancia en {$hotel->name}",
                     'formatCheckin' => $formatCheckin,
@@ -474,19 +487,19 @@ class StayService {
 
         //     //query section
             if($type == 'welcome'){
-                $currentPeriod = $this->getCurrentPeriod($hotel, $stay);    
+                $currentPeriod = $this->getCurrentPeriod($hotel, $stay);
                 $querySettings = $this->querySettingsServices->getAll($hotel->id);
                 $hoursAfterCheckin = $this->calculateHoursAfterCheckin($hotel, $stay);
                 $showQuerySection = true;
-                
+
                 if(
-                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate || 
+                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
                     $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
                     $currentPeriod == 'post-stay'
                 ){
                     $showQuerySection = false;
-                }    
-                //        
+                }
+                //
                 $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
 
@@ -495,7 +508,7 @@ class StayService {
                     'currentPeriod' => $currentPeriod,
                     'webappLinkInbox' => $webappLinkInbox,
                     'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-                    
+
                 ];
             }
 
@@ -504,9 +517,9 @@ class StayService {
             //
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
             //
-            
+
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
-            
+
             //
             $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             // $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
@@ -524,6 +537,7 @@ class StayService {
             // Log::info('dataEmail '.json_encode($dataEmail));
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
+
             $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), $guest->email);
 
         } catch (\Exception $e) {

@@ -46,11 +46,11 @@
             }
         }
         @media only screen and (max-width: 600px) {
-            
+
             .container{
                 padding:0 24px;
             }
-        
+
             body {
                 background-color: #ffffff !important;
             }
@@ -150,35 +150,35 @@
 
         @if($type == 'welcome' && $data['queryData'] && $data['queryData']['showQuerySection'])
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        
+
             @include('components.mails.feedback',[
                 'currentPeriod' => $data['queryData']['currentPeriod'],
                 'webappLinkInbox' => $data['queryData']['webappLinkInbox'],
                 'webappLinkInboxGoodFeel' => $data['queryData']['webappLinkInboxGoodFeel'],
             ])
         @endif
-        
+
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @if(count($data['places']) > 0)
+        @if(count($data['places']) > 0 || $hotel->show_places)
             @include('components.mails.places',['places' => $data['places']])
         @endif
 
-        @if(count($data['experiences']) > 0)
+        @if(count($data['experiences']) > 0 || $hotel->show_experiences)
             @include('components.mails.experiences', ['exp' => $data['experiences']])
         @endif
 
-        @if(count($data['facilities']) > 0)
+        @if(count($data['facilities']) > 0 || $hotel->show_facilities)
             @include('components.mails.facilities', ['facilities' => $data['facilities']])
         @endif
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        
+
 
         @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
 
 
-        
+
     </div>
 
     <!-- Footer -->

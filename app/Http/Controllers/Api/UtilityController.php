@@ -66,7 +66,6 @@ class UtilityController extends Controller
 
     public function getPhoneCodesApi(Request $request)
     {
-        
         $data = json_decode(Storage::disk('local')->get('phone-codes.json'), true);
         if($data){
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);

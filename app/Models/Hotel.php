@@ -96,7 +96,6 @@ class Hotel extends Model
 
     public function translate()
     {
-
         return $this->hasOne(HotelTranslate::class)->where('language', localeCurrent());
     }
 
