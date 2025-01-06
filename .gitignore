@@ -17,6 +17,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+.rnd 
 
 # Ignorar archivos y carpetas relacionados con MadelineProto
 MadelineProto.log
