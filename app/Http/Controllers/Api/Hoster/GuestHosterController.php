@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Hoster\GuestHosterService;
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\Log;
 
 class GuestHosterController extends Controller
 {
@@ -19,7 +20,9 @@ class GuestHosterController extends Controller
     }
 
     public function inviteToHotel(Request $request){
+        Log::info("Invite to");
         try {
+            //Log::info('GuestHosterController.inviteToHotel');
             $hotel = $request->attributes->get('hotel');
             $chainModel = $hotel->chain;
             $chainSubdomain = $chainModel->subdomain;
@@ -28,11 +31,12 @@ class GuestHosterController extends Controller
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
-                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
+            Log::error('GuestHosterController.inviteToHotelERROR', ['error' => $e]);
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.inviteToHotel');
         }
     }
