@@ -61,6 +61,7 @@ class Hotel extends Model
         'sender_for_sending_sms',
         'sender_for_sending_email',
         'code',
+        'chain_id',
     ];
 
     /* public function user()
@@ -78,6 +79,11 @@ class Hotel extends Model
         return $this->hasMany(HotelSubdomain::class);
     }
 
+    public function chain()
+    {
+        return $this->belongsTo(Chain::class);
+    }
+
     public function facilities()
     {
         return $this->hasMany(FacilityHoster::class);
@@ -90,7 +96,6 @@ class Hotel extends Model
 
     public function translate()
     {
-
         return $this->hasOne(HotelTranslate::class)->where('language', localeCurrent());
     }
 
@@ -143,6 +148,15 @@ class Hotel extends Model
         return $this->hasMany(ImageGallery::class, 'image_id');
     }
 
+
+    public function scopeActive($query)
+    {
+        return $query->where('del', 0);
+    }
+
+
+
+
     // AUXILIARIES
 
     public function toArray()
@@ -176,6 +190,23 @@ class Hotel extends Model
         $subscription = $this->subscription();
         return $subscription;
         // $plan = $this->stripe->plans->retrieve($request->price_id);
+    }
+
+    public function getButtonsHomeAttribute($value)
+    {
+        $defaultButtonsHome = [
+            'show_wifi' => false,
+            'show_call' => false,
+            'show_legal_text' => false,
+            'show_all' => false,
+        ];
+
+        return $value ? json_decode($value, true) : $defaultButtonsHome;
+    }
+
+    public function getImageAttribute($value)
+    {
+        return $value ? $value : '/storage/gallery/general-1.jpg';
     }
 
 

@@ -28,6 +28,11 @@ class Query extends Model
     ];
 
     //attrs
+    public function getAnsweredAttribute($value)
+    {
+        return boolval($value);
+    }
+    
     public function getSeenAttribute($value)
     {
         return boolval($value);
@@ -37,5 +42,10 @@ class Query extends Model
     public function histories()
     {
         return $this->hasMany(QueryHistory::class);
+    }
+
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class);
     }
 }

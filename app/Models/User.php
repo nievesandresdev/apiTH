@@ -46,6 +46,9 @@ class User extends Authenticatable
         'trial_duration',
         'trial_ends_at',
         'trial_starts_at',
+
+        //cadena
+        'chain_id',
     ];
 
     protected $dates = [
@@ -258,10 +261,11 @@ class User extends Authenticatable
             ];
         }
 
+
         return json_decode($value, true);
     }
 
-    public function getNotificationsAttribute($value)
+    /* public function getNotificationsAttribute($value)
     {
         if (is_null($value)) {
             return [
@@ -274,6 +278,6 @@ class User extends Authenticatable
         }
 
         return json_decode($value, true);
-    }
+    } */
 
 }

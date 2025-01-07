@@ -26,36 +26,26 @@ class RequestSettingService {
         }
     }
 
-    public function getPostStayRequestData($settings, $hotel){
+    public function getRequestData($settings, $hotel, $period){
         
         try {
             $localLang = localeCurrent();
 
             //titulo
             $nameHotelText = "[nombre del hotel]";
-            // switch ($nameHotelText) {
-            //     case $localLang == "fr":
-            //         $nameHotelText = "[nom de l'hôtel]";
-            //         break;
-            //     case $localLang == "en":
-            //         $nameHotelText = "[hotel name]";
-            //         break;
-            // }
+
             $title = $settings->msg_title[$localLang];
+            $text = preg_replace('/>\s+</', '><', $settings->msg_text[$localLang]);
+            if($period == 'in-stay'){
+                $title = $settings->in_stay_msg_title[$localLang];
+                $text = preg_replace('/>\s+</', '><', $settings->in_stay_msg_text[$localLang]);
+            }
+
             $title = str_replace($nameHotelText, $hotel->name, $title);
             
             //mensaje
             $linkText = "[Link a las OTAs]";
-            // switch ($linkText) {
-            //     case $localLang == "fr":
-            //         $linkText = "[Lien vers les OTA]";
-            //         break;
-            //     case $localLang == "en":
-            //         $linkText = "[Link to OTAs]";
-            //         break;
-            // }
             
-            $text = preg_replace('/>\s+</', '><', $settings->msg_text[$localLang]);
             // Verificar si $linkText está contenido dentro de $text
             $buttonAnchor = false;
             if (strpos($text, $linkText) !== false) {
@@ -70,8 +60,9 @@ class RequestSettingService {
                 "title" => $title,
                 "text1" => $text1,
                 "text2" => $text2,
-                "otas_enabled" => $settings->otas_enabled,
+                "otas_enabled" => $period == 'in-stay' ? $settings->in_stay_otas_enabled : $settings->otas_enabled,
                 "request_to" => $settings->request_to,
+                "in_stay_activate" => $settings->in_stay_activate,
                 "buttonAnchor" => $buttonAnchor
             ];
         } catch (\Exception $e) {

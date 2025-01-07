@@ -15,7 +15,8 @@ Route::group(['prefix' => 'stay'], function () {
     Route::get('/getGuestsAndSortByCurrentguestIdApi/{stayId}/{guestId}', [StayController::class, 'getGuestsAndSortByCurrentguestId']);
     Route::post('/updateStayAndGuests', [StayController::class, 'updateStayAndGuests']);
     Route::post('/deleteGuestOfStay/{stayId}/{guestId}', [StayController::class, 'deleteGuestOfStay']);
-
+    Route::get('/findbyId/{stayId}', [StayController::class, 'findbyId']);
+    
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/getAllByHotel', [StayHosterController::class, 'getAllByHotel']);
         Route::get('/statisticsByHotel', [StayHosterController::class, 'statisticsByHotel']);

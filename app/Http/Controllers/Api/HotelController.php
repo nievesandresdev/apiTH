@@ -82,9 +82,20 @@ class HotelController extends Controller
         }
     }
 
-    public function findByParams (Request $request) {
+    public function findById($id){
         try {
 
+            $data = $this->service->findById($id);
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findById');
+        }
+    }
+
+
+    public function findByParams (Request $request) {
+        try {
             $model = $this->service->findByParams($request);
 
             if(!$model){
@@ -106,7 +117,7 @@ class HotelController extends Controller
     public function getAllCrossellings (Request $request) {
         try {
             $modelHotel = $request->attributes->get('hotel');
-
+            //return bodyResponseRequest(EnumResponse::ACCEPTED, $modelHotel);
             // $modelTypePlaces = TypePlaces::all();
 
             //crear array de ciudades para la consulta
@@ -147,6 +158,7 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAllCrossellings');
         }
     }
@@ -171,10 +183,12 @@ class HotelController extends Controller
         }
     }
 
-    public function updateProfile (UpdateProfileRequest $request) {
+    public function updateProfile(UpdateProfileRequest $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+
+            // return bodyResponseRequest(EnumResponse::ACCEPTED, [$hotelModel,$request->all()]);
             if(!$hotelModel){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -187,6 +201,48 @@ class HotelController extends Controller
             $hotelModel = $this->service->updateProfile($request, $hotelModel);
 
             $this->service->asyncImages($request, $hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
+        }
+    }
+
+    public function buildUrlWebApp (Request $request) {
+        try {
+            $chainSubdomain = $request->attributes->get('chainSubdomain');
+            $hotelSlug = $request->slugHotel ?? null;
+            $uri = $request->uri ?? null;
+            $paramsString = $request->paramsString ?? null;
+
+            $url = buildUrlWebApp($chainSubdomain, $hotelSlug, $uri, $paramsString);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $url);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.buildUrlWebApp');
+        }
+    }
+
+
+
+    public function updateShowButtons(Request $request)
+    {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+
+            $hotelModel = $this->service->updateShowButtons($request, $hotelModel);
+
+            //$this->service->asyncImages($request, $hotelModel);
 
             $hotelModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
@@ -328,7 +384,7 @@ class HotelController extends Controller
         if (!$hotel || $hotel->subdomain == $subdomain) {
             return  false;
         }
-        $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
+        $exist = hotel::where(['subdomain' => $subdomain])->exists();
         return $exist;
     }
 
@@ -360,13 +416,13 @@ class HotelController extends Controller
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
             \DB::beginTransaction();
 
-            $subdomain = $request->subdomain;
+            $subdomainChain = $request->subdomain_chain;
             $exitsSubdomain = $this->service->verifySubdomainExistPerHotel($subdomain, $hotelModel);
             $subdomainIsNotNew = $this->service->verifySubdomainExist($subdomain, $hotelModel);
             $newSubdomainParam = false;
             if (!$exitsSubdomain && !$subdomainIsNotNew) {
                 if ($environment !== 'LOCAL') {
-                    $r_s = $this->service->createSubdomainInCloud($subdomain, $environment);
+                    // $r_s = $this->service->createSubdomainInCloud($subdomain, $environment);
                     $newSubdomainParam = true;
                 }
             }

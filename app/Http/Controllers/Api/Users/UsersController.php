@@ -21,6 +21,11 @@ use App\Models\User;
 use App\Mail\Chats\ChatEmail;
 use App\Services\ChatService;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\Guest\MsgStay;
+use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Services\UtilityService;
+
 
 
 class UsersController extends Controller
@@ -32,6 +37,7 @@ class UsersController extends Controller
     protected $settings;
     protected $api_review_service;
     protected $chatService;
+    protected $utilityService;
 
 
     public function __construct(
@@ -41,7 +47,8 @@ class UsersController extends Controller
         QueryServices $serviceQuery,
         QuerySettingsServices $_QuerySettingsServices,
         ApiReviewServices $_api_review_service,
-        ChatService $_ChatService
+        ChatService $_ChatService,
+        UtilityService $_UtilityService,
     )
     {
         $this->userServices = $userServices;
@@ -51,6 +58,7 @@ class UsersController extends Controller
         $this->settings = $_QuerySettingsServices;
         $this->api_review_service = $_api_review_service;
         $this->chatService = $_ChatService;
+        $this->utilityService = $_UtilityService;
     }
 
     public function getUsers()
@@ -246,7 +254,7 @@ class UsersController extends Controller
             $user = $this->userServices->deleteUserHoster(request()->user_id);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
-                'message' => 'Usuario eliminado con éxito',
+                'message' => 'Usuario eliminado',
                 'user' => $user
             ]);
         } catch (\Exception $e) {
@@ -308,11 +316,12 @@ class UsersController extends Controller
         try {
             $url = config('app.hoster_url');
             $hotel = $request->attributes->get('hotel');
-            $query = Query::find(245);
+            //$query = Query::find(245);
             $guest = Guest::select('id','phone','email','name')->where('id',171)->first();
-            $stay = Stay::find(46);
-            $periodUrl = $query->period_id;
-            $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id;
+            $stay = Stay::find(445);
+            //$periodUrl = $query->period_id ?? 1;
+            $periodUrl = 1;
+            $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay?->id ?? 1;
             //url para atender chat $url/estancias/{stayId}/chat?g=guestId
             $urlChat = config('app.hoster_url')."/estancias/".$stay->id."/chat?g=".$guest->id;
             $user = User::findOrFail(1);
@@ -321,6 +330,54 @@ class UsersController extends Controller
             $checkoutFormat = date('d/m/Y', strtotime($stay->check_out));
 
             $dates = "$checkinFormat - $checkoutFormat";
+
+
+            $data = [
+                'stay_id' => 2,
+                'guest_id' => 2,
+                'stay_lang' => $guest->lang_web,
+                'msg_text' => 'hola',
+                'guest_name' => $guest->name,
+                'hotel_name' => $hotel->name,
+                'hotel_id' => 3,
+            ];
+            $msg = prepareMessage($data,$hotel);
+            $link = buildUrlWebApp($hotel->subdomain);
+
+           /*  $qr = QrCode::format('png')->size(300)->generate($link);
+            // Definir el nombre del archivo con una marca de tiempo única
+            $nombreArchivo = 'qr_' . $hotel->subdomain . '.png';
+
+            // Definir la ruta completa donde se guardará el QR en S3
+            $rutaArchivo = 'qrcodes/' . $nombreArchivo;
+
+            if (Storage::disk('s3')->exists($rutaArchivo)) {
+                Storage::disk('s3')->delete($rutaArchivo);
+            }
+
+            $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
+
+            // Obtener la URL pública del archivo guardado
+            $urlQr = Storage::disk('s3')->url($rutaArchivo); */
+
+            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
+
+
+           /*  return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'message' => 'Correo enviado con éxito',
+                'data' => [
+                    'crosselling' => $crosselling,
+                    'stay' => $stay
+
+                ]
+            ]); */
+
+            $urlQr= 'wwww';
+
+            $this->mailService->sendEmail(new MsgStay(false,$hotel,$link,false,$guest->name,false,$urlQr,true,$crosselling), 'francisco20990@gmail.com');
+
+
+
             // Filtros para las notificaciones
             $notificationFilters = [
                 'newChat' => true,
@@ -332,26 +389,29 @@ class UsersController extends Controller
             $unansweredLastMessageData = $this->chatService->unansweredMessagesData(54,'ToHoster',true);
 
 
+
+
             // Verificar si hay usuarios
-            if ($queryUsers->isNotEmpty()) {
+            //if ($queryUsers->isNotEmpty()) {
                 // Datos necesarios para el correo electrónico
                 //$unansweredMessagesData = []; // Proporciona los datos reales aquí
 
                 // Enviar correo electrónico a cada usuario
-                $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
+                //$this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
                 /* $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     //$emailArray [] = $user->name;
                     $email = $user->email;
                     $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), 'francisco20990@gmail.com');
                 }); */
-            }
-            $this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
-            Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
-            $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
+            //}
+            //$this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
+            //Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
+            //$this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
                 'data' => [
+                    'data' => $crosselling,
                     'queryUsers' => $queryUsers,
                     'unansweredLastMessageData' => $unansweredLastMessageData,
                     //'emailArray' => $emailArray,
@@ -366,13 +426,13 @@ class UsersController extends Controller
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Correo enviado con éxito',
-                'data' => [
+                /* 'data' => [
                     'query' => $query,
                     'guest' => $guest,
                     'stay' => $stay,
                     'hotel' => $hotel,
                     'url' => $urlQuery,
-                ]
+                ] */
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [

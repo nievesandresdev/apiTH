@@ -20,7 +20,6 @@ class UserResource extends JsonResource
 
         // Si no se encuentra un hotel con is_default = 1, seleccionamos el primero
         $firstHotelId = $defaultHotel ?? $this->hotel()->first();
-
         $phone = $this->profile->phone ?? '';
 
         //$is_subscribed =$this->parent->subscriptions()->where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
@@ -58,33 +57,35 @@ class UserResource extends JsonResource
                     'slug' => $hotel->slug,
                     'name_short' => $hotel->name_short,
                     'subdomain' => $hotel->subdomain,
+                    'chain' => new ChainResource($hotel->chain)
                     //'subscribed' => $is_subscribed,
                     //'permissions' =>  $hotel->pivot->permissions,
                 ];
             }),
             'parent_hotels' => $this->parent_id ? $this->parent->hotel->map(function ($hotel) {
-            return [
-                'id' => $hotel->id,
-                'name' => $hotel->name,
-                'name_origin' => $hotel->name_origin,
-                'type' => $hotel->type,
-                'address' => $hotel->address,
-                'zone' => $hotel->zone,
-                'category' => $hotel->category,
-                'image' => $hotel->image,
-                'phone' => $hotel->phone,
-                'email' => $hotel->email,
-                'latitude' => $hotel->latitude,
-                'longitude' => $hotel->longitude,
-                'description' => $hotel->description,
-                'instagram_url' => $hotel->instagram_url,
-                'facebook_url' => $hotel->facebook_url,
-                'pinterest_url' => $hotel->pinterest_url,
-                'slug' => $hotel->slug,
-                'name_short' => $hotel->name_short,
-                'subdomain' => $hotel->subdomain,
-            ];
-        }) : null,
+                return [
+                    'id' => $hotel->id,
+                    'name' => $hotel->name,
+                    'name_origin' => $hotel->name_origin,
+                    'type' => $hotel->type,
+                    'address' => $hotel->address,
+                    'zone' => $hotel->zone,
+                    'category' => $hotel->category,
+                    'image' => $hotel->image,
+                    'phone' => $hotel->phone,
+                    'email' => $hotel->email,
+                    'latitude' => $hotel->latitude,
+                    'longitude' => $hotel->longitude,
+                    'description' => $hotel->description,
+                    'instagram_url' => $hotel->instagram_url,
+                    'facebook_url' => $hotel->facebook_url,
+                    'pinterest_url' => $hotel->pinterest_url,
+                    'slug' => $hotel->slug,
+                    'name_short' => $hotel->name_short,
+                    'subdomain' => $hotel->subdomain,
+                    'chain' => new ChainResource($hotel->chain)
+                ];
+            }) : null,
             'permissions' => $this->permissions,
             'current_hotel' => new HotelResource($firstHotelId),
             'current_subdmain_hotel' => $firstHotelId?->subdomain

@@ -47,10 +47,11 @@ class QueryServices {
             $stayId = $request->stayId ?? null;
             $guestId = $request->guestId ?? null;
             $period = $request->period ?? null;
+            $answered = $request->answered ?? 'null';
             $visited = $request->visited ?? 'null';
             $disabled = $request->disabled ?? false;
 
-            $query = Query::where(function($query) use($stayId, $guestId, $period, $visited, $disabled){
+            $query = Query::where(function($query) use($stayId, $guestId, $period, $visited, $disabled,$answered){
                 if ($stayId) {
                     $query->where('stay_id', $stayId);
                 }
@@ -65,6 +66,9 @@ class QueryServices {
                 }
                 if ($visited !== 'null') {
                     $query->where('visited', $visited);
+                }
+                if ($answered !== 'null') {
+                    $query->where('answered', $answered);
                 }
                 if ($disabled) {
                     $query->where('disabled', true);
@@ -179,8 +183,8 @@ class QueryServices {
              * traducir comentario
              */
             $comment = $request->comment;
-            $goodFeel = array('GOOD','VERYGOOD');
-            if (in_array($request->qualification, $goodFeel, true))  $comment = null;
+            // $goodFeel = array('GOOD','VERYGOOD');
+            // if (in_array($request->qualification, $goodFeel, true))  $comment = null;
 
             $originalComment = $request->comment;
             $responseLang = 'es';
@@ -250,6 +254,28 @@ class QueryServices {
         try{
 
             $settings = $this->settings->notifications($hotel->id);
+
+            /**
+             * query para traer user con notificacion de feedback push and email activa
+            */
+
+            $notificationFiltersNewFeedback = [
+                'newFeedback' => true,
+            ];
+
+            $specificChannels = ['push','email'];
+
+            $usersByChannel = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewFeedback, $specificChannels);
+
+            $pushUsersFeedback = $usersByChannel['push'];
+            $emailUserNewFeedback = $usersByChannel['email'];
+
+            return [
+                'pushUsersFeedback' => $pushUsersFeedback,
+                'emailUserNewFeedback' => $emailUserNewFeedback,
+            ];
+
+
             /**
              * notificar al hoster del nuevo feedback
              */
@@ -257,33 +283,41 @@ class QueryServices {
             // Log::info('$hotel->id '. $hotel->id);
             // Log::info('$stay->id '. $stay->id);
             // Log::info('$guest->id '. $guest->id);
-            sendEventPusher('notify-send-query.' . $hotel->id, 'App\Events\NotifySendQueryEvent',
-            [
-                "stayId" => $stay->id,
-                "guestId" => $guest->id,
-                "title" => "Nuevo feedback",
-                "text" => "Tienes un nuevo feedback",
-                "concept" => "new",
-                "countPendingQueries" => 1
-            ]
-            );
+            if ($pushUsersFeedback->isNotEmpty()) {
+                $pushUsersFeedback->each(function ($user) use ($hotel, $guest, $stay) {
+                    sendEventPusher('notify-send-query.' . $hotel->id, 'App\Events\NotifySendQueryEvent',
+                    [
+                        "stayId" => $stay->id,
+                        "guestId" => $guest->id,
+                        'user_id' => $user->id,
+                        "title" => "Nuevo feedback",
+                        "text" => "Tienes un nuevo feedback",
+                        "concept" => "new",
+                        "countPendingQueries" => 1
+                    ]
+                    );
+                });
+            }
+
+
             //noticacion via email
             //trae los ususarios y sus roles asociados al hotel en cuestion
             //$queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
-            $notificationFiltersNewFeedback = [
-                'newFeedback' => true,
-            ];
 
+/*
             $notificacionFilterFeedbackPending10 = [
                 'pendingFeedback10' => true,
-            ];
+            ]; */
 
-            $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewFeedback);
+            /* $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewFeedback);
             $queryUsersFeedback10 = $this->userServices->getUsersHotelBasicData($hotel->id, $notificacionFilterFeedbackPending10);
             Log::info('Feedback users: ' . json_encode([
                 'newFeedback' => $queryUsers,
                 'newFeedbackuser10min' => $queryUsersFeedback10
-            ], JSON_PRETTY_PRINT));
+            ], JSON_PRETTY_PRINT)); */
+
+
+
 
 
             // Extraer los roles de usuario a notificar para un nuevo mensaje
@@ -305,10 +339,10 @@ class QueryServices {
             } */
 
             // Verificar si hay usuarios
-            if ($queryUsers->isNotEmpty()) {
+            if ($emailUserNewFeedback->isNotEmpty()) {
 
                 // Enviar correo usuarios con newchat true
-                $queryUsers->each(function ($user) use ($dates, $urlQuery, $hotel, $query, $guest, $stay) {
+                $emailUserNewFeedback->each(function ($user) use ($dates, $urlQuery, $hotel, $query, $guest, $stay) {
                     $email = $user->email;
                     //$this->mailService->sendEmail(new ChatEmail($urlChat, 'new'), $email);
                     Mail::to($email)->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
@@ -326,13 +360,13 @@ class QueryServices {
             // DB::table('jobs')->where('payload', 'like', '%NotifyPendingQuery'.$guest->id.'%')->delete();
             //if ($getUsersRolePendingFeedback->isNotEmpty()) {
                 //job para notificar en un lapso de 10min
-                NotifyPendingQuery::dispatch(
+                /* NotifyPendingQuery::dispatch(
                     'NotifyPendingQuery'.$guest->id,
                     $dates, $urlQuery, $hotel,
                     $query, $guest, $stay,
                     $queryUsersFeedback10
                 )
-                ->delay(now()->addMinutes(10));
+                ->delay(now()->addMinutes(10)); */
             //}
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getResponses');

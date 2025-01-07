@@ -223,32 +223,64 @@ class UserServices
 
 
 
-    function getUsersHotelBasicData($hotelId, $notificationFilters = [])
+    function getUsersHotelBasicData($hotelId, $notificationFilters = [], $specificChannels = [])
     {
+        // Validar que $specificChannels sea un array
+        if (!is_array($specificChannels)) {
+            $specificChannels = [];
+        }
+
         $queryUsers = User::whereHas('hotel', function ($query) use ($hotelId) {
                 $query->where('hotel_id', $hotelId);
             })
-            ->select('id', 'email', 'name', 'notifications', 'permissions', 'periodicity_chat', 'periodicity_stay', 'status', 'del')
+            ->select('id', 'email', 'name', 'notifications')
             ->whereNotNull('notifications')
             ->where('del', 0)
             ->where('status', 1);
 
-        // Agregar filtros dinámicos basados en las notificaciones
+        // Validar si se pasaron filtros de notificación
         if (!empty($notificationFilters)) {
             foreach ($notificationFilters as $key => $value) {
-                $queryUsers->where("notifications->$key", $value);
+                $queryUsers->where(function ($query) use ($key, $value, $specificChannels) {
+                    foreach ($specificChannels as $channel) {
+                        $query->orWhere("notifications->{$channel}->$key", $value);
+                    }
+                });
             }
         }
 
         $queryUsers = $queryUsers->orderBy('created_at', 'desc')->get();
 
         if ($queryUsers->isEmpty()) {
-            return collect(); // Retorna una colección vacía para poder usar métodos de colección posteriormente
+            // Retorna un array con colecciones vacías para cada canal
+            return collect(array_fill_keys($specificChannels, collect()));
         }
 
-        // No es necesario mapear los datos si no vas a transformarlos
-        return $queryUsers;
+        // Separar los resultados en grupos dinámicos según $specificChannels
+        $groupedUsers = [];
+        foreach ($specificChannels as $channel) {
+            $groupedUsers[$channel] = collect();
+        }
+
+        $queryUsers->each(function ($user) use (&$groupedUsers, $specificChannels, $notificationFilters) {
+            $notifications = $user->notifications;
+
+            foreach ($notificationFilters as $key => $value) {
+                foreach ($specificChannels as $channel) {
+                    if (($notifications[$channel][$key] ?? false) === $value) {
+                        $groupedUsers[$channel]->push($user);
+                    }
+                }
+            }
+        });
+
+        return collect($groupedUsers);
     }
+
+
+
+
+
 
 
 
@@ -266,7 +298,7 @@ class UserServices
             'email' => $user->email,
             'del' => $user->del,
             'role' => 'user',  // rol
-            'work_position' => $user->profile->work_position ?? $user->profile?->workPosition?->name,
+            'work_position' => $user->profile?->work_position ?? $user->profile?->workPosition,
             'work_position_id' => $user->profile?->work_position_id ?? null,
             'profile' => $user->profile ?? '--',
             'phone' => $user->profile->phone,
@@ -288,9 +320,9 @@ class UserServices
             //'access' => $user->getAllPermissions()->pluck('name'),
             'firstHotelId' => $firstHotel->id ?? null,
             'time' => formatTimeDifference($user->created_at),
-            'notifications' => $user->notifications,
-            'periodicity_chat' => $user->periodicity_chat,
-            'periodicity_stay' => $user->periodicity_stay,
+            'notifications' => $user->profile?->work_position_id ? json_decode($user->profile?->workPosition->notifications) : json_decode($user->notifications),
+            'periodicity_chat' => $user->profile?->work_position_id ? json_decode($user->profile?->workPosition->periodicity_chat) : json_decode($user->periodicity_chat),
+            'periodicity_stay' => $user->profile?->work_position_id ? json_decode($user->profile?->workPosition->periodicity_stay) : json_decode($user->periodicity_stay),
             'permissions' => $user->permissions,
             'status' => $user->status,
             'owner' => $user->owner
@@ -315,9 +347,9 @@ class UserServices
             'parent_id' => $this->getParentId(),
             'password' => Hash::make($request->password),
             'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
-            'notifications' => json_encode($request->notifications), // Guarda el JSON de notificaciones
-            'periodicity_chat' => $request->periodicityChat,
-            'periodicity_stay' => $request->periodicityStay,
+            'notifications' => json_encode($request->notifications),
+            'periodicity_chat' => json_encode($request->periodicityChat),
+            'periodicity_stay' => json_encode($request->periodicityStay),
         ]);
 
 
@@ -368,8 +400,8 @@ class UserServices
             'email' => $request->email,
             'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
             'notifications' => json_encode($request->notifications), // Guarda el JSON de notificaciones
-            'periodicity_chat' => $request->periodicityChat,
-            'periodicity_stay' => $request->periodicityStay,
+            'periodicity_chat' => json_encode($request->periodicityChat),
+            'periodicity_stay' => json_encode($request->periodicityStay),
         ]);
 
 

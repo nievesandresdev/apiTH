@@ -60,6 +60,20 @@ class UtilsHosterServices
         ];
     }
 
+    function formatDateToDayWeekDateAndMonth($date) {
+        
+        $carbonDate = Carbon::parse($date);
+        $dayMonth = $carbonDate->format('d');
+        $month = rtrim($carbonDate->translatedFormat('M'), '.');
+        $weekDay = $carbonDate->translatedFormat('l');
+
+        return [
+            'dayDate' => $dayMonth,
+            'month' => ucfirst($month),
+            'weekDay' => ucfirst($weekDay)
+        ];
+    }
+
 
    
 }

@@ -50,6 +50,19 @@ class ChatService {
             $hotel = $request->attributes->get('hotel');
             $settings = $this->settings->getAll($hotel->id);
 
+            $notificationFilters = [
+                'newChat' => true,
+            ];
+
+            $specificChannels = ['push','email'];
+
+            $usersByChannel = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters, $specificChannels);
+
+            // Usuarios con notificaciones push
+            $pushUsers = $usersByChannel['push'];
+            $emailUserChatNew = $usersByChannel['email'];
+
+
             DB::beginTransaction();
             $langPage = $request->langWeb;
             $guestId = $request->guestId;
@@ -94,22 +107,29 @@ class ChatService {
                     ]
                 );
                 sendEventPusher('private-update-stay-list-hotel.' . $hotel->id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
-                //notificacion push para el navegador del hoster(nuevo mensaje)
-                sendEventPusher('private-notify-unread-msg-hotel.' . $hotel->id, 'App\Events\NotifyUnreadMsg',
-                [
-                    'showLoadPage' => false,
-                    'stay_id' => $stay->id,
-                    'guest_id' => $guest->id,
-                    'chat_id' => $chat->id,
-                    'hotel_id' => $hotel->id,
-                    'room' => $stay->room,
-                    'guest' => true,
-                    'text' => $msg->text,
-                    'automatic' => false,
-                    'concept' => "new",
-                    'add' => true,'pending' => false,//es falso en el input pero true en la bd
-                ]
-                );
+
+                if ($pushUsers->isNotEmpty()) {
+                    $pushUsers->each(function ($user) use ($chat, $stay, $guest, $msg, $hotel) {
+                        //Log::info('sendMsgToHoster $user'. json_encode($user));
+                        sendEventPusher('private-notify-unread-msg-hotel.' . $hotel->id, 'App\Events\NotifyUnreadMsg', [
+                            'showLoadPage' => false,
+                            'stay_id' => $stay->id,
+                            'guest_id' => $guest->id,
+                            'chat_id' => $chat->id,
+                            'hotel_id' => $hotel->id,
+                            'room' => $stay->room,
+                            'user_id' => $user->id,
+                            'guest' => true,
+                            'text' => $msg->text,
+                            'automatic' => false,
+                            'concept' => "new",
+                            'add' => true,
+                            'pending' => false,
+                        ]);
+                    });
+                }
+
+
                 /**
                  * cola de mensajes automaticos para el huesped
                  *
@@ -129,16 +149,6 @@ class ChatService {
                 if($request->isAvailable && $settings->three_available_show){
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(10));//10
 
-                    // /** enviar Mail */
-                    //     $mailData = [
-                    //         'guest' => $guest,
-                    //         'stay' => $stay,
-                    //         'msg' => $msg,
-                    //         'messageContent' => $settings->three_available_msg[$langPage]
-                    //     ];
-                    //     // evento
-                    //     SendPendingMessageEmail::dispatch($mailData)->delay(now()->addMinutes(10));
-                    // /** fin enviar mail */
                 }
 
                 //se envia el mensaje si no hay agente disponible
@@ -184,7 +194,8 @@ class ChatService {
                     $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'test'), 'francisco20990@gmail.com');
                 });
             } */
-            $this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
+             $this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg,$emailUserChatNew);
+
             }
 
 
@@ -197,7 +208,7 @@ class ChatService {
         }
     }
 
-    public function notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg){
+    public function notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg,$emailUserChatNew = null){
 
         try{
             $urlChat = config('app.hoster_url').'estancias/'.$stay->id.'/chat?g='.$guest->id;
@@ -218,7 +229,7 @@ class ChatService {
             /**
              * trae los ususarios y sus roles asociados al hotel en cuestion
              */
-            $notificationFiltersNewChat = [
+           /*  $notificationFiltersNewChat = [
                 'newChat' => true,
             ];
 
@@ -230,15 +241,15 @@ class ChatService {
                 'pendingChat30' => true,
             ];
 
-            $queryUsersNewchat = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewChat,true);
+            $queryUsersNewchat = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewChat,true); */
 
 
 
              // Verificar si hay usuarios
-             if ($queryUsersNewchat->isNotEmpty()) {
+             if ($emailUserChatNew) {
 
                 // Enviar correo usuarios con newchat true
-                $queryUsersNewchat->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
+                $emailUserChatNew->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     $email = $user->email;
                     $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,$user->id, 'new'), $email);
                 });
@@ -275,19 +286,19 @@ class ChatService {
 
             $guestId = $guest->id;
             //querys de ususuarios segun el tiempo configurado en notifications
-            $getUsersPending10 = $this->userServices->getUsersHotelBasicData($hotel->id, $notificacionFilterChatPending10);
-            $getUsersRolePending30 = $this->userServices->getUsersHotelBasicData($hotel->id, $notificacionFilterChatPending30);
+            /* $getUsersPending10 = $this->userServices->getUsersHotelBasicData($hotel->id, $notificacionFilterChatPending10);
+            $getUsersRolePending30 = $this->userServices->getUsersHotelBasicData($hotel->id, $notificacionFilterChatPending30); */
             /**
              * notificacion a enviarse a los 10min si el chat aun esta pendiente
              * withAvailability =  false
              */
-            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersPending10,false,$urlChat,10)->delay(now()->addMinutes(10));
+            //NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersPending10,false,$urlChat,10)->delay(now()->addMinutes(10));
             /**
              * notificacion a enviarse a los 30min si el chat aun esta pendiente y hay personal disponible
              *
              */
             $withAvailability = true;
-            NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending30, $withAvailability,$urlChat,30)->delay(now()->addMinutes(30));
+            //NofityPendingChat::dispatch('send-by'.$guestId, $guestId, $stay, $getUsersRolePending30, $withAvailability,$urlChat,30)->delay(now()->addMinutes(30));
         } catch (\Exception $e) {
             Log::error('Error al enviar notificaciones a hoster ChatService/notificationsToHosterWhenSendMsg: ' . $e->getMessage());
             return $e;

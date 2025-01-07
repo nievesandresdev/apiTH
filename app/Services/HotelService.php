@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Models\ImagesHotels;
 use App\Models\HotelSubdomain;
 
-use App\Http\Resources\HotelResource;
+use App\Http\Resources\HotelBasicDataResource;
 use App\Models\ChatHour;
 
 use App\Services\Chatgpt\TranslateService;
@@ -96,11 +96,12 @@ class HotelService {
             //     }
             // });
 
-            $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
-                if ($subdomain) {
-                    $query->where('name', $subdomain);
-                }
-            });
+            $query = Hotel::where('subdomain', $subdomain);
+            // $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
+            //     if ($subdomain) {
+            //         $query->where('name', $subdomain);
+            //     }
+            // });
 
             if (!$subdomain) {
                 return null;
@@ -117,17 +118,19 @@ class HotelService {
         }
     }
 
-    public function findById ($id) {
+    public function findById($id) {
         try {
 
             $model = Hotel::find($id);
 
-            return $model;
+            return new HotelBasicDataResource($model);
 
         } catch (\Exception $e) {
             return $e;
         }
     }
+
+
 
     public function getChatHours ($hotelId,$all = false) {
         try {
@@ -171,6 +174,7 @@ class HotelService {
         $hotelModel->x_url = $request->urlX;
         $hotelModel->with_wifi = $request->with_wifi;
         $hotelModel->show_profile = $request->show_profile;
+        $hotelModel->buttons_home = json_encode($request->buttons);
 
         $hotelModel->save();
         return $hotelModel;
@@ -196,6 +200,26 @@ class HotelService {
             }
         }
     }
+
+    public function updateShowButtons($request,$hotelModel)
+    {
+        $buttonsData = $request->buttons;
+        $imageData = $request->image ?? null;
+
+        if ($buttonsData) {
+            $hotelModel->buttons_home = json_encode($buttonsData);
+        }
+
+        if ($imageData) {
+            $hotelModel->image = $imageData;
+        }
+
+
+        $hotelModel->save();
+
+        return $hotelModel;
+    }
+
 
     public function updateTranslation ($model, $translation) {
         $translation = collect($translation ?? []);
@@ -224,12 +248,14 @@ class HotelService {
     public function processTranslateProfile ($request, $hotelModel) {
         $description = $request->description;
         // Log::info('processTranslateProfile $description'. !$description);
-        if ($description && $description != $hotelModel->description) {
+        if (!$description) {
+            $hotelModel->translations()->update(['description' => null]);
+            return;
+        }
+        if ($description != $hotelModel->description) {
             $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
             $inputsTranslate = ['description' => $description];
             TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
-        }else{
-            $hotelModel->translations()->update(['description' => null]);
         }
 
     }
@@ -274,7 +300,7 @@ class HotelService {
         if (!$hotelModel || $hotelModel->subdomain == $subdomain) {
             return  false;
         }
-        $exist = HotelSubdomain::where(['name' => $subdomain])->whereNot('hotel_id', $hotelModel->id)->exists();
+        $exist = hotel::where(['subdomain' => $subdomain])->whereNot('hotels.id', $hotelModel->id)->exists();
         return $exist;
     }
     public function verifySubdomainExist ($subdomain, $hotelModel) {
@@ -284,6 +310,7 @@ class HotelService {
         $exist = HotelSubdomain::where(['name' => $subdomain])->exists();
         return $exist;
     }
+
     public function updateSubdomain ($subdomain, $hotelModel) {
         if ($subdomain == $hotelModel->subdomain) {
             return;
@@ -308,6 +335,15 @@ class HotelService {
 
         $hotelModel->save();
     }
+
+    public function updateSlug ($slug, $hotelModel) {
+
+        $hotelModel->update([
+            'subdomain' => $slug,
+            'slug' => $slug,
+        ]);
+    }
+
     public function updateCustomization ($request, $hotelModel) {
         [
             'language_default_webapp' => $languageDefaultWebapp,

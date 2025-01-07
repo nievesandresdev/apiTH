@@ -25,7 +25,7 @@ class ExperienceService {
 
     public function getAll ($request, $modelHotel, $dataFilter) {
         try {
-            
+
             $queryExperience = $this->filter($request, $modelHotel, $dataFilter);
             $productsCountOtherCities = clone $queryExperience;
             // $productsCountOtherCities->get();
@@ -50,16 +50,16 @@ class ExperienceService {
 
     public function getNumbersByFilters ($request, $modelHotel, $dataFilter) {
         try {
-            
+
             $queryExperience = $this->filter($request, $modelHotel, $dataFilter);
-            
+
             $countByFilterDuration = [
                 '1' => ['name' =>'Hasta una hora', 'count' => $this->filter($request, $modelHotel, [...$dataFilter, 'duration'=>['1']])->count() ],
                 '2' => ['name' =>'Entre 1 y 3 horas', 'count' => $this->filter($request, $modelHotel, [...$dataFilter, 'duration'=>['2']])->count() ],
                 '3' => ['name' =>'Medio día', 'count' => $this->filter($request, $modelHotel, [...$dataFilter, 'duration'=>['3']])->count() ],
                 '4' => ['name' =>'Día completo', 'count' => $this->filter($request, $modelHotel, [...$dataFilter, 'duration'=>['4']])->count()]
             ];
-                            
+
             return $countByFilterDuration;
 
         } catch (\Exception $e) {
@@ -126,8 +126,8 @@ class ExperienceService {
         }
         if (!empty($dataFilter['price_max'])) {
             $queryExperience->where('from_price', '<=', floatval($dataFilter['price_max']));
-        }  
-        
+        }
+
         if (!empty($dataFilter['free_cancelation'])) {
             $queryExperience->whereHas('translation', function($query) use($dataFilter){
                 $query->where(['cancellation_policy' => 'STANDARD']);
@@ -170,7 +170,7 @@ class ExperienceService {
             foreach ($dataFilter['score'] as $key => $item) {
                 $durations =  [['i'=>0,'f'=>1.99],['i'=>2,'f'=>2.99],['i'=>3,'f'=>3.99],['i'=>4,'f'=>4.99],['i'=>5,'f'=>5]];
                 $d = intval($item) - 1;
-                
+
                 $interval = $durations[$d];
                 if ($key == 0){
                     $queryExperience = $queryExperience->whereRaw("JSON_EXTRACT(reviews, '$.combined_average_rating') BETWEEN ? AND ?", [$interval['i'], $interval['f']]);
@@ -182,7 +182,7 @@ class ExperienceService {
                 }
             }
         }
-        
+
 
         if ($dataFilter['featured']) {
             $queryExperience->whereFeaturedHotel($modelHotel->id);
@@ -230,7 +230,7 @@ class ExperienceService {
                                     //
                                     ->limit($lengthAExpFeatured)
                                     ->get();
-                            
+
             return $modelExperiencesFeatured;
 
         } catch (\Exception $e) {
@@ -273,9 +273,9 @@ class ExperienceService {
             $modelHotel = $request->attributes->get('hotel');
 
             $slug = $request->slug ?? null;
-            
+
             $experience = Products::where('slug', $slug)->first();
-            
+
             return $experience;
 
         } catch (\Exception $e) {
@@ -286,13 +286,13 @@ class ExperienceService {
     public function findInVIatorByShortId ($shortId) {
         try {
             if (!$shortId) return;
-            
+
             $response = Http::withHeaders([
                 'exp-api-key' => config('app.key_viator'),
                 'Accept-Language' => localeCurrent(),
                 'Accept' => 'application/json;version=2.0'
             ])->get(config('app.viator')."/products/$shortId")->collect();
-            
+
             return $response;
 
         } catch (\Exception $e) {
@@ -303,13 +303,13 @@ class ExperienceService {
     public function findSchedulesInVIator ($shortId) {
         try {
             if (!$shortId) return;
-            
+
             $response = Http::withHeaders([
                 'exp-api-key' => config('app.key_viator'),
                 'Accept-Language' => localeCurrent(),
                 'Accept' => 'application/json;version=2.0'
             ])->get(config('app.viator')."/availability/schedules/$shortId")->collect();
-            
+
             return $response;
 
         } catch (\Exception $e) {

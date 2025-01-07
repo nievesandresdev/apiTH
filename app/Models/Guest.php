@@ -14,11 +14,16 @@ class Guest extends Authenticatable
 
     protected $fillable = [
         'name',
+        'lastname',
         'email',
         'phone',
         'lang_web',
         'acronym',
-        'color'
+        'color',
+        'googleId',
+        'avatar',
+        'password',
+        'facebookId'
     ];
 
     // protected static function boot()
@@ -32,8 +37,34 @@ class Guest extends Authenticatable
 
     public function stays()
     {
-        return $this->belongsToMany(Stay::class);
+        return $this->belongsToMany(Stay::class)->withPivot('chain_id');
     }
+
+    /**
+     * Accesor para obtener el tipo de avatar.graph.facebook
+     */
+    public function getAvatarTypeAttribute()
+    {
+        // Check if the avatar URL is from Google
+        if (strpos($this->avatar, 'googleusercontent') !== false) {
+            return 'GOOGLE';
+        }
+
+        // Check if the avatar URL is from Facebook
+        if (strpos($this->avatar, 'facebook.com') !== false || strpos($this->avatar, 'fbcdn.net') !== false) {
+            return 'FACEBOOK';
+        }
+
+        // Check if it's an image stored on the server
+        if (strpos($this->avatar, '/storage/') !== false) {
+            return 'STORAGE';
+        }
+
+        // If none of the above, return false or any default value you prefer
+        return false;
+    }
+
+
 
     public function chatMessages()
     {
@@ -59,4 +90,4 @@ class Guest extends Authenticatable
     {
         return $this->hasMany(Query::class);
     }
-}   
+}

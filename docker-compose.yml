@@ -1,11 +1,12 @@
-version: '3.8'
+version: '3'
 services:
   api:
-    container_name: thehoster-app-api-backend
-    restart: always
     build:
       context: .
       dockerfile: Dockerfile
+    image: api:latest
+    container_name: thehoster-app-api-backend
+    restart: always
     volumes:
       - ../api:/var/www/html
       - ../api/vendor:/var/www/html/vendor
@@ -14,12 +15,14 @@ services:
     networks:
       - bd-data_hoster_network
     environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_DATABASE: ${DB_DATABASE}
-      
+      DB_HOST: 10.0.2.4
+      DB_PORT: 3307
+      DB_USER: thehoster_test
+      DB_PASSWORD: w2449daHK-n2T
+      DB_DATABASE: hoster_db
+    # Supervisord gestionará todos los procesos en este contenedor
+    command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+
 networks:
   bd-data_hoster_network:
     external: true

@@ -45,4 +45,5 @@ class WorkPosition extends Model
         return $this->hasMany(Profile::class, 'work_position_id');
     }
 
+
 }

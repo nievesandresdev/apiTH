@@ -70,7 +70,8 @@ class StayController extends Controller
     public function createAndInviteGuest (Request $request) {
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->createAndInviteGuest($hotel,$request);
+            $chainSubdomain = $request->attributes->get('chainSubdomain');
+            $model = $this->service->createAndInviteGuest($hotel, $chainSubdomain, $request);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -161,18 +162,18 @@ class StayController extends Controller
             $updateStay = $this->service->updateStayData($request);
             $data = ['message' => __('response.bad_request_long')];
             if(!$updateStay) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
-            //actualizar huespedes
-            foreach($request->listGuest as $g){
-                $data = (object) $g;
-                $updateGuest = $this->guestService->updateById($data);
-                $data = ['message' => __('response.bad_request_long')];
-                if(!$updateGuest) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
-            }
-            //eliminar huespedes
-            $deleteList = $request->deleteList;
-            foreach ($deleteList as $g) {
-                $this->service->deleteGuestOfStay($request->stayId,$g);
-            }
+            // //actualizar huespedes
+            // foreach($request->listGuest as $g){
+            //     $data = (object) $g;
+            //     $updateGuest = $this->guestService->updateById($data);
+            //     $data = ['message' => __('response.bad_request_long')];
+            //     if(!$updateGuest) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            // }
+            // //eliminar huespedes
+            // $deleteList = $request->deleteList;
+            // foreach ($deleteList as $g) {
+            //     $this->service->deleteGuestOfStay($request->stayId,$g);
+            // }
             $response = new StayResource($updateStay);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $response);
         } catch (\Exception $e) {
@@ -203,5 +204,17 @@ class StayController extends Controller
         }
     }
 
+    public function findbyId($stayId)
+    {
+        try {
+            $stay = $this->service->findbyId($stayId);
+            $data = ['message' => __('response.bad_request_long')];
+            if(!$stay) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            $stay = new StayResource($stay);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $stay);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findbyId');
+        }
+    }
 
 }

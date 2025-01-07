@@ -18,7 +18,13 @@ class CategoriPlaces extends Model
         'name',
         'active',
         'show',
+        'icon',
+        'translate'
     ];
+
+    protected $casts = [
+        'translate' => 'array',
+    ];  
 
     /**
      * Método que obtiene el los detalles de las actividades guardadas

@@ -18,9 +18,13 @@ class GuestResource extends JsonResource
         return [
             "id"=> $this->id,
             "name"=> $this->name,
+            "lastname" => $this->lastname,
+            "avatar"=> $this->avatar,
+            "avatar_type" => $this->avatar_type,
             "lang_web"=> $this->lang_web,
             "email"=> $this->email,
             "phone"=> $this->phone,
+            "hasPassword"=>  boolval($this->password),
         ];
     }
 }
