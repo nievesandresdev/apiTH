@@ -101,11 +101,11 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                 'icon' => 'WA.COFFE',
                 'translation' => [
                     'es' => 'Cafeterías y postres',
-                    'en' => 'Cafés and Desserts',
+                    'en' => 'Cafes and desserts',
                     'fr' => 'Cafés et desserts',
-                    'pr' => 'Cafeterias e sobremesas',
+                    'pr' => 'Cafés e sobremesas',
                     'de' => 'Cafés und Desserts',
-                    'it' => 'Caffetterie e dolci',
+                    'it' => 'Caffè e dessert',
                 ]
             ],
             [
