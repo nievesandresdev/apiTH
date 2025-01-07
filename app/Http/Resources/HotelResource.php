@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\ChatHour;
 use App\Models\ChatSetting;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,6 +23,8 @@ class HotelResource extends JsonResource
         $is_default = auth()->user()
         ? auth()->user()->hotel()->wherePivot('hotel_id', $this->id)->wherePivot('is_default', 1)->exists()
         : false;
+
+        $is_subscribed = Subscription::where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
         //ya hay una key translate para la traduccion
         //dejo el descripcion normal para tener a la mano el original
         //guardado en el perfil del hotel en el sass
@@ -83,6 +86,7 @@ class HotelResource extends JsonResource
             "code" => $this->code,
             "sender_mail_mask" => $this->sender_mail_mask,
             'is_default' => $is_default,
+            "subscribed"=> $this->subscription_active ? $is_subscribed : false,
         ];
     }
 }

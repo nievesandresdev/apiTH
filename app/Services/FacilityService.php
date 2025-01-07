@@ -91,7 +91,7 @@ class FacilityService {
 
     public function storeOrUpdate ($request, $hotelModel) {
         $title = $request->title ?? 'Nueva Instalación';
-        $title = $this->generateUniqueTitle($title, $hotelModel->id);
+        $title = $this->generateUniqueTitle($title, $hotelModel->id,$request->id);
 
         if($request->id){
             $facilityHosterModel = FacilityHoster::find($request->id);
@@ -157,13 +157,32 @@ class FacilityService {
         }
     }
 
-    private function generateUniqueTitle($baseTitle, $hotelId)
+    /* private function generateUniqueTitle($baseTitle, $hotelId)
     {
         $originalTitle = $baseTitle;
         $count = 1;
 
         // Repite el proceso hasta que encuentres un título que no exista
-        while (FacilityHoster::where('hotel_id', $hotelId)->where('title', $baseTitle)->exists()) {
+        while (FacilityHoster::where('hotel_id', $hotelId)->where('title', $baseTitle)->where('visible',1)->exists()) {
+            $count++;
+            $baseTitle = $originalTitle . ' ' . $count;
+        }
+
+        return $baseTitle;
+    } */
+
+    private function generateUniqueTitle($baseTitle, $hotelId, $currentId = null)
+    {
+        $originalTitle = $baseTitle;
+        $count = 1;
+
+        while (FacilityHoster::where('hotel_id', $hotelId)
+            ->where('title', $baseTitle)
+            ->where('visible', 1)
+            ->when($currentId, function ($query) use ($currentId) {
+                return $query->where('id', '!=', $currentId);
+            })
+            ->exists()) {
             $count++;
             $baseTitle = $originalTitle . ' ' . $count;
         }
