@@ -130,9 +130,11 @@
         </div>
         @if($type == 'welcome')
             @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name])
-        @else
-            {{-- @include('components.mails.headerBye',['guest_name' => $guest->name]) --}}
         @endif
+        @if($type == 'checkout')
+            @include('components.mails.headerBye',['guest_name' => $guest->name])
+        @endif
+
         @if($type == 'inviteGuestFromSaas')
             @include('components.mails.inviteGuestFromSaas',['urlWebapp' => $data['urlWebapp']])
         @endif
@@ -148,7 +150,8 @@
             ])
         @endif
 
-        @if($type == 'welcome' && $data['queryData'] && $data['queryData']['showQuerySection'])
+        {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
+        @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'])
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
             @include('components.mails.feedback',[
@@ -160,22 +163,25 @@
 
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         @if(count($data['places']) > 0 || $hotel->show_places)
-            @include('components.mails.places',['places' => $data['places']])
+            @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
         @endif
 
         @if(count($data['experiences']) > 0 || $hotel->show_experiences)
-            @include('components.mails.experiences', ['exp' => $data['experiences']])
+            @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
         @endif
 
-        @if(count($data['facilities']) > 0 || $hotel->show_facilities)
-            @include('components.mails.facilities', ['facilities' => $data['facilities']])
+        @if($type == 'welcome')
+            @if(count($data['facilities']) > 0 || $hotel->show_facilities)
+                @include('components.mails.facilities', ['facilities' => $data['facilities']])
+            @endif
         @endif
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
-
-        @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
+        @if($type == 'welcome')
+            @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
+            <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+            @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
+        @endif
 
 
 
