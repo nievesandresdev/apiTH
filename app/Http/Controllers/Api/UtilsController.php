@@ -98,7 +98,19 @@ class UtilsController extends Controller
         // }
     }
 
-    public function testTemplateEmail()
+    public function testTemplateEmail(){
+        $url = "url";
+        $hotel = Hotel::find(191);
+        $guest = Guest::find(9);
+
+        return view('Mails.guest.resetPassword', [
+            'url' => $url,
+            'hotel' => $hotel,
+            'guest' => $guest,
+        ]);
+    }
+    
+    public function testTemplateEmailold()
     {
         $type = 'checkout';
         $hotel = Hotel::find(191);
