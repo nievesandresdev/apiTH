@@ -52,7 +52,7 @@ class HotelResource extends JsonResource
             "longitude"=> $this->longitude,
             "checkin"=> $this->checkin,
             "checkout"=> $this->checkout,
-            "description"=> $this->translate->description ?? $this->description,
+            "description"=> $this->description,
             "instagram_url"=> $this->instagram_url,
             "facebook_url"=> $this->facebook_url,
             "pinterest_url"=> $this->pinterest_url,
