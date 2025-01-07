@@ -112,7 +112,7 @@ class UtilsController extends Controller
     
     public function testTemplateEmailold()
     {
-        $type = 'welcome';
+        $type = 'checkout';
         $hotel = Hotel::find(191);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
@@ -139,7 +139,7 @@ class UtilsController extends Controller
             }
 
         //     //query section
-            if($type == 'welcome'){
+            if($type == 'welcome' || $type == 'checkout'){
                 $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
                 $querySettings = $this->querySettingsServices->getAll($hotel->id);
                 $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
@@ -187,6 +187,7 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp
             ];
+
 
 
             //$this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);

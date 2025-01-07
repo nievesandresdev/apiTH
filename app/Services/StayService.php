@@ -521,8 +521,8 @@ class StayService {
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
             //
-            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-            // $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
+             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $dataEmail = [
                 'checkData' => $checkData,
@@ -534,6 +534,8 @@ class StayService {
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp
             ];
+
+            //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
             // Log::info('dataEmail '.json_encode($dataEmail));
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));

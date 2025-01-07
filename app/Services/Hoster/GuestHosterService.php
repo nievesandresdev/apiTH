@@ -51,6 +51,7 @@ class GuestHosterService {
     {
         $guest = $this->guestService->saveOrUpdate($data);
 
+
         $this->stayServices->guestWelcomeEmail('inviteGuestFromSaas',$chainSubdomain, $hotel, $guest);
     }
 
@@ -59,7 +60,7 @@ class GuestHosterService {
     //     try {
     //         // $guest = $this->guestService->saveOrUpdate($data);
     //         // $settings =  $this->staySettingsServices->getAll($hotelId);
-            
+
     //         $hotel = Hotel::find($hotelId);
 
     //         // //prepare msg
@@ -79,7 +80,7 @@ class GuestHosterService {
     //     }
     // }
 
-   
+
 
 
 
