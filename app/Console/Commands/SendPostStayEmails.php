@@ -83,21 +83,21 @@ class SendPostStayEmails extends Command
         // Hora actual
         $currentTime = Carbon::now();
 
-        Log::info('Estancias encontradas', ['stays_count' => $stays]);
+        Log::info('handleSendEmailCheckout', ['stays_count' => $stays]);
 
 
         // Procesar cada estancia
         foreach ($stays as $stay) {
-            $hotelCheckoutTime = $stay->hotel->checkout;
+            $hotelCheckoutTime = Carbon::parse($stay->hotel->checkout);
             $type = 'checkout';
 
-            Log::info('Estancia encontrada', ['stay_id' => $stay->id, 'checkout_time' => $hotelCheckoutTime,'hotel' => $stay->hotel]);
+            //Log::info('Estancia encontrada', ['stay_id' => $stay->id, 'checkout_time' => $hotelCheckoutTime,'hotel' => $stay->hotel]);
 
             // Verificar si la hora actual está dentro del rango de checkout del hotel
-            /* if (!$currentTime->between($hotelCheckoutTime->copy()->startOfHour(), $hotelCheckoutTime->copy()->endOfHour())) {
+            if (!$currentTime->between($hotelCheckoutTime->copy()->startOfHour(), $hotelCheckoutTime->copy()->endOfHour())) {
                 Log::info('Estancia fuera del rango de hora de checkout', ['stay_id' => $stay->id]);
                 continue;
-            } */
+            }
 
             foreach ($stay->queries as $query) {
                 if (!$query->guest || !$query->guest->email) {
@@ -150,7 +150,8 @@ class SendPostStayEmails extends Command
 
 
                     $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), $query->guest->email);
-                    Log::info('Correo enviado correctamente', ['guest_email' => $query->guest->email]);
+                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
+                    Log::info('Correo enviado correctamente handleSendEmailCheckout', ['guest_email' => $query->guest->email]);
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo', [
                         'guest_email' => $query->guest->email,
