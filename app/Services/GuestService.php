@@ -231,7 +231,7 @@ class GuestService {
         }
     }
 
-    public function updateById($data){
+    public function updateById($data, $renew = false){
         if(!$data->id) return;
 
         try{
@@ -249,10 +249,20 @@ class GuestService {
 
             $acronym = $this->generateInitialsName($name ?? $email);
 
+            $currentPhone = !$renew ? $guest->phone : null;
+            $currentLang = !$renew ? $guest->lang_web : 'es';
+            $currentLastname = !$renew ? $guest->lastname : null;
+            $currentAvatar = !$renew ? $guest->avatar : null;
+            
+
             $guest->name = $name;
             $guest->email = $data->email ?? $guest->email;
-            $guest->phone = $data->phone ?? $guest->phone;
-            $guest->lang_web = $data->lang_web ?? $guest->lang_web;
+            $guest->phone = $data->phone ?? $currentPhone;
+            $guest->lang_web = $data->lang_web ?? $currentLang;
+            $guest->lastname = $data->lastname ?? $currentLastname;
+            $guest->avatar = $data->avatar ?? $currentAvatar;
+
+
             $guest->acronym = $acronym;
 
             // Log::info('pass '.$data->password);
@@ -367,9 +377,10 @@ class GuestService {
         }
     }
 
-    public function sendResetLinkEmail($email, $url){
+    public function sendResetLinkEmail($email, $url, $hotel, $chain){
 
         try {
+            $hotelData = $hotel;
             $guest = $this->findByEmail($email);
 
             // Generar token de restablecimiento
@@ -384,7 +395,18 @@ class GuestService {
             ]);
 
             // Enviar correo con el enlace de restablecimiento
-            Mail::to($email)->send(new ResetPasswordGuest($url.$token));
+            // Mail::to($email)->send(new ResetPasswordGuest($url.$token));
+            $lastStay = $this->findAndValidLastStay($guest->email, $chain->id, $hotel ? $hotel->id : null);
+            if($lastStay && !$hotel){
+                $hotelData = $lastStay['stay']->hotel;
+            }
+            
+            Log::info('hotel '.json_encode($hotelData));
+            Log::info('guest '.json_encode($guest));
+            Log::info('chain '.json_encode($chain));
+            Log::info('url '.json_encode($url.$token));
+
+            Mail::to("andresdreamerf@gmail.com")->send(new ResetPasswordGuest($hotelData, $url.$token, $guest));
             return true;
         } catch (\Exception $e) {
             return $e;
