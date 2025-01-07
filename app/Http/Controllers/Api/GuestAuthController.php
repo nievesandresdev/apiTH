@@ -58,7 +58,8 @@ class GuestAuthController extends Controller
 
     public function updateById(Request $request){
         try {
-            $model = $this->service->updateById($request);
+
+            $model = $this->service->updateById($request, true);//true para borrar datos antiguos al momento de registrar
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -89,15 +90,14 @@ class GuestAuthController extends Controller
             $request->validate(['email' => 'required|email']);
 
             $chainSubdomain = $request->attributes->get('chainSubdomain');
-            // $chain = $this->chainServices->findBySubdomain($chainSubdomain);
+            $chain = $this->chainServices->findBySubdomain($chainSubdomain);
 
             $hotel = $request->attributes->get('hotel');
             $hotelSlug = $hotel->subdomain ?? null;
 
             $url = buildUrlWebApp($chainSubdomain, $hotelSlug,'restablecer-contrasena',"email={$request->email}&token=");
-            
 
-            $model = $this->service->sendResetLinkEmail($request->email, $url);
+            $model = $this->service->sendResetLinkEmail($request->email, $url, $hotel, $chain);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');

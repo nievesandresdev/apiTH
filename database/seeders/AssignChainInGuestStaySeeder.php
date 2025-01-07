@@ -19,8 +19,11 @@ class AssignChainInGuestStaySeeder extends Seeder
     {
         $models = GuestStay::all();
         foreach ($models as $model) {
-            $model->chain_id = $model->stay->hotel->chain_id;
-            $model->save();
+            if($model && $model->stay){
+                Log::info('model '.json_encode($model->stay->hotel));
+                $model->chain_id = $model->stay->hotel->chain_id;
+                $model->save();
+            }
         }
     }
 }

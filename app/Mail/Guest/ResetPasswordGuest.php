@@ -10,15 +10,20 @@ use Illuminate\Queue\SerializesModels;
 class ResetPasswordGuest extends Mailable
 {
     use Queueable, SerializesModels;
+    
     public $url;
+    public $hotel;
+    public $guest;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($url)
+    public function __construct($hotel, $url, $guest)
     {
         $this->url = $url;
+        $this->hotel = $hotel;
+        $this->guest = $guest;
     }
 
     /**
@@ -28,7 +33,16 @@ class ResetPasswordGuest extends Mailable
      */
     public function build()
     {
-        return $this->from("no-reply@thehoster.es", "Hoster Team")
+        $senderName = "Recuperar contraseña";
+        $senderEmail = "no-reply@thehoster.es";
+        if($this->hotel){
+            $senderName = $this->hotel['sender_for_sending_email'];
+            
+            if($this->hotel['sender_mail_mask']){
+                $senderEmail = $this->hotel['sender_mail_mask'];
+            }
+        }
+        return $this->from($senderEmail, $senderName)
                     ->subject('Reestrablecer contraseña')->view('Mails.guest.resetPassword');
 
     }
