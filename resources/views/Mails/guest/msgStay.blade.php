@@ -162,19 +162,19 @@
         @endif
 
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        {{-- @if(count($data['places']) > 0 || $hotel->show_places)
+        @if(count($data['places']) > 0 || $hotel->show_places)
             @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
         @endif
 
         @if(count($data['experiences']) > 0 || $hotel->show_experiences)
             @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
-        @endif --}}
+        @endif
 
-        {{-- @if($type == 'welcome')
+        @if($type == 'welcome')
             @if(count($data['facilities']) > 0 || $hotel->show_facilities)
                 @include('components.mails.facilities', ['facilities' => $data['facilities']])
             @endif
-        @endif --}}
+        @endif
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
         @if($type == 'welcome')
