@@ -98,7 +98,7 @@ class UtilsController extends Controller
         // }
     }
 
-    public function testTemplateEmail(){
+    public function testTemplateEmailOLD(){
         $url = "url";
         $hotel = Hotel::find(191);
         $guest = Guest::find(9);
@@ -109,10 +109,10 @@ class UtilsController extends Controller
             'guest' => $guest,
         ]);
     }
-    
-    public function testTemplateEmailold()
+
+    public function testTemplateEmail()
     {
-        $type = 'checkout';
+        $type = 'welcome';
         $hotel = Hotel::find(191);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
