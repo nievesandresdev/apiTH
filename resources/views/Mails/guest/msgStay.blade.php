@@ -128,7 +128,7 @@
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
         </div>
-        @if($type == 'welcome')
+        {{-- @if($type == 'welcome')
             @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name])
         @endif
         @if($type == 'checkout')
@@ -137,21 +137,21 @@
 
         @if($type == 'inviteGuestFromSaas')
             @include('components.mails.inviteGuestFromSaas',['urlWebapp' => $data['urlWebapp']])
-        @endif
+        @endif --}}
     </div>
     <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
 
-        @if($type == 'welcome' && isset($data['checkData']['title']))
+        {{-- @if($type == 'welcome' && isset($data['checkData']['title']))
             @include('components.mails.stayCheckDate',[
                 'title' => $data['checkData']['title'],
                 'formatCheckin' => $data['checkData']['formatCheckin'],
                 'formatCheckout' => $data['checkData']['formatCheckout'],
                 'editUrl' => $data['checkData']['editStayUrl']
             ])
-        @endif
+        @endif --}}
 
         {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
-        @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'])
+        {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'])
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
             @include('components.mails.feedback',[
@@ -159,7 +159,7 @@
                 'webappLinkInbox' => $data['queryData']['webappLinkInbox'],
                 'webappLinkInboxGoodFeel' => $data['queryData']['webappLinkInboxGoodFeel'],
             ])
-        @endif
+        @endif --}}
 
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         {{-- @if(count($data['places']) > 0 || $hotel->show_places)
@@ -175,13 +175,13 @@
                 @include('components.mails.facilities', ['facilities' => $data['facilities']])
             @endif
         @endif --}}
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+        {{-- <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
         @if($type == 'welcome')
             @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
-        @endif
+        @endif --}}
 
 
 
