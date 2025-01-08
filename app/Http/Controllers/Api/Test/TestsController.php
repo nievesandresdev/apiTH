@@ -232,4 +232,5 @@ public function sendEmail(Request $request)
 
         return response()->json(['message' => 'TestJob dispatchado. Revisa los logs y la consola.']);
     }
+    
 }
