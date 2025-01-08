@@ -164,7 +164,7 @@ class UtilsController extends Controller
         //         ];
         //     }
 
-        //     $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
+            $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
 
         //     //
         //     $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
@@ -187,7 +187,8 @@ class UtilsController extends Controller
                 // 'urlWebapp' => $urlWebapp
             ];
 
-            $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            // $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             // $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "andresdreamerf@gmail.com");
 
 
