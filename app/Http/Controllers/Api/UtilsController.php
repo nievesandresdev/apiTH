@@ -372,6 +372,7 @@ class UtilsController extends Controller
 
 
 
+
             //$this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
             $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "francisco20990@gmail.com");
 
@@ -380,7 +381,8 @@ class UtilsController extends Controller
                 'type' => $type,
                 'hotel' => $hotel,
                 'guest' => $guest,
-                'data'=> $dataEmail
+                'data'=> $dataEmail,
+                'after' => false
             ]);
     }
 

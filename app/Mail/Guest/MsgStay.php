@@ -16,8 +16,8 @@ class MsgStay extends Mailable
     public $link;
     public $create;
     public $urlQr;
-    public $after;
     public $data;
+    public $after;
     /**
      * Create a new message instance.
      *
@@ -27,13 +27,15 @@ class MsgStay extends Mailable
         $type,
         $hotel,
         $guest,
-        $data = null
+        $data = null,
+        $after = false
     )
     {
         $this->type = $type;
         $this->hotel = $hotel;
         $this->guest = $guest;
         $this->data = $data;
+        $this->after = $after;
 
     }
 

@@ -129,7 +129,7 @@
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
         </div>
         @if($type == 'welcome')
-            @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name])
+            @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name,'after' => $after])
         @endif
         @if($type == 'checkout')
             @include('components.mails.headerBye',['guest_name' => $guest->name])
