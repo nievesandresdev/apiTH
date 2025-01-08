@@ -187,8 +187,8 @@ class UtilsController extends Controller
                 // 'urlWebapp' => $urlWebapp
             ];
 
-            // $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
-            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             // $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "andresdreamerf@gmail.com");
 
 
