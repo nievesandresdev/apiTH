@@ -469,48 +469,48 @@ class StayService {
             $queryData = [];
             //stay section
 
-            if($type == 'welcome'){
-                if($stay->check_in && $stay->check_out){
-                    $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
-                    $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
-                }
-                $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
-                //
+            // if($type == 'welcome'){
+            //     if($stay->check_in && $stay->check_out){
+            //         $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
+            //         $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
+            //     }
+            //     $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
+            //     //
 
-                $checkData = [
-                    'title' => "Datos de tu estancia en {$hotel->name}",
-                    'formatCheckin' => $formatCheckin,
-                    'formatCheckout' => $formatCheckout,
-                    'editStayUrl' => $webappEditStay
-                ];
-            }
+            //     $checkData = [
+            //         'title' => "Datos de tu estancia en {$hotel->name}",
+            //         'formatCheckin' => $formatCheckin,
+            //         'formatCheckout' => $formatCheckout,
+            //         'editStayUrl' => $webappEditStay
+            //     ];
+            // }
 
         //     //query section
-            if($type == 'welcome'){
-                $currentPeriod = $this->getCurrentPeriod($hotel, $stay);
-                $querySettings = $this->querySettingsServices->getAll($hotel->id);
-                $hoursAfterCheckin = $this->calculateHoursAfterCheckin($hotel, $stay);
-                $showQuerySection = true;
+            // if($type == 'welcome'){
+            //     $currentPeriod = $this->getCurrentPeriod($hotel, $stay);
+            //     $querySettings = $this->querySettingsServices->getAll($hotel->id);
+            //     $hoursAfterCheckin = $this->calculateHoursAfterCheckin($hotel, $stay);
+            //     $showQuerySection = true;
 
-                if(
-                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
-                    $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
-                    $currentPeriod == 'post-stay'
-                ){
-                    $showQuerySection = false;
-                }
-                //
-                $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
-                $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
+            //     if(
+            //         $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
+            //         $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
+            //         $currentPeriod == 'post-stay'
+            //     ){
+            //         $showQuerySection = false;
+            //     }
+            //     //
+            //     $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
+            //     $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
 
-                $queryData = [
-                    'showQuerySection' => $showQuerySection,
-                    'currentPeriod' => $currentPeriod,
-                    'webappLinkInbox' => $webappLinkInbox,
-                    'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
+            //     $queryData = [
+            //         'showQuerySection' => $showQuerySection,
+            //         'currentPeriod' => $currentPeriod,
+            //         'webappLinkInbox' => $webappLinkInbox,
+            //         'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
 
-                ];
-            }
+            //     ];
+            // }
 
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
 
