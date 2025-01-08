@@ -518,7 +518,7 @@ class StayService {
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
             //
 
-            // $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
             //
             //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
@@ -527,9 +527,9 @@ class StayService {
             $dataEmail = [
                 'checkData' => $checkData,
                 'queryData' => $queryData,
-                // 'places' => $crosselling['places'],
-                // 'experiences' => $crosselling['experiences'],
-                // 'facilities' => $crosselling['facilities'],
+                'places' => $crosselling['places'],
+                'experiences' => $crosselling['experiences'],
+                'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp
