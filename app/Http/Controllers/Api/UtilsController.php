@@ -191,12 +191,13 @@ class UtilsController extends Controller
             // $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "andresdreamerf@gmail.com");
 
 
-            return view('Mails.guest.msgStay', [
-                // 'type' => $type,
-                'hotel' => $hotel,
-                // 'guest' => $guest,
-                // 'data'=> $dataEmail
-            ]);
+            // return view('Mails.guest.msgStay', [
+            //     // 'type' => $type,
+            //     'hotel' => $hotel,
+            //     // 'guest' => $guest,
+            //     // 'data'=> $dataEmail
+            // ]);
+            return 'endiado';
 
     }
 
