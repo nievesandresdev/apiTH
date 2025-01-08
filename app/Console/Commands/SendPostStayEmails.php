@@ -108,8 +108,8 @@ class SendPostStayEmails extends Command
                 $chainSubdomain = $stay->hotel->subdomain;
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
                 $urlWebapp = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain);
-                //$urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
-                $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
                     $currentPeriod = $this->stayService->getCurrentPeriod($stay->hotel, $stay);
                     $querySettings = $this->querySettingsServices->getAll($stay->hotel->id);

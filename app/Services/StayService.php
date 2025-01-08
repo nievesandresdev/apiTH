@@ -154,7 +154,7 @@ class StayService {
                 // $msg = prepareMessage($data,$hotel,'&subject=invited');
                 // $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+                // $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
                 // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
             //}
 
@@ -521,8 +521,8 @@ class StayService {
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
             //
-            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
-             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $dataEmail = [
                 'checkData' => $checkData,
