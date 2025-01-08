@@ -214,7 +214,7 @@ public function updateWhatsAppProfile(Request $request)
 }
 public function sendEmail(Request $request)
 {
-    $email = 'xavierclasesit@gmail.com';
+    $email = $request->email;
     $sendMail = Mail::to($email)->send(new TestMailer());
 
     return response()->json([
@@ -232,4 +232,5 @@ public function sendEmail(Request $request)
 
         return response()->json(['message' => 'TestJob dispatchado. Revisa los logs y la consola.']);
     }
+    
 }

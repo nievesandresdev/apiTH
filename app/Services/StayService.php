@@ -522,7 +522,7 @@ class StayService {
 
             //
             $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            //  $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $dataEmail = [
                 'checkData' => $checkData,
