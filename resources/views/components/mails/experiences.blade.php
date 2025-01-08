@@ -1,4 +1,4 @@
-<div class="container-exp" style="max-width: 488px;margin:0 auto;margin-top:32px;padding:0;">
+<div class="container-exp" style="max-width: 488px;margin:0 auto;margin-top:32px;padding:0;; margin-left: 16px; margin-right: 16px;">
     <!-- Título -->
     @if($type == 'welcome')
 

@@ -1,4 +1,4 @@
-<div >
+<div style="margin-left: 16px; margin-right: 16px;">
     <h2 style="margin:0;color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
         ¿Tienes dudas o consultas?
     </h2>
@@ -6,7 +6,7 @@
         Recuerda que en la WebApp puedes contactarnos por el canal de Chat.
     </p>
     <div style="max-width:260px;margin:0 auto;">
-        <a 
+        <a
             href="{{$webappChatLink}}"
             style="margin:0;border-radius: 6px;background-color: #333;padding: 12px 0;text-align:center;color:#F3F3F3;font-size: 18px;font-weight: 600;line-height: 110%;font-family:Arial;margin-top:16px;display:block;text-decoration: none;width:100%"
         >
