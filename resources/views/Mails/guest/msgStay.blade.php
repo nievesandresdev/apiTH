@@ -141,7 +141,7 @@
     </div>
     <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
 
-        @if($type == 'welcome')
+        @if($type == 'welcome' && isset($data['checkData']['title']))
             @include('components.mails.stayCheckDate',[
                 'title' => $data['checkData']['title'],
                 'formatCheckin' => $data['checkData']['formatCheckin'],
