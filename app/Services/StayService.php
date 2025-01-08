@@ -154,7 +154,7 @@ class StayService {
                 // $msg = prepareMessage($data,$hotel,'&subject=invited');
                 // $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                // $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
                 // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
             //}
 
@@ -518,18 +518,18 @@ class StayService {
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
             //
 
-            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+            // $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
             //
-            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
+             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $dataEmail = [
                 'checkData' => $checkData,
                 'queryData' => $queryData,
-                'places' => $crosselling['places'],
-                'experiences' => $crosselling['experiences'],
-                'facilities' => $crosselling['facilities'],
+                // 'places' => $crosselling['places'],
+                // 'experiences' => $crosselling['experiences'],
+                // 'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp
@@ -540,7 +540,8 @@ class StayService {
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), $guest->email);
+            // $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), $guest->email);
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "andresdreamerf@gmail.com");
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
