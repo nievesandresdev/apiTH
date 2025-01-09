@@ -133,10 +133,15 @@
         }
 
         .warning-info {
-            font-size: 10px; /* Reduce el tamaño del texto de advertencia */
+            font-size: 12px; /* Reduce el tamaño del texto de advertencia */
             line-height: 140%; /* Ajusta la altura de línea */
-            max-width: 250px; /* Limita el ancho máximo del texto */
+            max-width: 450px; /* Limita el ancho máximo del texto */
             margin: 20px auto 0 auto; /* Ajusta el margen para centrado */
+        }
+
+        .title-section{
+            padding-bottom: 15px;
+            max-width: 450px;
         }
 }
 
