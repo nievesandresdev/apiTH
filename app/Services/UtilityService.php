@@ -105,7 +105,7 @@ class UtilityService {
                 return [
                     'title' => $item['title'],
                     'image' => $img,
-                    'num_stars' => str_replace(',', '.',$item['num_stars']),
+                    'num_stars' => str_replace(',', '.', (string) $item['num_stars']),
                     'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"lugares/{$item['id']}"),
                 ];
             }, $placesArr);
