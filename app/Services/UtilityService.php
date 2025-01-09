@@ -101,11 +101,11 @@ class UtilityService {
                 if($item['place_images']){
                     $img = $url_bucket."/storage/places/".$item['place_images'][0]['image'];
                 }
-                
+
                 return [
                     'title' => $item['title'],
                     'image' => $img,
-                    'num_stars' => $item['num_stars'],
+                    'num_stars' => str_replace(',', '.',$item['num_stars']),
                     'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"lugares/{$item['id']}"),
                 ];
             }, $placesArr);
@@ -129,7 +129,7 @@ class UtilityService {
                     'num_stars' => $formattedRating
                 ];
             }, $experiencesArr);
-            
+
             return [
                 'facilities' => $facilities,
                 'places' => $placesArr,
