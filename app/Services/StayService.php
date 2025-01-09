@@ -154,7 +154,12 @@ class StayService {
                 // $msg = prepareMessage($data,$hotel,'&subject=invited');
                 // $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+
+                if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
+                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
+                } else {
+                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+                }
                 // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
             //}
 
@@ -462,7 +467,7 @@ class StayService {
         }
     }
 
-    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null)
+    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null,$after = false)
     {
         try {
             $checkData = [];
@@ -540,7 +545,7 @@ class StayService {
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), $guest->email);
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after), $guest->email);
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
