@@ -95,9 +95,7 @@ class GuestAuthController extends Controller
             $hotel = $request->attributes->get('hotel');
             $hotelSlug = $hotel->subdomain ?? null;
 
-            $url = buildUrlWebApp($chainSubdomain, $hotelSlug,'restablecer-contrasena',"email={$request->email}&token=");
-
-            $model = $this->service->sendResetLinkEmail($request->email, $url, $hotel, $chain);
+            $model = $this->service->sendResetLinkEmail($request->email, $hotel, $chain);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
