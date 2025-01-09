@@ -96,7 +96,7 @@
         .dates-container {
             padding: 10px; /* Reduce el padding interno */
             border: 1px solid #E0E0E0; /* Asegura un borde más ligero */
-            max-width: 400px; /* Limita el ancho máximo del contenedor */
+            max-width: 450px; /* Limita el ancho máximo del contenedor */
             margin: 0 auto; /* Centra el contenedor */
         }
 
@@ -115,19 +115,19 @@
 
         .checkin-description .h1,
         .checkout-description .h1 {
-            font-size: 40px; /* Reduce el tamaño de la fuente para los días */
+            font-size: 45px; /* Reduce el tamaño de la fuente para los días */
             line-height: 70%; /* Ajusta la altura de línea */
         }
 
         .checkin-description .h5,
         .checkout-description .h5 {
-            font-size: 10px; /* Reduce el tamaño de los días de la semana */
+            font-size: 13px; /* Reduce el tamaño de los días de la semana */
             line-height: 80%; /* Ajusta la altura de línea */
         }
 
         .checkin-description .h2,
         .checkout-description .h2 {
-            font-size: 14px; /* Reduce el tamaño de los meses */
+            font-size: 18px; /* Reduce el tamaño de los meses */
             line-height: 75%; /* Ajusta la altura de línea */
             margin-top: 5px; /* Reduce el margen superior */
         }
