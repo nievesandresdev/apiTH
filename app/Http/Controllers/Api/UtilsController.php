@@ -356,8 +356,8 @@ class UtilsController extends Controller
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
             //
-            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-            //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $dataEmail = [
                 'checkData' => $checkData,
@@ -369,6 +369,8 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp
             ];
+
+            dd($dataEmail, $hotel, $guest, $stay,$type);
 
 
             //$this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
