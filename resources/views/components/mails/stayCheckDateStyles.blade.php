@@ -140,7 +140,8 @@
         }
 
         .title-section{
-            padding-bottom: 15px;
+            padding-bottom: 12px;
+            padding-top: 15px;
             max-width: 450px;
         }
 }
