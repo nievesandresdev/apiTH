@@ -20,9 +20,7 @@ class GuestHosterController extends Controller
     }
 
     public function inviteToHotel(Request $request){
-        Log::info("Invite to");
         try {
-            //Log::info('GuestHosterController.inviteToHotel');
             $hotel = $request->attributes->get('hotel');
             $chainModel = $hotel->chain;
             $chainSubdomain = $chainModel->subdomain;

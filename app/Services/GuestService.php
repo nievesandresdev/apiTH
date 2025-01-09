@@ -377,12 +377,12 @@ class GuestService {
         }
     }
 
-    public function sendResetLinkEmail($email, $url, $hotel, $chain){
+    public function sendResetLinkEmail($email, $hotel, $chain){
 
         try {
             $hotelData = $hotel;
             $guest = $this->findByEmail($email);
-
+            
             // Generar token de restablecimiento
             $token = Str::random(60);
              // Guardar token en la base de datos
@@ -393,7 +393,7 @@ class GuestService {
                 'model_id' => $guest->id,
                 'created_at' => now()
             ]);
-
+            
             // Enviar correo con el enlace de restablecimiento
             // Mail::to($email)->send(new ResetPasswordGuest($url.$token));
             $lastStay = $this->findAndValidLastStay($guest->email, $chain->id, $hotel ? $hotel->id : null);
@@ -404,9 +404,10 @@ class GuestService {
             Log::info('hotel '.json_encode($hotelData));
             Log::info('guest '.json_encode($guest));
             Log::info('chain '.json_encode($chain));
+            
+            $url = buildUrlWebApp($chain->subdomain, $hotelData->subdomain,'',"email={$email}&acform=reset&token=");
             Log::info('url '.json_encode($url.$token));
-
-            Mail::to("andresdreamerf@gmail.com")->send(new ResetPasswordGuest($hotelData, $url.$token, $guest));
+            Mail::to($guest->email)->send(new ResetPasswordGuest($hotelData, $url.$token, $guest));
             return true;
         } catch (\Exception $e) {
             return $e;

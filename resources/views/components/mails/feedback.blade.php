@@ -1,4 +1,4 @@
-<section style="background: #FFFFFF; border-radius: 3px;">
+<section style="background: #FFFFFF; border-radius: 3px; margin-left: 16px; margin-right: 16px;">
     @if($currentPeriod !== 'pre-stay')
     <!-- Título -->
     <div style="">
@@ -16,7 +16,7 @@
             @else
                 Cuéntanos cómo te sientes.
             @endif
-            
+
         </p>
     </div>
 
