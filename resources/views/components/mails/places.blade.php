@@ -39,7 +39,7 @@
                                         <img src="{{ asset('mails/WA.star.png') }}" alt="Estrella" style="width: 16px; height: 16px;">
                                     </td>
                                     <td style="width: auto;">
-                                        <span style="color: #333; font-size: 16px; font-weight: 700;font-family:Arial;"> {{ str_replace(',', '.', $item['num_stars'] ?? '0') }}</span>
+                                        <span style="color: #333; font-size: 16px; font-weight: 700;font-family:Arial;"> {{ str_replace(',', '.', $item['num_stars']) }}</span>
                                     </td>
                                 </tr>
                             </table>
