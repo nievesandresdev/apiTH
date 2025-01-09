@@ -370,6 +370,8 @@ class UtilsController extends Controller
                 'urlWebapp' => $urlWebapp
             ];
 
+            dd($dataEmail);
+
 
 
 
