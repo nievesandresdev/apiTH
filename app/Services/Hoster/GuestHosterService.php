@@ -54,7 +54,7 @@ class GuestHosterService {
 
         //return bodyResponseRequest(EnumResponse::ACCEPTED, ['guest' => $guest,'data' => $data, 'hotel' => $hotel, 'chainSubdomain' => $chainSubdomain]);
 
-        $this->stayServices->guestWelcomeEmailSend('inviteGuestFromSaas',$chainSubdomain, $hotel, $guest);
+        $this->stayServices->guestWelcomeEmail('inviteGuestFromSaas',$chainSubdomain, $hotel, $guest);
 
         return $guest;
     }
