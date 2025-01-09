@@ -24,7 +24,8 @@ RUN apt-get update && apt-get install -y \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instalar extensiones de PHP
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/download/1.2.85/install-php-extensions /usr/local/bin/
+
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
     install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap imagick
 
