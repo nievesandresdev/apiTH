@@ -370,10 +370,9 @@ class UtilsController extends Controller
                 'urlWebapp' => $urlWebapp
             ];
 
-            dd($dataEmail, $hotel, $guest, $stay,$type);
 
 
-            //$this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
             $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "francisco20990@gmail.com");
 
 
