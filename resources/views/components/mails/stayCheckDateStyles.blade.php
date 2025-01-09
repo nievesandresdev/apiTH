@@ -96,7 +96,7 @@
         .dates-container {
             padding: 10px; /* Reduce el padding interno */
             border: 1px solid #E0E0E0; /* Asegura un borde más ligero */
-            max-width: 300px; /* Limita el ancho máximo del contenedor */
+            max-width: 400px; /* Limita el ancho máximo del contenedor */
             margin: 0 auto; /* Centra el contenedor */
         }
 

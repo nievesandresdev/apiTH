@@ -16,8 +16,8 @@
                                     </h1>
                                 </td>
                                 <td style="padding-left: 2px;">
-                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">{{$formatCheckin['weekDay'] ?? 12}}</h5>
-                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;text-transform: uppercase;">{{$formatCheckin['month'] ?? 5}}</h2>
+                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400; margin-botton:8px;">{{$formatCheckin['weekDay'] ?? 12}}</h5>
+                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400; margin-botton:8px;text-transform: uppercase;">{{$formatCheckin['month'] ?? 5}}</h2>
                                 </td>
                             </tr>
                         </table>
@@ -38,8 +38,8 @@
                                     </h1>
                                 </td>
                                 <td style="padding-left: 2px;">
-                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;">{{$formatCheckout['weekDay'] ?? 12}}</h5>
-                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400;text-transform: uppercase;">{{$formatCheckout['month'] ?? 5}}</h2>
+                                    <h5 class="h5" style="margin:0;color: #858181;font-family: Arial;font-weight: 400; margin-botton:8px;">{{$formatCheckout['weekDay'] ?? 12}}</h5>
+                                    <h2 class="h2" style="margin:0;color: #858181;font-family: Arial;font-weight: 400; margin-botton:8px;text-transform: uppercase;">{{$formatCheckout['month'] ?? 5}}</h2>
                                 </td>
                             </tr>
                         </table>
