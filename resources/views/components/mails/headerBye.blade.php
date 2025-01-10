@@ -1,5 +1,5 @@
 <section style="margin-right: 12px; margin-left: 12px" class="responsive-section">
-    <div style="border-radius: 3px 3px 50px 3px; background: #F3F3F3; padding: 40px;">
+    <div style="border-radius: 3px 3px 50px 3px; background: #F3F3F3;">
         <table class="responsive-table" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
             <tr>
                 <td style="text-align: center;
