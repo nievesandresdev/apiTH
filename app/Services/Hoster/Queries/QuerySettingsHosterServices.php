@@ -32,7 +32,6 @@ class QuerySettingsHosterServices {
     public function updateSettings ($hotelId, $keysToSave, $newdata, $period = null) {
         try {
             $default = $this->getAll($hotelId);
-
             $save = QuerySetting::updateOrCreate(['hotel_id' => $hotelId],
                 [
                     'pre_stay_activate' => in_array('pre_stay_activate', $keysToSave) ? $newdata->pre_stay_activate : $default->pre_stay_activate,
@@ -60,7 +59,7 @@ class QuerySettingsHosterServices {
                     'email_notify_pending_feedback_to' => in_array('email_notify_pending_feedback_to', $keysToSave) ? $newdata->email_notify_pending_feedback_to : $default->email_notify_pending_feedback_to,
                 ]
             );
-            
+            Log::info('save '.json_encode($save));
             $this->processTranslateTexts($newdata, $save, $period);
             return $save;
             
@@ -105,8 +104,8 @@ class QuerySettingsHosterServices {
     public function processTranslateTexts ($request, $model, $period){
         
         $pre_stay_thanks = $request->pre_stay_thanks['es'] ?? null;
-        $pre_stay_comment = $request->pre_stay_comment['es'] ?? null;
-        $arrToTranslate = ['pre_stay_thanks' => $pre_stay_thanks,'pre_stay_comment' => $pre_stay_comment];
+        // $pre_stay_comment = $request->pre_stay_comment['es'];
+        $arrToTranslate = ['pre_stay_thanks' => $pre_stay_thanks];
         if($period == 'in-stay'){
             $in_stay_thanks_good = $request->in_stay_thanks_good['es'] ?? null;
             $in_stay_thanks_normal = $request->in_stay_thanks_normal['es'] ?? null;
