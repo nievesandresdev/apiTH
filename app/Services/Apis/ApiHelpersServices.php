@@ -21,8 +21,6 @@ class ApiHelpersServices {
                 ]
             ];
 
-            //dd($body);
-
 
             $http_client_service = new HttpClientService();
             $response_request = $http_client_service->make_request('post', "$URL_BASE_API_HELPERS/place/getCrosselling", $body, [], 60);
