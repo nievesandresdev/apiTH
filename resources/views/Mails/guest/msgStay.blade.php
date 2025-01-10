@@ -153,7 +153,7 @@
 
         {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
         @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+            <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
             @include('components.mails.feedback',[
                 'currentPeriod' => $data['queryData']['currentPeriod'],
