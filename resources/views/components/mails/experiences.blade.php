@@ -3,7 +3,7 @@
     @if($type == 'welcome')
 
         <h2 style="margin:0; color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
-            Podrás vivir experiencias inolvidables
+            Podrás vivir experiencias inolvidables {{ count($data['experiences']) }}
         </h2>
     @endif
 
