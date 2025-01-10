@@ -106,16 +106,16 @@
             }
 
             .responsive-section table {
-            display: block;
+                display: block;
             }
             .responsive-section td {
                 display: block;
                 width: 100%;
                 text-align: center;
             }
-            .responsive-section td img {
-                margin-bottom: 20px; /* Separar la imagen del texto */
-            }
+            /* .responsive-section td img {
+                margin-bottom: 20px;
+            } */
         }
 
     </style>
