@@ -3,7 +3,7 @@
     <!-- Título -->
     <div style="">
         <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 20px; font-style: normal; font-weight: 500; line-height: 24px; margin: 0;">
-            @if($currentPeriod == 'post-stay')
+            @if($currentPeriod == 'post-stay' || $after)
                 ¿Cómo ha sido tu estancia con nosotros?
             @else
                 ¿Qué tal va tu estancia hasta ahora?
@@ -11,7 +11,7 @@
         </p>
         <!-- Subtítulo -->
         <p style="text-align: left; font-family: Roboto, sans-serif; font-size: 16px; font-style: normal; font-weight: 400; line-height: 24px; margin: 8px 0 0;">
-            @if($currentPeriod == 'post-stay')
+            @if($currentPeriod == 'post-stay' || $after)
                 Cuéntanos tu experiencia.
             @else
                 Cuéntanos cómo te sientes.

@@ -159,6 +159,7 @@
                 'currentPeriod' => $data['queryData']['currentPeriod'],
                 'webappLinkInbox' => $data['queryData']['webappLinkInbox'],
                 'webappLinkInboxGoodFeel' => $data['queryData']['webappLinkInboxGoodFeel'],
+                'after' => $after
             ])
         @endif
 
