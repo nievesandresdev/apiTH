@@ -59,7 +59,7 @@
             .response-button {
                 height: 30px; /* Altura reducida */
                 line-height: 34px; /* Centrado del texto */
-                font-size: 18px; /* Tamaño de fuente más pequeño */
+                font-size: 14px; /* Tamaño de fuente más pequeño */
                 padding: 10px 25px; /* Espaciado ajustado */
             }
             .responsive-table, .responsive-table-2 {
