@@ -52,14 +52,14 @@
                 padding:0 24px;
             }
 
-            body {
+            /* body {
                 background-color: #ffffff !important;
-            }
+            } */
 
             .response-button {
                 height: 30px; /* Altura reducida */
                 line-height: 34px; /* Centrado del texto */
-                font-size: 18px; /* Tamaño de fuente más pequeño */
+                font-size: 14px; /* Tamaño de fuente más pequeño */
                 padding: 10px 25px; /* Espaciado ajustado */
             }
             .responsive-table, .responsive-table-2 {
@@ -106,7 +106,7 @@
             }
 
             .responsive-section table {
-            display: block;
+                display: block;
             }
             .responsive-section td {
                 display: block;
@@ -114,7 +114,7 @@
                 text-align: center;
             }
             .responsive-section td img {
-                margin-bottom: 20px; /* Separar la imagen del texto */
+                margin-bottom: 20px;
             }
         }
 
@@ -153,26 +153,27 @@
 
         {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
         @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+            <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
             @include('components.mails.feedback',[
                 'currentPeriod' => $data['queryData']['currentPeriod'],
                 'webappLinkInbox' => $data['queryData']['webappLinkInbox'],
                 'webappLinkInboxGoodFeel' => $data['queryData']['webappLinkInboxGoodFeel'],
+                'after' => $after
             ])
         @endif
 
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @if(count($data['places']) > 0 || $hotel->show_places)
+        @if(count($data['places']) > 0 && $hotel->show_places)
             @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
         @endif
 
-        @if(count($data['experiences']) > 0 || $hotel->show_experiences)
+        @if(count($data['experiences']) > 0 && $hotel->show_experiences)
             @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
         @endif
 
         @if($type == 'welcome')
-            @if(count($data['facilities']) > 0 || $hotel->show_facilities)
+            @if(count($data['facilities']) > 0 && $hotel->show_facilities)
                 @include('components.mails.facilities', ['facilities' => $data['facilities']])
             @endif
         @endif

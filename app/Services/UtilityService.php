@@ -101,7 +101,7 @@ class UtilityService {
                 if($item['place_images']){
                     $img = $url_bucket."/storage/places/".$item['place_images'][0]['image'];
                 }
-                
+
                 return [
                     'title' => $item['title'],
                     'image' => $img,
@@ -129,7 +129,7 @@ class UtilityService {
                     'num_stars' => $formattedRating
                 ];
             }, $experiencesArr);
-            
+
             return [
                 'facilities' => $facilities,
                 'places' => $placesArr,

@@ -526,8 +526,8 @@ class StayService {
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
             //
-            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
-             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $dataEmail = [
                 'checkData' => $checkData,
@@ -545,7 +545,7 @@ class StayService {
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after), $guest->email);
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());

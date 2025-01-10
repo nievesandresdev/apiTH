@@ -294,7 +294,7 @@ class UtilsController extends Controller
     // }
 
     public function testTemplateEmail(){
-        $type = 'welcome';
+        $type = 'checkout';
         $hotel = Hotel::find(191);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
@@ -356,8 +356,8 @@ class UtilsController extends Controller
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
             //
-            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
-            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $dataEmail = [
                 'checkData' => $checkData,
@@ -370,10 +370,9 @@ class UtilsController extends Controller
                 'urlWebapp' => $urlWebapp
             ];
 
-
-
-            $this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "xpestana4@gmail.com");
+            //$this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            //$this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,true), "xpestana4@gmail.com");
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,true), "francisco20990@gmail.com");
 
 
             return view('Mails.guest.msgStay', [
