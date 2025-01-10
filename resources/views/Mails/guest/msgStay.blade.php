@@ -52,9 +52,9 @@
                 padding:0 24px;
             }
 
-            body {
+            /* body {
                 background-color: #ffffff !important;
-            }
+            } */
 
             .response-button {
                 height: 30px; /* Altura reducida */
@@ -113,9 +113,9 @@
                 width: 100%;
                 text-align: center;
             }
-            /* .responsive-section td img {
+            .responsive-section td img {
                 margin-bottom: 20px;
-            } */
+            }
         }
 
     </style>
