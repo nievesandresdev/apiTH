@@ -294,7 +294,7 @@ class UtilsController extends Controller
     // }
 
     public function testTemplateEmail(){
-        $type = 'welcome';
+        $type = 'checkout';
         $hotel = Hotel::find(191);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
