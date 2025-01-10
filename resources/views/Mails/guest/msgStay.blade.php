@@ -172,7 +172,7 @@
         @endif
 
         @if($type == 'welcome')
-            @if(count($data['facilities']) > 0 || $hotel->show_facilities)
+            @if(count($data['facilities']) > 0 && $hotel->show_facilities)
                 @include('components.mails.facilities', ['facilities' => $data['facilities']])
             @endif
         @endif
