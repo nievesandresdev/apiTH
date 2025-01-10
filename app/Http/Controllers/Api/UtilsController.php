@@ -295,7 +295,7 @@ class UtilsController extends Controller
 
     public function testTemplateEmail(){
         $type = 'checkout';
-        $hotel = Hotel::find(191);
+        $hotel = Hotel::find(274);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(449);
@@ -356,8 +356,8 @@ class UtilsController extends Controller
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
             //
-            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-            //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $dataEmail = [
                 'checkData' => $checkData,

@@ -84,6 +84,7 @@ class UtilityService {
             }
 
             $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);
+            dd($helpers);
             //places
             $placesArr = [];
             if (!empty($helpers['crosselling_places_whatvisit'][0])) {
