@@ -84,7 +84,6 @@ class UtilityService {
             }
 
             $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);
-            dd($helpers);
             //places
             $placesArr = [];
             if (!empty($helpers['crosselling_places_whatvisit'][0])) {
@@ -130,6 +129,13 @@ class UtilityService {
                     'num_stars' => $formattedRating
                 ];
             }, $experiencesArr);
+
+            dd([
+                'facilities' => $facilities,
+                'places' => $placesArr,
+                'experiences' => $experiences
+
+            ]);
 
             return [
                 'facilities' => $facilities,
