@@ -167,7 +167,7 @@
             @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
         @endif
 
-        @if(count($data['experiences']) > 0 || $hotel->show_experiences)
+        @if(count($data['experiences']) > 0 && $hotel->show_experiences)
             @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
         @endif
 
