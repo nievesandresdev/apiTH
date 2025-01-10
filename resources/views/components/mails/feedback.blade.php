@@ -26,7 +26,7 @@
             <!-- Muy Mala -->
             <td style="text-align: center; padding: 0 10px;">
                 <a href="{{$webappLinkInbox}}" target="_blank" style="text-decoration: none;">
-                    <img src="{{ asset('mails/icons/reviews/VERYWRONG.png') }}" alt="Muy Mala" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
+                    <img src="{{ asset('mails/icons/reviews/VERYWRONG.svg') }}" alt="Muy Mala" style="width: 32px; height: 32px; display: block; margin: 0 auto;">
                     <p class="review-label" style="color: #A0A0A0; font-family: Roboto, sans-serif; font-size: 14px; font-weight: 500; margin-top: 4px; white-space: nowrap;">Muy Mala</p>
                 </a>
             </td>
