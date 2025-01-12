@@ -65,7 +65,7 @@ class ChainController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotels);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getHotelsList');
         }
     }
 
