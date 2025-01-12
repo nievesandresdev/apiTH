@@ -5,5 +5,5 @@
 0 5 * * * /usr/local/bin/php /var/www/html/artisan sendqueriescommand >> /var/log/cron.log 2>&1 #diariamente 5 am / migrado / de admin
 * * * * * /usr/local/bin/php /var/www/html/artisan app:periodicity-chat >> /var/log/cron.log 2>&1 #cada minuto
 #0 12 * * * /usr/local/bin/php /var/www/html/artisan backup:hoster >> /var/log/cron.log 2>&1 #diariamente 12 pm backups
-5 * * * * /usr/local/bin/php /var/www/html/artisan send-post-stay-emails >> /var/log/cron.log 2>&1 #Cada hora
+#5 * * * * /usr/local/bin/php /var/www/html/artisan send-post-stay-emails >> /var/log/cron.log 2>&1 #Cada hora
 
