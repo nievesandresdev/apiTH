@@ -261,6 +261,7 @@ class User extends Authenticatable
             ];
         }
 
+
         return json_decode($value, true);
     }
 

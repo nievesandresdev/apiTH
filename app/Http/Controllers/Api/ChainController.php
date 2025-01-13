@@ -7,7 +7,7 @@ use App\Http\Resources\ChainResource;
 use Illuminate\Http\Request;
 use App\Services\Hoster\ChainCustomizationServices;
 use App\Http\Resources\CustomizationResource;
-use App\Http\Resources\HotelCardResource;
+use App\Http\Resources\{HotelCardResource, HotelResource};
 use App\Services\ChainService;
 use App\Services\HotelService;
 
@@ -50,7 +50,12 @@ class ChainController extends Controller
         try {
             $chainSubdomain = $request->attributes->get('chainSubdomain');
             $hotels = $this->chainServices->getHotelsList($chainSubdomain);
-            $hotels = HotelCardResource::collection($hotels);
+            if($request->type == 'reservation'){
+                $hotels = HotelResource::collection($hotels);
+            }else{
+                $hotels = HotelCardResource::collection($hotels);
+            }
+
             if(!$hotels){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -60,7 +65,7 @@ class ChainController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotels);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getHotelsList');
         }
     }
 

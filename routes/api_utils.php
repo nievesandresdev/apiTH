@@ -12,7 +12,7 @@ Route::group(['prefix' => 'utils'], function () {
 
 //test
 Route::group(['prefix' => 'utils'], function () {
-    Route::get('/test', [UtilsController::class, 'test']);
+    // Route::get('/test', [UtilsController::class, 'test']);
     Route::get('/stayTest', [StayController::class, 'testMail']);
     Route::get('/updateGuestsAcronyms', [UtilityController::class, 'updateGuestsAcronyms']);
 });

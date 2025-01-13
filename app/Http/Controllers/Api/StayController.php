@@ -70,7 +70,8 @@ class StayController extends Controller
     public function createAndInviteGuest (Request $request) {
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->createAndInviteGuest($hotel,$request);
+            $chainSubdomain = $request->attributes->get('chainSubdomain');
+            $model = $this->service->createAndInviteGuest($hotel, $chainSubdomain, $request);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -209,6 +210,7 @@ class StayController extends Controller
             $stay = $this->service->findbyId($stayId);
             $data = ['message' => __('response.bad_request_long')];
             if(!$stay) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            $stay = new StayResource($stay);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $stay);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findbyId');

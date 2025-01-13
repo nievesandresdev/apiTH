@@ -59,6 +59,8 @@ class GuestService {
             $lang = $data->language ?? 'es';
             $avatar = $data->avatar ?? null;
             $googleId = $data->googleId ?? null;
+            $facebookId = $data->facebookId ?? null;
+
             $guest = Guest::where('email',$email)->first();
             $acronym = $this->generateInitialsName($name ?? $email);
 
@@ -71,6 +73,7 @@ class GuestService {
                     'phone' => $phone ?? null,
                     'avatar' => $avatar,
                     'googleId' => $googleId,
+                    'facebookId' => $facebookId
                 ]);
 
             }else{
@@ -79,6 +82,7 @@ class GuestService {
                 $guest->phone = $phone ?? $guest->phone;
                 $guest->avatar = $avatar ?? $guest->avatar;
                 $guest->googleId = $googleId ?? $guest->googleId;
+                $guest->facebookId = $facebookId ?? $guest->facebookId;
                 if($acronym){
                     $guest->acronym = $acronym;
                 }
@@ -102,7 +106,7 @@ class GuestService {
     public function updatePasswordGuest($data)
     {
         try {
-            return $data->id;
+            //return $data->id;
             $guest = Guest::find($data->id);
 
             // Si el campo password es null, permite establecer la nueva contraseña
@@ -227,7 +231,7 @@ class GuestService {
         }
     }
 
-    public function updateById($data){
+    public function updateById($data, $renew = false){
         if(!$data->id) return;
 
         try{
@@ -245,16 +249,26 @@ class GuestService {
 
             $acronym = $this->generateInitialsName($name ?? $email);
 
+            $currentPhone = !$renew ? $guest->phone : null;
+            $currentLang = !$renew ? $guest->lang_web : 'es';
+            $currentLastname = !$renew ? $guest->lastname : null;
+            $currentAvatar = !$renew ? $guest->avatar : null;
+            
+
             $guest->name = $name;
             $guest->email = $data->email ?? $guest->email;
-            $guest->phone = $data->phone ?? $guest->phone;
-            $guest->lang_web = $data->lang_web ?? $guest->lang_web;
+            $guest->phone = $data->phone ?? $currentPhone;
+            $guest->lang_web = $data->lang_web ?? $currentLang;
+            $guest->lastname = $data->lastname ?? $currentLastname;
+            $guest->avatar = $data->avatar ?? $currentAvatar;
+
+
             $guest->acronym = $acronym;
 
             // Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
                 $guest->password = bcrypt($data->password);
-                Log::info('update pass'. $guest->password);
+                // Log::info('update pass'. $guest->password);
             }
 
             $guest->save();
@@ -344,17 +358,15 @@ class GuestService {
         $colorsExistsArray = $colorsExists->toArray();
 
         // Log para ver qué contiene $colorsExistsArray
-        Log::info('$colors '.json_encode($colors));
-        Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
+        // Log::info('$colors '.json_encode($colors));
+        // Log::info('$colorsExistsArray '.json_encode($colorsExistsArray));
 
         // Filtrar colores para encontrar aquellos que no están en $colorsExistsArray
         $availableColors = array_diff($colors, $colorsExistsArray);
-        Log::info('$availableColors '.json_encode($availableColors));
+        // Log::info('$availableColors '.json_encode($availableColors));
 
         // Verificar si hay colores disponibles
         if (!empty($availableColors)) {
-            Log::info('if');
-            Log::info('if '.$availableColors[array_rand($availableColors)]);
             // Seleccionar un color al azar de los colores disponibles
             return $availableColors[array_rand($availableColors)];
         } else {
@@ -365,11 +377,12 @@ class GuestService {
         }
     }
 
-    public function sendResetLinkEmail($email, $url){
+    public function sendResetLinkEmail($email, $hotel, $chain){
 
         try {
+            $hotelData = $hotel;
             $guest = $this->findByEmail($email);
-
+            
             // Generar token de restablecimiento
             $token = Str::random(60);
              // Guardar token en la base de datos
@@ -380,9 +393,21 @@ class GuestService {
                 'model_id' => $guest->id,
                 'created_at' => now()
             ]);
-
+            
             // Enviar correo con el enlace de restablecimiento
-            Mail::to($email)->send(new ResetPasswordGuest($url.$token));
+            // Mail::to($email)->send(new ResetPasswordGuest($url.$token));
+            $lastStay = $this->findAndValidLastStay($guest->email, $chain->id, $hotel ? $hotel->id : null);
+            if($lastStay && !$hotel){
+                $hotelData = $lastStay['stay']->hotel;
+            }
+            
+            Log::info('hotel '.json_encode($hotelData));
+            Log::info('guest '.json_encode($guest));
+            Log::info('chain '.json_encode($chain));
+            
+            $url = buildUrlWebApp($chain->subdomain, $hotelData->subdomain,'',"email={$email}&acform=reset&token=");
+            Log::info('url '.json_encode($url.$token));
+            Mail::to($guest->email)->send(new ResetPasswordGuest($hotelData, $url.$token, $guest));
             return true;
         } catch (\Exception $e) {
             return $e;
@@ -434,6 +459,9 @@ class GuestService {
                 $stay->save();
             }
             DB::commit();
+            
+            sendEventPusher('private-update-stay-list-hotel.' . $stay->hotel_id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
+
             return [
                 'stay' => $stay,
                 'guest' => $guest,
@@ -450,29 +478,32 @@ class GuestService {
         try {
             DB::beginTransaction();
             try {
-                // Log::info('deleteGuestOfStay ');
+                Log::info('-----deleteGuestOfStay ');
 
                 $guest = Guest::find($guestId);
+                Log::info('guest '.json_encode($guest->name));
                 $stay = Stay::find($stayId);
                 $chatExists = Chat::where('stay_id', $stayId)->where('guest_id', $guestId)->first();
+                Log::info('chatExists '.json_encode($chatExists));
                 $queryAnsweredExists = Query::where('stay_id', $stayId)
                             ->where('guest_id', $guestId)
                             ->where('answered', 1)
                             ->exists();
-
+                Log::info('queryAnsweredExists '.json_encode($queryAnsweredExists));
                 if(intval($stay->number_guests) > 1){
                     $stay->number_guests = intval($stay->number_guests) - 1;
                     $stay->save();
                 }
-
+                
                 if($chatExists || $queryAnsweredExists){
+                    Log::info('proceso para huesped con actividad ');
                     // Crear una nueva estancia solo para el huésped
                     $newStay = new Stay();
                     $newStay->hotel_id = $hotelId;
                     $newStay->number_guests = 1;
                     $newStay->language = 'Español';
-                    $newStay->check_in = Carbon::now()->subDays(5)->toDateString();
-                    $newStay->check_out = Carbon::now()->subDay()->toDateString();
+                    $newStay->check_in = $stay->check_in;
+                    $newStay->check_out = $stay->check_out;
                     $newStay->guest_id = $guestId;
                     $newStay->save();
 
@@ -503,6 +534,7 @@ class GuestService {
                     NoteGuest::where('stay_id', $stayId)->where('guest_id', $guestId)->update(['stay_id' => $newStay->id]);
 
                 } else {
+                    Log::info('proceso para huesped SIN actividad ');
                     // Eliminar relación
                     $guest->stays()->detach($stayId);
                     // Eliminar acceso
@@ -527,6 +559,9 @@ class GuestService {
 
                 DB::commit();
                 //actualizar lista en el saas
+                sendEventPusher('private-logout-webapp-guest.' . $guestId, 'App\Events\LogoutWebappGuest', [
+                    'guestId' => $guestId
+                ]);
                 sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
                 return true;
             } catch (\Exception $e) {
@@ -540,4 +575,5 @@ class GuestService {
             return $e;
         }
     }
+
 }

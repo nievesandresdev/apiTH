@@ -4,6 +4,7 @@ namespace App\Services\Hoster\RequestReviews;
 
 use App\Jobs\TranslateGenericMultipleJob;
 use App\Models\RequestSetting;
+use App\Models\RequestSettingsHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -31,6 +32,7 @@ class RequestReviewsSettingsServices {
     public function updateSettings ($hotelId, $keysToSave, $newdata) {
         try {
             $default = $this->getAll($hotelId);
+            
             $save = RequestSetting::updateOrCreate(['hotel_id' => $hotelId],
                 [
                     'msg_title' => in_array('msg_title', $keysToSave) ? $newdata->msg_title : $default->msg_title,
@@ -43,6 +45,9 @@ class RequestReviewsSettingsServices {
                     'request_to' => in_array('request_to', $keysToSave) ? $newdata->request_to : $default->request_to,
                 ]
             );
+
+            $this->createHistory($keysToSave, $newdata, $default, $save->id, $hotelId);
+
             $this->processTranslateTexts($newdata, $save);
             return $save;
         } catch (\Exception $e) {
@@ -104,4 +109,58 @@ class RequestReviewsSettingsServices {
         $model->save();
         Log::info('nueva traduccion guardada');
     }
+
+    public function createHistory($keysToSave, $newdata, $oldData, $settingId, $hotelId) {
+
+        try {
+            $inStayActivate = null;
+            $requestTo = null;
+            
+            $diffActivate = boolval($newdata->in_stay_activate) !== boolval($oldData->in_stay_activate);
+            $diffRequestTo = json_encode($newdata->request_to) !== json_encode($oldData->request_to);
+            
+            if(in_array('in_stay_activate', $keysToSave) && $diffActivate){
+                $inStayActivate = $oldData->in_stay_activate;
+            }
+            if(in_array('request_to', $keysToSave) && $diffRequestTo){
+                $requestTo = $oldData->request_to;
+            }
+
+            if(
+                in_array('in_stay_activate', $keysToSave) && $diffActivate || 
+                in_array('request_to', $keysToSave) && $diffRequestTo
+            ){
+                return RequestSettingsHistory::create([
+                    'hotel_id' => $hotelId,
+                    'request_setting_id' => $settingId,
+                    'in_stay_activate' => $inStayActivate,
+                    'request_to' => $requestTo
+                ]);
+            }
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function fieldAtTheMoment($field, $moment, $hotelId) {
+        try {
+            $latestHistory = RequestSettingsHistory::where('hotel_id', $hotelId)
+                ->where('created_at', '>=', $moment)
+                ->whereNotNull($field)
+                ->orderBy('created_at', 'asc')
+                ->first();
+    
+            if ($latestHistory) {
+                // Retornar el valor del campo desde el historial encontrado
+                return $latestHistory->$field;
+            } else {
+                $currentSettings = $this->getAll($hotelId);
+                return $currentSettings->$field;
+            }
+        } catch (\Exception $e) {
+            Log::error('Error en fieldAtTheMoment: ' . $e->getMessage());
+            return null; // O considera lanzar una excepción personalizada
+        }
+    }
+    
 }

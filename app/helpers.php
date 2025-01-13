@@ -14,7 +14,8 @@ use App\Models\ImagesHotels;
 use App\Models\ImageGallery;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('bodyResponseRequest')) {
     /**
@@ -723,13 +724,14 @@ if (! function_exists('postStayqueriesTextDefault')) {
     function postStayqueriesTextDefault(){
         $queriesTextDefault = new stdClass();
         $queriesTextDefault->post_stay_thanks_good = [
-            "es" => "Mención destacada a miembros del hotel:",
-            "en" => "Special mention to hotel staff:",
-            "fr" => "Mention spéciale aux membres du personnel de l'hôtel :",
-            "pt" => "Menção especial aos membros da equipe do hotel:",
-            "it" => "Menzione speciale ai membri dello staff dell'hotel:",
-            "de" => "Besondere Erwähnung für die Mitarbeiter des Hotels:"
-        ];       
+            "es" => "¡Nos alegra que hayas disfrutado con nosotros!",
+            "en" => "We're glad you enjoyed your stay with us!",
+            "fr" => "Nous sommes ravis que vous ayez apprécié votre séjour chez nous!",
+            "pt" => "Estamos felizes que você tenha gostado da sua estadia conosco!",
+            "it" => "Siamo lieti che tu abbia gradito il tuo soggiorno con noi!",
+            "de" => "Wir freuen uns, dass Sie Ihren Aufenthalt bei uns genossen haben!"
+        ];
+        
         $queriesTextDefault->post_stay_assessment_good_activate = true;
         $queriesTextDefault->post_stay_assessment_good = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
@@ -953,3 +955,26 @@ function saveImageToS3($imgFile, $path) {
 function getImageSavePath($model, $name_file) {
     return 'storage/'.$model.'/'.$name_file;
 }
+
+if (! function_exists('generateQr')) {
+    function generateQr($concept, $content) {
+
+        $qr = QrCode::format('png')->size(300)->generate($content);
+        // Definir el nombre del archivo con una marca de tiempo única
+        $nombreArchivo = 'qr_' . $concept . '.png';
+
+        // Definir la ruta completa donde se guardará el QR en S3
+        $rutaArchivo = 'qrcodes/' . $nombreArchivo;
+
+        if (Storage::disk('s3')->exists($rutaArchivo)) {
+            Storage::disk('s3')->delete($rutaArchivo);
+        }
+
+        $storage = Storage::disk('s3')->put($rutaArchivo, $qr, 'public');
+
+        // Obtener la URL pública del archivo guardado
+        return $urlQr = Storage::disk('s3')->url($rutaArchivo);
+    }
+}
+
+            

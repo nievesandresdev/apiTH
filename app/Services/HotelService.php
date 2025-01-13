@@ -248,12 +248,14 @@ class HotelService {
     public function processTranslateProfile ($request, $hotelModel) {
         $description = $request->description;
         // Log::info('processTranslateProfile $description'. !$description);
-        if ($description && $description != $hotelModel->description) {
+        if (!$description) {
+            $hotelModel->translations()->update(['description' => null]);
+            return;
+        }
+        if ($description != $hotelModel->description) {
             $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
             $inputsTranslate = ['description' => $description];
             TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel);
-        }else{
-            $hotelModel->translations()->update(['description' => null]);
         }
 
     }

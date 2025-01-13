@@ -39,7 +39,8 @@ class HotelResource extends JsonResource
         return [
             "id"=> $this->id,
             "name"=> $this->name,
-            "type"=> ucfirst($this->type),
+            // "type"=> ucfirst($this->type),
+            "type"=> $this->type,
             "address"=> $this->address,
             "zone"=> $this->zone,
             "category"=> $this->category,

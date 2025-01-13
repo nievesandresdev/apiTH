@@ -10,25 +10,32 @@ use Illuminate\Queue\SerializesModels;
 class MsgStay extends Mailable
 {
     use Queueable, SerializesModels;
-    public $msg;
+    public $type;
     public $hotel;
     public $guest;
-    public $guest_name;
     public $link;
     public $create;
+    public $urlQr;
+    public $data;
+    public $after;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($msg, $hotel,$link = null,$guest = false,$guest_name = null,$create = false)
+    public function __construct(
+        $type,
+        $hotel,
+        $guest,
+        $data = null,
+        $after = false
+    )
     {
-        $this->msg = $msg;
+        $this->type = $type;
         $this->hotel = $hotel;
-        $this->link = $link;
         $this->guest = $guest;
-        $this->guest_name = $guest_name;
-        $this->create = $create;
+        $this->data = $data;
+        $this->after = $after;
 
     }
 
@@ -39,16 +46,23 @@ class MsgStay extends Mailable
      */
     public function build()
     {
-        if($this->guest){
-            $subject = 'Hola '.$this->guest_name.', prueba la WebApp de '.$this->hotel->name.' ' ;
-        }else if($this->create){
-            $subject = 'Explora y disfruta la ciudad junto a '. $this->hotel->name;
+        if($this->type == 'welcome' || $this->type == 'inviteGuestFromSaas'){
+            $subject = 'Te damos la bienvenida a la WebApp de '.$this->hotel->name;
         }else{
-            $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
+            $subject = 'Gracias por elegirnos.';
         }
-        
+
+        // if($this->type == 'welcome'){
+        //     $subject = 'Hola '.$this->guest_name.', prueba la WebApp de '.$this->hotel->name.' ' ;
+        // }
+        // else if($this->create){
+        //     $subject = 'Explora y disfruta la ciudad junto a '. $this->hotel->name;
+        // }else{
+        // $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
+        // }
+
         $senderName = $this->hotel['sender_for_sending_email'];
-        $senderEmail = "no-reply@thehoster.es";
+        $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
         if($this->hotel['sender_mail_mask']){
             $senderEmail = $this->hotel['sender_mail_mask'];
         }

@@ -58,7 +58,8 @@ class GuestAuthController extends Controller
 
     public function updateById(Request $request){
         try {
-            $model = $this->service->updateById($request);
+
+            $model = $this->service->updateById($request, true);//true para borrar datos antiguos al momento de registrar
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -89,15 +90,12 @@ class GuestAuthController extends Controller
             $request->validate(['email' => 'required|email']);
 
             $chainSubdomain = $request->attributes->get('chainSubdomain');
-            // $chain = $this->chainServices->findBySubdomain($chainSubdomain);
+            $chain = $this->chainServices->findBySubdomain($chainSubdomain);
 
             $hotel = $request->attributes->get('hotel');
             $hotelSlug = $hotel->subdomain ?? null;
 
-            $url = buildUrlWebApp($chainSubdomain, $hotelSlug,'restablecer-contrasena',"email={$request->email}&token=");
-            
-
-            $model = $this->service->sendResetLinkEmail($request->email, $url);
+            $model = $this->service->sendResetLinkEmail($request->email, $hotel, $chain);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
@@ -197,26 +195,6 @@ class GuestAuthController extends Controller
                 Log::info('handleGoogleCallback 7');
             }
             return redirect()->to($redirectUrl);    
-            // if($findGuest){
-            //     $stay = $this->service->findAndValidLastStay($guest->id, null, $chain->id);
-            //     if($stay){
-            //         $hotel = $this->hotelServices->findById($stay->hotel_id);
-            //         //falto revisar cuando si tiene estancia
-            //         $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
-            //         return redirect()->to($redirectUrl);    
-            //     }
-            //     // $token = $findGuest->createToken('auth_token')->plainTextToken;
-            //     if($chain->type == "INDEPENDENT"){
-            //         $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&acform=createstay");
-            //     }else{
-            //         $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, 'lista-de-alojamientos',"g={$guest->id}");
-            //     }
-            //     return redirect()->to($redirectUrl);
-            // }else{
-            //     // auth_token={$token}&googleId={$googleId}&
-            //     $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete");
-            //     return redirect()->to($redirectUrl);
-            // }
         } catch (\Exception $e) {
             // Manejar errores y redirigir con un mensaje de error
             $state = $request->input('state');
@@ -228,11 +206,14 @@ class GuestAuthController extends Controller
 
     public function authWithFacebook(Request $request)
     {
-        // Obtener la URL de redirección desde el frontend
-        $redirectUrl = $request->input('redirect'); // Ejemplo: https://subdominio.tu-dominio.com
+        $stateData = [
+            'chainSubdomain' => $request->chainSubdomain,
+            'subdomain' => $request->subdomain ?? null,
+            'hotelId' => $request->hotelId ?? null,
+            'stayId' => $request->stayId ?? null,
+        ];
 
-        // Serializar la URL de redirección en el parámetro state
-        $state = base64_encode(json_encode(['redirect' => $redirectUrl]));
+        $state = base64_encode(json_encode($stateData));
 
         // Redirigir al usuario a Facebook para la autenticación con los permisos y parámetros necesarios
         return Socialite::driver('facebook')
@@ -245,14 +226,20 @@ class GuestAuthController extends Controller
     public function handleFacebookCallback(Request $request)
     {
         try {
+            Log::info('handleFacebookCallback');
             // Obtener y decodificar el parámetro state para extraer la URL de redirección
             $state = $request->input('state');
             if (!$state) {
-                throw new \Exception('El parámetro state está ausente.');
+                throw new \Exception('State parameter is missing.');
             }
 
             $decodedState = json_decode(base64_decode($state), true);
-            $redirectUrl = $decodedState['redirect'] ?? 'https://thehoster.io';
+            $chainSubdomain = $decodedState['chainSubdomain'];
+            $subdomainHotel = $decodedState['subdomain'] === 'null' ? null : $decodedState['subdomain'];
+            $hotelId = $decodedState['hotelId'] === 'null' ? null : $decodedState['hotelId'];
+            $stayId = $decodedState['stayId'] === 'null' ? null : $decodedState['stayId'];
+            $chain = $this->chainServices->findBySubdomain($chainSubdomain);
+            $chainId = $chain->id;
 
             // Obtener el usuario autenticado de Facebook
             $facebookUser = Socialite::driver('facebook')->stateless()->user();
@@ -265,20 +252,35 @@ class GuestAuthController extends Controller
             $email = $facebookUser->getEmail();
             $avatar = $facebookUser->getAvatar();
             // $avatar = $facebookUser->attributes['avatar_original'] ?? 'avatarnulo';
-            
-
-            $names = $firstName;
-            
             // Buscar al usuario por email
             $dataGuest = new \stdClass();
             $dataGuest->email = $email;
-            $guest = $this->service->saveOrUpdate($dataGuest);
-            
-            // Generar un token de autenticación (usando Laravel Sanctum)
-            $token = $guest->createToken('auth_token')->plainTextToken;
-
-            // Redirigir de vuelta al subdominio original con el token
-            return redirect()->to("{$redirectUrl}?auth_token={$token}&facebookId={$facebookId}&names={$names}&email={$email}&avatar={$avatar}");
+            $dataGuest->lastname = $lastName;
+            $dataGuest->name = $firstName;
+            $dataGuest->avatar = $avatar;
+            $dataGuest->facebookId = $facebookId;
+            // Log::info('$avatar '.$avatar);
+          
+          // $findGuest = $this->service->findByEmail($email);
+          
+          $guest = $this->service->saveOrUpdate($dataGuest);
+          
+          $findValidLastStay = $this->service->findAndValidLastStay($email, $chainId, $hotelId);
+          // Log::info('handleGoogleCallback 4 '.json_encode($findValidLastStay));
+          if(isset($findValidLastStay["stay"])){
+              $stay = $findValidLastStay["stay"];
+              $hotel = $this->hotelServices->findById($stay->hotel_id);
+              $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
+          }else{
+              if(!$hotelId){
+                  $subdomainHotel = null;
+              }
+              if($stayId){
+                  $findValidLastStay = $this->service->createAccessInStay($guest->id, $stayId, $chainId);
+              }
+              $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=facebook&acform=complete&e={$stayId}"); 
+          }
+          return redirect()->to($redirectUrl); 
         } catch (\Exception $e) {
             // Manejar errores y redirigir con un mensaje de error
             Log::error('Error en handleFacebookCallback: ' . $e->getMessage());
@@ -290,7 +292,6 @@ class GuestAuthController extends Controller
             return redirect()->to("{$redirectUrl}?error=authentication_failed");
         }
     }
-
 
 
     public function deleteFacebookData(Request $request)

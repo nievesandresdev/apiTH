@@ -16,7 +16,7 @@ Route::group(['prefix' => 'guest'], function () {
     Route::post('/sendMailTo', [GuestController::class, 'sendMailTo']);
     Route::post('/createAccessInStay', [GuestController::class, 'createAccessInStay']);
     Route::post('/deleteGuestOfStay', [GuestController::class, 'deleteGuestOfStay']);
-    
+
     //update data huesped
     Route::post('/updatePasswordGuest', [GuestController::class, 'updatePasswordGuest']);
     //updateDataGuest
@@ -36,10 +36,9 @@ Route::group(['prefix' => 'guest'], function () {
         Route::get('/google', [GuestAuthController::class, 'getDataByGoogle']);
         Route::get('/google/callback', [GuestAuthController::class, 'handleGoogleCallback']);
 
-
-        Route::get('/facebook', [GuestController::class, 'authWithFacebook']);
-        Route::post('/facebook/deleteData', [GuestController::class, 'deleteFacebookData']);
-        Route::get('/facebook/callback', [GuestController::class, 'handleFacebookCallback']);
+        Route::get('/facebook', [GuestAuthController::class, 'authWithFacebook']);
+        Route::post('/facebook/deleteData', [GuestAuthController::class, 'deleteFacebookData']);
+        Route::get('/facebook/callback', [GuestAuthController::class, 'handleFacebookCallback']);
 
 
 

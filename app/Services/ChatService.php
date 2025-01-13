@@ -138,7 +138,7 @@ class ChatService {
                 DB::table('jobs')->where('payload', 'like', '%send-by' . $guest->id . '%')->delete();
 
                 //se envia el mensaje si el hoster no responde en 1 min
-                /* if($request->isAvailable && $settings->first_available_show){
+                if($request->isAvailable && $settings->first_available_show){
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->first_available_msg[$langPage])->delay(now()->addMinutes(1));
                 }
                 //se envia el mensaje si el hoster no responde en 5 min
@@ -149,7 +149,7 @@ class ChatService {
                 if($request->isAvailable && $settings->three_available_show){
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(10));//10
 
-                } */
+                }
 
                 //se envia el mensaje si no hay agente disponible
                 if(!$request->isAvailable && $settings->not_available_show){

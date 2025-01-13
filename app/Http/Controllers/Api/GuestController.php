@@ -158,7 +158,7 @@ class GuestController extends Controller
     public function updatePasswordGuest(Request $request)
     {
         try {
-            $response = $this->service->updateDataGuest($request);
+            $response = $this->service->updatePasswordGuest($request);
 
 
             if (!$response['valid_password']) {
@@ -241,7 +241,7 @@ class GuestController extends Controller
             $stayId = $request->stayId;
             $chainId = $request->chainId;
             $hotelId = $request->hotelId;
-            
+
             $model = $this->service->deleteGuestOfStay($guestId, $stayId, $hotelId, $chainId);
             if(!$model){
                 $data = [
@@ -256,7 +256,7 @@ class GuestController extends Controller
         }
     }
 
-    
+
 
 
 }
