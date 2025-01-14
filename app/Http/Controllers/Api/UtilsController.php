@@ -294,11 +294,11 @@ class UtilsController extends Controller
     // }
 
     public function testTemplateEmail(){
-        $type = 'checkout';
-        $hotel = Hotel::find(274);
+        $type = 'welcome';
+        $hotel = Hotel::find(291);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
-        $stay = Stay::find(449);
+        $stay = Stay::find(1271);
 
         $checkData = [];
             $queryData = [];
@@ -372,7 +372,7 @@ class UtilsController extends Controller
 
             //$this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
             //$this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,true), "xpestana4@gmail.com");
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,true), "francisco20990@gmail.com");
+            // $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,true), "francisco20990@gmail.com");
 
 
             return view('Mails.guest.msgStay', [

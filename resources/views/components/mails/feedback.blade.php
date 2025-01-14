@@ -61,7 +61,7 @@
         </tr>
     </table>
     @else
-    <h2 style="margin:0;color:#333;font-family: Arial;font-size: 22px;font-weight: 500;">¿Necesitas algo para tu llegada al hotel?</h2>
+    <h2 style="margin:0;color:#333;font-family: Arial;font-size: 22px;font-weight: 500;">¿Necesitas algo para tu llegada al {{ formatTypeLodging($hotel->type) }}?</h2>
     <p style="margin:0;margin-top: 8px;color: #333;font-family: Arial;font-size: 16px;line-height: 175%;">Cuéntanos cómo recibirte.</p>
     @endif
     <!-- Botón -->
