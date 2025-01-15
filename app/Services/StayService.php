@@ -125,7 +125,7 @@ class StayService {
                 'check_out' => $request->checkDate['end'],
                 'guest_id' => $guest->id,
             ]);
-            // $guest->stays()->syncWithoutDetaching([$stay->id]);
+
             $guest->stays()->syncWithoutDetaching([
                 $stay->id => ['chain_id' => $hotel->chain_id]
             ]);
@@ -469,11 +469,11 @@ class StayService {
 
     public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null,$after = false)
     {
+
         try {
             $checkData = [];
             $queryData = [];
             //stay section
-
             if($type == 'welcome'){
                 if($stay->check_in && $stay->check_out){
                     $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
@@ -489,6 +489,7 @@ class StayService {
                     'editStayUrl' => $webappEditStay
                 ];
             }
+
 
         //     //query section
             if($type == 'welcome'){
@@ -517,17 +518,22 @@ class StayService {
                 ];
             }
 
+
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
+
 
             //
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
-            //
+
 
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+
 
             //
             $urlQr = generateQr($hotel->subdomain, $urlWebapp);
              //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+
+
 
             $dataEmail = [
                 'checkData' => $checkData,

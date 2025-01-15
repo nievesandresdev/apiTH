@@ -130,6 +130,13 @@ class UtilityService {
                 ];
             }, $experiencesArr);
 
+            /* dd([
+                'facilities' => $facilities,
+                'places' => $placesArr,
+                'experiences' => $experiences
+
+            ]); */
+
             return [
                 'facilities' => $facilities,
                 'places' => $placesArr,
