@@ -14,12 +14,8 @@ services:
       - "8001:80"
     networks:
       - bd-data_hoster_network
-    environment:
-      DB_HOST: 10.0.2.4
-      DB_PORT: 3307
-      DB_USER: thehoster_test
-      DB_PASSWORD: w2449daHK-n2T
-      DB_DATABASE: hoster_db
+    env_file: 
+      - .env
     # Supervisord gestionará todos los procesos en este contenedor
     command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
