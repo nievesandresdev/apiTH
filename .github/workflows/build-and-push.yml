@@ -54,6 +54,7 @@ jobs:
           echo "MIX_PUSHER_APP_CLUSTER=us2" >> .env
 
           if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "ASSET_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             echo "APP_DEBUG=${{ secrets.APP_DEBUG_MAIN }}" >> .env
             echo "APP_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             echo "APP_ENV=${{secrets.APP_ENV_MAIN}}" >> .env
@@ -91,7 +92,9 @@ jobs:
             echo "X_KEY_API=${{ secrets.X_KEY_API_MAIN }}" >> .env
 
             echo "URL_BASE_API_REVIEW=${{ secrets.URL_BASE_API_REVIEW_MAIN }}" >> .env
+            echo "URL_BASE_API_HELPERS=${{ secrets.URL_BASE_API_HELPERS_MAIN }}" >> .env
             echo "KEY_API_REVIEW=${{ secrets.KEY_API_REVIEW_MAIN }}" >> .env
+
 
             echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_MAIN }}" >> .env
             echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI_MAIN }}" >> .env
@@ -105,8 +108,8 @@ jobs:
             echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET_MAIN }}" >> .env
             echo "FACEBOOK_REDIRECT=${{ secrets.FACEBOOK_REDIRECT_MAIN }}" >> .env
 
-            echo "PASSPORT_PRIVATE_KEY=${{ secrets.PASSPORT_PRIVATE_KEY_MAIN }}" >> .env
-            echo "PASSPORT_PUBLIC_KEY=${{ secrets.PASSPORT_PUBLIC_KEY_MAIN }}" >> .env
+            echo "PASSPORT_PRIVATE_KEY=\"${{ secrets.PASSPORT_PRIVATE_KEY_MAIN }}\"" >> .env
+            echo "PASSPORT_PUBLIC_KEY=\"${{ secrets.PASSPORT_PUBLIC_KEY_MAIN }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
           else
