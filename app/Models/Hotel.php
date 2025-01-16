@@ -62,6 +62,8 @@ class Hotel extends Model
         'sender_for_sending_email',
         'code',
         'chain_id',
+        'show_referrals',
+        'offer_benefits',
     ];
 
     /* public function user()
