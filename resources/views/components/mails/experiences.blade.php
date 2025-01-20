@@ -1,6 +1,6 @@
-<div class="container-exp" style="max-width: 488px;margin:0 auto;margin-top:32px;padding:0;">
+<div class="container-exp" style="max-width: 488px;margin:0 auto;margin-top:32px;padding:0;; margin-left: 16px; margin-right: 16px;">
     <!-- Título -->
-    @if($type == 'welcome')
+    @if($type == 'welcome' || $type == 'postCheckin')
 
         <h2 style="margin:0; color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
             Podrás vivir experiencias inolvidables
@@ -42,7 +42,7 @@
                                         <img src="{{ asset('mails/WA.star.png') }}" alt="Estrella" style="width: 16px; height: 16px;">
                                     </td>
                                     <td style="width: auto;">
-                                        <span style="color: #333; font-size: 16px; font-weight: 700;font-family:Arial;">{{$item['num_stars']}}</span>
+                                        <span style="color: #333; font-size: 16px; font-weight: 700;font-family:Arial;"> {{ str_replace(',', '.', $item['num_stars'] ?? '0') }}</span>
                                     </td>
                                 </tr>
                             </table>

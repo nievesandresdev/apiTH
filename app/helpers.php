@@ -977,4 +977,18 @@ if (! function_exists('generateQr')) {
     }
 }
 
+if (! function_exists('formatTypeLodging')) {
+    function formatTypeLodging($type, $title = false) {
+
+        $typeLodging = [
+            "hotel" => !$title ? "hotel" : "Hotel",
+            "at" => !$title ? "apartamento" : "Apartamento",
+            "vft" => !$title ? "apartamento" : "Apartamento",
+        ];
+        $defaultLetter = !$title ? "alojamiento" : "Alojamiento";
+        return $typeLodging[$type] ?? $defaultLetter;
+    }
+}
+
             
+

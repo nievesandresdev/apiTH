@@ -35,10 +35,7 @@ jobs:
           echo "REDIS_HOST=127.0.0.1" >> .env
           echo "REDIS_PASSWORD=null" >> .env
           echo "REDIS_PORT=6379" >> .env
-          echo "MAIL_DRIVER=smtp" >> .env
-          echo "MAIL_HOST=smtp.gmail.com" >> .env
-          echo "MAIL_PORT=587" >> .env
-          echo "MAIL_ENCRYPTION=tls" >> .env
+          
           echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
           echo "MAIL_FROM_NAME=TheHoster" >> .env
           echo "MAIL_ADMIN=info@thehoster.es" >> .env
@@ -54,6 +51,7 @@ jobs:
           echo "MIX_PUSHER_APP_CLUSTER=us2" >> .env
 
           if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "ASSET_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             echo "APP_DEBUG=${{ secrets.APP_DEBUG_MAIN }}" >> .env
             echo "APP_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             echo "APP_ENV=${{secrets.APP_ENV_MAIN}}" >> .env
@@ -64,6 +62,10 @@ jobs:
             echo "DB_USERNAME=${{ secrets.DB_USERNAME_MAIN }}" >> .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD_MAIN }}" >> .env
 
+            echo "MAIL_DRIVER=${{ secrets.MAIL_DRIVER_MAIN }}" >> .env
+            echo "MAIL_HOST=${{ secrets.MAIL_HOST_MAIN }}" >> .env
+            echo "MAIL_PORT=${{ secrets.MAIL_PORT_MAIN }}" >> .env
+            echo "MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION_MAIN }}" >> .env
             echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME_MAIN }}" >> .env
             echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD_MAIN }}" >> .env
 
@@ -91,7 +93,9 @@ jobs:
             echo "X_KEY_API=${{ secrets.X_KEY_API_MAIN }}" >> .env
 
             echo "URL_BASE_API_REVIEW=${{ secrets.URL_BASE_API_REVIEW_MAIN }}" >> .env
+            echo "URL_BASE_API_HELPERS=${{ secrets.URL_BASE_API_HELPERS_MAIN }}" >> .env
             echo "KEY_API_REVIEW=${{ secrets.KEY_API_REVIEW_MAIN }}" >> .env
+
 
             echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_MAIN }}" >> .env
             echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI_MAIN }}" >> .env
@@ -105,8 +109,8 @@ jobs:
             echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET_MAIN }}" >> .env
             echo "FACEBOOK_REDIRECT=${{ secrets.FACEBOOK_REDIRECT_MAIN }}" >> .env
 
-            echo "PASSPORT_PRIVATE_KEY=${{ secrets.PASSPORT_PRIVATE_KEY_MAIN }}" >> .env
-            echo "PASSPORT_PUBLIC_KEY=${{ secrets.PASSPORT_PUBLIC_KEY_MAIN }}" >> .env
+            echo "PASSPORT_PRIVATE_KEY=\"${{ secrets.PASSPORT_PRIVATE_KEY_MAIN }}\"" >> .env
+            echo "PASSPORT_PUBLIC_KEY=\"${{ secrets.PASSPORT_PUBLIC_KEY_MAIN }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
           else
@@ -121,6 +125,10 @@ jobs:
             echo "DB_USERNAME=${{ secrets.DB_USERNAME_TEST }}" >> .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD_TEST }}" >> .env
 
+            echo "MAIL_DRIVER=${{ secrets.MAIL_DRIVER_TEST }}" >> .env
+            echo "MAIL_HOST=${{ secrets.MAIL_HOST_TEST }}" >> .env
+            echo "MAIL_PORT=${{ secrets.MAIL_PORT_TEST }}" >> .env
+            echo "MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION_TEST }}" >> .env
             echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME_TEST }}" >> .env
             echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD_TEST }}" >> .env
 

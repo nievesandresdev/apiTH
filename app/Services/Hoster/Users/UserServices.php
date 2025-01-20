@@ -277,14 +277,6 @@ class UserServices
         return collect($groupedUsers);
     }
 
-
-
-
-
-
-
-
-
     public function arrayMapUser($user)
     {
 

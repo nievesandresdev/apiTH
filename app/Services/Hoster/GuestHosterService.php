@@ -13,6 +13,7 @@ use App\Services\MailService;
 use App\Services\QuerySettingsServices;
 use App\Services\StayService;
 use App\Services\UtilityService;
+use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\Log;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
@@ -51,8 +52,11 @@ class GuestHosterService {
     {
         $guest = $this->guestService->saveOrUpdate($data);
 
+        //return bodyResponseRequest(EnumResponse::ACCEPTED, ['guest' => $guest,'data' => $data, 'hotel' => $hotel, 'chainSubdomain' => $chainSubdomain]);
 
         $this->stayServices->guestWelcomeEmail('inviteGuestFromSaas',$chainSubdomain, $hotel, $guest);
+
+        return $guest;
     }
 
     // public function inviteToHotel($data, $hotelId)

@@ -16,8 +16,8 @@ class MsgStay extends Mailable
     public $link;
     public $create;
     public $urlQr;
-    public $after;
     public $data;
+    public $after;
     /**
      * Create a new message instance.
      *
@@ -27,13 +27,15 @@ class MsgStay extends Mailable
         $type,
         $hotel,
         $guest,
-        $data = null
+        $data = null,
+        $after = false
     )
     {
         $this->type = $type;
         $this->hotel = $hotel;
         $this->guest = $guest;
         $this->data = $data;
+        $this->after = $after;
 
     }
 
@@ -44,10 +46,12 @@ class MsgStay extends Mailable
      */
     public function build()
     {
-        if($this->type == 'welcome'){
-            $subject = '¿Ya conoces la WebApp de '.$this->hotel->name.'?';
-        }else{
-            $subject = 'Gracias por elegirnos.';
+        $subject = 'Gracias por elegirnos.';
+        if($this->type == 'welcome' || $this->type == 'inviteGuestFromSaas'){
+            $subject = 'Te damos la bienvenida a la WebApp de '.$this->hotel->name;
+        }
+        if($this->type == 'postCheckin'){
+            $subject = '¿Qué tal va todo?';
         }
 
         // if($this->type == 'welcome'){
@@ -60,7 +64,7 @@ class MsgStay extends Mailable
         // }
 
         $senderName = $this->hotel['sender_for_sending_email'];
-        $senderEmail = "no-reply@thehoster.es";
+        $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
         if($this->hotel['sender_mail_mask']){
             $senderEmail = $this->hotel['sender_mail_mask'];
         }

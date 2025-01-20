@@ -37,4 +37,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('buildUrlWebApp', [HotelController::class, 'buildUrlWebApp']);
     //findById
     Route::get('findById/{id}', [HotelController::class, 'findById']);
+
+    //handleShowReferrals
+    Route::post('handleShowReferrals', [HotelController::class, 'handleShowReferrals']);
 });

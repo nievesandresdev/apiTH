@@ -94,6 +94,8 @@ class HotelResource extends JsonResource
             "policies" => $this->policies,
             "chain" => new ChainResource($this->chain),
             "subscribed"=> $this->subscription_active ? $is_subscribed : false,
+            "show_referrals" => $this->show_referrals,
+            "offer_benefits" => $this->offer_benefits,
         ];
     }
 }

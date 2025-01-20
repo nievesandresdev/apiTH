@@ -125,7 +125,7 @@ class StayService {
                 'check_out' => $request->checkDate['end'],
                 'guest_id' => $guest->id,
             ]);
-            // $guest->stays()->syncWithoutDetaching([$stay->id]);
+
             $guest->stays()->syncWithoutDetaching([
                 $stay->id => ['chain_id' => $hotel->chain_id]
             ]);
@@ -154,7 +154,12 @@ class StayService {
                 // $msg = prepareMessage($data,$hotel,'&subject=invited');
                 // $link = prepareLink($data,$hotel,'&subject=invited');
                 // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-                // $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+
+                if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
+                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
+                } else {
+                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+                }
                 // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
             //}
 
@@ -462,13 +467,13 @@ class StayService {
         }
     }
 
-    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null)
+    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null,$after = false)
     {
+
         try {
             $checkData = [];
             $queryData = [];
             //stay section
-
             if($type == 'welcome'){
                 if($stay->check_in && $stay->check_out){
                     $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
@@ -484,6 +489,7 @@ class StayService {
                     'editStayUrl' => $webappEditStay
                 ];
             }
+
 
         //     //query section
             if($type == 'welcome'){
@@ -512,17 +518,22 @@ class StayService {
                 ];
             }
 
+
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
+
 
             //
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
-            //
+
 
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
+
             //
-            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
-             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+
+
 
             $dataEmail = [
                 'checkData' => $checkData,
@@ -540,7 +551,7 @@ class StayService {
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), $guest->email);
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after), $guest->email);
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());

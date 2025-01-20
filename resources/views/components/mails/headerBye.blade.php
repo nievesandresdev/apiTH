@@ -6,7 +6,7 @@
                            width: 50%;
                            vertical-align: top;
                            padding: 0 0 0 10px;" class="hidden-responsive"> <!-- 10px de padding a la izquierda -->
-                    <img src="{{ asset('mails/welcome2.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px; max-width: 100%; height: auto;">
+                    <img src="{{ asset('mails/welcome2.png') }}" alt="Welcome Banner" style="width: 327px; height: 240px; max-width: 100%; height: auto;">
                 </td>
                 <!-- Columna de Texto -->
                 <td class="text-content"

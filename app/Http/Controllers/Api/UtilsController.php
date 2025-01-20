@@ -98,30 +98,18 @@ class UtilsController extends Controller
         // }
     }
 
-    public function testTemplateEmail(){
-        $url = "url";
-        $hotel = Hotel::find(191);
-        $guest = Guest::find(9);
 
-        return view('Mails.guest.resetPassword', [
-            'url' => $url,
-            'hotel' => $hotel,
-            'guest' => $guest,
-        ]);
-    }
-    
-    public function testTemplateEmailold()
-    {
-        $type = 'checkout';
+    public function testTemplateEmail(){
+        $type = 'postCheckin';
         $hotel = Hotel::find(191);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
-        $stay = Stay::find(449);
+        $stay = Stay::find(565);
 
-        $checkData = [];
+        try {
+            $checkData = [];
             $queryData = [];
             //stay section
-
             if($type == 'welcome'){
                 if($stay->check_in && $stay->check_out){
                     $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
@@ -138,8 +126,9 @@ class UtilsController extends Controller
                 ];
             }
 
+
         //     //query section
-            if($type == 'welcome' || $type == 'checkout'){
+            if($type == 'welcome' || $type == 'postCheckin'){
                 $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
                 $querySettings = $this->querySettingsServices->getAll($hotel->id);
                 $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
@@ -165,17 +154,22 @@ class UtilsController extends Controller
                 ];
             }
 
+
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
+
 
             //
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
-            //
+
 
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
+
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+
+
 
             $dataEmail = [
                 'checkData' => $checkData,
@@ -188,42 +182,30 @@ class UtilsController extends Controller
                 'urlWebapp' => $urlWebapp
             ];
 
+            //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
+            // Log::info('dataEmail '.json_encode($dataEmail));
+            // Log::info('hotelid '.json_encode($hotel->id));
+            // Log::info('guest '.json_encode($guest));
 
-
-            //$this->stayServices->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail), "francisco20990@gmail.com");
-
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false), $guest->email);
+            
 
             return view('Mails.guest.msgStay', [
                 'type' => $type,
                 'hotel' => $hotel,
                 'guest' => $guest,
-                'data'=> $dataEmail
+                'data'=> $dataEmail,
+                'after' => false
             ]);
 
+        } catch (\Exception $e) {
+            Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
+            DB::rollback();
+            return $e;
+        }
     }
 
 
-    public function test()
-    {
-        return 'asdasd';
-        $hotel = Hotel::find(191);
-        $urlWebapp = buildUrlWebApp($hotel->chain->subdomain,$hotel->subdomain);
-        // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-        $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
-
-        $guest = Guest::find(9);
-        $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $hotel->subdomain);
-        $this->mailService->sendEmail(new MsgStay(
-            'welcome',
-            $hotel,
-            $urlWebapp,
-            $guest,
-            $urlQr,
-            ['crosselling'=>$crosselling]
-        ), 'andresdreamerf@gmail.com');
-        return 'hecho'.time();
-    }
 
 
 

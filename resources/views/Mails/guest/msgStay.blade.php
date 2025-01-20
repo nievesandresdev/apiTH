@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
 
         body {
@@ -51,14 +52,14 @@
                 padding:0 24px;
             }
 
-            body {
+            /* body {
                 background-color: #ffffff !important;
-            }
+            } */
 
             .response-button {
                 height: 30px; /* Altura reducida */
                 line-height: 34px; /* Centrado del texto */
-                font-size: 18px; /* Tamaño de fuente más pequeño */
+                font-size: 14px; /* Tamaño de fuente más pequeño */
                 padding: 10px 25px; /* Espaciado ajustado */
             }
             .responsive-table, .responsive-table-2 {
@@ -105,7 +106,7 @@
             }
 
             .responsive-section table {
-            display: block;
+                display: block;
             }
             .responsive-section td {
                 display: block;
@@ -113,7 +114,7 @@
                 text-align: center;
             }
             .responsive-section td img {
-                margin-bottom: 20px; /* Separar la imagen del texto */
+                margin-bottom: 20px;
             }
         }
 
@@ -122,6 +123,7 @@
     @include('components.mails.facilitiesAndPlacesStyles')
     @include('components.mails.experiencesStyles')
     @include('components.mails.inviteGuestFromSaasStyles')
+    @include('components.mails.headerPostCheckinStyles')
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
     <div style="max-width: 568px; margin: 0 auto">
@@ -129,7 +131,10 @@
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
         </div>
         @if($type == 'welcome')
-            @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name])
+            @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name,'after' => $after])
+        @endif
+        @if($type == 'postCheckin')
+            @include('components.mails.headerPostCheckin')
         @endif
         @if($type == 'checkout')
             @include('components.mails.headerBye',['guest_name' => $guest->name])
@@ -151,33 +156,34 @@
         @endif
 
         {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
-        @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-
+        @if(($type == 'welcome' || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
+            @if($data['queryData']['currentPeriod'] !== 'in-stay')
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+            @endif
             @include('components.mails.feedback',[
                 'currentPeriod' => $data['queryData']['currentPeriod'],
                 'webappLinkInbox' => $data['queryData']['webappLinkInbox'],
                 'webappLinkInboxGoodFeel' => $data['queryData']['webappLinkInboxGoodFeel'],
+                'after' => $after
             ])
         @endif
 
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        {{-- @if(count($data['places']) > 0 || $hotel->show_places)
+        @if(count($data['places']) > 0 && $hotel->show_places)
             @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
         @endif
 
-        @if(count($data['experiences']) > 0 || $hotel->show_experiences)
+        @if(count($data['experiences']) > 0 && $hotel->show_experiences)
             @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
-        @endif --}}
+        @endif
 
-        {{-- @if($type == 'welcome')
-            @if(count($data['facilities']) > 0 || $hotel->show_facilities)
+        @if($type == 'welcome' || $type == 'postCheckin')
+            @if(count($data['facilities']) > 0 && $hotel->show_facilities)
                 @include('components.mails.facilities', ['facilities' => $data['facilities']])
             @endif
-        @endif --}}
+        @endif
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-
-        @if($type == 'welcome')
+        @if($type == 'welcome' || $type == 'postCheckin')
             @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])

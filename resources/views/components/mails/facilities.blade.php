@@ -1,4 +1,4 @@
-<div style="margin-top:32px">
+<div style="margin-top:32px; margin-left: 16px; margin-right: 16px;">
     <!-- Título -->
     <h2 style="color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
         Disfrutarás de estas instalaciones y más
@@ -16,9 +16,9 @@
                 @foreach ($facilities as $key => $item)
                     <td class="{{ $key == 2 ? 'col-3-desktop' : '' }}">
                         <div style="border-radius: 4px;border: 1px solid #F3F3F3;background: #FFF;padding:1px;">
-                            <img 
-                                src="{{$item['url_image']}}" 
-                                alt="Catedral de Sevilla" 
+                            <img
+                                src="{{$item['url_image']}}"
+                                alt="Catedral de Sevilla"
                                 style="display:block;border-radius:3px 3px 0 0;width:100%;height:148px"
                             >
                             <div style="padding: 8px;">
@@ -26,8 +26,8 @@
                                     {!! $item['title'] !!}
                                 </h2>
                                 <div style="text-align: right;margin-top:8px;margin-bottom:15px;">
-                                    <a 
-                                        style="color:#333;font-family: Arial;font-size: 10.5px;font-weight: 700;line-height: 114.286%;text-decoration: underline;" 
+                                    <a
+                                        style="color:#333;font-family: Arial;font-size: 10.5px;font-weight: 700;line-height: 114.286%;text-decoration: underline;"
                                         href="{{ $item['url_webapp'] }}"
                                     >
                                         Ver en la WebApp

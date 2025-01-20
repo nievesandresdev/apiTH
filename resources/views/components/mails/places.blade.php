@@ -1,6 +1,6 @@
-<div style="max-width: 488px;margin:0 auto;">
+<div style="max-width: 488px;margin:0 auto;; margin-left: 16px; margin-right: 16px;">
     <!-- Título -->
-    @if($type == 'welcome')
+    @if($type == 'welcome' || $type == 'postCheckin')
         <h2 style="margin:0; color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
             Te esperan estos Destinos y muchos más
         </h2>
