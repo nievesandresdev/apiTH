@@ -183,7 +183,7 @@ class GuestAuthController extends Controller
             if(isset($findValidLastStay["stay"])){
                 $stay = $findValidLastStay["stay"];
                 $hotel = $this->hotelServices->findById($stay->hotel_id);
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}&action=toLogin");
             }else{
                 if(!$hotelId){
                     $subdomainHotel = null;

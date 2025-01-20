@@ -1,4 +1,7 @@
 <section style="background: #FFFFFF; border-radius: 3px; margin-left: 16px; margin-right: 16px;">
+    @if($currentPeriod == 'in-stay')
+        <div style="margin-top: 32px;"></div>
+    @endif
     @if($currentPeriod !== 'pre-stay')
     <!-- Título -->
     <div style="">
