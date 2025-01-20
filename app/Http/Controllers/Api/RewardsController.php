@@ -37,7 +37,7 @@ class RewardsController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $rewards);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], $e->getMessage().' '.self::class . '.getRewards');
         }
     }
 
