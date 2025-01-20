@@ -159,7 +159,7 @@ class PeriodicityChat extends Command
                 });
             });
 
-            Log::info('Finalizado PeriodicityChat con éxito.');
+            // Log::info('Finalizado PeriodicityChat con éxito.');
         } catch (\Exception $e) {
             Log::error('Error al obtener los usuarios de los hoteles y chats/queries pendientes', ['error' => $e->getMessage()]);
         }
