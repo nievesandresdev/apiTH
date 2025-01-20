@@ -22,22 +22,36 @@ class RewardsController extends Controller
         try {
             $hotelModel = $request->attributes->get('hotel');
             $rewards = $this->service->getRewards($request, $hotelModel);
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+            /* return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'rewards' => $rewards,
                 'hotel' => $hotelModel
-            ]);
-            if(!$facilities){
+            ]); */
+            if(!$rewards){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             //
-            /* $data = FacilityResource::collection($facilities);
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $data); */
+            //$data = FacilityResource::collection($facilities);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $rewards);
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
+        }
+    }
+
+    public function storeOrUpdateRewards(Request $request){
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $rewards = $this->service->storeOrUpdateRewards($request, $hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'requestCreate' => $request->all(),
+                'hotel' => $hotelModel,
+                'rewards' => $rewards
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdateRewards');
         }
     }
 }

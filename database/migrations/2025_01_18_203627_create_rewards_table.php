@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('type_discount')->nullable();
             $table->string('type_rewards')->nullable();
-            //foreign users
+
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            //foreign hotels
+
             $table->unsignedBigInteger('hotel_id');
             $table->foreign('hotel_id')->references('id')->on('hotels');
             $table->timestamps();

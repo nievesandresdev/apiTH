@@ -443,6 +443,17 @@ class HotelController extends Controller
         }
     }
 
+    public function handleShowReferrals (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $data = $this->service->handleShowReferrals($hotelModel);
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.handleShowReferrals');
+        }
+    }
+
 
 
 }

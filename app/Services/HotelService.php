@@ -414,4 +414,10 @@ class HotelService {
         }
     }
 
+    public function handleShowReferrals ($hotelModel) {
+       $hotelModel->update(['show_referrals' => !$hotelModel->show_referrals]);
+
+        return $hotelModel;
+    }
+
 }
