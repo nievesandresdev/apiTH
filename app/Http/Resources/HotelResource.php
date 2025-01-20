@@ -81,6 +81,8 @@ class HotelResource extends JsonResource
             "checkout_until"=> $this->checkout_until,
             "x_url" => $this->x_url,
             "show_facilities" => $this->show_facilities,
+            "show_confort" => $this->show_confort,
+            "show_transport" => $this->show_transport,
             "show_places" => $this->show_places,
             "hidden_categories" => $this->hiddenCategories->pluck('id'),
             "hidden_type_places" => $this->hiddenTypePlaces->pluck('id'),

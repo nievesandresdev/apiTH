@@ -270,6 +270,13 @@ class HotelService {
         return $hotelModel;
     }
 
+    public function updateVisivilityServices ($request, $hotelModel) {
+        $nameService = $request->service;
+        $input = "show_$nameService";
+        $hotelModel = $hotelModel->update([$input => !$hotelModel[$input]]);
+        return $hotelModel;
+    }
+
     public function updateVisivilityPlaces ($hotelModel) {
         $hotelModel = $hotelModel->update(['show_places' => !$hotelModel->show_places]);
         return $hotelModel;
