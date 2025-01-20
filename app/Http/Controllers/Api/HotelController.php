@@ -250,7 +250,7 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
         }
     }
-
+    
     public function updateVisivilityFacilities (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
@@ -263,6 +263,25 @@ class HotelController extends Controller
             }
 
             $this->service->updateVisivilityFacilities($hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityFacilities');
+        }
+    }
+
+    public function updateVisivilityServices (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            $this->service->updateVisivilityServices($request, $hotelModel);
 
             $hotelModel->refresh();
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
@@ -440,6 +459,17 @@ class HotelController extends Controller
             \DB::rollback();
             return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateCustomization');
+        }
+    }
+
+    public function handleShowReferrals (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $data = $this->service->handleShowReferrals($hotelModel);
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.handleShowReferrals');
         }
     }
 

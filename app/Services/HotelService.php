@@ -270,6 +270,13 @@ class HotelService {
         return $hotelModel;
     }
 
+    public function updateVisivilityServices ($request, $hotelModel) {
+        $nameService = $request->service;
+        $input = "show_$nameService";
+        $hotelModel = $hotelModel->update([$input => !$hotelModel[$input]]);
+        return $hotelModel;
+    }
+
     public function updateVisivilityPlaces ($hotelModel) {
         $hotelModel = $hotelModel->update(['show_places' => !$hotelModel->show_places]);
         return $hotelModel;
@@ -412,6 +419,12 @@ class HotelService {
         } else {
             return "Error al crear el subdominio: " . $response;
         }
+    }
+
+    public function handleShowReferrals ($hotelModel) {
+       $hotelModel->update(['show_referrals' => !$hotelModel->show_referrals]);
+
+        return $hotelModel;
     }
 
 }

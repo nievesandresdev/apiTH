@@ -28,6 +28,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::post('/updateSenderMailMask', [HotelController::class, 'updateSenderMailMask']);
     Route::post('/facilityVisivility', [HotelController::class, 'updateVisivilityFacilities']);
     Route::post('/experienceVisivility', [HotelController::class, 'updateVisivilityExperiences']);
+    Route::post('/serviceVisivility', [HotelController::class, 'updateVisivilityServices']);
     Route::post('/categoriVisivility', [HotelController::class, 'updateVisivilityCategory']);
     Route::post('/typePlaceVisivility', [HotelController::class, 'updateVisivilityTypePlace']);
     Route::get('/verifySubdomainExistPerHotel', [HotelController::class, 'verifySubdomainExistPerHotel']);
@@ -36,4 +37,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('buildUrlWebApp', [HotelController::class, 'buildUrlWebApp']);
     //findById
     Route::get('findById/{id}', [HotelController::class, 'findById']);
+
+    //handleShowReferrals
+    Route::post('handleShowReferrals', [HotelController::class, 'handleShowReferrals']);
 });

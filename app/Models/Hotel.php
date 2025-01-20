@@ -47,6 +47,8 @@ class Hotel extends Model
         'scraper_run',
         'last_date_historical',
         'show_experiences',
+        'show_confort',
+        'show_transport',
         'show_places',
         'phone_optional',
         'with_wifi',
