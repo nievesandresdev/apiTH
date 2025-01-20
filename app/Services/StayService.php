@@ -403,7 +403,7 @@ class StayService {
 
             $dayCheckin = $stay->check_in;
             $dayCheckout = $stay->check_out;
-            $hourCheckin = $hotel->checkin ?? '16:00';
+            $hourCheckin = $hotel->checkin ?? '14:00';
 
             // Crear objeto Carbon para check-in
             $checkinDateTimeString = $dayCheckin . ' ' . $hourCheckin;
@@ -467,7 +467,7 @@ class StayService {
         }
     }
 
-    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null,$after = false)
+    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null, $after = false)
     {
 
         try {
@@ -491,8 +491,8 @@ class StayService {
             }
 
 
-        //     //query section
-            if($type == 'welcome'){
+            //     //query section
+            if($type == 'welcome' || $type == 'postCheckin'){
                 $currentPeriod = $this->getCurrentPeriod($hotel, $stay);
                 $querySettings = $this->querySettingsServices->getAll($hotel->id);
                 $hoursAfterCheckin = $this->calculateHoursAfterCheckin($hotel, $stay);
@@ -530,8 +530,8 @@ class StayService {
 
 
             //
-            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
 
 
