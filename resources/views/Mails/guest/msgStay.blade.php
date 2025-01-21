@@ -154,16 +154,15 @@
                 'editUrl' => $data['checkData']['editStayUrl']
             ])
         @endif
-        {{-- {{dd($data,$hotel)}} --}}
         {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
-        @if(($type == 'welcome' || $type == 'checkout' || $type == 'postCheckin'))
-            {{-- @if($data['queryData']['currentPeriod'] !== 'in-stay')
+        @if(($type == 'welcome' || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
+            @if($data['queryData']['currentPeriod'] !== 'in-stay')
                 <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-            @endif --}}
+            @endif
             @include('components.mails.feedback',[
-                'currentPeriod' => 'in-stay',
-                'webappLinkInbox' => 'sss',
-                'webappLinkInboxGoodFeel' => 'sss',
+                'currentPeriod' => $data['queryData']['currentPeriod'],
+                'webappLinkInbox' => $data['queryData']['webappLinkInbox'],
+                'webappLinkInboxGoodFeel' => $data['queryData']['webappLinkInboxGoodFeel'],
                 'after' => $after
             ])
         @endif
