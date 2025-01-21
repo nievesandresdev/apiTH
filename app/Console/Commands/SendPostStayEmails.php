@@ -155,7 +155,7 @@ class SendPostStayEmails extends Command
                     $link = includeSubdomainInUrlHuesped($queries_url, $stay->hotel);
 
 
-                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), $query->guest->email);
+                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
                     $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
                     Log::info('Correo enviado correctamente handleSendEmailCheckout', ['guest_email' => $query->guest->email]);
                 } catch (\Exception $e) {
