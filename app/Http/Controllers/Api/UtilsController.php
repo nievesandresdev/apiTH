@@ -100,12 +100,13 @@ class UtilsController extends Controller
     }
 
 
-    public function testTemplateEmail(){
-        $type = 'postCheckin';
-        $hotel = Hotel::find(191);
+    public function test(){
+        $type = 'checkout';
+        $hotel = Hotel::find(240);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(565);
+
 
         try {
             $checkData = [];
@@ -183,13 +184,15 @@ class UtilsController extends Controller
                 'urlWebapp' => $urlWebapp
             ];
 
+            //dd($dataEmail);
+
             //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
             // Log::info('dataEmail '.json_encode($dataEmail));
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false), $guest->email);
-            
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false), 'francisco20990@gmail.com');
+
 
             return view('Mails.guest.msgStay', [
                 'type' => $type,
@@ -206,15 +209,15 @@ class UtilsController extends Controller
         }
     }
 
-    
-    public function test()
+
+    public function test2()
     {
         // Ayer a esta misma hora (24h antes)
-        $start = now()->subDay(); 
+        $start = now()->subDay();
         // Ayer a esta misma hora + 1 hora
         $end   = now()->subDay()->addHour();
 
-        
+
         Log::info('comienza consulta estancias hace 24h starthour: '.$start.' endhour: '.$end);
 
         return $stays = Stay::with(['guests:id,name,email'])->select(
@@ -228,7 +231,7 @@ class UtilsController extends Controller
             ->join('chains as c', 'c.id', '=', 'h.chain_id')
             ->whereRaw("
                 TIMESTAMP(
-                    stays.check_in, 
+                    stays.check_in,
                     COALESCE(NULLIF(h.checkin, ''), '14:00:00')
                 ) BETWEEN ? AND ?
             ", [
@@ -236,7 +239,7 @@ class UtilsController extends Controller
                 $end
             ])
             ->get();
-        
+
         // foreach($stays as $stay){
         //     //create hotel object
         //     $hotel = new stdClass();
@@ -253,7 +256,7 @@ class UtilsController extends Controller
         //     $hotel->longitude = $stay->longitude;
         //     $hotel->sender_for_sending_email = $stay->sender_for_sending_email;
         //     $hotel->sender_mail_mask = $stay->sender_mail_mask;
-            
+
         //     foreach ($stay->guests as $guest) {
         //         $this->stayServices->guestWelcomeEmail('postCheckin', $stay->chainSubdomain, $hotel, $guest, $stay);
         //     }
@@ -263,7 +266,7 @@ class UtilsController extends Controller
     }
 
 
-    
+
 
 
 
