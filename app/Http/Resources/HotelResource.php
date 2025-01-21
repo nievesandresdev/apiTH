@@ -35,12 +35,15 @@ class HotelResource extends JsonResource
         //     $description = $this->translate->description ?? null;
         // }
 
-
+        $type = $this->type;
+        if (!in_array($this->type, ['hotel', 'at', 'vft'])) {
+            $type = 'hotel';
+        }
         return [
             "id"=> $this->id,
             "name"=> $this->name,
             // "type"=> ucfirst($this->type),
-            "type"=> $this->type,
+            "type"=> $type,
             "address"=> $this->address,
             "zone"=> $this->zone,
             "category"=> $this->category,
