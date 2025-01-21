@@ -99,6 +99,9 @@ class HotelResource extends JsonResource
             "subscribed"=> $this->subscription_active ? $is_subscribed : false,
             "show_referrals" => $this->show_referrals,
             "offer_benefits" => $this->offer_benefits,
+            //"rewads" => count($this->rewards) > 0 ? $this->rewards : null,
+            "referrals" => $this->referrals->first(),
+            "referent" => $this->referent->first(),
         ];
     }
 }

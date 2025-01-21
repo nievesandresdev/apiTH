@@ -88,6 +88,18 @@ class Hotel extends Model
         return $this->belongsTo(Chain::class);
     }
 
+    //hasMany rewards
+    public function referrals()
+    {
+        return $this->hasMany(Reward::class)->where('type_rewards', 'referrals');
+    }
+
+    public function referent()
+    {
+        return $this->hasMany(Reward::class)->where('type_rewards', 'referent');
+    }
+
+
     public function facilities()
     {
         return $this->hasMany(FacilityHoster::class);
