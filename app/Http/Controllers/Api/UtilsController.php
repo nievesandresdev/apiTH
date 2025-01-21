@@ -102,7 +102,7 @@ class UtilsController extends Controller
 
     public function test(){
         $type = 'checkout';
-        $hotel = Hotel::find(240);
+        $hotel = Hotel::find(191);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(565);
