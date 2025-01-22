@@ -144,6 +144,7 @@
             @include('components.mails.inviteGuestFromSaas',['urlWebapp' => $data['urlWebapp']])
         @endif
     </div>
+    @include('components.mails.ota')
     <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
 
         @if($type == 'welcome' && isset($data['checkData']['title']))
