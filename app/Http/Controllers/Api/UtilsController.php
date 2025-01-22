@@ -209,57 +209,11 @@ class UtilsController extends Controller
     
     public function test()
     {
-        // Ayer a esta misma hora (24h antes)
-        $start = now()->subDay(); 
-        // Ayer a esta misma hora + 1 hora
-        $end   = now()->subDay()->addHour();
-
-        
-        Log::info('comienza consulta estancias hace 24h starthour: '.$start.' endhour: '.$end);
-
-        return $stays = Stay::with(['guests:id,name,email'])->select(
-                'h.checkin','h.id as hotelId','h.chain_id','h.name as hotelName','h.subdomain as hotelSubdomain','h.zone',
-                'h.show_facilities','h.show_places','h.show_experiences','h.latitude','h.longitude','h.sender_for_sending_email','h.sender_mail_mask',
-                //
-                'stays.check_in','stays.id','stays.check_out',
-                'c.subdomain as chainSubdomain',
-            )
-            ->join('hotels as h', 'stays.hotel_id', '=', 'h.id')
-            ->join('chains as c', 'c.id', '=', 'h.chain_id')
-            ->whereRaw("
-                TIMESTAMP(
-                    stays.check_in, 
-                    COALESCE(NULLIF(h.checkin, ''), '14:00:00')
-                ) BETWEEN ? AND ?
-            ", [
-                $start,
-                $end
-            ])
-            ->get();
-        
-        // foreach($stays as $stay){
-        //     //create hotel object
-        //     $hotel = new stdClass();
-        //     $hotel->checkin = $stay->checkin;
-        //     $hotel->id = $stay->hotelId;
-        //     $hotel->chain_id = $stay->chain_id;
-        //     $hotel->name = $stay->hotelName;
-        //     $hotel->subdomain = $stay->hotelSubdomain;
-        //     $hotel->zone = $stay->zone;
-        //     $hotel->show_facilities = $stay->show_facilities;
-        //     $hotel->show_places = $stay->show_places;
-        //     $hotel->show_experiences = $stay->show_experiences;
-        //     $hotel->latitude = $stay->latitude;
-        //     $hotel->longitude = $stay->longitude;
-        //     $hotel->sender_for_sending_email = $stay->sender_for_sending_email;
-        //     $hotel->sender_mail_mask = $stay->sender_mail_mask;
-            
-        //     foreach ($stay->guests as $guest) {
-        //         $this->stayServices->guestWelcomeEmail('postCheckin', $stay->chainSubdomain, $hotel, $guest, $stay);
-        //     }
-        // }
-
-        // return 'listo';
+        $guestId = 9;
+        sendEventPusher('private-logout-webapp-guest.' . $guestId, 'App\Events\LogoutWebappGuest', [
+            'guestId' => $guestId
+        ]);
+        return 'mandao';
     }
 
 
