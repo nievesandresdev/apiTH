@@ -100,12 +100,13 @@ class UtilsController extends Controller
     }
 
 
-    public function testTemplateEmail(){
-        $type = 'postCheckin';
-        $hotel = Hotel::find(191);
+    public function test2(){
+        $type = 'checkout';
+        $hotel = Hotel::find(240);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(565);
+
 
         try {
             $checkData = [];
@@ -183,20 +184,22 @@ class UtilsController extends Controller
                 'urlWebapp' => $urlWebapp
             ];
 
+            //dd($dataEmail);
+
             //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
             // Log::info('dataEmail '.json_encode($dataEmail));
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false), $guest->email);
-            
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+
 
             return view('Mails.guest.msgStay', [
                 'type' => $type,
                 'hotel' => $hotel,
                 'guest' => $guest,
                 'data'=> $dataEmail,
-                'after' => false
+                'after' => true
             ]);
 
         } catch (\Exception $e) {
@@ -206,7 +209,7 @@ class UtilsController extends Controller
         }
     }
 
-    
+
     public function test()
     {
         $guestId = 9;
@@ -217,7 +220,7 @@ class UtilsController extends Controller
     }
 
 
-    
+
 
 
 

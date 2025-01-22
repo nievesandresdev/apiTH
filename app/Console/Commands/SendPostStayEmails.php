@@ -90,7 +90,11 @@ class SendPostStayEmails extends Command
 
         // Procesar cada estancia
         foreach ($stays as $stay) {
-            $hotelCheckoutTime = Carbon::parse($stay->hotel->checkout);
+            //$hotelCheckoutTime = Carbon::parse($stay->hotel->checkout);
+             // Manejar checkout nulo asignando la última hora del día
+            $hotelCheckoutTime = $stay->hotel->checkout
+                ? Carbon::parse($stay->hotel->checkout) // Si tienecheckout
+                : Carbon::today()->endOfDay();          // Si es null, usar ultima hora del dia
             $type = 'checkout';
 
             //Log::info('Estancia encontrada', ['stay_id' => $stay->id, 'checkout_time' => $hotelCheckoutTime,'hotel' => $stay->hotel]);
@@ -151,7 +155,7 @@ class SendPostStayEmails extends Command
                     $link = includeSubdomainInUrlHuesped($queries_url, $stay->hotel);
 
 
-                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), $query->guest->email);
+                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
                     $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
                     Log::info('Correo enviado correctamente handleSendEmailCheckout', ['guest_email' => $query->guest->email]);
                 } catch (\Exception $e) {
@@ -300,11 +304,11 @@ class SendPostStayEmails extends Command
     public function handleSendEmailPostChekin()
     {
         // Ayer a esta misma hora (24h antes)
-        $start = now()->subDay(); 
+        $start = now()->subDay();
         // Ayer a esta misma hora + 1 hora
         $end   = now()->subDay()->addHour();
 
-        
+
         Log::info('comienza consulta estancias hace 24h starthour: '.$start.' endhour: '.$end);
 
         $stays = Stay::with(['guests:id,name,email'])->select(
@@ -318,7 +322,7 @@ class SendPostStayEmails extends Command
             ->join('chains as c', 'c.id', '=', 'h.chain_id')
             ->whereRaw("
                 TIMESTAMP(
-                    stays.check_in, 
+                    stays.check_in,
                     COALESCE(NULLIF(h.checkin, ''), '14:00:00')
                 ) BETWEEN ? AND ?
             ", [
@@ -326,7 +330,7 @@ class SendPostStayEmails extends Command
                 $end
             ])
             ->get();
-        
+
         foreach($stays as $stay){
             //create hotel object
             $hotel = new stdClass();
@@ -343,7 +347,7 @@ class SendPostStayEmails extends Command
             $hotel->longitude = $stay->longitude;
             $hotel->sender_for_sending_email = $stay->sender_for_sending_email;
             $hotel->sender_mail_mask = $stay->sender_mail_mask;
-            
+
             foreach ($stay->guests as $guest) {
                 $this->stayService->guestWelcomeEmail('postCheckin', $stay->chainSubdomain, $hotel, $guest, $stay);
             }

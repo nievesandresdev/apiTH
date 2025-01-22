@@ -154,7 +154,6 @@
                 'editUrl' => $data['checkData']['editStayUrl']
             ])
         @endif
-
         {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
         @if(($type == 'welcome' || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
             @if($data['queryData']['currentPeriod'] !== 'in-stay')
