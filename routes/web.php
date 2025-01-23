@@ -16,4 +16,4 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/test', [UtilsController::class, 'test']);
-Route::get('/test-email', [UtilsController::class, 'testTemplateEmail']);
+Route::get('/testEmailcheckin', [UtilsController::class, 'testEmailcheckin']);
