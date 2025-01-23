@@ -7,63 +7,27 @@
     </p>
 </div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 24px; text-align: center;">
-    <!-- Google Review Button -->
-    <tr>
-        <td align="center" style="padding: 12px 0;">
-            <a href="https://g.page/r/review-example" target="_blank" style="text-decoration: none; display: block;">
-                <table border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; width: calc(100% - 32px); margin: 0 16px; overflow: hidden;">
-                    <tr>
-                        <!-- Logo Section with Diagonal Background -->
-                        <td style="padding: 0; background: linear-gradient(105deg, #F3F3F3 75%, transparent 50%); width: 48px; text-align: center; padding: 5px;">
-                            <img src="{{ asset('mails/icons/services/google.svg') }}" alt="Google" style="width: 24px; height: 24px; display: block;" />
-                        </td>
-                        <!-- Text Section -->
-                        <td style="padding: 12px; font-family: Arial, sans-serif; font-size: 14px; font-weight: 400; color: #333333; text-align: left;">
-                            Dejar reseña en Google
-                        </td>
-                    </tr>
-                </table>
-            </a>
-        </td>
-    </tr>
-
-    <!-- Tripadvisor Review Button -->
-    <tr>
-        <td align="center" style="padding: 12px 0;">
-            <a href="https://www.tripadvisor.com/review-example" target="_blank" style="text-decoration: none; display: block;">
-                <table border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; width: calc(100% - 32px); margin: 0 16px; overflow: hidden;">
-                    <tr>
-                        <!-- Logo Section with Diagonal Background -->
-                        <td style="padding: 0; background: linear-gradient(105deg, #F3F3F3 75%, transparent 50%); width: 48px; text-align: center; padding: 5px;">
-                            <img src="{{ asset('mails/icons/services/tripadvisor.svg') }}" alt="Tripadvisor" style="width: 24px; height: 24px; display: block;" />
-                        </td>
-                        <!-- Text Section -->
-                        <td style="padding: 12px; font-family: Arial, sans-serif; font-size: 14px; font-weight: 400; color: #333333; text-align: left;">
-                            Dejar reseña en Tripadvisor
-                        </td>
-                    </tr>
-                </table>
-            </a>
-        </td>
-    </tr>
-
-    <!-- Booking Review Button -->
-    <tr>
-        <td align="center" style="padding: 12px 0;">
-            <a href="https://www.booking.com/review-example" target="_blank" style="text-decoration: none; display: block;">
-                <table border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; width: calc(100% - 32px); margin: 0 16px; overflow: hidden;">
-                    <tr>
-                        <!-- Logo Section with Diagonal Background -->
-                        <td style="padding: 0; background: linear-gradient(105deg, #F3F3F3 75%, transparent 50%); width: 48px; text-align: center; padding: 5px;">
-                            <img src="{{ asset('mails/icons/services/booking.svg') }}" alt="Booking" style="width: 24px; height: 24px; display: block;" />
-                        </td>
-                        <!-- Text Section -->
-                        <td style="padding: 12px; font-family: Arial, sans-serif; font-size: 14px; font-weight: 400; color: #333333; text-align: left;">
-                            Dejar reseña en Booking
-                        </td>
-                    </tr>
-                </table>
-            </a>
-        </td>
-    </tr>
+    <?php foreach ($otas as $ota): ?>
+        <tr>
+            <td align="center" style="padding: 12px 16px;">
+                <a href="{{ $ota['url'] }}" target="_blank" style="text-decoration: none; display: block; width: 100%;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; overflow: hidden;">
+                        <tr>
+                            <!-- Logo Section with Diagonal Background -->
+                            <td style="padding: 0; background: linear-gradient(105deg, #F3F3F3 75%, transparent 40%); width: 50px; text-align: center;">
+                                <img src="<?= asset('mails/icons/services/' . $ota['name'] . '.svg'); ?>" alt=" {{ $ota['name'] }}" style="width: 24px; height: 24px; display: block; margin: 9px" />
+                            </td>
+                            <!-- Text Section -->
+                            <td style="padding: 12px; font-family: Arial, sans-serif; font-size: 14px; font-weight: 400; color: #333333; text-align: left;">
+                                Dejar reseña en  {{ $ota['name'] }}
+                            </td>
+                        </tr>
+                    </table>
+                </a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
 </table>
+
+
+

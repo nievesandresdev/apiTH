@@ -23,8 +23,12 @@ use App\Services\Hoster\Users\UserServices;
 use App\Services\Hoster\UtilsHosterServices;
 use App\Services\MailService;
 use App\Services\QuerySettingsServices;
+use App\Services\RequestSettingService;
 use App\Services\StayService;
 use App\Services\UtilityService;
+use App\Services\UrlOtasService;
+use App\Services\Apis\ApiReviewServices;
+
 use Illuminate\Support\Facades\Hash;
 
 use Carbon\Carbon;
@@ -51,6 +55,9 @@ class UtilsController extends Controller
     public  $utilityService;
     public  $mailService;
     public  $stayServices;
+    public  $requestService;
+    public  $api_review_service;
+    public  $urlOtasService;
 
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
@@ -63,6 +70,9 @@ class UtilsController extends Controller
         UtilityService $_UtilityService,
         MailService $_MailService,
         StayService $_StayService,
+        RequestSettingService $requestService,
+        ApiReviewServices $_api_review_service,
+        UrlOtasService $urlOtasService
     )
     {
         $this->querySettingsServices = $_QuerySettingsServices;
@@ -75,6 +85,9 @@ class UtilsController extends Controller
         $this->utilityService = $_UtilityService;
         $this->mailService = $_MailService;
         $this->stayServices = $_StayService;
+        $this->requestService = $requestService;
+        $this->api_review_service = $_api_review_service;
+        $this->urlOtasService = $urlOtasService;
     }
 
     public function authPusher(Request $request)
@@ -219,7 +232,7 @@ class UtilsController extends Controller
     }
 
     public function testEmailcheckin(){
-        $type = 'checkout';
+        $type = 'checkin';
         $hotel = Hotel::find(240);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
@@ -227,88 +240,54 @@ class UtilsController extends Controller
 
 
         try {
-            $checkData = [];
-            $queryData = [];
-            //stay section
-            if($type == 'welcome'){
-                if($stay->check_in && $stay->check_out){
-                    $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
-                    $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
-                }
-                $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
-                //
 
-                $checkData = [
-                    'title' => "Datos de tu estancia en {$hotel->name}",
-                    'formatCheckin' => $formatCheckin,
-                    'formatCheckout' => $formatCheckout,
-                    'editStayUrl' => $webappEditStay
-                ];
+           //query section
+            $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
+            $querySettings = $this->querySettingsServices->getAll($hotel->id);
+            $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
+            $showQuerySection = true;
+
+            if(
+                $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
+                $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
+                $currentPeriod == 'post-stay'
+            ){
+                $showQuerySection = false;
             }
+            //
+            $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
+            $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
 
+            $queryData = [
+                'showQuerySection' => $showQuerySection,
+                'currentPeriod' => $currentPeriod,
+                'webappLinkInbox' => $webappLinkInbox,
+                'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
 
-        //     //query section
-            if($type == 'welcome' || $type == 'postCheckin'){
-                $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
-                $querySettings = $this->querySettingsServices->getAll($hotel->id);
-                $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
-                $showQuerySection = true;
-
-                if(
-                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
-                    $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
-                    $currentPeriod == 'post-stay'
-                ){
-                    $showQuerySection = false;
-                }
-                //
-                $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
-                $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
-
-                $queryData = [
-                    'showQuerySection' => $showQuerySection,
-                    'currentPeriod' => $currentPeriod,
-                    'webappLinkInbox' => $webappLinkInbox,
-                    'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-
-                ];
-            }
+            ];
 
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
-
-
-            //
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
-
-
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+            $settingEnabled = $this->requestService->getAll($hotel->id);
+            $otasWithUrls = $this->urlOtasService->getOtasWithUrls($hotel, $settingEnabled->otas_enabled);
 
 
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
-
-
+            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
             $dataEmail = [
-                'checkData' => $checkData,
                 'queryData' => $queryData,
                 'places' => $crosselling['places'],
-                'experiences' => $crosselling['experiences'],
-                'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
-                'urlWebapp' => $urlWebapp
+                'urlWebapp' => $urlWebapp,
+                'otas' => $otasWithUrls
             ];
 
-            //dd($dataEmail);
 
-            //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
-            // Log::info('dataEmail '.json_encode($dataEmail));
-            // Log::info('hotelid '.json_encode($hotel->id));
-            // Log::info('guest '.json_encode($guest));
-
-            $this->mailService->sendEmail(new checkinMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            //$this->mailService->sendEmail(new checkinMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
             Log::info('Correo enviado correctamente a usuario@example.com');
 
 
