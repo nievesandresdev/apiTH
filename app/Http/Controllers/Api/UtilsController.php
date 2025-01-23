@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\Chat\NotifyUnreadMsg;
 use App\Http\Controllers\Controller;
 use App\Jobs\Chat\NofityPendingChat;
-use App\Mail\Guest\MsgStay;
+use App\Mail\Guest\{MsgStay, checkinMail};
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Guest;
@@ -23,8 +23,12 @@ use App\Services\Hoster\Users\UserServices;
 use App\Services\Hoster\UtilsHosterServices;
 use App\Services\MailService;
 use App\Services\QuerySettingsServices;
+use App\Services\RequestSettingService;
 use App\Services\StayService;
 use App\Services\UtilityService;
+use App\Services\UrlOtasService;
+use App\Services\Apis\ApiReviewServices;
+
 use Illuminate\Support\Facades\Hash;
 
 use Carbon\Carbon;
@@ -51,6 +55,9 @@ class UtilsController extends Controller
     public  $utilityService;
     public  $mailService;
     public  $stayServices;
+    public  $requestService;
+    public  $api_review_service;
+    public  $urlOtasService;
 
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
@@ -63,6 +70,9 @@ class UtilsController extends Controller
         UtilityService $_UtilityService,
         MailService $_MailService,
         StayService $_StayService,
+        RequestSettingService $requestService,
+        ApiReviewServices $_api_review_service,
+        UrlOtasService $urlOtasService
     )
     {
         $this->querySettingsServices = $_QuerySettingsServices;
@@ -75,6 +85,9 @@ class UtilsController extends Controller
         $this->utilityService = $_UtilityService;
         $this->mailService = $_MailService;
         $this->stayServices = $_StayService;
+        $this->requestService = $requestService;
+        $this->api_review_service = $_api_review_service;
+        $this->urlOtasService = $urlOtasService;
     }
 
     public function authPusher(Request $request)
@@ -156,7 +169,6 @@ class UtilsController extends Controller
                 ];
             }
 
-
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
 
 
@@ -218,6 +230,82 @@ class UtilsController extends Controller
         ]);
         return 'mandao';
     }
+
+    public function testEmailcheckin(){
+        $type = 'checkin';
+        $hotel = Hotel::find(240);
+        $guest = Guest::find(9);
+        $chainSubdomain = $hotel->subdomain;
+        $stay = Stay::find(565);
+
+
+        try {
+
+           //query section
+            $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
+            $querySettings = $this->querySettingsServices->getAll($hotel->id);
+            $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
+            $showQuerySection = true;
+
+            if(
+                $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
+                $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
+                $currentPeriod == 'post-stay'
+            ){
+                $showQuerySection = false;
+            }
+            //
+            $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
+            $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
+
+            $queryData = [
+                'showQuerySection' => $showQuerySection,
+                'currentPeriod' => $currentPeriod,
+                'webappLinkInbox' => $webappLinkInbox,
+                'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
+
+            ];
+
+            $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
+            $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
+            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+            $settingEnabled = $this->requestService->getAll($hotel->id);
+            $otasWithUrls = $this->urlOtasService->getOtasWithUrls($hotel, $settingEnabled->otas_enabled);
+
+
+            //
+            // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+
+            $dataEmail = [
+                'queryData' => $queryData,
+                'places' => $crosselling['places'],
+                'webappChatLink' => $webappChatLink,
+                'urlQr' => $urlQr,
+                'urlWebapp' => $urlWebapp,
+                'otas' => $otasWithUrls
+            ];
+
+            $this->mailService->sendEmail(new checkinMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            Log::info('Correo enviado correctamente a usuario@example.com');
+
+
+            return view('Mails.guest.checkinEmail', [
+                'type' => $type,
+                'hotel' => $hotel,
+                'guest' => $guest,
+                'data'=> $dataEmail,
+                'after' => true
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
+            DB::rollback();
+            return $e;
+        }
+    }
+
+
 
 
 

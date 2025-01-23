@@ -26,8 +26,9 @@ class RequestSettingService {
         }
     }
 
+
     public function getRequestData($settings, $hotel, $period){
-        
+
         try {
             $localLang = localeCurrent();
 
@@ -42,10 +43,10 @@ class RequestSettingService {
             }
 
             $title = str_replace($nameHotelText, $hotel->name, $title);
-            
+
             //mensaje
             $linkText = "[Link a las OTAs]";
-            
+
             // Verificar si $linkText está contenido dentro de $text
             $buttonAnchor = false;
             if (strpos($text, $linkText) !== false) {
