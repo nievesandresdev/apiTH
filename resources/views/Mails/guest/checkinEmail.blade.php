@@ -137,14 +137,7 @@
     </div>
 
     <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
-
-        @include('components.mails.ota',['otas' => $data['otas'] ])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @include('components.mails.checkin.reservation',['webappChatLink' => 'ssssss'])
-
-
-        {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
-        @if(($type == 'welcome' || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
+        @if($data['queryData'])
             @if($data['queryData']['currentPeriod'] !== 'in-stay')
                 <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @endif
@@ -155,6 +148,11 @@
                 'after' => $after
             ])
         @endif
+
+        @include('components.mails.ota',['otas' => $data['otas'] ])
+        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+        @include('components.mails.checkin.reservation',['webappChatLink' => 'ssssss'])
+
 
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         @if(count($data['places']) > 0 && $hotel->show_places)

@@ -33,7 +33,7 @@ class UrlOtasService
 
         return $googlePlaceId
             ? "https://search.google.com/local/writereview?placeid={$googlePlaceId}"
-            : '#'; // Si no hay place_id, retornar '#'
+            : '#';
     }
 
     /**
@@ -50,7 +50,7 @@ class UrlOtasService
             return isset($ota['ota']) && strtoupper($ota['ota']) === 'TRIPADVISOR';
         });
 
-        return !empty($tripadvisorReview) ? reset($tripadvisorReview)['url'] : '#'; // Retornar '#' si no existe
+        return !empty($tripadvisorReview) ? reset($tripadvisorReview)['url'] : '#';
     }
 
     /**
@@ -82,7 +82,7 @@ class UrlOtasService
         foreach ($filteredOtas as $key => $enabled) {
             $otasWithUrls[$key] = [
                 'name' => ucfirst($key),
-                'url' => is_array($urls[$key]) ? $urls[$key]['url'] : ($urls[$key] ?? '#'), // URL normal
+                'url' => is_array($urls[$key]) ? $urls[$key]['url'] : ($urls[$key] ?? '#'),
                 'url_responsive' => is_array($urls[$key]) ? $urls[$key]['url_responsive'] : null, // Solo para Booking
             ];
         }
