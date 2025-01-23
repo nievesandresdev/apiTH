@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Hoster\CheckinHosterController;
 use App\Http\Controllers\Api\Hoster\StayHosterController;
 use App\Http\Controllers\Api\Hoster\StaySessionsHosterController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,15 @@ Route::group(['prefix' => 'stay'], function () {
         Route::post('/deleteSession', [StaySessionsHosterController::class, 'deleteSession']);
         Route::post('/deleteSessionWithApiKey', [StaySessionsHosterController::class, 'deleteSessionWithApiKey']);
         Route::post('/deleteSessionByHotelAndEmail', [StaySessionsHosterController::class, 'deleteSessionByHotelAndEmail']);
+
+        Route::group(['prefix' => 'checkin'], function () {
+
+            Route::post('/updateGeneralSettings', [CheckinHosterController::class, 'updateGeneralSettings']);
+            Route::get('/getGeneralSettings', [CheckinHosterController::class, 'getGeneralSettings']);
+            Route::post('/updateFormSettings', [CheckinHosterController::class, 'updateFormSettings']);
+            Route::get('/getFormSettings', [CheckinHosterController::class, 'getFormSettings']);
+
+        });
     });
 });
 
