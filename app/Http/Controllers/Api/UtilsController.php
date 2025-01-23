@@ -286,10 +286,7 @@ class UtilsController extends Controller
                 'otas' => $otasWithUrls
             ];
 
-            //dd($dataEmail);
-
-
-            //$this->mailService->sendEmail(new checkinMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new checkinMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
             Log::info('Correo enviado correctamente a usuario@example.com');
 
 
