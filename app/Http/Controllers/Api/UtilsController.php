@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\Chat\NotifyUnreadMsg;
 use App\Http\Controllers\Controller;
 use App\Jobs\Chat\NofityPendingChat;
-use App\Mail\Guest\MsgStay;
+use App\Mail\Guest\{MsgStay, checkinMail};
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Guest;
@@ -308,7 +308,7 @@ class UtilsController extends Controller
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new checkinMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
             Log::channel('email')->info('Correo enviado correctamente a usuario@example.com');
 
 
