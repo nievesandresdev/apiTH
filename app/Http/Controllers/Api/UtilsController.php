@@ -309,7 +309,7 @@ class UtilsController extends Controller
             // Log::info('guest '.json_encode($guest));
 
             $this->mailService->sendEmail(new checkinMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
-            Log::channel('email')->info('Correo enviado correctamente a usuario@example.com');
+            Log::info('Correo enviado correctamente a usuario@example.com');
 
 
             return view('Mails.guest.checkinEmail', [
