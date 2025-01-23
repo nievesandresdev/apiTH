@@ -11,7 +11,7 @@
     <tr>
         <td align="center" style="padding: 12px 0;">
             <a href="https://g.page/r/review-example" target="_blank" style="text-decoration: none;">
-                <table border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; width: 93%; overflow: hidden; margin-left: 16px; margin-right: 16px;">
+                <table border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; overflow: hidden; margin-left: 16px; margin-right: 16px;">
                     <tr>
                         <!-- Logo Section with Diagonal Background -->
                         <td style="padding: 0; background: linear-gradient(105deg, #F3F3F3 75%, transparent 50%); width: 48px; text-align: center; padding: 5px;">
@@ -31,7 +31,7 @@
     <tr>
         <td align="center" style="padding: 12px 0;">
             <a href="https://www.tripadvisor.com/review-example" target="_blank" style="text-decoration: none;">
-                <table border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; width: 400px; margin: 0 auto; overflow: hidden;">
+                <table border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; margin-left: 16px; margin-right: 16px; overflow: hidden;">
                     <tr>
                         <!-- Logo Section with Diagonal Background -->
                         <td style="padding: 0; background: linear-gradient(105deg, #F3F3F3 75%, transparent 50%); width: 48px; text-align: center; padding: 5px;">
@@ -51,7 +51,7 @@
     <tr>
         <td align="center" style="padding: 12px 0;">
             <a href="https://www.booking.com/review-example" target="_blank" style="text-decoration: none;">
-                <table border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; width: 400px; margin: 0 auto; overflow: hidden;">
+                <table border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; margin-left: 16px; margin-right: 16px; overflow: hidden;">
                     <tr>
                         <!-- Logo Section with Diagonal Background -->
                         <td style="padding: 0; background: linear-gradient(105deg, #F3F3F3 75%, transparent 50%); width: 48px; text-align: center; padding: 5px;">

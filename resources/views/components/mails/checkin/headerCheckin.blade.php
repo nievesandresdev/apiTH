@@ -6,7 +6,7 @@
                            width: 50%;
                            vertical-align: top;
                            padding: 0 0 0 10px;" class="hidden-responsive"> <!-- 10px de padding a la izquierda -->
-                    <img src="{{ asset('mails/checkin2.png') }}" alt="Welcome Banner" style="width: 327px; height: 240px; max-width: 100%; height: auto;">
+                    <img src="{{ asset('mails/checkin2.png') }}" alt="checkin-image" style="width: 327px; height: 240px; max-width: 100%; height: auto;">
                 </td>
                 <!-- Columna de Texto -->
                 <td class="text-content"
@@ -27,7 +27,7 @@
                            width: 50%;
                            vertical-align: top;
                            padding: 0 0 0 10px;" class="show-not-responsive"> <!-- 10px de padding a la izquierda -->
-                    <img src="{{ asset('mails/checkin.png') }}" alt="Welcome Banner" style="width: 227px; height: 240px; max-width: 100%; height: auto;">
+                    <img src="{{ asset('mails/checkin.png') }}" alt="checkin-image" style="width: 227px; height: 240px; max-width: 100%; height: auto;">
                 </td>
             </tr>
         </table>
