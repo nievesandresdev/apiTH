@@ -55,6 +55,7 @@ class SendPostStayEmails extends Command
     public function handle()
     {
         $this->handleSendEmailPostChekin();
+        //$this->handleSendEmailPostCheckout();
         //$this->handleSendEmail();
         $this->handleSendEmailCheckout();
     }
@@ -85,7 +86,7 @@ class SendPostStayEmails extends Command
         // Hora actual
         $currentTime = Carbon::now();
 
-        Log::info('handleSendEmailCheckout', ['stays_count' => $stays]);
+        Log::info('handleSendEmailCheckoutSend', ['stays_count' => $stays]);
 
 
         // Procesar cada estancia
@@ -101,13 +102,13 @@ class SendPostStayEmails extends Command
 
             // Verificar si la hora actual está dentro del rango de checkout del hotel
             if (!$currentTime->between($hotelCheckoutTime->copy()->startOfHour(), $hotelCheckoutTime->copy()->endOfHour())) {
-                Log::info('Estancia fuera del rango de hora de checkout', ['stay_id' => $stay->id]);
+                Log::info('Estancia fuera del rango de hora de checkout handleSendEmailCheckoutSend', ['stay_id' => $stay->id]);
                 continue;
             }
 
             foreach ($stay->queries as $query) {
                 if (!$query->guest || !$query->guest->email) {
-                    Log::warning('Consulta sin huésped válido', ['query_id' => $query->id]);
+                    Log::warning('Consulta sin huésped válido handleSendEmailCheckoutSend', ['query_id' => $query->id]);
                     continue;
                 }
 
@@ -157,9 +158,9 @@ class SendPostStayEmails extends Command
 
                     $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
                     $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
-                    Log::info('Correo enviado correctamente handleSendEmailCheckout', ['guest_email' => $query->guest->email]);
+                    Log::info('Correo enviado correctamente handleSendEmailCheckout ', ['guest_email' => $query->guest->email]);
                 } catch (\Exception $e) {
-                    Log::error('Error al enviar correo', [
+                    Log::error('Error al enviar correo handleSendEmailCheckoutSend', [
                         'guest_email' => $query->guest->email,
                         'error_message' => $e->getMessage(),
                     ]);
@@ -270,7 +271,7 @@ class SendPostStayEmails extends Command
                 $queries_url = url('consultas?e='.$stay->id.'&lang='.$query->guest->lang_web.'&g='.$query->guest->id);
                 $link = includeSubdomainInUrlHuesped($queries_url, $stay->hotel);
                 Log::info('$link'.$link);
-                if(intval($hoursDifference) == 49){
+                if(intval($hoursDifference) == 48){
                     Log::info('answered '.boolval($query->answered));
                     if(!boolval($query->answered)){
                         Log::info('enviado a '.$query->guest->email);
@@ -354,4 +355,93 @@ class SendPostStayEmails extends Command
         }
 
     }
+
+    public function handleSendEmailPostCheckout()
+    {
+        // Hora actual
+        $currentTime = Carbon::now();
+        $startOfHour = $currentTime->copy()->startOfHour(); // Ej: 12:00
+        $endOfHour = $currentTime->copy()->endOfHour();     // Ej: 12:59:59
+
+
+
+        // Obtener estancias cuyo checkout fue exactamente hace 48 horas
+        $stays = Stay::select('id', 'hotel_id', 'check_out')
+            ->whereHas('hotel') // Validar que la estancia esté asociada a un hotel
+            ->whereBetween('check_out', [
+                $startOfHour->subHours(48), // 48 horas antes del inicio de esta hora
+                $endOfHour->subHours(48)   // 48 horas antes del final de esta hora
+            ])
+            ->with([
+                'queries' => function ($query) {
+                    $query->select('id', 'stay_id', 'guest_id', 'answered', 'qualification')
+                        ->where('period', 'post-stay');
+                },
+                'queries.guest' => function ($query) {
+                    $query->select('id', 'name', 'email');
+                },
+                'hotel' => function ($query) {
+                    $query->select('id', 'name', 'checkout', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone');
+                }
+            ])
+            ->get();
+
+        Log::info('handleSendEmailPostCheckout', ['stays_count' => $stays->count(), 'current_time' => $currentTime, 'start_of_hour' => $startOfHour, 'end_of_hour' => $endOfHour,'hora481' => $startOfHour->subDays(2),'hora482' => $endOfHour->subDays(2)]);
+
+        // Procesar cada estancia
+        foreach ($stays as $stay) {
+            // Manejar checkout nulo asignando la última hora del día + 48 horas
+            $hotelCheckoutTime = $stay->hotel->checkout
+                ? Carbon::parse($stay->hotel->checkout)->addDays(2) // Hora de checkout + 48 horas
+                : Carbon::today()->endOfDay()->addDays(2);          // Última hora del día + 48 horas
+
+            // Verificar si la hora actual está dentro del rango de hora de 48 horas después del checkout del hotel
+            if (!$currentTime->between($hotelCheckoutTime->copy()->startOfHour(), $hotelCheckoutTime->copy()->endOfHour())) {
+                Log::info('Estancia fuera del rango de hora de 48 horas después del checkout', ['stay_id' => $stay->id]);
+                continue;
+            }
+
+            foreach ($stay->queries as $query) {
+                if (!$query->guest || !$query->guest->email) {
+                    Log::warning('Consulta sin huésped válido', ['query_id' => $query->id]);
+                    continue;
+                }
+
+                // Diferente lógica según el estado de `answered`
+                $type = $query->answered ? 'post-checkout-answered' : 'post-checkout-unanswered';
+
+                $chainSubdomain = $stay->hotel->subdomain;
+                $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
+                $urlWebapp = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain);
+                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+
+                $queryData = [
+                    'answered' => $query->answered,
+                    'qualification' => $query->qualification,
+                    'guest_name' => $query->guest->name,
+                ];
+
+                $dataEmail = [
+                    'places' => $crosselling['places'],
+                    'experiences' => $crosselling['experiences'],
+                    'facilities' => $crosselling['facilities'],
+                    'urlQr' => $urlQr,
+                    'urlWebapp' => $urlWebapp,
+                    'queryData' => $queryData,
+                ];
+
+                try {
+                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail, true), $query->guest->email);
+                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
+                    Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
+                } catch (\Exception $e) {
+                    Log::error('Error al enviar correo', [
+                        'guest_email' => $query->guest->email,
+                        'error_message' => $e->getMessage(),
+                    ]);
+                }
+            }
+        }
+    }
+
 }
