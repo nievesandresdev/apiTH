@@ -207,7 +207,7 @@ class UsersController extends Controller
         try {
             $email = request()->email;
             $id = request()->userId;
-            $query = User::where('email',$email);
+            $query = User::where('email',$email)->where('del',1);
 
 
             if($id){
