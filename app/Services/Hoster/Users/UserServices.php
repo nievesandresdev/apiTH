@@ -297,13 +297,13 @@ class UserServices
             'lastname' => $user->profile?->lastname ?? '',
             'email' => $user->email,
             'del' => $user->del,
-            'role' => 'user',  // rol
-            'work_position' => $user->profile?->work_position ?? $user->profile?->workPosition,
+            'role' => 'user',
+            'work_position' => $user->profile?->workPosition,
             'work_position_id' => $user->profile?->work_position_id ?? null,
             'profile' => $user->profile ?? '--',
             'phone' => $user->profile->phone,
             'prefix' => null,
-            'hotelsNameId' => $user->hotel->pluck('name', 'id'), // 'id' => 'name
+            'hotelsNameId' => $user->hotel->pluck('name', 'id'),
             'hotels' => $user->hotel->pluck('id'),
             'hotelsData' => $user->hotel->map(function ($hotel) {
                 return [

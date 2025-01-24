@@ -13,7 +13,11 @@ class WorkPositionController extends Controller
         $work_positions = WorkPosition::active()->byHotel()->get();
 
         $work_positions_mapped = $work_positions->map(function($work_position) {
-            $has_profile = $work_position->profiles()->exists();
+            $has_profile = $work_position->profiles()
+            ->whereHas('user', function ($query) {
+                $query->where('del', 0);
+            })
+            ->exists();
 
             $work_position->relation = $has_profile;
 
