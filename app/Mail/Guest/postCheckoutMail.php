@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class checkinMail extends Mailable
+class postCheckoutMail extends Mailable
 {
     use Queueable, SerializesModels;
     public $type;
@@ -54,7 +54,7 @@ class checkinMail extends Mailable
             $senderEmail = $this->hotel->sender_mail_mask;
         }
         return $this->from($senderEmail, $senderName)
-                    ->subject($subject)->view('Mails.guest.checkinEmail');
+                    ->subject($subject)->view('Mails.guest.postCheckoutEmail');
 
     }
 }

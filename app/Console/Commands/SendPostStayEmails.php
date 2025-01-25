@@ -422,6 +422,7 @@ class SendPostStayEmails extends Command
                 $chainSubdomain = $stay->hotel->subdomain;
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
                 $urlWebapp = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain);
+                $reservationURl = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'reservar-estancia');
                 //$urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
                 $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
@@ -438,6 +439,7 @@ class SendPostStayEmails extends Command
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
                     'queryData' => $queryData,
+                    'reservationURl' => $reservationURl
                 ];
 
                 Log::info('handleSendEmailPostCheckout', ['guest_email' => $query->guest->email, 'type' => $type]);

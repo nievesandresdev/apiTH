@@ -22,7 +22,7 @@ class VerifyApiKey
             'api/guest/auth/facebook/callback',
             'api/guest/auth/facebook/deleteData',
             'test',
-            'testEmailcheckin',
+            'testEmailPostCheckout'
         ];
 
         // Verifica si la ruta actual está en la lista de exclusiones

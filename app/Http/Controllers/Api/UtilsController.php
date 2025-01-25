@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\Chat\NotifyUnreadMsg;
 use App\Http\Controllers\Controller;
 use App\Jobs\Chat\NofityPendingChat;
-use App\Mail\Guest\{MsgStay, checkinMail};
+use App\Mail\Guest\{MsgStay, postCheckoutMail};
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Guest;
@@ -231,12 +231,15 @@ class UtilsController extends Controller
         return 'mandao';
     }
 
-    public function testEmailcheckin(){
-        $type = 'checkin';
+    public function testEmailPostCheckout(){
+        $type = 'post-checkout';
         $hotel = Hotel::find(240);
         $guest = Guest::find(9);
+        //$guest = Guest::find(355);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(565);
+        //$stay = Stay::with('queries')->where('id',628)->first();
+
 
 
         try {
@@ -246,7 +249,7 @@ class UtilsController extends Controller
             $querySettings = $this->querySettingsServices->getAll($hotel->id);
             $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
             $showQuerySection = true;
-
+            $answered = Query::where('stay_id',$stay->id)->where('period','post-stay')->where('guest_id',$guest->id)->first();
             if(
                 $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
                 $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
@@ -263,11 +266,13 @@ class UtilsController extends Controller
                 'currentPeriod' => $currentPeriod,
                 'webappLinkInbox' => $webappLinkInbox,
                 'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
+                'answered' => $answered->answered == 1 ? true : false
 
             ];
 
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
+            $reservationURl = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'reservar-estancia');
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
             $settingEnabled = $this->requestService->getAll($hotel->id);
             $otasWithUrls = $this->urlOtasService->getOtasWithUrls($hotel, $settingEnabled->otas_enabled);
@@ -283,14 +288,16 @@ class UtilsController extends Controller
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
-                'otas' => $otasWithUrls
+                'otas' => $otasWithUrls,
+                'reservationURl' => $reservationURl
             ];
 
-            $this->mailService->sendEmail(new checkinMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            dd($dataEmail);
+            $this->mailService->sendEmail(new postCheckoutMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
             Log::info('Correo enviado correctamente a usuario@example.com');
 
 
-            return view('Mails.guest.checkinEmail', [
+            return view('Mails.guest.postCheckoutEmail', [
                 'type' => $type,
                 'hotel' => $hotel,
                 'guest' => $guest,
