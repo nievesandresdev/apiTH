@@ -46,11 +46,11 @@ class UrlOtasService
     {
         $review = $this->apiReviewService->getDataOta($hotel);
 
-        if ($review === null) {
+        if ($review['otas'] === null) {
             return '#';
         }
 
-        dd($review);
+        //dd($review);
 
         $tripadvisorReview = array_filter($review['otas'], function ($ota) {
             return isset($ota['ota']) && strtoupper($ota['ota']) === 'TRIPADVISOR';
