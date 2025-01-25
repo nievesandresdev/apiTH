@@ -54,10 +54,10 @@ class SendPostStayEmails extends Command
 
     public function handle()
     {
-        $this->handleSendEmailPostChekin();
-        //$this->handleSendEmailPostCheckout();
+        //$this->handleSendEmailPostChekin();
+        $this->handleSendEmailPostCheckout();
         //$this->handleSendEmail();
-        $this->handleSendEmailCheckout();
+        //$this->handleSendEmailCheckout();
     }
 
     public function handleSendEmailCheckout()
@@ -363,15 +363,12 @@ class SendPostStayEmails extends Command
         $startOfHour = $currentTime->copy()->startOfHour(); // Ej: 12:00
         $endOfHour = $currentTime->copy()->endOfHour();     // Ej: 12:59:59
 
-
+        $hoursBack = 48;
 
         // Obtener estancias cuyo checkout fue exactamente hace 48 horas
         $stays = Stay::select('id', 'hotel_id', 'check_out')
             ->whereHas('hotel') // Validar que la estancia esté asociada a un hotel
-            ->whereBetween('check_out', [
-                $startOfHour->subHours(48), // 48 horas antes del inicio de esta hora
-                $endOfHour->subHours(48)   // 48 horas antes del final de esta hora
-            ])
+            ->whereDate('check_out', $currentTime->subHours($hoursBack)->format('Y-m-d')) // Filtrar por la fecha de checkout
             ->with([
                 'queries' => function ($query) {
                     $query->select('id', 'stay_id', 'guest_id', 'answered', 'qualification')
@@ -386,18 +383,30 @@ class SendPostStayEmails extends Command
             ])
             ->get();
 
-        Log::info('handleSendEmailPostCheckout', ['stays_count' => $stays->count(), 'current_time' => $currentTime, 'start_of_hour' => $startOfHour, 'end_of_hour' => $endOfHour,'hora481' => $startOfHour->subDays(2),'hora482' => $endOfHour->subDays(2)]);
+        Log::info('handleSendEmailPostCheckout', [
+            'stays_count' => $stays->count(),
+            'current_time' => $currentTime,
+            'start_of_hour' => $startOfHour,
+            'end_of_hour' => $endOfHour,
+        ]);
 
         // Procesar cada estancia
         foreach ($stays as $stay) {
-            // Manejar checkout nulo asignando la última hora del día + 48 horas
+            // Manejar checkout nulo asignando la última hora del día
             $hotelCheckoutTime = $stay->hotel->checkout
-                ? Carbon::parse($stay->hotel->checkout)->addDays(2) // Hora de checkout + 48 horas
-                : Carbon::today()->endOfDay()->addDays(2);          // Última hora del día + 48 horas
+                ? Carbon::parse($stay->hotel->checkout)->subHours($hoursBack) // Sumar 48 horas al checkout del hotel
+                : Carbon::today()->endOfDay()->subHours($hoursBack);          // Última hora del día + 48 horas
 
-            // Verificar si la hora actual está dentro del rango de hora de 48 horas después del checkout del hotel
+
+            // Verificar si la hora actual está dentro del rango de 48 horas después del checkout
             if (!$currentTime->between($hotelCheckoutTime->copy()->startOfHour(), $hotelCheckoutTime->copy()->endOfHour())) {
-                Log::info('Estancia fuera del rango de hora de 48 horas después del checkout', ['stay_id' => $stay->id]);
+                Log::info('Estancia fuera del rango de hora de 48 horas después del checkout', [
+                    'stay_id' => $stay->id,
+                    'stay_checkout' => $stay->check_out,
+                    'hotel_checkout_time' => $hotelCheckoutTime,
+                    'starthotel' => $hotelCheckoutTime->copy()->startOfHour(),
+                    'endhotel' => $hotelCheckoutTime->copy()->endOfHour(),
+                ]);
                 continue;
             }
 
@@ -413,7 +422,8 @@ class SendPostStayEmails extends Command
                 $chainSubdomain = $stay->hotel->subdomain;
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
                 $urlWebapp = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain);
-                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                //$urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
                 $queryData = [
                     'answered' => $query->answered,
@@ -430,6 +440,9 @@ class SendPostStayEmails extends Command
                     'queryData' => $queryData,
                 ];
 
+                Log::info('handleSendEmailPostCheckout', ['guest_email' => $query->guest->email, 'type' => $type]);
+                Log::info('handleSendEmailPostCheckout', ['dataEmail' => $dataEmail]);
+
                 try {
                     $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail, true), $query->guest->email);
                     $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
@@ -443,5 +456,6 @@ class SendPostStayEmails extends Command
             }
         }
     }
+
 
 }
