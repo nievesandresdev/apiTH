@@ -47,8 +47,10 @@ class UrlOtasService
         $review = $this->apiReviewService->getDataOta($hotel);
 
         if ($review === null) {
-            return '#'; // Tripadvisor no existe
+            return '#';
         }
+
+        dd($review);
 
         $tripadvisorReview = array_filter($review['otas'], function ($ota) {
             return isset($ota['ota']) && strtoupper($ota['ota']) === 'TRIPADVISOR';
@@ -65,8 +67,8 @@ class UrlOtasService
     public function booking()
     {
         return [
-            'url' => 'https://secure.booking.com/reviewtimeline.html', // Normal
-            'url_responsive' => 'https://secure.booking.com/reviewmanage.html', // Responsive
+            'url' => 'https://secure.booking.com/reviewtimeline.html',
+            'url_responsive' => 'https://secure.booking.com/reviewmanage.html',
         ];
     }
 
