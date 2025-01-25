@@ -45,7 +45,10 @@ class UrlOtasService
     public function tripadvisor($hotel)
     {
         $review = $this->apiReviewService->getDataOta($hotel);
-        dd($review);
+
+        if ($review === null) {
+            return '#'; // Tripadvisor no existe
+        }
 
         $tripadvisorReview = array_filter($review['otas'], function ($ota) {
             return isset($ota['ota']) && strtoupper($ota['ota']) === 'TRIPADVISOR';
