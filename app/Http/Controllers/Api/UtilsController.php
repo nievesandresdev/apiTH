@@ -267,7 +267,6 @@ class UtilsController extends Controller
                 'webappLinkInbox' => $webappLinkInbox,
                 'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
                 'answered' => $answered->answered == 1 ? true : false
-
             ];
 
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
@@ -292,10 +291,8 @@ class UtilsController extends Controller
                 'reservationURl' => $reservationURl
             ];
 
-            dd($dataEmail);
+            //dd($dataEmail);
             $this->mailService->sendEmail(new postCheckoutMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
-            Log::info('Correo enviado correctamente a usuario@example.com');
-
 
             return view('Mails.guest.postCheckoutEmail', [
                 'type' => $type,

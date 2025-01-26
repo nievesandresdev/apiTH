@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Services\MailService;
 use App\Mail\Guest\MsgStay;
+use App\Mail\Guest\postCheckoutMail;
 use App\Services\QuerySettingsServices;
 use App\Services\UtilityService;
 use stdClass;
@@ -43,7 +44,7 @@ class SendPostStayEmails extends Command
 
      public function __construct(StayService $_StayServices, RequestSettingService $_RequestSettingService,MailService $_MailService,UtilityService $_UtilityService,QuerySettingsServices $_QuerySettingsServices)
      {
-         parent::__construct(); // Llama al constructor del padre
+         parent::__construct();
          $this->stayService = $_StayServices;
          $this->requestSettings = $_RequestSettingService;
          $this->mailService = $_MailService;
@@ -56,7 +57,6 @@ class SendPostStayEmails extends Command
     {
         $this->handleSendEmailPostChekin();
         $this->handleSendEmailPostCheckout();
-        //$this->handleSendEmail();
         $this->handleSendEmailCheckout();
     }
 
@@ -91,14 +91,11 @@ class SendPostStayEmails extends Command
 
         // Procesar cada estancia
         foreach ($stays as $stay) {
-            //$hotelCheckoutTime = Carbon::parse($stay->hotel->checkout);
              // Manejar checkout nulo asignando la última hora del día
             $hotelCheckoutTime = $stay->hotel->checkout
                 ? Carbon::parse($stay->hotel->checkout) // Si tienecheckout
                 : Carbon::today()->endOfDay();          // Si es null, usar ultima hora del dia
             $type = 'checkout';
-
-            //Log::info('Estancia encontrada', ['stay_id' => $stay->id, 'checkout_time' => $hotelCheckoutTime,'hotel' => $stay->hotel]);
 
             // Verificar si la hora actual está dentro del rango de checkout del hotel
             if (!$currentTime->between($hotelCheckoutTime->copy()->startOfHour(), $hotelCheckoutTime->copy()->endOfHour())) {
@@ -358,11 +355,9 @@ class SendPostStayEmails extends Command
 
     public function handleSendEmailPostCheckout()
     {
-        // Hora actual
         $currentTime = Carbon::now();
-        $startOfHour = $currentTime->copy()->startOfHour(); // Ej: 12:00
-        $endOfHour = $currentTime->copy()->endOfHour();     // Ej: 12:59:59
-
+        $startOfHour = $currentTime->copy()->startOfHour(); // inicio hor actual
+        $endOfHour = $currentTime->copy()->endOfHour();     // fin hora actuyal
         $hoursBack = 48;
 
         // Obtener estancias cuyo checkout fue exactamente hace 48 horas
@@ -371,7 +366,7 @@ class SendPostStayEmails extends Command
             ->whereDate('check_out', $currentTime->subHours($hoursBack)->format('Y-m-d')) // Filtrar por la fecha de checkout
             ->with([
                 'queries' => function ($query) {
-                    $query->select('id', 'stay_id', 'guest_id', 'answered', 'qualification')
+                    $query->select('id', 'stay_id', 'guest_id', 'answered', 'qualification','period')
                         ->where('period', 'post-stay');
                 },
                 'queries.guest' => function ($query) {
@@ -421,15 +416,20 @@ class SendPostStayEmails extends Command
 
                 $chainSubdomain = $stay->hotel->subdomain;
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
+
+                //urls
                 $urlWebapp = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain);
                 $reservationURl = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'reservar-estancia');
-                //$urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
-                $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+                $webappLinkInbox = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox');
+                $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$stay->id}&g={$query->guest->id}&fill=VERYGOOD");
+                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
                 $queryData = [
-                    'answered' => $query->answered,
-                    'qualification' => $query->qualification,
-                    'guest_name' => $query->guest->name,
+                    'currentPeriod' => $query->period,
+                    'webappLinkInbox' => $webappLinkInbox,
+                    'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
+                    'answered' => $query->answered == 1 ? true : false
                 ];
 
                 $dataEmail = [
@@ -442,15 +442,15 @@ class SendPostStayEmails extends Command
                     'reservationURl' => $reservationURl
                 ];
 
-                Log::info('handleSendEmailPostCheckout', ['guest_email' => $query->guest->email, 'type' => $type]);
-                Log::info('handleSendEmailPostCheckout', ['dataEmail' => $dataEmail]);
+                Log::info('handleSendEmailPostCheckout email send', ['guest_email' => $query->guest->email, 'type' => $type]);
+                Log::info('handleSendEmailPostCheckout data email', ['dataEmail' => $dataEmail]);
 
                 try {
-                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail, true), $query->guest->email);
-                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
+                    $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                    $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
                     Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
                 } catch (\Exception $e) {
-                    Log::error('Error al enviar correo', [
+                    Log::error('Error al enviar correo handleSendEmailPostCheckout', [
                         'guest_email' => $query->guest->email,
                         'error_message' => $e->getMessage(),
                     ]);
