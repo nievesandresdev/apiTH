@@ -22,7 +22,7 @@
         @include('components.mails.postCheckout.headerPostCheckout',['guest_name' => $guest->name,'hotel_name' => $hotel->name,'after' => $after])
     </div>
 
-    <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
+    <div class="container" style="max-width: 488px; margin-top: 24px; background-color: #ffff;">
         @if($data['queryData'] && !$data['queryData']['answered'] )
             @include('components.mails.feedback',[
                 'currentPeriod' => $data['queryData']['currentPeriod'],
