@@ -24,7 +24,7 @@
     </div>
 
     <!-- Tabla de íconos -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-left: 40px; padding-right: 50px">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-left: 10px; padding-right: 50px">
         <tr>
             <!-- Muy Mala -->
             <td style="text-align: center; padding: 0 10px;">
