@@ -128,21 +128,9 @@
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
     <div style="max-width: 568px; margin: 0 auto">
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
-            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
+            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}xXXX</span>
         </div>
-        @if($type == 'welcome')
-            @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name,'after' => $after])
-        @endif
-        @if($type == 'postCheckin')
-            @include('components.mails.headerPostCheckin')
-        @endif
-        @if($type == 'checkout')
-            @include('components.mails.headerBye',['guest_name' => $guest->name])
-        @endif
-
-        @if($type == 'inviteGuestFromSaas')
-            @include('components.mails.inviteGuestFromSaas',['urlWebapp' => $data['urlWebapp']])
-        @endif
+        @include('components.mails.headerPrepareArrival',['hotel_name' => $hotel->name,'after' => $after,'data' => $data])
     </div>
     <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
 
@@ -155,7 +143,7 @@
             ])
         @endif
         {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
-        @if(($type == 'welcome' || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
+        @if($data['queryData'])
             @if($data['queryData']['currentPeriod'] !== 'in-stay')
                 <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @endif
@@ -176,10 +164,9 @@
             @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
         @endif --}}
 
-        @if($type == 'welcome' || $type == 'postCheckin')
-            @if(count($data['facilities']) > 0 && $hotel->show_facilities)
-                @include('components.mails.facilities', ['facilities' => $data['facilities']])
-            @endif
+
+        @if(count($data['facilities']) > 0 && $hotel->show_facilities)
+            @include('components.mails.facilities', ['facilities' => $data['facilities']])
         @endif
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         @if($type == 'welcome' || $type == 'postCheckin')

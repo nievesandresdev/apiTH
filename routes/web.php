@@ -17,3 +17,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/test', [UtilsController::class, 'test']);
 Route::get('/testEmailPostCheckout', [UtilsController::class, 'testEmailPostCheckout']);
+Route::get('/testPrepareYourArrival', [UtilsController::class, 'testPrepareYourArrival']);

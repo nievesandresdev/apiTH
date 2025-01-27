@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\Chat\NotifyUnreadMsg;
 use App\Http\Controllers\Controller;
 use App\Jobs\Chat\NofityPendingChat;
-use App\Mail\Guest\{MsgStay, postCheckoutMail};
+use App\Mail\Guest\{MsgStay, postCheckoutMail,prepareArrival};
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\Guest;
@@ -295,6 +295,113 @@ class UtilsController extends Controller
             $this->mailService->sendEmail(new postCheckoutMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
 
             return view('Mails.guest.postCheckoutEmail', [
+                'type' => $type,
+                'hotel' => $hotel,
+                'guest' => $guest,
+                'data'=> $dataEmail,
+                'after' => true
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
+            DB::rollback();
+            return $e;
+        }
+    }
+
+    public function testPrepareYourArrival(){
+        $type = 'prepare-arrival';
+        $hotel = Hotel::find(274);
+        //$guest = Guest::find(146);
+        $guest = Guest::find(355);
+        $chainSubdomain = $hotel->subdomain;
+        //$stay = Stay::find(630);
+        $stay = Stay::with('queries')->where('id',628)->first();
+
+
+
+        try {
+            $checkData = [];
+            $queryData = [];
+            //stay section
+            /* if($type == 'welcome'){ */
+                if($stay->check_in && $stay->check_out){
+                    $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
+                    $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
+                }
+                $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
+                //
+
+                $checkData = [
+                    'title' => "Datos de tu estancia en {$hotel->name}",
+                    'formatCheckin' => $formatCheckin,
+                    'formatCheckout' => $formatCheckout,
+                    'editStayUrl' => $webappEditStay
+                ];
+           /*  } */
+
+
+        //     //query section
+            if($type == 'welcome' || $type == 'postCheckin'){
+                $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
+                $querySettings = $this->querySettingsServices->getAll($hotel->id);
+                $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
+                $showQuerySection = true;
+
+                if(
+                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
+                    $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
+                    $currentPeriod == 'post-stay'
+                ){
+                    $showQuerySection = false;
+                }
+                //
+                $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
+                $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
+
+                $queryData = [
+                    'showQuerySection' => $showQuerySection,
+                    'currentPeriod' => $currentPeriod,
+                    'webappLinkInbox' => $webappLinkInbox,
+                    'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
+
+                ];
+            }
+
+            $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
+
+
+            //
+            $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
+
+
+            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+
+
+            //
+            // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+
+
+
+            $dataEmail = [
+                'checkData' => $checkData,
+                'queryData' => $queryData,
+                'places' => $crosselling['places'],
+                'experiences' => $crosselling['experiences'],
+                'facilities' => $crosselling['facilities'],
+                'webappChatLink' => $webappChatLink,
+                'urlQr' => $urlQr,
+                'urlWebapp' => $urlWebapp
+            ];
+
+            //dd($dataEmail);
+
+
+            $this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+
+
+            return view('Mails.guest.prepareYourArrival', [
                 'type' => $type,
                 'hotel' => $hotel,
                 'guest' => $guest,
