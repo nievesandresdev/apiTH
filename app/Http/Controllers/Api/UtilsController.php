@@ -234,11 +234,11 @@ class UtilsController extends Controller
     public function testEmailPostCheckout(){
         $type = 'post-checkout';
         $hotel = Hotel::find(274);
-        $guest = Guest::find(146);
-        //$guest = Guest::find(355);
+        //$guest = Guest::find(146);
+        $guest = Guest::find(355);
         $chainSubdomain = $hotel->subdomain;
-        $stay = Stay::find(630);
-        //$stay = Stay::with('queries')->where('id',628)->first();
+        //$stay = Stay::find(630);
+        $stay = Stay::with('queries')->where('id',628)->first();
 
 
 

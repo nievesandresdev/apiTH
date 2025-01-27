@@ -1,4 +1,4 @@
-<section style="background: #FFFFFF; border-radius: 3px; margin-left: 16px; margin-right: 16px;">
+<section style="background: #FFFFFF; border-radius: 3px; margin-left: 16px; margin-right: 16px; margin-top: 24px;">
     @if($currentPeriod == 'in-stay')
         <div style="margin-top: 32px;"></div>
     @endif
@@ -24,7 +24,7 @@
     </div>
 
     <!-- Tabla de íconos -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-left: 10px; padding-right: 50px">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-right: 91px">
         <tr>
             <!-- Muy Mala -->
             <td style="text-align: center; padding: 0 10px;">
