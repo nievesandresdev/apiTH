@@ -8,6 +8,8 @@ use App\Mail\User\WelcomeUser;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use App\Services\Hoster\Users\ProfileServices;
+use Illuminate\Validation\Rule;
+
 
 
 class UserServices
@@ -451,6 +453,7 @@ class UserServices
         $user = User::findOrFail($userId);
 
         $user->del = 1;
+        $user->email = $user->email.$userId;
         $user->save();
 
         return $user;
