@@ -35,6 +35,7 @@ class FacilityService {
                             ->limit($limit)
                             ->get();
 
+
             return $facilities;
 
         } catch (\Exception $e) {
@@ -195,8 +196,8 @@ class FacilityService {
 
         $dirTemplateTranslate = 'translation/webapp/hotel_input/facility';
         $inputsTranslate = [
-            'title' => $facilityHosterModel->title, 
-            'description' => $facilityHosterModel->description, 
+            'title' => $facilityHosterModel->title,
+            'description' => $facilityHosterModel->description,
             'schedule' => $request->ad_tag
         ];
         TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $facilityHosterModel);

@@ -311,12 +311,12 @@ class UtilsController extends Controller
 
     public function testPrepareYourArrival(){
         $type = 'prepare-arrival';
-        $hotel = Hotel::find(274);
+        $hotel = Hotel::find(240);
         //$guest = Guest::find(146);
-        $guest = Guest::find(355);
+        $guest = Guest::find(280);
         $chainSubdomain = $hotel->subdomain;
         //$stay = Stay::find(630);
-        $stay = Stay::with('queries')->where('id',628)->first();
+        $stay = Stay::with('queries')->where('id',629)->first();
 
 
 
@@ -330,22 +330,24 @@ class UtilsController extends Controller
                     $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
                 }
                 $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
+
                 //
 
                 $checkData = [
                     'title' => "Datos de tu estancia en {$hotel->name}",
                     'formatCheckin' => $formatCheckin,
                     'formatCheckout' => $formatCheckout,
-                    'editStayUrl' => $webappEditStay
+                    'editStayUrl' => $webappEditStay,
                 ];
            /*  } */
 
 
         //     //query section
-            if($type == 'welcome' || $type == 'postCheckin'){
                 $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
                 $querySettings = $this->querySettingsServices->getAll($hotel->id);
                 $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
+                $answered = Query::where('stay_id',$stay->id)->where('guest_id',$guest->id)->first();
+
                 $showQuerySection = true;
 
                 if(
@@ -364,23 +366,24 @@ class UtilsController extends Controller
                     'currentPeriod' => $currentPeriod,
                     'webappLinkInbox' => $webappLinkInbox,
                     'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
+                    'answered' => $answered->answered == 1 ? true : false
 
                 ];
-            }
 
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
 
 
             //
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
-
-
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+            $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
+
 
 
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
              $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+
 
 
 
@@ -392,10 +395,11 @@ class UtilsController extends Controller
                 'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
-                'urlWebapp' => $urlWebapp
+                'urlWebapp' => $urlWebapp,
+                'urlCheckin' => $urlCheckin,
             ];
 
-            //dd($dataEmail);
+            //dd($dataEmail,$hotel);
 
 
             $this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');

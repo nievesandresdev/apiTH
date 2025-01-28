@@ -32,7 +32,7 @@ class SendPostStayEmails extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'correos post stay';
     protected $stayService;
     protected $requestSettings;
     protected $mailService;
@@ -165,76 +165,6 @@ class SendPostStayEmails extends Command
             }
         }
     }
-
-
-   /*  public function handleSendEmailCheckout()
-    {
-
-        // Definir el rango de tiempo actual (última hora hasta ahora)
-        $startTime = Carbon::now()->startOfHour(); // Inicio de la hora actual (7:00)
-        $endTime = Carbon::now()->addHour()->startOfHour(); // Inicio de la siguiente hora (8:00)
-
-
-
-        // Filtrar estancias con checkout dentro del rango actual
-        $stays = Stay::select('id', 'hotel_id', 'check_out')
-            ->whereHas('hotel')
-            ->whereBetween('check_out', [$startTime->toDateString(), $endTime->toDateString()])
-            ->with([
-                'queries' => function ($query) {
-                    $query->select('id', 'stay_id', 'guest_id', 'answered', 'qualification')
-                        ->where('period', 'post-stay');
-                },
-                'queries.guest' => function ($query) {
-                    $query->select('guests.id', 'guests.name', 'guests.email');
-                },
-                'hotel' => function ($query) {
-                    $query->select('hotels.id', 'hotels.name', 'hotels.checkout');
-                }
-            ])
-            ->get();
-
-
-
-        foreach ($stays as $stay) {
-            foreach ($stay->queries as $query) {
-                $chainSubdomain = $stay->hotel->subdomain;
-
-                $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
-
-                //
-                //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
-
-                $urlWebapp = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain);
-                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
-
-                $dataEmail = [
-
-                    'places' => $crosselling['places'],
-                    'experiences' => $crosselling['experiences'],
-                    'facilities' => $crosselling['facilities'],
-                    'urlQr' => $urlQr,
-                    'urlWebapp' => $urlWebapp
-                ];
-                Log::info('inicia data handleSendEmailCheckout',$dataEmail);
-                try {
-                    $queries_url = url('consultas?e=' . $stay->id . '&lang=' . $query->guest->lang_web . '&g=' . $query->guest->id);
-                    $link = includeSubdomainInUrlHuesped($queries_url, $stay->hotel);
-
-                    //Mail::to($query->guest->email)->send(new InsistencePostStayResponse($link, $stay->hotel));
-                    $type = 'checkout';
-                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), "francisco20990@gmail.com");
-                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), $query->guest->email);
-                    Log::info('se envio el correo handleSendEmailCheckout');
-
-
-                } catch (\Exception $e) {
-                    Log::error('Error al enviar correo a ' . $query->guest->email . ': ' . $e->getMessage());
-                }
-            }
-        }
-
-    } */
 
 
     public function handleSendEmail()

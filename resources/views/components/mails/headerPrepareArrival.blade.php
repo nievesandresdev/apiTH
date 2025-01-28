@@ -4,7 +4,7 @@
             <tr>
                 {{-- mobile image --}}
                 <td style="text-align: center;width: 50%;vertical-align: top;padding: 0 0 0 10px;" class="hidden-responsive"> <!-- 10px de padding a la izquierda -->
-                    <img src="{{ asset('mails/arrival1.png') }}" alt="arrival1" style="width: 100%; height: 240px; max-width: 100%;object-fit:cover">
+                    <img src="{{ asset('mails/arrival2.png') }}" alt="arrival1" style="width: 100%; height: 240px; max-width: 100%;object-fit:cover">
                 </td>
                 <!-- Columna de Texto -->
                 <td class="text-content" style="color: #333333;text-align: left;vertical-align: top;padding-right:20px;">
@@ -24,7 +24,7 @@
 
                 <!-- Columna de Imagen -->
                 <td style="text-align: center;vertical-align: top;width: 212px;padding: 0 0 0 10px;" class="show-not-responsive"> <!-- 10px de padding a la izquierda -->
-                    <img src="{{ asset('mails/arrival2.png') }}" alt="arrival2" style="width: 212px; height: 213px; max-width: 100%;">
+                    <img src="{{ asset('mails/arrival1.png') }}" alt="arrival2" style="width: 208px; height: 254px; max-width: 100%;">
                 </td>
             </tr>
         </table>
