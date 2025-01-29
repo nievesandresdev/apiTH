@@ -13,7 +13,11 @@ class WorkPositionController extends Controller
         $work_positions = WorkPosition::active()->byHotel()->get();
 
         $work_positions_mapped = $work_positions->map(function($work_position) {
-            $has_profile = $work_position->profiles()->exists();
+            $has_profile = $work_position->profiles()
+            ->whereHas('user', function ($query) {
+                $query->where('del', 0);
+            })
+            ->exists();
 
             $work_position->relation = $has_profile;
 
@@ -99,16 +103,18 @@ class WorkPositionController extends Controller
 
         try {
             // Buscar perfiles asociados
-            $profiles = $work_position->profiles;
+            $hasActiveUsers = $work_position->profiles()
+                ->whereHas('user', function ($query) {
+                    $query->where('del', 0);
+                })->exists();
 
-            // Si existen perfiles asociados, devolver un mensaje de error
-            if ($profiles && $profiles->count() > 0) {
+            if ($hasActiveUsers) {
                 return bodyResponseRequest(EnumResponse::ERROR, [
-                    'message' => 'No se puede eliminar la posición de trabajo porque tiene registros asociados.'
+                    'message' => 'No se puede eliminar la posición de trabajo porque tiene usuarios activos asociados.'
                 ]);
             }
 
-            // Actualizar el estado de la posición de trabajo a 0
+            // Actualizar  posición de trabajo a 0
             $work_position->update(['status' => 0]);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
@@ -117,7 +123,8 @@ class WorkPositionController extends Controller
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [
-                'message' => 'Error al eliminar la posición de trabajo'
+                'message' => 'Error al eliminar la posición de trabajo',
+                'error' => $e->getMessage()
             ]);
         }
     }
