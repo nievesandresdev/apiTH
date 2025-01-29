@@ -54,12 +54,12 @@ use stdClass;
             //
             $fieldsForm->responsibleAdult = new stdClass();
             $fieldsForm->responsibleAdult->visible = false;
-            $fieldsForm->responsibleAdult->mandatory = true;
+            $fieldsForm->responsibleAdult->mandatory = false;
             $fieldsForm->responsibleAdult->dependence = true;
             //
             $fieldsForm->kinshipRelationship = new stdClass();
             $fieldsForm->kinshipRelationship->visible = false;
-            $fieldsForm->kinshipRelationship->mandatory = true;
+            $fieldsForm->kinshipRelationship->mandatory = false;
             $fieldsForm->kinshipRelationship->dependence = true;
             return $fieldsForm;
         }
@@ -94,10 +94,15 @@ use stdClass;
             $fieldsForm->countryResidence->mandatory = true;
             $fieldsForm->countryResidence->dependence = false;
             //
-            $fieldsForm->postalCodeMunicipality = new stdClass();
-            $fieldsForm->postalCodeMunicipality->visible = true;
-            $fieldsForm->postalCodeMunicipality->mandatory = true;
-            $fieldsForm->postalCodeMunicipality->dependence = false;
+            $fieldsForm->postalCode = new stdClass();
+            $fieldsForm->postalCode->visible = true;
+            $fieldsForm->postalCode->mandatory = true;
+            $fieldsForm->postalCode->dependence = false;
+            //
+            $fieldsForm->municipality = new stdClass();
+            $fieldsForm->municipality->visible = true;
+            $fieldsForm->municipality->mandatory = true;
+            $fieldsForm->municipality->dependence = false;
             //
             $fieldsForm->addressResidence = new stdClass();
             $fieldsForm->addressResidence->visible = true;

@@ -3,6 +3,7 @@ namespace App\Services\Hoster\Stay;
 
 use App\Jobs\TranslateGenericMultipleJob;
 use App\Models\CheckinSetting;
+use App\Models\Hotel;
 use App\Utils\Enums\EnumsStay\CheckinSettingsDefaultEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -77,6 +78,30 @@ class CheckinHosterServices {
             $model->save();
         } catch (\Exception $e) {
             Log::error('error processTranslateTextsCHECKIN: '.$e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateToggleShowCheckinHotel ($hotelId, $value) {
+        try {
+            
+            $hotel = Hotel::find($hotelId);
+            $hotel->show_checkin_stay = $value;
+            $save = $hotel->save();
+            return $save;
+        } catch (\Exception $e) {
+            Log::error('error updateToggleShowCheckinHotel: '.$e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getToggleShowCheckinHotel ($hotelId) {
+        try {
+            
+            $hotel = Hotel::find($hotelId);
+            return $hotel->show_checkin_stay;
+        } catch (\Exception $e) {
+            Log::error('error updateToggleShowCheckinHotel: '.$e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

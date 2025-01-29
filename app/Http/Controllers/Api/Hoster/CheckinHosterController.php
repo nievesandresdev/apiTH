@@ -90,4 +90,37 @@ class CheckinHosterController extends Controller
         }
     }
 
+    public function updateToggleShowCheckinHotel(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->updateToggleShowCheckinHotel($hotel->id, $request->value);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateToggleShowCheckinHotel');
+        }
+    }
+
+    public function getToggleShowCheckinHotel(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->getToggleShowCheckinHotel($hotel->id);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getToggleShowCheckinHotel');
+        }
+    }
 }

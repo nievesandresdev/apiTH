@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CheckinController;
 use App\Http\Controllers\Api\Hoster\CheckinHosterController;
 use App\Http\Controllers\Api\Hoster\StayHosterController;
 use App\Http\Controllers\Api\Hoster\StaySessionsHosterController;
@@ -46,9 +47,17 @@ Route::group(['prefix' => 'stay'], function () {
             Route::get('/getGeneralSettings', [CheckinHosterController::class, 'getGeneralSettings']);
             Route::post('/updateFormSettings', [CheckinHosterController::class, 'updateFormSettings']);
             Route::get('/getFormSettings', [CheckinHosterController::class, 'getFormSettings']);
-
+            Route::post('/updateToggleShowCheckinHotel', [CheckinHosterController::class, 'updateToggleShowCheckinHotel']);
+            Route::get('/getToggleShowCheckinHotel', [CheckinHosterController::class, 'getToggleShowCheckinHotel']);
         });
     });
+
+    Route::group(['prefix' => 'checkin'], function () {
+
+        // Route::post('/updateGeneralSettings', [CheckinHosterController::class, 'updateGeneralSettings']);
+        Route::get('/getAllSettings', [CheckinController::class, 'getAllSettings']);
+    });
+    
 });
 
 
