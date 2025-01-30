@@ -509,12 +509,12 @@ class StayService {
                 $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
 
+
                 $queryData = [
                     'showQuerySection' => $showQuerySection,
                     'currentPeriod' => $currentPeriod,
                     'webappLinkInbox' => $webappLinkInbox,
                     'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-
                 ];
             }
 
@@ -530,8 +530,9 @@ class StayService {
 
 
             //
-            // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
 
 
 
@@ -543,7 +544,8 @@ class StayService {
                 'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
-                'urlWebapp' => $urlWebapp
+                'urlWebapp' => $urlWebapp,
+                'urlCheckin' => $urlCheckin,
             ];
 
             //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
