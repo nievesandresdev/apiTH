@@ -162,8 +162,8 @@ class SendPreStayEmail extends Command
                 //corosseling que trae instalaciones exp y destinos etc
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
 
-                //$urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
-                $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
 
                 $dataEmail = [
