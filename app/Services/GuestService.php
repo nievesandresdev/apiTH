@@ -132,13 +132,31 @@ class GuestService {
         }
     }
 
-    public function updateDataGuest($guest,$request) {
+    public function updateDataGuest($guest, $request, $completeCheckin = false) {
         try {
             $guest->name = $request->name ?? $guest->name;
             $guest->lastname = $request->lastname ?? $guest->lastname;
+            $guest->second_lastname = $request->secondLastname ?? $guest->second_lastname;
             $guest->email = $request->email ?? $guest->email;
             $guest->phone = $request->phone ?? $guest->phone;
+            $guest->sex = $request->gender ?? $guest->sex;
+            //
+            $guest->responsible_adult = $request->responsibleAdult ?? $guest->responsible_adult;
+            $guest->kinship_relationship = $request->kinshipRelationship ?? $guest->kinship_relationship;
+            //
+            $guest->nationality = $request->nationality ?? $guest->nationality;
+            $guest->doc_type = $request->docType ?? $guest->doc_type;
+            $guest->doc_support_number = $request->docSupportNumber ?? $guest->doc_support_number;
+            $guest->doc_num = $request->docNumber ?? $guest->doc_num;
+            $guest->country_address = $request->countryResidence ?? $guest->country_address;
+            $guest->postal_code = $request->postalCode ?? $guest->postal_code;
+            $guest->municipality = $request->municipality ?? $guest->municipality;
+            $guest->address = $request->addressResidence ?? $guest->address;
 
+            if($completeCheckin){
+                $guest->complete_checkin_data = true;
+            }
+            //   
             $guest->save();
             return $guest;
 

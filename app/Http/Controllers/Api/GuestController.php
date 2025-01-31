@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Utils\Enums\EnumResponse;
 use App\Services\GuestService;
+use App\Services\QueryServices;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Google\Client as GoogleClient;
@@ -18,12 +19,15 @@ use Google\Client as GoogleClient;
 class GuestController extends Controller
 {
     public $service;
+    public $queryService;
 
     function __construct(
-        GuestService $_GuestService
+        GuestService $_GuestService,
+        QueryServices $_QueryServices,
     )
     {
         $this->service = $_GuestService;
+        $this->queryService = $_QueryServices;
     }
 
     public function findById ($id) {
@@ -209,6 +213,40 @@ class GuestController extends Controller
 
         $data = new GuestResource($model);
         return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+    }
+
+    public function saveCheckinData(Request $request) {
+        
+        $hotel = $request->attributes->get('hotel');
+        $guest = Guest::find($request->id);
+
+        if (!$guest) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        try {
+            $queryPreStay = $guest->queries()->where('period','pre-stay')->where('stay_id',$request->stayId)->first();
+            $saveQuery = true;
+            if($queryPreStay){
+                $saveQuery = $this->queryService->saveResponse($queryPreStay->id, $request, $hotel);
+            }
+            
+            $model = $this->service->updateDataGuest($guest, $request, true);
+
+            if (!$model || !$saveQuery) {
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveCheckinData');
+        }
     }
 
     public function createAccessInStay(Request $request) {
