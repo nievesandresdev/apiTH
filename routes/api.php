@@ -64,6 +64,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('/getDossier/{domain}/{type}', [DossierController::class, 'getDossier']);
     Route::get('/getDossierData/{tabNumber}', [DossierController::class, 'getDossierData']);
     Route::post('/storeUpdateOrCreate', [DossierController::class, 'storeUpdateOrCreate']);
+    Route::post('/createNewScenario', [DossierController::class, 'storeDossierData']);
 });
 
 //prefix users

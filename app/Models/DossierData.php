@@ -12,14 +12,14 @@ class DossierData extends Model
     protected $fillable = [
         'dossier_id',
         'rooms',
-        'average_price',
-        'occupancy_rate',
-        'reputation_increase',
-        'price_per_night_increase',
-        'occupancy_rate_increase',
-        'price_per_room_per_month',
-        'implementation_price',
-        'investment_in_hoster',
+        'averagePrice',
+        'occupancyRate',
+        'reputationIncrease',
+        'pricePerNightIncrease',
+        'occupancyRateIncrease',
+        'pricePerRoomPerMonth',
+        'implementationPrice',
+        'investmentInHoster',
         'benefit',
     ];
 
@@ -28,7 +28,7 @@ class DossierData extends Model
         static::creating(function ($dossierData) {
 
             if (empty($dossierData->tab_number)) {
-                $dossierData->tab_number = self::getNextTabNumber($dossierData->dossier_id);
+                $dossierData->tab_number = self::getNextTabNumber();
             }
         });
     }
@@ -43,8 +43,8 @@ class DossierData extends Model
     /**
      * Obtener el siguiente tab_number para un dossier_id.
      */
-    private static function getNextTabNumber($dossierId)
+    private static function getNextTabNumber()
     {
-        return self::where('dossier_id', $dossierId)->max('tab_number') + 1;
+        return self::max('tab_number') + 1;
     }
 }

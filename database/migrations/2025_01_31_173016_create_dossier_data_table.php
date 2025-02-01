@@ -17,14 +17,14 @@ return new class extends Migration
             $table->integer('tab_number');
 
             $table->integer('rooms')->default(0);
-            $table->decimal('average_price', 10, 2)->default(0);
-            $table->decimal('occupancy_rate', 5, 2)->default(0);
-            $table->decimal('reputation_increase', 5, 2)->default(0);
-            $table->decimal('price_per_night_increase', 5, 2)->default(0);
-            $table->decimal('occupancy_rate_increase', 5, 2)->default(0);
-            $table->decimal('price_per_room_per_month', 10, 2)->default(8.99);
-            $table->decimal('implementation_price', 10, 2)->default(900);
-            $table->decimal('investment_in_hoster', 10, 2)->default(0);
+            $table->decimal('averagePrice', 10, 2)->default(0);
+            $table->decimal('occupancyRate', 5, 2)->default(0);
+            $table->decimal('reputationIncrease', 5, 2)->default(0);
+            $table->decimal('pricePerNightIncrease', 5, 2)->default(0);
+            $table->decimal('occupancyRateIncrease', 5, 2)->default(0);
+            $table->decimal('pricePerRoomPerMonth', 10, 2)->default(8.99);
+            $table->decimal('implementationPrice', 10, 2)->default(900);
+            $table->decimal('investmentInHoster', 10, 2)->default(0);
             $table->decimal('benefit', 10, 2)->default(0);
 
             $table->timestamps();

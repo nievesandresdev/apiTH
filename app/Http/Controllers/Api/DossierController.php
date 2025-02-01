@@ -25,6 +25,30 @@ class DossierController extends Controller
     public function storeUpdateOrCreate(Request $request)
     {
         $dossierData = DossierData::updateOrCreate(['tab_number' => $request->tab_number], $request->all());
-        return response()->json($dossierData);
+
+        $dossier = Dossier::find($dossierData->dossier_id);
+        return response()->json($dossier->load('dossierData'));
+    }
+
+    //store dossierdata new data
+    public function storeDossierData(Request $request)
+    {
+        $dossierData = new DossierData();
+        $dossierData->dossier_id = $request->dossier_id;
+        //$dossierData->tab_number = $request->tab_number;
+        $dossierData->rooms = $request->rooms;
+        $dossierData->averagePrice = $request->averagePrice;
+        $dossierData->occupancyRate = $request->occupancyRate;
+        $dossierData->reputationIncrease = $request->reputationIncrease;
+        $dossierData->pricePerNightIncrease = $request->pricePerNightIncrease;
+        $dossierData->occupancyRateIncrease = $request->occupancyRateIncrease;
+        $dossierData->pricePerRoomPerMonth = $request->pricePerRoomPerMonth;
+        $dossierData->implementationPrice = $request->implementationPrice;
+        $dossierData->investmentInHoster = $request->investmentInHoster;
+        $dossierData->benefit = $request->benefit;
+        $dossierData->save();
+
+        $dossier = Dossier::find($dossierData->dossier_id);
+        return response()->json($dossier->load('dossierData'));
     }
 }
