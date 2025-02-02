@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('reputationIncrease', 5, 2)->default(0);
             $table->decimal('pricePerNightIncrease', 5, 2)->default(0);
             $table->decimal('occupancyRateIncrease', 5, 2)->default(0);
-            $table->decimal('pricePerRoomPerMonth', 10, 2)->default(8.99);
+            $table->decimal('pricePerRoomPerMonth', 10, 2)->default(0);
             $table->decimal('implementationPrice', 10, 2)->default(900);
             $table->decimal('investmentInHoster', 10, 2)->default(0);
             $table->decimal('benefit', 10, 2)->default(0);

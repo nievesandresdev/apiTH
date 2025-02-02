@@ -12,6 +12,11 @@ class DossierController extends Controller
     public function getDossier($domain, $type)
     {
         $dossier = Dossier::where('domain', 'like', '%' . $domain . '%')->where('type', $type)->first();
+
+        if (!$dossier) {
+            return response()->json(null, 204);
+        }
+
         return response()->json($dossier->load('dossierData'));
     }
 
@@ -33,22 +38,21 @@ class DossierController extends Controller
     //store dossierdata new data
     public function storeDossierData(Request $request)
     {
-        $dossierData = new DossierData();
-        $dossierData->dossier_id = $request->dossier_id;
-        //$dossierData->tab_number = $request->tab_number;
-        $dossierData->rooms = $request->rooms;
-        $dossierData->averagePrice = $request->averagePrice;
-        $dossierData->occupancyRate = $request->occupancyRate;
-        $dossierData->reputationIncrease = $request->reputationIncrease;
-        $dossierData->pricePerNightIncrease = $request->pricePerNightIncrease;
-        $dossierData->occupancyRateIncrease = $request->occupancyRateIncrease;
-        $dossierData->pricePerRoomPerMonth = $request->pricePerRoomPerMonth;
-        $dossierData->implementationPrice = $request->implementationPrice;
-        $dossierData->investmentInHoster = $request->investmentInHoster;
-        $dossierData->benefit = $request->benefit;
-        $dossierData->save();
 
-        $dossier = Dossier::find($dossierData->dossier_id);
+        $dossier_id = $request->dossier_id;
+
+        $lastData = DossierData::where('dossier_id', $dossier_id)
+            ->latest()
+            ->first();
+
+
+        $newDossierData = $lastData->replicate();
+        $newDossierData->tab_number = null;
+
+        $newDossierData->save();
+
+        $dossier = Dossier::find($dossier_id);
         return response()->json($dossier->load('dossierData'));
     }
+
 }
