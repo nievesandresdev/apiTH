@@ -61,7 +61,6 @@ class RewardsController extends Controller
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'requestCreate' => $request->all(),
-                'hotel' => $hotelModel
             ]);
             //$rewards = $this->service->storeRewardStay($request, $hotelModel);
         } catch (\Exception $e) {
