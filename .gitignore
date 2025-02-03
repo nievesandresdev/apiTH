@@ -1,10 +1,12 @@
+/storage/*
 /.phpunit.cache
 /node_modules
 /public/build
 /public/hot
 /public/storage
 /vendor
-/storage/*.key
+#/storage/*.key
+!storage/app/
 !storage/app/phone-codes.json
 .env
 .env.backup
@@ -23,10 +25,10 @@ yarn-error.log
 # Ignorar archivos y carpetas relacionados con MadelineProto
 MadelineProto.log
 public/MadelineProto.log
-storage/session.madeline
-storage/telegram/*
-storage/framework
-storage/logs
+#storage/session.madeline
+#storage/telegram/*
+#storage/framework
+#storage/logs
 
 #ignorar locks
 composer.lock
