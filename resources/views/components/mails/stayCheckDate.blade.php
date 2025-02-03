@@ -7,7 +7,7 @@
             <tr>
                 <td>
                     <p class="checkin-title" style="margin: 0;color:#A0A0A0;font-family: arial;line-height: 110%">Check-in</p>
-                    <div class="checkin-description" style="margin:0 auto;">
+                    <div class="checkin-description" style="margin:0 10px;">
                         <table style="width: 100%;">
                             <tr>
                                 <td>
