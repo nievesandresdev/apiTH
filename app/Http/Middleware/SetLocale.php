@@ -14,12 +14,22 @@ class SetLocale
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle($request, Closure $next)
-    {
-        if ($locale = $request->header('Accept-Language')) {
-            App::setLocale($locale);
+    public function handle($request, Closure $next) {
+        // Obtener el encabezado Accept-Language
+        $locale = $request->header('Accept-Language');
+    
+        if ($locale) {
+            // Extraer solo el primer idioma válido
+            $localesValidos = ['es', 'en']; // Agrega más idiomas si es necesario
+            $locale = strtok($locale, ','); // Toma solo la primera parte antes de la coma
+    
+            if (in_array($locale, $localesValidos)) {
+                App::setLocale($locale);
+            } else {
+                App::setLocale(config('app.fallback_locale')); // Establece un fallback
+            }
         }
-
+    
         return $next($request);
     }
 }
