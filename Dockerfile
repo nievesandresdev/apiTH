@@ -4,8 +4,9 @@ FROM php:8.2-apache
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
 
-# Instalar dependencias del sistema
+# Instalar dependencias del sistema, incluyendo locales
 RUN apt-get update && apt-get install -y \
+    locales \
     libonig-dev \
     libzip-dev \
     libpng-dev \
@@ -22,6 +23,17 @@ RUN apt-get update && apt-get install -y \
     cron \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Configurar locales para que el sistema soporte es_ES.UTF-8
+RUN echo "es_ES.UTF-8 UTF-8" >> /etc/locale.gen && \
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+    locale-gen && \
+    update-locale LANG=es_ES.UTF-8
+
+# Establecer variables de entorno para el locale
+ENV LANG es_ES.UTF-8
+ENV LANGUAGE es_ES:es
+ENV LC_ALL es_ES.UTF-8
 
 # Instalar extensiones de PHP
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
