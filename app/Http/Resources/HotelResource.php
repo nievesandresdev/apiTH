@@ -46,6 +46,7 @@ class HotelResource extends JsonResource
             "type"=> $type,
             "address"=> $this->address,
             "zone"=> $this->zone,
+            "city_id"=> $this->city_id,
             "category"=> $this->category,
             "image"=> $this->image,
             "images" => $this->images()->orderBy('created_at', 'DESC')->get(),

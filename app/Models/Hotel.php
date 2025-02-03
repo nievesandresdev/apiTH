@@ -23,6 +23,7 @@ class Hotel extends Model
         'type',
         'address',
         'zone',
+        'city_id',
         'image',
         'category',
         'phone',
