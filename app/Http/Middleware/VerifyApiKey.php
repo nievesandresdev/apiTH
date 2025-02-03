@@ -24,7 +24,8 @@ class VerifyApiKey
             'test',
             'testEmailPostCheckout',
             'testPrepareYourArrival',
-            'testEmailGeneral'
+            'testEmailGeneral',
+            'api/rewards/storeRewardStay'
         ];
 
         // Verifica si la ruta actual está en la lista de exclusiones
