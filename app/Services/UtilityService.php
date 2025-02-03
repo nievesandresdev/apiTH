@@ -70,17 +70,21 @@ class UtilityService {
             $citySlug = \Str::slug($modelHotel->zone);
             $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
 
-            if($modelHotel->show_facilities){
+
+
+            if($modelHotel->show_facilities == 1){
                 $facilities = $this->facilityService->getCrosselling($modelHotel, 3);
+
 
                 //$crossellingPlacesWhatvisit = PlaceResource::collection($placesWhatvisit)->toArray(request());
                 $facilities = $facilities->map(function ($item) use($modelHotel, $chainSubdomain, $url_bucket){
                     return [
                         'title' => $item->title,
                         'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"ver-instalacion/{$item->id}"),
-                        'url_image' => $url_bucket.$item->images[0]->url
+                        'url_image' => count($item->images) > 0 ? $url_bucket.$item->images[0]->url : null
                     ];
                 });
+
             }
 
             $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);

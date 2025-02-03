@@ -54,4 +54,17 @@ class RewardsController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdateRewards');
         }
     }
+
+    public function storeRewardStay(Request $request){
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'requestCreate' => $request->all(),
+            ]);
+            //$rewards = $this->service->storeRewardStay($request, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeRewardStay');
+        }
+    }
 }

@@ -108,6 +108,44 @@ class ApiReviewServices {
 
     }
 
+    public function findDataOta($hotel,$ota) {
+        $URL_BASE_API_REVIEW = config('app.url_base_api_review');
+        //return $URL_BASE_API_REVIEW.'/hotels/getSummaryReviewsOtas/';
+
+
+        $code = $hotel->code;
+
+        $params = [
+            "ota" => $ota,
+            "googleMapCid" => $code
+        ];
+
+
+        $http_client_service = new HttpClientService();
+        $headers = ['x-api-key' => $this->X_KEY_API];
+        $response_request = $http_client_service->make_request('GET', "$URL_BASE_API_REVIEW/hotels/findByParams", $params, $headers, 60);
+
+        /* return [
+            'params' => $params,
+            'url' => $URL_BASE_API_REVIEW.'/hotelOtas/getByParams',
+            'key' => $this->X_KEY_API,
+            'response' => $response_request
+        ]; */
+
+        // $response_request = null;
+        $data = null;
+        if (!isset($response_request['ok']) || !$response_request['ok']) {
+            \Log::error($response_request['message']??$response_request);
+            return;
+        } else {
+            $data = $response_request ?? null;
+        }
+        $data = $data['data'] ?? null;
+
+        return $this->convert_keys_to_snake_case($data);
+
+    }
+
     public function updateBulkOTAS($hotel,$request){
         $URL_BASE_API_REVIEW = config('app.url_base_api_review');
 

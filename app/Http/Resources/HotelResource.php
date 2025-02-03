@@ -103,6 +103,7 @@ class HotelResource extends JsonResource
             //"rewads" => count($this->rewards) > 0 ? $this->rewards : null,
             "referrals" => $this->referrals->first(),
             "referent" => $this->referent->first(),
+            "show_checkin_stay" => $this->show_checkin_stay,
         ];
     }
 }

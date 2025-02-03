@@ -154,6 +154,12 @@
                 'editUrl' => $data['checkData']['editStayUrl']
             ])
         @endif
+
+        @if($hotel->show_checkin_stay)
+            <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+            @include('components.mails.makeYourCheckLink', ['urlCheckin' => $data['urlCheckin']])
+        @endif
+
         {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
         @if(($type == 'welcome' || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
             @if($data['queryData']['currentPeriod'] !== 'in-stay')
@@ -172,9 +178,9 @@
             @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
         @endif
 
-        @if(count($data['experiences']) > 0 && $hotel->show_experiences)
+        {{-- @if(count($data['experiences']) > 0 && $hotel->show_experiences)
             @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
-        @endif
+        @endif --}}
 
         @if($type == 'welcome' || $type == 'postCheckin')
             @if(count($data['facilities']) > 0 && $hotel->show_facilities)

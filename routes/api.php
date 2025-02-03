@@ -9,7 +9,8 @@ use App\Http\Controllers\Api\revieNotificationController;
 use App\Http\Controllers\Subdomain\SubdomainController;
 use App\Http\Controllers\Api\{
     LanguageController,
-    DasboardController
+    DasboardController,
+    DossierController
 };
 use App\Http\Controllers\Api\Auth\{
     AuthController,
@@ -19,7 +20,7 @@ use App\Http\Controllers\Api\Users\{
     UsersController,
     WorkPositionController
 };
-
+use App\Http\Controllers\Api\RewardsController;
 
 
 /*
@@ -32,6 +33,8 @@ use App\Http\Controllers\Api\Users\{
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::post('/storeRewardStay', [RewardsController::class, 'storeRewardStay']);
 
 Route::group(['prefix' => 'utility'], function () {
     Route::get('/getExpAndPlaceBySaearch', [UtilityController::class, 'getExpAndPlace']);
@@ -56,6 +59,14 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 
     Route::post('password/verify-token', [ForgotPasswordController::class, 'verifyToken'])->name('password.verify');
+});
+
+ //prefix dossier
+ Route::group(['prefix' => 'dossier'], function () {
+    Route::get('/getDossier/{domain}/{type}', [DossierController::class, 'getDossier']);
+    Route::get('/getDossierData/{tabNumber}', [DossierController::class, 'getDossierData']);
+    Route::post('/storeUpdateOrCreate', [DossierController::class, 'storeUpdateOrCreate']);
+    Route::post('/createNewScenario', [DossierController::class, 'storeDossierData']);
 });
 
 //prefix users
@@ -90,13 +101,15 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/testMail', [UsersController::class, 'testMail']);
     });
 
+
+
     //dashboard
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/dataCustomerExperience', [DasboardController::class, 'dataCustomerExperience']);
         Route::get('/dataFeedback', [DasboardController::class, 'dataFeedback']);
         Route::get('/getDataReviewOTA', [DasboardController::class, 'getDataReviewOTA']);
-    }); 
-    
+    });
+
 });
 
 

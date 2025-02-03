@@ -67,6 +67,8 @@ class Hotel extends Model
         'chain_id',
         'show_referrals',
         'offer_benefits',
+        //
+        'show_checkin_stay'
     ];
 
     /* public function user()
@@ -224,6 +226,11 @@ class Hotel extends Model
     public function getImageAttribute($value)
     {
         return $value ? $value : '/storage/gallery/general-1.jpg';
+    }
+
+    public function getShowCheckinStayAttribute($value)
+    {
+        return boolval($value);
     }
 
 
