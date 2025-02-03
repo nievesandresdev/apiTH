@@ -6,7 +6,6 @@
 /public/storage
 /vendor
 #/storage/*.key
-!storage/app/
 !storage/app/phone-codes.json
 .env
 .env.backup
