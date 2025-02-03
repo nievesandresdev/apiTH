@@ -15,5 +15,10 @@ class Dossier extends Model
         'domain',
     ];
 
+    public function dossierData()
+    {
+        return $this->hasMany(DossierData::class);
+    }
+
 
 }
