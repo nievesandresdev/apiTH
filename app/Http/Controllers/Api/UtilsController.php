@@ -113,9 +113,9 @@ class UtilsController extends Controller
     }
 
 
-    public function test2(){
-        $type = 'checkout';
-        $hotel = Hotel::find(240);
+    public function testEmailGeneral(){
+        $type = 'welcome';
+        $hotel = Hotel::find(274);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(565);
@@ -177,6 +177,7 @@ class UtilsController extends Controller
 
 
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+            $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
 
 
             //
@@ -193,7 +194,8 @@ class UtilsController extends Controller
                 'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
-                'urlWebapp' => $urlWebapp
+                'urlWebapp' => $urlWebapp,
+                'urlCheckin' => $urlCheckin
             ];
 
             //dd($dataEmail);
