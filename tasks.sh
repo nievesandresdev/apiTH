@@ -11,7 +11,7 @@ echo "Ejecutando seeders..."
 #php /var/www/html/artisan db:seed --force
 
 # Cargar el campo city_id en la tabla hotels
-php /var/www/html/artisan db:seed --class=LoadCityObjectidInProductSeeder
+php /var/www/html/artisan db:seed --class=loadCityObjectidInHotelSeeder
 
 #Ejecutar custom commmands sprint 4
 echo "Ejecutando customs commands..."
