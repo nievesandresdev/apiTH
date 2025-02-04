@@ -22,10 +22,7 @@ class RewardsController extends Controller
         try {
             $hotelModel = $request->attributes->get('hotel');
             $rewards = $this->service->getRewards($request, $hotelModel);
-            /* return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                'rewards' => $rewards,
-                'hotel' => $hotelModel
-            ]); */
+
             if(!$rewards){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -44,6 +41,7 @@ class RewardsController extends Controller
     public function storeOrUpdateRewards(Request $request){
         try {
             $hotelModel = $request->attributes->get('hotel');
+
             $rewards = $this->service->storeOrUpdateRewards($request, $hotelModel);
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'requestCreate' => $request->all(),
