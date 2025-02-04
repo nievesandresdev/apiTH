@@ -1,4 +1,5 @@
-/storage/*
+storage/*
+!storage/app/phone-codes.json
 /.phpunit.cache
 /node_modules
 /public/build
@@ -6,7 +7,6 @@
 /public/storage
 /vendor
 #/storage/*.key
-!storage/app/phone-codes.json
 .env
 .env.backup
 .env.production
