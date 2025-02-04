@@ -1,0 +1,1432 @@
+[
+  {
+    "label": "ES +34",
+    "value": "+34",
+    "codeCountry": "ES",
+    "translateCountry": {
+      "es": "España",
+      "en": "Spain",
+      "de": "Spanien",
+      "fr": "Espagne",
+      "it": "Spagna",
+      "pt": "Espanha"
+    }
+  },
+  {
+    "label": "US +1",
+    "value": "+1",
+    "codeCountry": "US",
+    "translateCountry": {
+      "es": "Estados Unidos",
+      "en": "United States",
+      "de": "Vereinigte Staaten",
+      "fr": "États-Unis",
+      "it": "Stati Uniti",
+      "pt": "Estados Unidos"
+    }
+  },
+  {
+    "label": "GB +44",
+    "value": "+44",
+    "codeCountry": "GB",
+    "translateCountry": {
+      "es": "Reino Unido",
+      "en": "United Kingdom",
+      "de": "Vereinigtes Königreich",
+      "fr": "Royaume-Uni",
+      "it": "Regno Unito",
+      "pt": "Reino Unido"
+    }
+  },
+  {
+    "label": "DE +49",
+    "value": "+49",
+    "codeCountry": "DE",
+    "translateCountry": {
+      "es": "Alemania",
+      "en": "Germany",
+      "de": "Deutschland",
+      "fr": "Allemagne",
+      "it": "Germania",
+      "pt": "Alemanha"
+    }
+  },
+  {
+    "label": "FR +33",
+    "value": "+33",
+    "codeCountry": "FR",
+    "translateCountry": {
+      "es": "Francia",
+      "en": "France",
+      "de": "Frankreich",
+      "fr": "France",
+      "it": "Francia",
+      "pt": "França"
+    }
+  },
+  {
+    "label": "IT +39",
+    "value": "+39",
+    "codeCountry": "IT",
+    "translateCountry": {
+      "es": "Italia",
+      "en": "Italy",
+      "de": "Italien",
+      "fr": "Italie",
+      "it": "Italia",
+      "pt": "Itália"
+    }
+  },
+  {
+    "label": "RU +7",
+    "value": "+7",
+    "codeCountry": "RU",
+    "translateCountry": {
+      "es": "Rusia",
+      "en": "Russia",
+      "de": "Russland",
+      "fr": "Russie",
+      "it": "Russia",
+      "pt": "Rússia"
+    }
+  },
+  {
+    "label": "JP +81",
+    "value": "+81",
+    "codeCountry": "JP",
+    "translateCountry": {
+      "es": "Japón",
+      "en": "Japan",
+      "de": "Japan",
+      "fr": "Japon",
+      "it": "Giappone",
+      "pt": "Japão"
+    }
+  },
+  {
+    "label": "CN +86",
+    "value": "+86",
+    "codeCountry": "CN",
+    "translateCountry": {
+      "es": "China",
+      "en": "China",
+      "de": "China",
+      "fr": "Chine",
+      "it": "Cina",
+      "pt": "China"
+    }
+  },
+  {
+    "label": "IN +91",
+    "value": "+91",
+    "codeCountry": "IN",
+    "translateCountry": {
+      "es": "India",
+      "en": "India",
+      "de": "Indien",
+      "fr": "Inde",
+      "it": "India",
+      "pt": "Índia"
+    }
+  },
+  {
+    "label": "BR +55",
+    "value": "+55",
+    "codeCountry": "BR",
+    "translateCountry": {
+      "es": "Brasil",
+      "en": "Brazil",
+      "de": "Brasilien",
+      "fr": "Brésil",
+      "it": "Brasile",
+      "pt": "Brasil"
+    }
+  },
+  {
+    "label": "AU +61",
+    "value": "+61",
+    "codeCountry": "AU",
+    "translateCountry": {
+      "es": "Australia",
+      "en": "Australia",
+      "de": "Australien",
+      "fr": "Australie",
+      "it": "Australia",
+      "pt": "Austrália"
+    }
+  },
+  {
+    "label": "ZA +27",
+    "value": "+27",
+    "codeCountry": "ZA",
+    "translateCountry": {
+      "es": "Sudáfrica",
+      "en": "South Africa",
+      "de": "Südafrika",
+      "fr": "Afrique du Sud",
+      "it": "Sudafrica",
+      "pt": "África do Sul"
+    }
+  },
+  {
+    "label": "AR +54",
+    "value": "+54",
+    "codeCountry": "AR",
+    "translateCountry": {
+      "es": "Argentina",
+      "en": "Argentina",
+      "de": "Argentinien",
+      "fr": "Argentine",
+      "it": "Argentina",
+      "pt": "Argentina"
+    }
+  },
+  {
+    "label": "MX +52",
+    "value": "+52",
+    "codeCountry": "MX",
+    "translateCountry": {
+      "es": "México",
+      "en": "Mexico",
+      "de": "Mexiko",
+      "fr": "Mexique",
+      "it": "Messico",
+      "pt": "México"
+    }
+  },
+  {
+    "label": "NZ +64",
+    "value": "+64",
+    "codeCountry": "NZ",
+    "translateCountry": {
+      "es": "Nueva Zelanda",
+      "en": "New Zealand",
+      "de": "Neuseeland",
+      "fr": "Nouvelle-Zélande",
+      "it": "Nuova Zelanda",
+      "pt": "Nova Zelândia"
+    }
+  },
+  {
+    "label": "SE +46",
+    "value": "+46",
+    "codeCountry": "SE",
+    "translateCountry": {
+      "es": "Suecia",
+      "en": "Sweden",
+      "de": "Schweden",
+      "fr": "Suède",
+      "it": "Svezia",
+      "pt": "Suécia"
+    }
+  },
+  {
+    "label": "CH +41",
+    "value": "+41",
+    "codeCountry": "CH",
+    "translateCountry": {
+      "es": "Suiza",
+      "en": "Switzerland",
+      "de": "Schweiz",
+      "fr": "Suisse",
+      "it": "Svizzera",
+      "pt": "Suíça"
+    }
+  },
+  {
+    "label": "TR +90",
+    "value": "+90",
+    "codeCountry": "TR",
+    "translateCountry": {
+      "es": "Turquía",
+      "en": "Turkey",
+      "de": "Türkei",
+      "fr": "Turquie",
+      "it": "Turchia",
+      "pt": "Turquia"
+    }
+  },
+  {
+    "label": "PE +51",
+    "value": "+51",
+    "codeCountry": "PE",
+    "translateCountry": {
+      "es": "Perú",
+      "en": "Peru",
+      "de": "Peru",
+      "fr": "Pérou",
+      "it": "Perù",
+      "pt": "Peru"
+    }
+  },
+  {
+    "label": "CO +57",
+    "value": "+57",
+    "codeCountry": "CO",
+    "translateCountry": {
+      "es": "Colombia",
+      "en": "Colombia",
+      "de": "Kolumbien",
+      "fr": "Colombie",
+      "it": "Colombia",
+      "pt": "Colômbia"
+    }
+  },
+  {
+    "label": "CL +56",
+    "value": "+56",
+    "codeCountry": "CL",
+    "translateCountry": {
+      "es": "Chile",
+      "en": "Chile",
+      "de": "Chile",
+      "fr": "Chili",
+      "it": "Cile",
+      "pt": "Chile"
+    }
+  },
+  {
+    "label": "EG +20",
+    "value": "+20",
+    "codeCountry": "EG",
+    "translateCountry": {
+      "es": "Egipto",
+      "en": "Egypt",
+      "de": "Ägypten",
+      "fr": "Égypte",
+      "it": "Egitto",
+      "pt": "Egito"
+    }
+  },
+  {
+    "label": "NG +234",
+    "value": "+234",
+    "codeCountry": "NG",
+    "translateCountry": {
+      "es": "Nigeria",
+      "en": "Nigeria",
+      "de": "Nigeria",
+      "fr": "Nigéria",
+      "it": "Nigeria",
+      "pt": "Nigéria"
+    }
+  },
+  {
+    "label": "SA +966",
+    "value": "+966",
+    "codeCountry": "SA",
+    "translateCountry": {
+      "es": "Arabia Saudita",
+      "en": "Saudi Arabia",
+      "de": "Saudi-Arabien",
+      "fr": "Arabie saoudite",
+      "it": "Arabia Saudita",
+      "pt": "Arábia Saudita"
+    }
+  },
+  {
+    "label": "ID +62",
+    "value": "+62",
+    "codeCountry": "ID",
+    "translateCountry": {
+      "es": "Indonesia",
+      "en": "Indonesia",
+      "de": "Indonesien",
+      "fr": "Indonésie",
+      "it": "Indonesia",
+      "pt": "Indonésia"
+    }
+  },
+  {
+    "label": "PK +92",
+    "value": "+92",
+    "codeCountry": "PK",
+    "translateCountry": {
+      "es": "Pakistán",
+      "en": "Pakistan",
+      "de": "Pakistan",
+      "fr": "Pakistan",
+      "it": "Pakistan",
+      "pt": "Paquistão"
+    }
+  },
+  {
+    "label": "BD +880",
+    "value": "+880",
+    "codeCountry": "BD",
+    "translateCountry": {
+      "es": "Bangladesh",
+      "en": "Bangladesh",
+      "de": "Bangladesch",
+      "fr": "Bangladesh",
+      "it": "Bangladesh",
+      "pt": "Bangladesh"
+    }
+  },
+  {
+    "label": "IR +98",
+    "value": "+98",
+    "codeCountry": "IR",
+    "translateCountry": {
+      "es": "Irán",
+      "en": "Iran",
+      "de": "Iran",
+      "fr": "Iran",
+      "it": "Iran",
+      "pt": "Irã"
+    }
+  },
+  {
+    "label": "VN +84",
+    "value": "+84",
+    "codeCountry": "VN",
+    "translateCountry": {
+      "es": "Vietnam",
+      "en": "Vietnam",
+      "de": "Vietnam",
+      "fr": "Viêt Nam",
+      "it": "Vietnam",
+      "pt": "Vietnã"
+    }
+  },
+  {
+    "label": "TH +66",
+    "value": "+66",
+    "codeCountry": "TH",
+    "translateCountry": {
+      "es": "Tailandia",
+      "en": "Thailand",
+      "de": "Thailand",
+      "fr": "Thaïlande",
+      "it": "Tailandia",
+      "pt": "Tailândia"
+    }
+  },
+  {
+    "label": "MY +60",
+    "value": "+60",
+    "codeCountry": "MY",
+    "translateCountry": {
+      "es": "Malasia",
+      "en": "Malaysia",
+      "de": "Malaysia",
+      "fr": "Malaisie",
+      "it": "Malesia",
+      "pt": "Malásia"
+    }
+  },
+  {
+    "label": "PH +63",
+    "value": "+63",
+    "codeCountry": "PH",
+    "translateCountry": {
+      "es": "Filipinas",
+      "en": "Philippines",
+      "de": "Philippinen",
+      "fr": "Philippines",
+      "it": "Filippine",
+      "pt": "Filipinas"
+    }
+  },
+  {
+    "label": "KR +82",
+    "value": "+82",
+    "codeCountry": "KR",
+    "translateCountry": {
+      "es": "Corea del Sur",
+      "en": "South Korea",
+      "de": "Südkorea",
+      "fr": "Corée du Sud",
+      "it": "Corea del Sud",
+      "pt": "Coreia do Sul"
+    }
+  },
+  {
+    "label": "HK +852",
+    "value": "+852",
+    "codeCountry": "HK",
+    "translateCountry": {
+      "es": "Hong Kong",
+      "en": "Hong Kong",
+      "de": "Hongkong",
+      "fr": "Hong Kong",
+      "it": "Hong Kong",
+      "pt": "Hong Kong"
+    }
+  },
+  {
+    "label": "SG +65",
+    "value": "+65",
+    "codeCountry": "SG",
+    "translateCountry": {
+      "es": "Singapur",
+      "en": "Singapore",
+      "de": "Singapur",
+      "fr": "Singapour",
+      "it": "Singapore",
+      "pt": "Singapura"
+    }
+  },
+  {
+    "label": "TW +886",
+    "value": "+886",
+    "codeCountry": "TW",
+    "translateCountry": {
+      "es": "Taiwán",
+      "en": "Taiwan",
+      "de": "Taiwan",
+      "fr": "Taïwan",
+      "it": "Taiwan",
+      "pt": "Taiwan"
+    }
+  },
+  {
+    "label": "PL +48",
+    "value": "+48",
+    "codeCountry": "PL",
+    "translateCountry": {
+      "es": "Polonia",
+      "en": "Poland",
+      "de": "Polen",
+      "fr": "Pologne",
+      "it": "Polonia",
+      "pt": "Polónia"
+    }
+  },
+  {
+    "label": "PT +351",
+    "value": "+351",
+    "codeCountry": "PT",
+    "translateCountry": {
+      "es": "Portugal",
+      "en": "Portugal",
+      "de": "Portugal",
+      "fr": "Portugal",
+      "it": "Portogallo",
+      "pt": "Portugal"
+    }
+  },
+  {
+    "label": "RO +40",
+    "value": "+40",
+    "codeCountry": "RO",
+    "translateCountry": {
+      "es": "Rumanía",
+      "en": "Romania",
+      "de": "Rumänien",
+      "fr": "Roumanie",
+      "it": "Romania",
+      "pt": "Romênia"
+    }
+  },
+  {
+    "label": "RS +381",
+    "value": "+381",
+    "codeCountry": "RS",
+    "translateCountry": {
+      "es": "Serbia",
+      "en": "Serbia",
+      "de": "Serbien",
+      "fr": "Serbie",
+      "it": "Serbia",
+      "pt": "Sérvia"
+    }
+  },
+  {
+    "label": "SI +386",
+    "value": "+386",
+    "codeCountry": "SI",
+    "translateCountry": {
+      "es": "Eslovenia",
+      "en": "Slovenia",
+      "de": "Slowenien",
+      "fr": "Slovénie",
+      "it": "Slovenia",
+      "pt": "Eslovênia"
+    }
+  },
+  {
+    "label": "SK +421",
+    "value": "+421",
+    "codeCountry": "SK",
+    "translateCountry": {
+      "es": "Eslovaquia",
+      "en": "Slovakia",
+      "de": "Slowakei",
+      "fr": "Slovaquie",
+      "it": "Slovacchia",
+      "pt": "Eslováquia"
+    }
+  },
+  {
+    "label": "UA +380",
+    "value": "+380",
+    "codeCountry": "UA",
+    "translateCountry": {
+      "es": "Ucrania",
+      "en": "Ukraine",
+      "de": "Ukraine",
+      "fr": "Ukraine",
+      "it": "Ucraina",
+      "pt": "Ucrânia"
+    }
+  },
+  {
+    "label": "VA +39",
+    "value": "+39",
+    "codeCountry": "VA",
+    "translateCountry": {
+      "es": "Ciudad del Vaticano",
+      "en": "Vatican City",
+      "de": "Vatikanstadt",
+      "fr": "Cité du Vatican",
+      "it": "Città del Vaticano",
+      "pt": "Cidade do Vaticano"
+    }
+  },
+  {
+    "label": "HR +385",
+    "value": "+385",
+    "codeCountry": "HR",
+    "translateCountry": {
+      "es": "Croacia",
+      "en": "Croatia",
+      "de": "Kroatien",
+      "fr": "Croatie",
+      "it": "Croazia",
+      "pt": "Croácia"
+    }
+  },
+  {
+    "label": "IS +354",
+    "value": "+354",
+    "codeCountry": "IS",
+    "translateCountry": {
+      "es": "Islandia",
+      "en": "Iceland",
+      "de": "Island",
+      "fr": "Islande",
+      "it": "Islanda",
+      "pt": "Islândia"
+    }
+  },
+  {
+    "label": "AL +355",
+    "value": "+355",
+    "codeCountry": "AL",
+    "translateCountry": {
+      "es": "Albania",
+      "en": "Albania",
+      "de": "Albanien",
+      "fr": "Albanie",
+      "it": "Albania",
+      "pt": "Albânia"
+    }
+  },
+  {
+    "label": "MC +377",
+    "value": "+377",
+    "codeCountry": "MC",
+    "translateCountry": {
+      "es": "Mónaco",
+      "en": "Monaco",
+      "de": "Monaco",
+      "fr": "Monaco",
+      "it": "Monaco",
+      "pt": "Mônaco"
+    }
+  },
+  {
+    "label": "MD +373",
+    "value": "+373",
+    "codeCountry": "MD",
+    "translateCountry": {
+      "es": "Moldavia",
+      "en": "Moldova",
+      "de": "Moldau",
+      "fr": "Moldavie",
+      "it": "Moldavia",
+      "pt": "Moldávia"
+    }
+  },
+  {
+    "label": "ME +382",
+    "value": "+382",
+    "codeCountry": "ME",
+    "translateCountry": {
+      "es": "Montenegro",
+      "en": "Montenegro",
+      "de": "Montenegro",
+      "fr": "Monténégro",
+      "it": "Montenegro",
+      "pt": "Montenegro"
+    }
+  },
+  {
+    "label": "MK +389",
+    "value": "+389",
+    "codeCountry": "MK",
+    "translateCountry": {
+      "es": "Macedonia del Norte",
+      "en": "North Macedonia",
+      "de": "Nordmazedonien",
+      "fr": "Macédoine du Nord",
+      "it": "Macedonia del Nord",
+      "pt": "Macedônia do Norte"
+    }
+  },
+  {
+    "label": "MT +356",
+    "value": "+356",
+    "codeCountry": "MT",
+    "translateCountry": {
+      "es": "Malta",
+      "en": "Malta",
+      "de": "Malta",
+      "fr": "Malte",
+      "it": "Malta",
+      "pt": "Malta"
+    }
+  },
+  {
+    "label": "NO +47",
+    "value": "+47",
+    "codeCountry": "NO",
+    "translateCountry": {
+      "es": "Noruega",
+      "en": "Norway",
+      "de": "Norwegen",
+      "fr": "Norvège",
+      "it": "Norvegia",
+      "pt": "Noruega"
+    }
+  },
+  {
+    "label": "SM +378",
+    "value": "+378",
+    "codeCountry": "SM",
+    "translateCountry": {
+      "es": "San Marino",
+      "en": "San Marino",
+      "de": "San Marino",
+      "fr": "Saint-Marin",
+      "it": "San Marino",
+      "pt": "San Marino"
+    }
+  },
+  {
+    "label": "BY +375",
+    "value": "+375",
+    "codeCountry": "BY",
+    "translateCountry": {
+      "es": "Bielorrusia",
+      "en": "Belarus",
+      "de": "Weißrussland",
+      "fr": "Biélorussie",
+      "it": "Bielorussia",
+      "pt": "Bielorrússia"
+    }
+  },
+  {
+    "label": "BA +387",
+    "value": "+387",
+    "codeCountry": "BA",
+    "translateCountry": {
+      "es": "Bosnia y Herzegovina",
+      "en": "Bosnia and Herzegovina",
+      "de": "Bosnien und Herzegowina",
+      "fr": "Bosnie-Herzégovine",
+      "it": "Bosnia ed Erzegovina",
+      "pt": "Bósnia e Herzegovina"
+    }
+  },
+  {
+    "label": "AD +376",
+    "value": "+376",
+    "codeCountry": "AD",
+    "translateCountry": {
+      "es": "Andorra",
+      "en": "Andorra",
+      "de": "Andorra",
+      "fr": "Andorre",
+      "it": "Andorra",
+      "pt": "Andorra"
+    }
+  },
+  {
+    "label": "LI +423",
+    "value": "+423",
+    "codeCountry": "LI",
+    "translateCountry": {
+      "es": "Liechtenstein",
+      "en": "Liechtenstein",
+      "de": "Liechtenstein",
+      "fr": "Liechtenstein",
+      "it": "Liechtenstein",
+      "pt": "Liechtenstein"
+    }
+  },
+  {
+    "label": "FO +298",
+    "value": "+298",
+    "codeCountry": "FO",
+    "translateCountry": {
+      "es": "Islas Feroe",
+      "en": "Faroe Islands",
+      "de": "Färöer-Inseln",
+      "fr": "Îles Féroé",
+      "it": "Isole Faroe",
+      "pt": "Ilhas Faroé"
+    }
+  },
+  {
+    "label": "GI +350",
+    "value": "+350",
+    "codeCountry": "GI",
+    "translateCountry": {
+      "es": "Gibraltar",
+      "en": "Gibraltar",
+      "de": "Gibraltar",
+      "fr": "Gibraltar",
+      "it": "Gibilterra",
+      "pt": "Gibraltar"
+    }
+  },
+  {
+    "label": "GG +44",
+    "value": "+44",
+    "codeCountry": "GG",
+    "translateCountry": {
+      "es": "Guernsey",
+      "en": "Guernsey",
+      "de": "Guernsey",
+      "fr": "Guernesey",
+      "it": "Guernsey",
+      "pt": "Guernsey"
+    }
+  },
+  {
+    "label": "JE +44",
+    "value": "+44",
+    "codeCountry": "JE",
+    "translateCountry": {
+      "es": "Jersey",
+      "en": "Jersey",
+      "de": "Jersey",
+      "fr": "Jersey",
+      "it": "Jersey",
+      "pt": "Jersey"
+    }
+  },
+  {
+    "label": "XK +383",
+    "value": "+383",
+    "codeCountry": "XK",
+    "translateCountry": {
+      "es": "Kosovo",
+      "en": "Kosovo",
+      "de": "Kosovo",
+      "fr": "Kosovo",
+      "it": "Kosovo",
+      "pt": "Kosovo"
+    }
+  },
+  {
+    "label": "AF +93",
+    "value": "+93",
+    "codeCountry": "AF",
+    "translateCountry": {
+      "es": "Afganistán",
+      "en": "Afghanistan",
+      "de": "Afghanistan",
+      "fr": "Afghanistan",
+      "it": "Afghanistan",
+      "pt": "Afeganistão"
+    }
+  },
+  {
+    "label": "AM +374",
+    "value": "+374",
+    "codeCountry": "AM",
+    "translateCountry": {
+      "es": "Armenia",
+      "en": "Armenia",
+      "de": "Armenien",
+      "fr": "Arménie",
+      "it": "Armenia",
+      "pt": "Armênia"
+    }
+  },
+  {
+    "label": "AZ +994",
+    "value": "+994",
+    "codeCountry": "AZ",
+    "translateCountry": {
+      "es": "Azerbaiyán",
+      "en": "Azerbaijan",
+      "de": "Aserbaidschan",
+      "fr": "Azerbaïdjan",
+      "it": "Azerbaigian",
+      "pt": "Azerbaijão"
+    }
+  },
+  {
+    "label": "BH +973",
+    "value": "+973",
+    "codeCountry": "BH",
+    "translateCountry": {
+      "es": "Baréin",
+      "en": "Bahrain",
+      "de": "Bahrain",
+      "fr": "Bahreïn",
+      "it": "Bahrein",
+      "pt": "Bahrein"
+    }
+  },
+  {
+    "label": "BT +975",
+    "value": "+975",
+    "codeCountry": "BT",
+    "translateCountry": {
+      "es": "Bután",
+      "en": "Bhutan",
+      "de": "Bhutan",
+      "fr": "Bhoutan",
+      "it": "Bhutan",
+      "pt": "Butão"
+    }
+  },
+  {
+    "label": "BN +673",
+    "value": "+673",
+    "codeCountry": "BN",
+    "translateCountry": {
+      "es": "Brunéi",
+      "en": "Brunei",
+      "de": "Brunei",
+      "fr": "Brunéi",
+      "it": "Brunei",
+      "pt": "Brunei"
+    }
+  },
+  {
+    "label": "MM +95",
+    "value": "+95",
+    "codeCountry": "MM",
+    "translateCountry": {
+      "es": "Myanmar",
+      "en": "Myanmar (Burma)",
+      "de": "Myanmar (Birma)",
+      "fr": "Myanmar (Birmanie)",
+      "it": "Myanmar (Birmania)",
+      "pt": "Mianmar (Birmânia)"
+    }
+  },
+  {
+    "label": "KH +855",
+    "value": "+855",
+    "codeCountry": "KH",
+    "translateCountry": {
+      "es": "Camboya",
+      "en": "Cambodia",
+      "de": "Kambodscha",
+      "fr": "Cambodge",
+      "it": "Cambogia",
+      "pt": "Camboja"
+    }
+  },
+  {
+    "label": "CY +357",
+    "value": "+357",
+    "codeCountry": "CY",
+    "translateCountry": {
+      "es": "Chipre",
+      "en": "Cyprus",
+      "de": "Zypern",
+      "fr": "Chypre",
+      "it": "Cipro",
+      "pt": "Chipre"
+    }
+  },
+  {
+    "label": "GE +995",
+    "value": "+995",
+    "codeCountry": "GE",
+    "translateCountry": {
+      "es": "Georgia",
+      "en": "Georgia",
+      "de": "Georgien",
+      "fr": "Géorgie",
+      "it": "Georgia",
+      "pt": "Geórgia"
+    }
+  },
+  {
+    "label": "IQ +964",
+    "value": "+964",
+    "codeCountry": "IQ",
+    "translateCountry": {
+      "es": "Irak",
+      "en": "Iraq",
+      "de": "Irak",
+      "fr": "Irak",
+      "it": "Iraq",
+      "pt": "Iraque"
+    }
+  },
+  {
+    "label": "IL +972",
+    "value": "+972",
+    "codeCountry": "IL",
+    "translateCountry": {
+      "es": "Israel",
+      "en": "Israel",
+      "de": "Israel",
+      "fr": "Israël",
+      "it": "Israele",
+      "pt": "Israel"
+    }
+  },
+  {
+    "label": "JO +962",
+    "value": "+962",
+    "codeCountry": "JO",
+    "translateCountry": {
+      "es": "Jordania",
+      "en": "Jordan",
+      "de": "Jordanien",
+      "fr": "Jordanie",
+      "it": "Giordania",
+      "pt": "Jordânia"
+    }
+  },
+  {
+    "label": "KP +850",
+    "value": "+850",
+    "codeCountry": "KP",
+    "translateCountry": {
+      "es": "Corea del Norte",
+      "en": "North Korea",
+      "de": "Nordkorea",
+      "fr": "Corée du Nord",
+      "it": "Corea del Nord",
+      "pt": "Coreia do Norte"
+    }
+  },
+  {
+    "label": "KW +965",
+    "value": "+965",
+    "codeCountry": "KW",
+    "translateCountry": {
+      "es": "Kuwait",
+      "en": "Kuwait",
+      "de": "Kuwait",
+      "fr": "Koweït",
+      "it": "Kuwait",
+      "pt": "Kuwait"
+    }
+  },
+  {
+    "label": "KG +996",
+    "value": "+996",
+    "codeCountry": "KG",
+    "translateCountry": {
+      "es": "Kirguistán",
+      "en": "Kyrgyzstan",
+      "de": "Kirgisistan",
+      "fr": "Kirghizistan",
+      "it": "Kirghizistan",
+      "pt": "Quirguistão"
+    }
+  },
+  {
+    "label": "LA +856",
+    "value": "+856",
+    "codeCountry": "LA",
+    "translateCountry": {
+      "es": "Laos",
+      "en": "Laos",
+      "de": "Laos",
+      "fr": "Laos",
+      "it": "Laos",
+      "pt": "Laos"
+    }
+  },
+  {
+    "label": "LB +961",
+    "value": "+961",
+    "codeCountry": "LB",
+    "translateCountry": {
+      "es": "Líbano",
+      "en": "Lebanon",
+      "de": "Libanon",
+      "fr": "Liban",
+      "it": "Libano",
+      "pt": "Líbano"
+    }
+  },
+  {
+    "label": "MV +960",
+    "value": "+960",
+    "codeCountry": "MV",
+    "translateCountry": {
+      "es": "Maldivas",
+      "en": "Maldives",
+      "de": "Malediven",
+      "fr": "Maldives",
+      "it": "Maldive",
+      "pt": "Maldivas"
+    }
+  },
+  {
+    "label": "MN +976",
+    "value": "+976",
+    "codeCountry": "MN",
+    "translateCountry": {
+      "es": "Mongolia",
+      "en": "Mongolia",
+      "de": "Mongolei",
+      "fr": "Mongolie",
+      "it": "Mongolia",
+      "pt": "Mongólia"
+    }
+  },
+  {
+    "label": "NP +977",
+    "value": "+977",
+    "codeCountry": "NP",
+    "translateCountry": {
+      "es": "Nepal",
+      "en": "Nepal",
+      "de": "Nepal",
+      "fr": "Népal",
+      "it": "Nepal",
+      "pt": "Nepal"
+    }
+  },
+  {
+    "label": "OM +968",
+    "value": "+968",
+    "codeCountry": "OM",
+    "translateCountry": {
+      "es": "Omán",
+      "en": "Oman",
+      "de": "Oman",
+      "fr": "Oman",
+      "it": "Oman",
+      "pt": "Omã"
+    }
+  },
+  {
+    "label": "QA +974",
+    "value": "+974",
+    "codeCountry": "QA",
+    "translateCountry": {
+      "es": "Catar",
+      "en": "Qatar",
+      "de": "Katar",
+      "fr": "Qatar",
+      "it": "Qatar",
+      "pt": "Catar"
+    }
+  },
+  {
+    "label": "LK +94",
+    "value": "+94",
+    "codeCountry": "LK",
+    "translateCountry": {
+      "es": "Sri Lanka",
+      "en": "Sri Lanka",
+      "de": "Sri Lanka",
+      "fr": "Sri Lanka",
+      "it": "Sri Lanka",
+      "pt": "Sri Lanka"
+    }
+  },
+  {
+    "label": "SY +963",
+    "value": "+963",
+    "codeCountry": "SY",
+    "translateCountry": {
+      "es": "Siria",
+      "en": "Syria",
+      "de": "Syrien",
+      "fr": "Syrie",
+      "it": "Siria",
+      "pt": "Síria"
+    }
+  },
+  {
+    "label": "TJ +992",
+    "value": "+992",
+    "codeCountry": "TJ",
+    "translateCountry": {
+      "es": "Tayikistán",
+      "en": "Tajikistan",
+      "de": "Tadschikistan",
+      "fr": "Tadjikistan",
+      "it": "Tagikistan",
+      "pt": "Tajiquistão"
+    }
+  },
+  {
+    "label": "TM +993",
+    "value": "+993",
+    "codeCountry": "TM",
+    "translateCountry": {
+      "es": "Turkmenistán",
+      "en": "Turkmenistan",
+      "de": "Turkmenistan",
+      "fr": "Turkménistan",
+      "it": "Turkmenistan",
+      "pt": "Turquemenistão"
+    }
+  },
+  {
+    "label": "AE +971",
+    "value": "+971",
+    "codeCountry": "AE",
+    "translateCountry": {
+      "es": "Emiratos Árabes Unidos",
+      "en": "United Arab Emirates",
+      "de": "Vereinigte Arabische Emirate",
+      "fr": "Émirats arabes unis",
+      "it": "Emirati Arabi Uniti",
+      "pt": "Emirados Árabes Unidos"
+    }
+  },
+  {
+    "label": "YE +967",
+    "value": "+967",
+    "codeCountry": "YE",
+    "translateCountry": {
+      "es": "Yemen",
+      "en": "Yemen",
+      "de": "Jemen",
+      "fr": "Yémen",
+      "it": "Yemen",
+      "pt": "Iêmen"
+    }
+  },
+  {
+    "label": "AZ +994",
+    "value": "+994",
+    "codeCountry": "AZ",
+    "translateCountry": {
+      "es": "Azerbaiyán",
+      "en": "Azerbaijan",
+      "de": "Aserbaidschan",
+      "fr": "Azerbaïdjan",
+      "it": "Azerbaigian",
+      "pt": "Azerbaijão"
+    }
+  },
+  {
+    "label": "LT +370",
+    "value": "+370",
+    "codeCountry": "LT",
+    "translateCountry": {
+      "es": "Lituania",
+      "en": "Lithuania",
+      "de": "Litauen",
+      "fr": "Lituanie",
+      "it": "Lituania",
+      "pt": "Lituânia"
+    }
+  },
+  {
+    "label": "LV +371",
+    "value": "+371",
+    "codeCountry": "LV",
+    "translateCountry": {
+      "es": "Letonia",
+      "en": "Latvia",
+      "de": "Lettland",
+      "fr": "Lettonie",
+      "it": "Lettonia",
+      "pt": "Letônia"
+    }
+  },
+  {
+    "label": "EE +372",
+    "value": "+372",
+    "codeCountry": "EE",
+    "translateCountry": {
+      "es": "Estonia",
+      "en": "Estonia",
+      "de": "Estland",
+      "fr": "Estonie",
+      "it": "Estonia",
+      "pt": "Estônia"
+    }
+  },
+  {
+    "label": "MD +373",
+    "value": "+373",
+    "codeCountry": "MD",
+    "translateCountry": {
+      "es": "Moldavia",
+      "en": "Moldova",
+      "de": "Moldau",
+      "fr": "Moldavie",
+      "it": "Moldavia",
+      "pt": "Moldávia"
+    }
+  },
+  {
+    "label": "PA +507",
+    "value": "+507",
+    "codeCountry": "PA",
+    "translateCountry": {
+      "es": "Panamá",
+      "en": "Panama",
+      "de": "Panama",
+      "fr": "Panama",
+      "it": "Panamá",
+      "pt": "Panamá"
+    }
+  },
+  {
+    "label": "CU +53",
+    "value": "+53",
+    "codeCountry": "CU",
+    "translateCountry": {
+      "es": "Cuba",
+      "en": "Cuba",
+      "de": "Kuba",
+      "fr": "Cuba",
+      "it": "Cuba",
+      "pt": "Cuba"
+    }
+  },
+  {
+    "label": "FI +358",
+    "value": "+358",
+    "codeCountry": "FI",
+    "translateCountry": {
+      "es": "Finlandia",
+      "en": "Finland",
+      "de": "Finnland",
+      "fr": "Finlande",
+      "it": "Finlandia",
+      "pt": "Finlândia"
+    }
+  },
+  {
+    "label": "AT +43",
+    "value": "+43",
+    "codeCountry": "AT",
+    "translateCountry": {
+      "es": "Austria",
+      "en": "Austria",
+      "de": "Österreich",
+      "fr": "Autriche",
+      "it": "Austria",
+      "pt": "Áustria"
+    }
+  },
+  {
+    "label": "BE +32",
+    "value": "+32",
+    "codeCountry": "BE",
+    "translateCountry": {
+      "es": "Bélgica",
+      "en": "Belgium",
+      "de": "Belgien",
+      "fr": "Belgique",
+      "it": "Belgio",
+      "pt": "Bélgica"
+    }
+  },
+  {
+    "label": "DK +45",
+    "value": "+45",
+    "codeCountry": "DK",
+    "translateCountry": {
+      "es": "Dinamarca",
+      "en": "Denmark",
+      "de": "Dänemark",
+      "fr": "Danemark",
+      "it": "Danimarca",
+      "pt": "Dinamarca"
+    }
+  },
+  {
+    "label": "GR +30",
+    "value": "+30",
+    "codeCountry": "GR",
+    "translateCountry": {
+      "es": "Grecia",
+      "en": "Greece",
+      "de": "Griechenland",
+      "fr": "Grèce",
+      "it": "Grecia",
+      "pt": "Grécia"
+    }
+  },
+  {
+    "label": "IE +353",
+    "value": "+353",
+    "codeCountry": "IE",
+    "translateCountry": {
+      "es": "Irlanda",
+      "en": "Ireland",
+      "de": "Irland",
+      "fr": "Irlande",
+      "it": "Irlanda",
+      "pt": "Irlanda"
+    }
+  },
+  {
+    "label": "LU +352",
+    "value": "+352",
+    "codeCountry": "LU",
+    "translateCountry": {
+      "es": "Luxemburgo",
+      "en": "Luxembourg",
+      "de": "Luxemburg",
+      "fr": "Luxembourg",
+      "it": "Lussemburgo",
+      "pt": "Luxemburgo"
+    }
+  },
+  {
+    "label": "NL +31",
+    "value": "+31",
+    "codeCountry": "NL",
+    "translateCountry": {
+      "es": "Países Bajos",
+      "en": "Netherlands",
+      "de": "Niederlande",
+      "fr": "Pays-Bas",
+      "it": "Paesi Bassi",
+      "pt": "Países Baixos"
+    }
+  },
+  {
+    "label": "CZ +420",
+    "value": "+420",
+    "codeCountry": "CZ",
+    "translateCountry": {
+      "es": "Chequia",
+      "en": "Czech Republic",
+      "de": "Tschechien",
+      "fr": "Tchéquie",
+      "it": "Cechia",
+      "pt": "Chéquia"
+    }
+  },
+  {
+    "label": "HU +36",
+    "value": "+36",
+    "codeCountry": "HU",
+    "translateCountry": {
+      "es": "Hungría",
+      "en": "Hungary",
+      "de": "Ungarn",
+      "fr": "Hongrie",
+      "it": "Ungheria",
+      "pt": "Hungria"
+    }
+  }
+]
