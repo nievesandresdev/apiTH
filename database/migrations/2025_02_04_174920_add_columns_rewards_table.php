@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('rewards', function (Blueprint $table) {
             $table->string('url')->nullable();
             $table->boolean('enabled_url')->default(false);
+            $table->boolean('used')->default(false);
         });
     }
 

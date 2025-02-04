@@ -23,10 +23,12 @@ class Reward extends Model
         'hotel_id',
         'url',
         'enabled_url',
+        'used',
     ];
 
     protected $casts = [
         'enabled_url' => 'boolean',
+        'used' => 'boolean',
     ];
 
 
