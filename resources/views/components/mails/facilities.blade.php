@@ -24,7 +24,7 @@
                                 >
                             </div>
                             <div style="padding: 8px;">
-                                <h2 style="color: #333;font-family: Arial;font-size: 14px;font-weight: 700;line-height: 114.286%;margin:0;">
+                                <h2 class="title-card" style="color: #333;font-family: Arial;font-size: 14px;font-weight: 700;line-height: 114.286%;margin:0;">
                                     {!! $item['title'] !!}
                                 </h2>
                                 <div style="text-align: right;margin-top:8px;margin-bottom:15px;">

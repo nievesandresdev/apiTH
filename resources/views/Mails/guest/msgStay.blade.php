@@ -155,7 +155,7 @@
             ])
         @endif
 
-        @if($hotel->show_checkin_stay)
+        @if($hotel->show_checkin_stay && $type != 'inviteGuestFromSaas')
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @include('components.mails.makeYourCheckLink', ['urlCheckin' => $data['urlCheckin']])
         @endif
@@ -182,13 +182,13 @@
             @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
         @endif --}}
 
-        @if($type == 'welcome' || $type == 'postCheckin')
+        @if($type == 'welcome' || $type == 'postCheckin' || $type == 'inviteGuestFromSaas')
             @if(count($data['facilities']) > 0 && $hotel->show_facilities)
                 @include('components.mails.facilities', ['facilities' => $data['facilities']])
             @endif
         @endif
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @if($type == 'welcome' || $type == 'postCheckin')
+        @if($type == 'welcome' || $type == 'postCheckin' || $type == 'inviteGuestFromSaas')
             @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])

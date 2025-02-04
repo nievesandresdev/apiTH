@@ -1,7 +1,7 @@
 <style>
     .title-card,.title-card *{
             margin: 0;
-            height: 28px;
+            height: 32px;
             color: #333;
             font-family: Arial, sans-serif;
             font-weight: 500;
@@ -33,5 +33,5 @@
             display: none;
         }
     }
-    
+
 </style>

@@ -689,7 +689,7 @@ if (! function_exists('inStayqueriesTextDefault')) {
             "it" => "Ci piacerebbe sapere più dettagli sulla tua opinione sull'hotel e sul personale, cerchiamo di migliorare la tua esperienza.",
             "pt" => "Adoraríamos saber mais detalhes sobre a sua opinião sobre o hotel e a equipe, buscamos melhorar sua experiência."
         ];
-        
+
         $queriesTextDefault->in_stay_thanks_normal = [
             "es" => "Lamentamos que tu estancia no esté siendo la ideal. Nos gustaría saber más para tratar de mejorarla.",
             "en" => "We are sorry that your stay was not ideal. We would like to know more to try to improve it.",
@@ -707,7 +707,7 @@ if (! function_exists('inStayqueriesTextDefault')) {
             "it" => "Ci piacerebbe conoscere maggiori dettagli, cerchiamo di migliorare la tua esperienza.",
             "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
         ];
-        
+
         $queriesTextDefault->in_stay_comment = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
             "en" => "We would love to know more details, we seek to improve your experience.",
@@ -731,7 +731,7 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "it" => "Siamo lieti che tu abbia gradito il tuo soggiorno con noi!",
             "de" => "Wir freuen uns, dass Sie Ihren Aufenthalt bei uns genossen haben!"
         ];
-        
+
         $queriesTextDefault->post_stay_assessment_good_activate = true;
         $queriesTextDefault->post_stay_assessment_good = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
@@ -749,7 +749,7 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "it" => "Ci dispiace che il tuo soggiorno non sia stato ideale. Ci piacerebbe sapere di più per cercare di migliorarlo.",
             "pt" => "Lamentamos que a sua estadia não tenha sido ideal. Gostaríamos de saber mais para tentar melhorá-la."
         ];
-        
+
         $queriesTextDefault->post_stay_assessment_normal_activate = true;
         $queriesTextDefault->post_stay_assessment_normal = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
@@ -819,8 +819,8 @@ if (! function_exists('requestSettingsDefault')) {
             "it" => "<p>Siamo felici che tu stia godendo del tuo soggiorno!</p>",
             "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genießen!</p>"
         ];
-        
-        
+
+
         $requestSettings->in_stay_msg_text = [
             "es" => '<p>Tu experiencia es muy importante, compartirla ayudaría a otros viajeros a conocernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si reservaste online, podrían solicitarte tu opinión pronto. Valoramos mucho que la compartieras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos tu tiempo y ¡Gracias por habernos elegido!</strong></p>',
             "en" => '<p>Your experience is very important, sharing it would help other travelers get to know us.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>If you booked online, you may be asked for your opinion soon. We really appreciate that you shared it.</p><p><br></p><p class="ql-align-center"><strong>We appreciate your time and thank you for choosing us!</strong></p>',
@@ -844,7 +844,7 @@ if (! function_exists('requestSettingsDefault')) {
             "it" => "<p>Siamo felici che tu abbia apprezzato il tuo soggiorno!</p>",
             "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genossen haben!</p>"
         ];
-        
+
         $requestSettings->msg_text = [
             "es" => '<p>Tu experiencia es muy importante, compartirla ayudaría a otros viajeros a conocernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si reservaste online, podrían solicitarte tu opinión pronto. Valoramos mucho que la compartieras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos tu tiempo y ¡Gracias por habernos elegido!</strong></p>',
             "en" => '<p>Your experience is very important, sharing it would help other travelers get to know us.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>If you booked online, you may be asked for your opinion soon. We really appreciate that you shared it.</p><p><br></p><p class="ql-align-center"><strong>We appreciate your time and thank you for choosing us!</strong></p>',
@@ -959,7 +959,7 @@ function getImageSavePath($model, $name_file) {
 if (! function_exists('generateQr')) {
     function generateQr($concept, $content) {
 
-        $qr = QrCode::format('png')->size(300)->generate($content);
+        $qr = QrCode::format('png')->size(600)->generate($content);
         // Definir el nombre del archivo con una marca de tiempo única
         $nombreArchivo = 'qr_' . $concept . '.png';
 
@@ -990,5 +990,5 @@ if (! function_exists('formatTypeLodging')) {
     }
 }
 
-            
+
 
