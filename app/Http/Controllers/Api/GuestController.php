@@ -229,7 +229,7 @@ class GuestController extends Controller
         try {
             $queryPreStay = $guest->queries()->where('period','pre-stay')->where('stay_id',$request->stayId)->first();
             $saveQuery = true;
-            if($queryPreStay){
+            if($queryPreStay && $request->comment){
                 $saveQuery = $this->queryService->saveResponse($queryPreStay->id, $request, $hotel);
             }
             

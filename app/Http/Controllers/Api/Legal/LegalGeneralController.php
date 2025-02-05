@@ -50,4 +50,24 @@ class LegalGeneralController extends Controller
         }
     }
 
+    //WEBAPP METHODS
+    public function getNormsByHotel(){
+
+        try {
+            $hotel = request()->attributes->get('hotel');
+            $data = $this->legalServices->getNormsByHotel($hotel->id);
+            if(!$data){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::SUCCESS, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getHotelsList');
+        }
+
+    }
+
 }

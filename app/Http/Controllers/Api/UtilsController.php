@@ -224,11 +224,7 @@ class UtilsController extends Controller
 
     public function test()
     {
-        $guestId = 9;
-        sendEventPusher('private-logout-webapp-guest.' . $guestId, 'App\Events\LogoutWebappGuest', [
-            'guestId' => $guestId
-        ]);
-        return 'mandao';
+        return $this->stayServices->getGuestsAndSortByAccess(604);
     }
 
     public function testEmailPostCheckout(){

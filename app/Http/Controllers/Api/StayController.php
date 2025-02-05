@@ -157,6 +157,20 @@ class StayController extends Controller
         }
     }
 
+    public function getGuestsAndSortByAccess($stayId)
+    {
+        try {
+            $data = ['message' => __('response.bad_request_long')];
+            if(!$stayId) return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            $guests = $this->service->getGuestsAndSortByAccess($stayId);
+
+            $data = GuestResource::collection($guests);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getGuestsAndSortByAccess');
+        }
+    }
+
     public function updateStayAndGuests(Request $request){
         try {
             $updateStay = $this->service->updateStayData($request);

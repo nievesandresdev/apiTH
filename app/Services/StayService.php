@@ -321,6 +321,30 @@ class StayService {
         }
     }
 
+    public function getGuestsAndSortByAccess($stayId){
+
+        try{
+            $subquery = StayAccess::select('guest_id', DB::raw('MIN(created_at) as first_access'))
+                ->where('stay_id', $stayId)
+                ->groupBy('guest_id');
+
+            $guests = StayAccess::select('guests.*', 'sub.first_access')
+                ->join('guests', 'guests.id', '=', 'stay_accesses.guest_id')
+                ->joinSub($subquery, 'sub', function ($join) {
+                    $join->on('stay_accesses.guest_id', '=', 'sub.guest_id')
+                         ->on('stay_accesses.created_at', '=', 'sub.first_access');
+                })
+                ->where('stay_accesses.stay_id', $stayId)
+                ->orderBy('sub.first_access', 'asc') // Orden ascendente (el más antiguo primero)
+                ->get();
+
+
+            return $guests;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getGuestsAndSortByAccess');
+        }
+    }
+
     public function getCheckoutDateTime($stayId){
         $stay = Stay::where('id',$stayId)->first();
         $checkOutDate = Carbon::parse($stay->check_out);
