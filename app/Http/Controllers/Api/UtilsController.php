@@ -508,10 +508,10 @@ class UtilsController extends Controller
             //dd($dataEmail,$hotel);
 
 
-            $this->mailService->sendEmail(new RewardsEmail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            //$this->mailService->sendEmail(new RewardsEmail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
 
 
-            return view('Mails.guest.prepareYourArrival', [
+            return view('Mails.users.rewards', [
                 'type' => $type,
                 'hotel' => $hotel,
                 'guest' => $guest,
