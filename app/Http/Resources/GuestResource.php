@@ -24,6 +24,7 @@ class GuestResource extends JsonResource
             "lang_web"=> $this->lang_web,
             "email"=> $this->email,
             "phone"=> $this->phone,
+            "complete_checkin_data"=> $this->complete_checkin_data,
             "hasPassword"=>  boolval($this->password),
         ];
     }

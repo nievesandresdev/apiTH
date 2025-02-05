@@ -66,4 +66,12 @@ class LegalServices {
 
         return $policy;
     }
+
+     //WEBAPP METHODS
+    public function getNormsByHotel($hotelId)
+    {
+        return PolicyLegals::where('hotel_id',$hotelId)
+                            ->where('del',0)
+                            ->get();
+    }
 }
