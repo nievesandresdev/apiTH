@@ -541,7 +541,7 @@ class GuestService {
                     $stay->save();
                 }
                 
-                if($chatExists || $queryAnsweredExists){
+                if($chatExists || $queryAnsweredExists || $guest->complete_checkin_data){
                     Log::info('proceso para huesped con actividad ');
                     // Crear una nueva estancia solo para el huésped
                     $newStay = new Stay();
