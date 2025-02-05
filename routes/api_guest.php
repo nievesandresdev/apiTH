@@ -17,7 +17,7 @@ Route::group(['prefix' => 'guest'], function () {
     Route::post('/createAccessInStay', [GuestController::class, 'createAccessInStay']);
     Route::post('/deleteGuestOfStay', [GuestController::class, 'deleteGuestOfStay']);
     Route::post('/saveCheckinData', [GuestController::class, 'saveCheckinData']);
-
+    Route::post('/deleteCheckinData', [GuestController::class, 'deleteCheckinData']);
     //update data huesped
     Route::post('/updatePasswordGuest', [GuestController::class, 'updatePasswordGuest']);
     //updateDataGuest

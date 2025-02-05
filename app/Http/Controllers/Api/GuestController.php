@@ -249,6 +249,33 @@ class GuestController extends Controller
         }
     }
 
+    public function deleteCheckinData(Request $request) {
+        
+        $guest = Guest::find($request->id);
+
+        if (!$guest) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        try {
+            $model = $this->service->deleteCheckinData($guest);
+
+            if (!$model) {
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteCheckinData');
+        }
+    }
+
     public function createAccessInStay(Request $request) {
         try {
             $guestId = $request->guestId;

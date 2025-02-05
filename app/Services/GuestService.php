@@ -166,6 +166,34 @@ class GuestService {
         }
     }
 
+    public function deleteCheckinData($guest) {
+        try {
+            $guest->second_lastname = null;
+            $guest->phone = null;
+            $guest->sex = null;
+            //
+            $guest->responsible_adult = null;
+            $guest->kinship_relationship = null;
+            //
+            $guest->nationality = null;
+            $guest->doc_type = null;
+            $guest->doc_support_number = null;
+            $guest->doc_num = null;
+            $guest->country_address = null;
+            $guest->postal_code = null;
+            $guest->municipality = null;
+            $guest->address = null;
+            $guest->complete_checkin_data = false;
+            //   
+            $guest->save();
+            return $guest;
+
+        } catch (\Exception $e) {
+            logger()->error("Error en deleteCheckinData: " . $e->getMessage());
+            return null;
+        }
+    }
+
 
     public function updateLanguage ($data)
     {
