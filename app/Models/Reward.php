@@ -21,6 +21,14 @@ class Reward extends Model
         'type_discount',
         'type_rewards',
         'hotel_id',
+        'url',
+        'enabled_url',
+        'used',
+    ];
+
+    protected $casts = [
+        'enabled_url' => 'boolean',
+        'used' => 'boolean',
     ];
 
 

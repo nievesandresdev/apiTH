@@ -48,6 +48,8 @@ class RewardsServices {
                     'code' => $request->benefitSReferrals['code'],
                     'description' => $request->benefitSReferrals['description'],
                     'type_discount' => $request->benefitSReferrals['type_discount'],
+                    'url' => $request->benefitSReferrals['enabled_url'] ? $request->benefitSReferrals['url'] : null,
+                    'enabled_url' => $request->benefitSReferrals['enabled_url'],
                 ]
             );
             $rewards[] = $rewardReferrals;
@@ -65,6 +67,8 @@ class RewardsServices {
                     'code' => $request->benefitReferent['code'],
                     'description' => $request->benefitReferent['description'],
                     'type_discount' => $request->benefitReferent['type_discount'],
+                    'url' => $request->benefitReferent['url'],
+                    'enabled_url' => $request->benefitReferent['enabled_url'],
                 ]
             );
             $rewards[] = $rewardReferent;

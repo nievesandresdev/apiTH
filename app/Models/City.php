@@ -10,9 +10,22 @@ class City extends Model
     use HasFactory;
 
     protected $fillable = [
+        'image',
         'active',
         'slug',
         'id',
+        'natcode',
+        'inspire_id',
+        'name',
+        'codnut1',
+        'codnut2',
+        'codnut3',
+        'codigoine',
+        'shape_area',
+        'shape_length',
+        'lat',
+        'long',
+        'near',
     ];
 
     protected $casts = [

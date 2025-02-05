@@ -14,4 +14,5 @@ Route::group(['prefix' => 'rewards'], function () {
     Route::post('/storeOrUpdateRewards', [RewardsController::class, 'storeOrUpdateRewards']);
 
 
+
 });

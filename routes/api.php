@@ -20,7 +20,7 @@ use App\Http\Controllers\Api\Users\{
     UsersController,
     WorkPositionController
 };
-
+use App\Http\Controllers\Api\RewardsController;
 
 
 /*
@@ -33,6 +33,8 @@ use App\Http\Controllers\Api\Users\{
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::post('/storeRewardStay', [RewardsController::class, 'storeRewardStay']);
 
 Route::group(['prefix' => 'utility'], function () {
     Route::get('/getExpAndPlaceBySaearch', [UtilityController::class, 'getExpAndPlace']);
