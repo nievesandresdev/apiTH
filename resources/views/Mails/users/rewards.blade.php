@@ -171,7 +171,7 @@
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         @include('components.mails.rewards.redemSection',['webappChatLink' => $data['webappChatLink']])
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
+        {{-- @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']]) --}}
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
 

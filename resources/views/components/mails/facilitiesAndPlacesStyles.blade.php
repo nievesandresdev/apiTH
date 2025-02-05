@@ -18,7 +18,7 @@
             width: 157px;
         }
     }
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 550px) {
         .col-3-desktop{
             display: none;
         }

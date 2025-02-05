@@ -1,7 +1,7 @@
 <!-- Estilos Responsivos -->
 <style>
-     /* Desktop */
-     @media only screen and (min-width: 601px) {
+  /* Desktop */
+  @media only screen and (min-width: 601px) {
         .desktop-section {
             display: block;
         }
