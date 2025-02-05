@@ -503,12 +503,13 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
+                'referent' => $hotel->referent,
             ];
 
             //dd($dataEmail,$hotel);
 
 
-            //$this->mailService->sendEmail(new RewardsEmail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new RewardsEmail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
 
 
             return view('Mails.users.rewards', [
@@ -516,6 +517,7 @@ class UtilsController extends Controller
                 'hotel' => $hotel,
                 'guest' => $guest,
                 'data'=> $dataEmail,
+                'referent' => $hotel->referent,
                 'after' => true
             ]);
 

@@ -4,13 +4,17 @@
             <tr>
                 {{-- mobile image --}}
                 <td style="text-align: center;width: 50%;vertical-align: top;padding: 0 0 0 10px;" class="hidden-responsive"> <!-- 10px de padding a la izquierda -->
-                    <img src="{{ asset('mails/arrival2.png') }}" alt="arrival1" style="width: 100%; height: 240px; max-width: 100%;object-fit:cover">
+                    <img src="{{ asset('mails/rewards/header2.png') }}" alt="header1" style="width: 100%; height: 240px; max-width: 100%;object-fit:cover">
                 </td>
                 <!-- Columna de Texto -->
                 <td class="text-content" style="color: #333333;text-align: left;vertical-align: top;padding-right:20px;">
-                    <h1 style="margin: 0;color: #333;font-family: arial;font-size: 26px;font-weight: 600;line-height: 110%;">¿Todo listo {{ $hotel_name }}?</h1>
+                    <h1 style="margin: 0;color: #333;font-family: arial;font-size: 26px;font-weight: 600;line-height: 110%;">¡Enhorabuena!</h1>
                     <p style="margin: 0;color: #333;font-family: arial;font-size: 16px;font-weight: 400;line-height: 28px;margin-top:14px">
-                        Faltan sólo 2 días para recibirte en {{ $hotel_name }}! Queremos brindarte la mejor experiencia y asegurar tu disfrute al máximo.
+                        Hola [nombreHuésped]
+                        <br>
+                        uno de tus referidos ha utilizado tu código de descuento...
+                        <br>
+                        ¿Sabes lo que significa eso? ¡Un regalo para tí!
                     </p>
                   {{--   <a
                         href="{{ $data['urlWebapp'] }}"
@@ -24,7 +28,7 @@
 
                 <!-- Columna de Imagen -->
                 <td style="text-align: center;vertical-align: top;width: 212px;padding: 0 0 0 10px;" class="show-not-responsive"> <!-- 10px de padding a la izquierda -->
-                    <img src="{{ asset('mails/arrival1.png') }}" alt="arrival2" style="width: 208px; height: 254px; max-width: 100%;">
+                    <img src="{{ asset('mails/rewards/header1.png') }}" alt="header2" style="width: 208px; height: 254px; max-width: 100%;">
                 </td>
             </tr>
         </table>
