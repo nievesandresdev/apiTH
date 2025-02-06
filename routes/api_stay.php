@@ -50,6 +50,7 @@ Route::group(['prefix' => 'stay'], function () {
             Route::get('/getFormSettings', [CheckinHosterController::class, 'getFormSettings']);
             Route::post('/updateToggleShowCheckinHotel', [CheckinHosterController::class, 'updateToggleShowCheckinHotel']);
             Route::get('/getToggleShowCheckinHotel', [CheckinHosterController::class, 'getToggleShowCheckinHotel']);
+            Route::get('/getGuestsForTabsCheckinStay', [CheckinHosterController::class, 'getGuestsForTabsCheckinStay']);
         });
     });
 
