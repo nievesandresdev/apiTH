@@ -59,6 +59,15 @@ class GuestHosterService {
         return $guest;
     }
 
+    public function findById($id)
+    {
+        try {
+            return Guest::find($id);
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
     // public function inviteToHotel($data, $hotelId)
     // {
     //     try {

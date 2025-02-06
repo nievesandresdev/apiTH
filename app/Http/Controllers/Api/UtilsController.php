@@ -29,6 +29,7 @@ use App\Services\StayService;
 use App\Services\UtilityService;
 use App\Services\UrlOtasService;
 use App\Services\Apis\ApiReviewServices;
+use App\Services\Hoster\Stay\StayHosterServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -51,6 +52,7 @@ class UtilsController extends Controller
     public  $requestService;
     public  $api_review_service;
     public  $urlOtasService;
+    public  $stayHosterServices;
 
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
@@ -65,7 +67,8 @@ class UtilsController extends Controller
         StayService $_StayService,
         RequestSettingService $requestService,
         ApiReviewServices $_api_review_service,
-        UrlOtasService $urlOtasService
+        UrlOtasService $urlOtasService,
+        StayHosterServices $_StayHosterServices
     )
     {
         $this->querySettingsServices = $_QuerySettingsServices;
@@ -81,6 +84,7 @@ class UtilsController extends Controller
         $this->requestService = $requestService;
         $this->api_review_service = $_api_review_service;
         $this->urlOtasService = $urlOtasService;
+        $this->stayHosterServices = $_StayHosterServices;
     }
 
     public function authPusher(Request $request)
@@ -219,7 +223,8 @@ class UtilsController extends Controller
 
     public function test()
     {
-        return $this->stayServices->getGuestsAndSortByAccess(604);
+        $hotel = Hotel::find(193);
+        return $this->stayHosterServices->getAllByHotel($hotel,[]);
     }
 
     public function testEmailPostCheckout(){

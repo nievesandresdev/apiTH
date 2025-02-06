@@ -140,6 +140,11 @@ class GuestService {
             $guest->email = $request->email ?? $guest->email;
             $guest->phone = $request->phone ?? $guest->phone;
             $guest->sex = $request->gender ?? $guest->sex;
+            if($request->birthdate){
+                $birthdate = Carbon::createFromFormat('d/m/Y', $request->birthdate)
+                ->format('Y-m-d');
+                $guest->birthdate = $birthdate;
+            }
             //
             $guest->responsible_adult = $request->responsibleAdult ?? $guest->responsible_adult;
             $guest->kinship_relationship = $request->kinshipRelationship ?? $guest->kinship_relationship;

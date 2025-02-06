@@ -17,6 +17,7 @@ class Guest extends Authenticatable
         'lastname',
         'email',
         'phone',
+        'birthdate',
         'lang_web',
         'acronym',
         'color',
