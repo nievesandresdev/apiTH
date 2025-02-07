@@ -25,7 +25,8 @@ class Guest extends Authenticatable
         'avatar',
         'password',
         'facebookId',
-        'complete_checkin_data'
+        'complete_checkin_data',
+        'checkin_email'
     ];
 
     // protected static function boot()

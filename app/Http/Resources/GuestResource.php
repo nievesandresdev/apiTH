@@ -39,6 +39,7 @@ class GuestResource extends JsonResource
             "postal_code"=> $this->postal_code,
             "municipality"=> $this->municipality,
             "country_address"=> $this->country_address,
+            "checkin_email"=> $this->checkin_email,
             //
             "complete_checkin_data"=> $this->complete_checkin_data,
             
