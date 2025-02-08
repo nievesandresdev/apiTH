@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Reward;
+use App\Models\{Reward, RewardStay};
 use Illuminate\Support\Str;
 class RewardsServices {
 
@@ -69,10 +69,18 @@ class RewardsServices {
     }
 
     function createCodeReferent($request, $modelHotel){
+
         $code = Str::random(7);
-        return strtoupper($code);
+
+        $rewardStay = RewardStay::create([
+            'code' => strtoupper($code),
+            'hotel_id' => $modelHotel->id,
+            'stay_id' => $request->stay_id,
+            'guest_id' => $request->guest_id,
+            'reward_id' => $request->reward_id,
+        ]);
+
+        return $rewardStay->load('reward');
     }
-
-
 
 }

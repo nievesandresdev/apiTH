@@ -58,7 +58,7 @@ class RewardsController extends Controller
             $hotelModel = $request->attributes->get('hotel');
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                'requestCreate' => $request->all(),
+                'requestCreateX' => $request->all(),
             ]);
             //$rewards = $this->service->storeRewardStay($request, $hotelModel);
         } catch (\Exception $e) {
@@ -71,10 +71,7 @@ class RewardsController extends Controller
             $hotelModel = $request->attributes->get('hotel');
 
             $code = $this->service->createCodeReferent($request, $hotelModel);
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                'code' => $code,
-                'hotel' => $hotelModel->id
-            ]);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $code);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.createCodeReferent');
         }

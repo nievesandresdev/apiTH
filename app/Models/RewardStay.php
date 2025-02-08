@@ -17,6 +17,8 @@ class RewardStay extends Model
         'reward_id',
     ];
 
+    protected $appends = ['full_url'];
+
     public function reward()
     {
         return $this->belongsTo(Reward::class);
@@ -41,5 +43,19 @@ class RewardStay extends Model
     {
         return $query->where('code', $code);
     }
+
+    public function getFullUrlAttribute()
+    {
+        $url = $this->reward->url;
+
+        // Verifica si la URL no termina en '/'
+        if (substr($url, -1) !== '/') {
+            $url .= '/';
+        }
+
+        return $url . '?code=' . $this->code;
+    }
+
+
 
 }
