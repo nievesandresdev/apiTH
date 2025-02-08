@@ -2,21 +2,8 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
-
-use App\Models\Facility;
-use App\Models\FacilityHoster;
-use App\Models\FacilityHosterLanguage;
-use App\Models\User;
-
-use App\Http\Resources\FacilityResource;
-
-use App\Jobs\TranslateModelJob;
 use App\Models\Reward;
-
+use Illuminate\Support\Str;
 class RewardsServices {
 
     function getRewards($request, $modelHotel)
@@ -79,6 +66,11 @@ class RewardsServices {
         ]);
 
         return $rewards;
+    }
+
+    function createCodeReferent($request, $modelHotel){
+        $code = Str::random(7);
+        return strtoupper($code);
     }
 
 

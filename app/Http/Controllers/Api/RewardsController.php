@@ -65,4 +65,18 @@ class RewardsController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeRewardStay');
         }
     }
+
+    public function createCodeReferent(Request $request){
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+
+            $code = $this->service->createCodeReferent($request, $hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'code' => $code,
+                'hotel' => $hotelModel->id
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.createCodeReferent');
+        }
+    }
 }
