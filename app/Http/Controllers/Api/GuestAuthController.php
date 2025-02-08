@@ -172,6 +172,7 @@ class GuestAuthController extends Controller
             $dataGuest->name = $firstName;
             $dataGuest->avatar = $avatar;
             $dataGuest->googleId = $googleId;
+            $dataGuest->complete_checkin_data = false;
             // Log::info('$avatar '.$avatar);
             
             // $findGuest = $this->service->findByEmail($email);
@@ -259,6 +260,7 @@ class GuestAuthController extends Controller
             $dataGuest->name = $firstName;
             $dataGuest->avatar = $avatar;
             $dataGuest->facebookId = $facebookId;
+            $dataGuest->complete_checkin_data = false;
             // Log::info('$avatar '.$avatar);
           
           // $findGuest = $this->service->findByEmail($email);

@@ -60,7 +60,7 @@ class GuestService {
             $avatar = $data->avatar ?? null;
             $googleId = $data->googleId ?? null;
             $facebookId = $data->facebookId ?? null;
-
+            $completeCheckinData = $data->complete_checkin_data ?? false;
             $guest = Guest::where('email',$email)->first();
             $acronym = $this->generateInitialsName($name ?? $email);
 
@@ -83,6 +83,8 @@ class GuestService {
                 $guest->avatar = $avatar ?? $guest->avatar;
                 $guest->googleId = $googleId ?? $guest->googleId;
                 $guest->facebookId = $facebookId ?? $guest->facebookId;
+                $guest->complete_checkin_data = $completeCheckinData;
+                
                 if($acronym){
                     $guest->acronym = $acronym;
                 }
@@ -157,6 +159,7 @@ class GuestService {
             $guest->postal_code = $request->postalCode ?? $guest->postal_code;
             $guest->municipality = $request->municipality ?? $guest->municipality;
             $guest->address = $request->addressResidence ?? $guest->address;
+            $guest->checkin_email = $request->checkinEmail ?? null;
 
             if($completeCheckin){
                 $guest->complete_checkin_data = true;
