@@ -53,18 +53,67 @@ class RewardsController extends Controller
         }
     }
 
-    public function storeRewardStay(Request $request){
+    public function storeRewardStay(Request $request)
+    {
         try {
-            $hotelModel = $request->attributes->get('hotel');
+            // 1. Extraer datos del request (se asume que 'code', 'webUrl' y 'hotel' siempre vienen)
+            $data    = $request->all();
+            $code    = $data['code'];
+            $webUrl  = $data['webUrl'];
+            $hotelId = $data['hotel'];
 
+            // 2. Buscar en la base de datos el registro de RewardStay correspondiente al código y hotel.
+            $rewardStay = \App\Models\RewardStay::where('code', $code)
+                ->where('hotel_id', $hotelId)
+                ->first();
+
+
+            // Obtener el Reward relacionado.
+            $reward = $rewardStay->reward;
+
+
+            // 3. Parsear la webUrl recibida para extraer su base (scheme, host y path)
+            $parsedUrl = parse_url($webUrl);
+            if (!isset($parsedUrl['scheme']) || !isset($parsedUrl['host'])) {
+                throw new \Exception("El webUrl proporcionado no es una URL válida.");
+            }
+            // Reconstruir la URL base sin el query string
+            $baseWebUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host']
+                        . (isset($parsedUrl['path']) ? $parsedUrl['path'] : '');
+            // Quitar posibles barras finales para evitar discrepancias
+            $baseWebUrl = rtrim($baseWebUrl, '/');
+            $rewardUrl  = rtrim($reward->url, '/');
+
+            // 4. Validar que la URL base del request comience con la URL del Reward.
+            // Esto evita ejecutar la lógica (y consultar la BD en exceso) cuando se refresca en otra página.
+            if (strpos($baseWebUrl, $rewardUrl) !== 0) {
+                return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                    'message' => 'La URL no coincide con la URL base del Reward. No se realiza acción en la base de datos.'
+                ]);
+            }
+
+            // 5. Verificar si el Reward ya fue utilizado.
+            if ($reward->used) {
+                throw new \Exception("El Reward ya ha sido utilizado.");
+            }
+
+            // Marcar el Reward como usado.
+            $reward->used = true;
+            $reward->save();
+
+            // Retornar respuesta exitosa.
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                'requestCreateX' => $request->all(),
+                'message'    => 'El código del Reward se ha aplicado correctamente.',
+                'reward'     => $reward,
+                'url'        => $baseWebUrl,
+                //'rewardStay' => $rewardStay,
             ]);
-            //$rewards = $this->service->storeRewardStay($request, $hotelModel);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeRewardStay');
         }
     }
+
+
 
     public function createCodeReferent(Request $request){
         try {
