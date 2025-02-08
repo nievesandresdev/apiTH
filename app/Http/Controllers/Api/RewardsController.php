@@ -109,7 +109,7 @@ class RewardsController extends Controller
                 //'rewardStay' => $rewardStay,
             ]);
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeRewardStay');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, ['message' => $e->getMessage()], self::class . '.storeRewardStay');
         }
     }
 
