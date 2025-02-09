@@ -61,6 +61,13 @@ class RewardsController extends Controller
             $code    = $data['code'];
             $webUrl  = $data['webUrl'];
             $hotelId = $data['hotel'];
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'code' => $code,
+                'webUrl' => $webUrl,
+                'hotelId' => $hotelId
+            ]);
+
             $cleanUrl = explode('?', $webUrl)[0];
 
             $rewardStay = RewardStay::where('code', $code)
@@ -84,7 +91,7 @@ class RewardsController extends Controller
                 'rewardStay' => $rewardStay,
             ]);
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e->getMessage(), [], self::class . '.storeRewardStay');
+            return bodyResponseRequest(EnumResponse::ERROR, ['message' => $e->getMessage()], [], self::class . $e->getMessage());
         }
     }
 
