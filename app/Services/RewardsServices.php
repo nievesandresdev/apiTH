@@ -4,7 +4,18 @@ namespace App\Services;
 
 use App\Models\{Reward, RewardStay};
 use Illuminate\Support\Str;
+use App\Services\MailService;
+use App\Mail\User\RewardsEmail;
+use Illuminate\Support\Facades\Log;
 class RewardsServices {
+
+    public $mailService;
+
+    function __construct(
+        MailService $_MailService
+    ){
+        $this->mailService = $_MailService;
+    }
 
     function getRewards($request, $modelHotel)
     {
@@ -81,6 +92,20 @@ class RewardsServices {
         ]);
 
         return $rewardStay->load('reward');
+    }
+
+    function sendEmailReferent($rewardStay){
+
+        $chainSubdomain = $rewardStay->hotel->chain->subdomain;
+        $urlWebapp = buildUrlWebApp($chainSubdomain, $rewardStay->hotel->subdomain);
+
+        $data = [
+            'webappChatLink' => buildUrlWebApp($rewardStay->hotel->subdomain, $rewardStay->hotel->subdomain,'chat'),
+            'urlQr' => generateQr($rewardStay->hotel->subdomain, $urlWebapp),
+        ];
+
+        Log::info('sendEmailReferent', ['data' => $data]);
+        $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
     }
 
 }

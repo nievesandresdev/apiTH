@@ -14,7 +14,7 @@
                     <!-- Columna: Texto del descuento -->
                     <td style="width: 50%; text-align: left; padding-left: 8px; vertical-align: middle;">
                         <h2 style="margin: 0; font-family: Arial, sans-serif; color: #fff; line-height: 145.455%;">
-                            <span class="discount-percentage" style="font-size: 64px; font-weight: 800; display: block;">35%</span>
+                            <span class="discount-percentage" style="font-size: 64px; font-weight: 800; display: block;">{{ $rewardStay->reward->reward_amount }}</span>
                             <span class="discount-text" style="font-size: 32px; font-weight: 400; display: block; margin-top: 16px;">de descuento</span>
                         </h2>
                     </td>
@@ -34,7 +34,7 @@
                                style="margin: 0 auto; display: table; border-collapse: separate; border-radius: 12px; overflow: hidden; border: 2px solid #000; width: 300px;">
                             <tr>
                                 <td style="background-color: #fff; color: #000; font-family: Arial, sans-serif; font-size: 24px; font-weight: 400; padding: 12px 16px; text-align: center; border-radius: 12px; word-wrap: break-word;">
-                                    HOTELESPRUEBA2545HOTELESSS
+                                    {{ $rewardStay->reward->code }}
                                 </td>
                             </tr>
                         </table>

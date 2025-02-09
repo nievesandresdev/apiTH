@@ -7,7 +7,7 @@ use App\Models\{Reward, RewardStay};
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use App\Services\RewardsServices;
-
+use Illuminate\Support\Facades\Log;
 class RewardsController extends Controller
 {
     public $service;
@@ -68,6 +68,7 @@ class RewardsController extends Controller
                 ->whereHas('reward', function($query) use ($cleanUrl) {
                     $query->where('url', $cleanUrl);
                 })
+                ->where('used', false)
             ->first();
 
             if($rewardStay){
@@ -81,15 +82,32 @@ class RewardsController extends Controller
                 return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un RewardStay con el código '$code' para el hotel indicado.");
             }
 
+            if($cleanUrl == $rewardStay->reward->url){
+
+                $rewardStay->update([
+                    'used' => true
+                ]);
+                Log::info('sendEmailReferent', ['rewardStay' => $rewardStay]);
+                $this->service->sendEmailReferent($rewardStay);
+                return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                    'message' => 'RewardStay encontrado y enviado',
+                ]);
+            }
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'message' => 'RewardStay encontrado pero no coincide la url',
+            ]);
+
+
+
+            /* return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'request' => $request->all(),
                 'code' => $code,
                 'webUrl' => $webUrl,
                 'hotelId' => $hotelId,
                 'cleanUrl' => $cleanUrl,
                 'rewardStay' => $rewardStay
-            ]);
+            ]); */
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, ['message' => $e->getMessage()], [], $e->getMessage());

@@ -10,7 +10,7 @@
                 <td class="text-content" style="color: #333333;text-align: left;vertical-align: top;padding-right:20px;">
                     <h1 style="margin: 0;color: #333;font-family: arial;font-size: 26px;font-weight: 600;line-height: 110%;">¡Enhorabuena!</h1>
                     <p style="margin: 0;color: #333;font-family: arial;font-size: 16px;font-weight: 400;line-height: 28px;margin-top:14px">
-                        Hola [nombreHuésped]
+                        Hola {{ $data->guest->name }}
                         <br>
                         uno de tus referidos ha utilizado tu código de descuento...
                         <br>
@@ -22,8 +22,6 @@
                     >
                         Ir a la WebApp
                     </a> --}}
-
-
                 </td>
 
                 <!-- Columna de Imagen -->

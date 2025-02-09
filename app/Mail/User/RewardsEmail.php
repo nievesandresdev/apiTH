@@ -9,32 +9,19 @@ use Illuminate\Queue\SerializesModels;
 class RewardsEmail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $type;
     public $hotel;
-    public $guest;
-    public $link;
-    public $create;
-    public $urlQr;
     public $data;
-    public $after;
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
+    public $rewardStay;
+
     public function __construct(
-        $type,
         $hotel,
-        $guest,
+        $rewardStay,
         $data = null,
-        $after = false
     )
     {
-        $this->type = $type;
         $this->hotel = $hotel;
-        $this->guest = $guest;
+        $this->rewardStay = $rewardStay;
         $this->data = $data;
-        $this->after = $after;
 
     }
 
