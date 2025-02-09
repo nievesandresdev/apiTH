@@ -56,7 +56,6 @@ class RewardsController extends Controller
     public function storeRewardStay(Request $request)
     {
         try {
-            // 1. Extraer datos del request (se asume que 'code', 'webUrl' y 'hotel' siempre vienen)
             $data    = $request->all();
             $code    = $data['code'];
             $webUrl  = $data['webUrl'];
@@ -69,13 +68,19 @@ class RewardsController extends Controller
                 ->whereHas('reward', function($query) use ($cleanUrl) {
                     $query->where('url', $cleanUrl);
                 })
-                ->first();
+            ->first();
 
-            
+            if($rewardStay){
+               $rewardStay->reward()->update([
+                'used' => true
+               ]);
+            }
+
 
             if (!$rewardStay) {
                 return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un RewardStay con el código '$code' para el hotel indicado.");
             }
+
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'code' => $code,
@@ -85,15 +90,6 @@ class RewardsController extends Controller
                 'rewardStay' => $rewardStay
             ]);
 
-            $reward = $rewardStay->reward;
-
-
-            // 6. Retornar respuesta exitosa.
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                'message'    => 'El código del Reward se ha aplicado correctamente.',
-                'reward'     => $reward,
-                'rewardStay' => $rewardStay,
-            ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, ['message' => $e->getMessage()], [], $e->getMessage());
         }
