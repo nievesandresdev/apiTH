@@ -62,56 +62,54 @@ class RewardsController extends Controller
             $webUrl  = $data['webUrl'];
             $hotelId = $data['hotel'];
 
-            // 2. Buscar en la base de datos el registro de RewardStay correspondiente al código y hotel.
+            // 2. Parsear la webUrl para obtener la URL base (sin el query string '?code=...')
+            $parsedUrl = parse_url($webUrl);
+            if (!isset($parsedUrl['scheme']) || !isset($parsedUrl['host'])) {
+                return bodyResponseRequest(EnumResponse::ERROR, "El webUrl proporcionado no es una URL válida.");
+            }
+            $baseWebUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . (isset($parsedUrl['path']) ? $parsedUrl['path'] : '');
+            $baseWebUrl = rtrim($baseWebUrl, '/');
+
+            // 3. Buscar en la base de datos el registro de RewardStay correspondiente al código y hotel.
             $rewardStay = \App\Models\RewardStay::where('code', $code)
                 ->where('hotel_id', $hotelId)
                 ->first();
 
-
-            // Obtener el Reward relacionado.
-            $reward = $rewardStay->reward;
-
-
-            // 3. Parsear la webUrl recibida para extraer su base (scheme, host y path)
-            $parsedUrl = parse_url($webUrl);
-            if (!isset($parsedUrl['scheme']) || !isset($parsedUrl['host'])) {
-                throw new \Exception("El webUrl proporcionado no es una URL válida.");
+            if (!$rewardStay) {
+                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un RewardStay con el código '$code' para el hotel indicado.");
             }
-            // Reconstruir la URL base sin el query string
-            $baseWebUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host']
-                        . (isset($parsedUrl['path']) ? $parsedUrl['path'] : '');
-            // Quitar posibles barras finales para evitar discrepancias
-            $baseWebUrl = rtrim($baseWebUrl, '/');
-            $rewardUrl  = rtrim($reward->url, '/');
 
-            // 4. Validar que la URL base del request comience con la URL del Reward.
-            // Esto evita ejecutar la lógica (y consultar la BD en exceso) cuando se refresca en otra página.
-            if (strpos($baseWebUrl, $rewardUrl) !== 0) {
-                return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                    'message' => 'La URL no coincide con la URL base del Reward. No se realiza acción en la base de datos.'
-                ]);
+            // 4. Obtener el Reward asociado y validar que la URL almacenada coincida con la URL base obtenida.
+            $reward = $rewardStay->reward;
+            if (!$reward) {
+                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró el Reward asociado al RewardStay.");
+            }
+
+            $rewardUrl = rtrim($reward->url, '/');
+            if ($baseWebUrl !== $rewardUrl) {
+                return bodyResponseRequest(EnumResponse::ERROR, "La URL proporcionada ($baseWebUrl) no coincide con la URL del Reward ($rewardUrl).");
             }
 
             // 5. Verificar si el Reward ya fue utilizado.
             if ($reward->used) {
-                throw new \Exception("El Reward ya ha sido utilizado.");
+                return bodyResponseRequest(EnumResponse::ERROR, "El Reward ya ha sido utilizado.");
             }
 
             // Marcar el Reward como usado.
             $reward->used = true;
             $reward->save();
 
-            // Retornar respuesta exitosa.
+            // 6. Retornar respuesta exitosa.
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'message'    => 'El código del Reward se ha aplicado correctamente.',
                 'reward'     => $reward,
-                'url'        => $baseWebUrl,
-                //'rewardStay' => $rewardStay,
+                'rewardStay' => $rewardStay,
             ]);
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e->getMessage(), ['message' => $e->getMessage()], self::class . '.storeRewardStay');
+            return bodyResponseRequest(EnumResponse::ERROR, $e->getMessage(), [], self::class . '.storeRewardStay');
         }
     }
+
 
 
 
