@@ -62,11 +62,21 @@ class RewardsController extends Controller
             $webUrl  = $data['webUrl'];
             $hotelId = $data['hotel'];
 
+            $cleanUrl = explode('?', $webUrl)[0];
+
+            $rewardStay = RewardStay::where('code', $code)
+                ->where('hotel_id', $hotelId)
+                ->whereHas('reward', function($query) use ($cleanUrl) {
+                    $query->where('url', $cleanUrl);
+                })
+                ->first();
+
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'code' => $code,
                 'webUrl' => $webUrl,
                 'hotelId' => $hotelId,
-                'cleanUrl' => explode('?', $webUrl)[0]
+                'cleanUrl' => $cleanUrl,
+                'rewardStay' => $rewardStay
             ]);
 
             $cleanUrl = explode('?', $webUrl)[0];
