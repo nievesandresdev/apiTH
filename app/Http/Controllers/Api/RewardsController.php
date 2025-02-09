@@ -71,6 +71,12 @@ class RewardsController extends Controller
                 })
                 ->first();
 
+            
+
+            if (!$rewardStay) {
+                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un RewardStay con el código '$code' para el hotel indicado.");
+            }
+
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'code' => $code,
                 'webUrl' => $webUrl,
@@ -78,19 +84,6 @@ class RewardsController extends Controller
                 'cleanUrl' => $cleanUrl,
                 'rewardStay' => $rewardStay
             ]);
-
-            $cleanUrl = explode('?', $webUrl)[0];
-
-            $rewardStay = RewardStay::where('code', $code)
-                ->where('hotel_id', $hotelId)
-                ->whereHas('reward', function($query) use ($cleanUrl) {
-                    $query->where('url', $cleanUrl);
-                })
-                ->first();
-
-            if (!$rewardStay) {
-                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un RewardStay con el código '$code' para el hotel indicado.");
-            }
 
             $reward = $rewardStay->reward;
 
