@@ -83,6 +83,7 @@ class RewardsController extends Controller
 
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'request' => $request->all(),
                 'code' => $code,
                 'webUrl' => $webUrl,
                 'hotelId' => $hotelId,
