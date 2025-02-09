@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Reward;
+use App\Models\{Reward, RewardStay};
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use App\Services\RewardsServices;
@@ -61,43 +61,21 @@ class RewardsController extends Controller
             $code    = $data['code'];
             $webUrl  = $data['webUrl'];
             $hotelId = $data['hotel'];
+            $cleanUrl = explode('?', $webUrl)[0];
 
-            // 2. Parsear la webUrl para obtener la URL base (sin el query string '?code=...')
-            $parsedUrl = parse_url($webUrl);
-            if (!isset($parsedUrl['scheme']) || !isset($parsedUrl['host'])) {
-                return bodyResponseRequest(EnumResponse::ERROR, "El webUrl proporcionado no es una URL válida.");
-            }
-            $baseWebUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . (isset($parsedUrl['path']) ? $parsedUrl['path'] : '');
-            $baseWebUrl = rtrim($baseWebUrl, '/');
-
-            // 3. Buscar en la base de datos el registro de RewardStay correspondiente al código y hotel.
-            $rewardStay = \App\Models\RewardStay::where('code', $code)
+            $rewardStay = RewardStay::where('code', $code)
                 ->where('hotel_id', $hotelId)
+                ->whereHas('reward', function($query) use ($cleanUrl) {
+                    $query->where('url', $cleanUrl);
+                })
                 ->first();
 
             if (!$rewardStay) {
                 return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un RewardStay con el código '$code' para el hotel indicado.");
             }
 
-            // 4. Obtener el Reward asociado y validar que la URL almacenada coincida con la URL base obtenida.
             $reward = $rewardStay->reward;
-            if (!$reward) {
-                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró el Reward asociado al RewardStay.");
-            }
 
-            $rewardUrl = rtrim($reward->url, '/');
-            if ($baseWebUrl !== $rewardUrl) {
-                return bodyResponseRequest(EnumResponse::ERROR, "La URL proporcionada ($baseWebUrl) no coincide con la URL del Reward ($rewardUrl).");
-            }
-
-            // 5. Verificar si el Reward ya fue utilizado.
-            if ($reward->used) {
-                return bodyResponseRequest(EnumResponse::ERROR, "El Reward ya ha sido utilizado.");
-            }
-
-            // Marcar el Reward como usado.
-            $reward->used = true;
-            $reward->save();
 
             // 6. Retornar respuesta exitosa.
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
