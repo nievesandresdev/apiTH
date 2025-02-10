@@ -18,7 +18,7 @@ class RewardsController extends Controller
         $this->service = $_RewardsServices;
     }
 
-    public function getRewards (Request $request) {
+    public function getRewards(Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
             $rewards = $this->service->getRewards($request, $hotelModel);
