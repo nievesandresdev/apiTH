@@ -23,6 +23,7 @@ use App\Http\Resources\HotelBasicDataResource;
 use App\Utils\Enums\EnumResponse;
 
 use App\Http\Requests\Hotel\UpdateProfileRequest;
+use App\Http\Resources\HotelMainDataWebappResource;
 
 class HotelController extends Controller
 {
@@ -121,6 +122,26 @@ class HotelController extends Controller
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findByParams');
+        }
+    }
+
+    public function getMainData (Request $request) {
+        try {
+            $model = $this->service->getMainData($request);
+
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+            $data = new HotelMainDataWebappResource($model);
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getMainData');
         }
     }
 

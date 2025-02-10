@@ -437,4 +437,27 @@ class HotelService {
         return $hotelModel;
     }
 
+
+    public function getMainData ($request) {
+        try {
+            $subdomain = $request->subdomain ?? null;
+            Log::error('subdomain '.$subdomain);
+
+            return Hotel::with([
+                'chatSettings:id,hotel_id,show_guest'
+            ])
+            ->select(
+                'hotels.id','hotels.name','hotels.type','hotels.zone','hotels.instagram_url','hotels.facebook_url','hotels.pinterest_url',
+                'hotels.show_profile','hotels.subdomain','hotels.logo','hotels.favicon','hotels.show_experiences','hotels.instagram_url',
+                'hotels.language_default_webapp','hotels.x_url','hotels.show_facilities','hotels.show_places','hotels.buttons_home',
+                'hotels.show_referrals','hotels.show_checkin_stay','hotels.offer_benefits','hotels.latitude','hotels.longitude',
+                'hotels.city_id'
+            )
+            // chatSettings
+            ->where('subdomain', $subdomain)
+            ->first();            
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }

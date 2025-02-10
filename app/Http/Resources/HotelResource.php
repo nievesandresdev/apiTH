@@ -17,8 +17,8 @@ class HotelResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $defaultChatSettingsArray  = defaultChatSettings();
-        $chatSettings = ChatSetting::with('languages')->where('hotel_id',$this->id)->first() ?? $defaultChatSettingsArray;
+        // $defaultChatSettingsArray  = defaultChatSettings();
+        // $chatSettings = ChatSetting::with('languages')->where('hotel_id',$this->id)->first() ?? $defaultChatSettingsArray;
 
         $is_default = auth()->user()
         ? auth()->user()->hotel()->wherePivot('hotel_id', $this->id)->wherePivot('is_default', 1)->exists()
@@ -74,7 +74,7 @@ class HotelResource extends JsonResource
             "subdomain" => $this->subdomain,
             //"user" => new UserResource($this->user()->first()),
             "translate" => $this->translate,
-            "chatSettings" => new ChatSettingResource($chatSettings),
+            // "chatSettings" => new ChatSettingResource($chatSettings),
             // "chatHours" => $chatHours,
             "language_default_webapp"=> $this->language_default_webapp,
             "sender_for_sending_sms"=> $this->sender_for_sending_sms,
@@ -94,9 +94,9 @@ class HotelResource extends JsonResource
             "sender_mail_mask" => $this->sender_mail_mask,
             'is_default' => $is_default,
             "buttons_home" => $this->buttons_home,
-            "legal" => $this->policies()->count() > 0 ? false : true,
+            // "legal" => $this->policies()->count() > 0 ? false : true,
             "policies" => $this->policies,
-            "chain" => new ChainResource($this->chain),
+            // "chain" => new ChainResource($this->chain),
             "subscribed"=> $this->subscription_active ? $is_subscribed : false,
             "show_referrals" => $this->show_referrals,
             "offer_benefits" => $this->offer_benefits,

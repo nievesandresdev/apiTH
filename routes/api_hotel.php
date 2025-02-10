@@ -35,6 +35,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::post('/customization', [HotelController::class, 'updateCustomization']);
     Route::post('/updateShowButtons', [HotelController::class, 'updateShowButtons']);
     Route::get('buildUrlWebApp', [HotelController::class, 'buildUrlWebApp']);
+    Route::get('getMainData', [HotelController::class, 'getMainData']);
     //findById
     Route::get('findById/{id}', [HotelController::class, 'findById']);
     Route::get('getRewardsByHotel', [HotelController::class, 'getRewardsByHotel']);
