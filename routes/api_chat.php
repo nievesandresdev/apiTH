@@ -7,11 +7,13 @@ use App\Http\Controllers\Api\Hoster\ChatSettingsController;
 use App\Http\Controllers\Api\Hoster\StayChatHosterController;
 
 Route::group(['prefix' => 'chat'], function () {
+    //webapp endpoints
     Route::post('/sendMsgToHoster', [ChatController::class, 'sendMsgToHoster']);
     Route::post('/loadMessages', [ChatController::class, 'loadMessages']);
     Route::post('/markMsgsAsRead', [ChatController::class, 'markMsgsAsRead']);
     Route::get('/unreadMsgs', [ChatController::class, 'unreadMsgs']);
     Route::get('/getAvailavilityByHotel/', [ChatController::class, 'getAvailavilityByHotel']);
+    Route::get('/getAvailableLanguages', [ChatController::class, 'getAvailableLanguages']);
     //hoster endpoints
     Route::group(['prefix' => 'hoster'], function () {
 
