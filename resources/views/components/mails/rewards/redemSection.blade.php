@@ -2,8 +2,8 @@
        style="background: url('{{ asset('mails/rewards/fondo1.png') }}') no-repeat center center; background-size: cover; height: 354px;">
     <tr>
         <td style="height: 354px; vertical-align: middle; text-align: center; padding: 16px;">
-            <!-- Tabla interna con contenido -->
-            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 0 auto; text-align: center;">
+            <!-- Tabla interna con contenido, ancho fijo -->
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 0 auto; text-align: center; max-width: 400px; width: 100%;">
                 <tr>
                     <!-- Columna: Imagen del regalo -->
                     <td style="width: 50%; text-align: right; padding-right: 8px; vertical-align: middle;">
@@ -14,7 +14,7 @@
                     <!-- Columna: Texto del descuento -->
                     <td style="width: 50%; text-align: left; padding-left: 8px; vertical-align: middle;">
                         <h2 style="margin: 0; font-family: Arial, sans-serif; color: #fff; line-height: 145.455%;">
-                            <span class="discount-percentage" style="font-size: 64px; font-weight: 800; display: block;">35%</span>
+                            <span class="discount-percentage" style="font-size: 64px; font-weight: 800; display: block;">{{ $rewardStay->reward->reward_amount }}</span>
                             <span class="discount-text" style="font-size: 32px; font-weight: 400; display: block; margin-top: 16px;">de descuento</span>
                         </h2>
                     </td>
@@ -31,10 +31,10 @@
                     <!-- Fila: Código de regalo -->
                     <td colspan="2" style="text-align: center; padding-top: 4px;">
                         <table role="presentation" cellspacing="0" cellpadding="0"
-                               style="margin: 0 auto; display: inline-block; border-collapse: separate; border-radius: 12px; overflow: hidden; border: 2px solid #000;">
+                               style="margin: 0 auto; display: table; border-collapse: separate; border-radius: 12px; overflow: hidden; border: 2px solid #000; width: 300px;">
                             <tr>
-                                <td style="background-color: #fff; color: #000; font-family: Arial, sans-serif; font-size: 24px; font-weight: 400; padding: 12px 24px; text-align: center; border-radius: 12px;">
-                                    HOTELESPRUEBA2545
+                                <td style="background-color: #fff; color: #000; font-family: Arial, sans-serif; font-size: 24px; font-weight: 400; padding: 12px 16px; text-align: center; border-radius: 12px; word-wrap: break-word;">
+                                    {{ $rewardStay->reward->code }}
                                 </td>
                             </tr>
                         </table>

@@ -54,4 +54,13 @@ class Reward extends Model
     {
         return $this->belongsTo(Hotel::class);
     }
+
+    public function getRewardAmountAttribute()
+    {
+        if ($this->type_discount === 'percent') {
+            return intval($this->amount) . '%';
+        }
+
+        return number_format($this->amount, 2, ',', '.') . '€';
+    }
 }

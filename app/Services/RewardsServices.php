@@ -2,22 +2,20 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\{Reward, RewardStay};
+use Illuminate\Support\Str;
+use App\Services\MailService;
+use App\Mail\User\RewardsEmail;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
-
-use App\Models\Facility;
-use App\Models\FacilityHoster;
-use App\Models\FacilityHosterLanguage;
-use App\Models\User;
-
-use App\Http\Resources\FacilityResource;
-
-use App\Jobs\TranslateModelJob;
-use App\Models\Reward;
-
 class RewardsServices {
+
+    public $mailService;
+
+    function __construct(
+        MailService $_MailService
+    ){
+        $this->mailService = $_MailService;
+    }
 
     function getRewards($request, $modelHotel)
     {
@@ -81,6 +79,33 @@ class RewardsServices {
         return $rewards;
     }
 
+    function createCodeReferent($request, $modelHotel){
 
+        $code = Str::random(7);
+
+        $rewardStay = RewardStay::create([
+            'code' => strtoupper($code),
+            'hotel_id' => $modelHotel->id,
+            'stay_id' => $request->stay_id,
+            'guest_id' => $request->guest_id,
+            'reward_id' => $request->reward_id,
+        ]);
+
+        return $rewardStay->load('reward');
+    }
+
+    function sendEmailReferent($rewardStay){
+
+        $chainSubdomain = $rewardStay->hotel->chain->subdomain;
+        $urlWebapp = buildUrlWebApp($chainSubdomain, $rewardStay->hotel->subdomain);
+
+        $data = [
+            'webappChatLink' => buildUrlWebApp($rewardStay->hotel->subdomain, $rewardStay->hotel->subdomain,'chat'),
+            'urlQr' => generateQr($rewardStay->hotel->subdomain, $urlWebapp),
+        ];
+
+        Log::info('sendEmailReferent', ['data' => $data]);
+        $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
+    }
 
 }

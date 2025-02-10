@@ -84,6 +84,16 @@ class HotelService {
         return $newDefaultHotel;
     }
 
+    public function getRewardsByHotel($modelHotel){
+
+        $rewards = [
+             'referrals' => $modelHotel->referrals->first(),
+             'referent' => $modelHotel->referent->first(),
+        ];
+
+        return $rewards;
+    }
+
 
 
     public function findByParams ($request) {

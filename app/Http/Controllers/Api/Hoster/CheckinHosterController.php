@@ -123,4 +123,22 @@ class CheckinHosterController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getToggleShowCheckinHotel');
         }
     }
+
+    //operation
+    public function getGuestsForTabsCheckinStay(Request $request){
+        try {
+            $model = $this->service->getGuestsForTabsCheckinStay($request->stayId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getGuestsForTabsCheckinStay');
+        }
+    }
+    
 }

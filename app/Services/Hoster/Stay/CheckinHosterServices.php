@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class CheckinHosterServices {
 
+    //settings
     public function getAll ($hotelId) {
         try {
             $default = CheckinSetting::where('hotel_id',$hotelId)->first();
@@ -105,4 +106,20 @@ class CheckinHosterServices {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    //operation
+    public function getGuestsForTabsCheckinStay ($stayId) {
+
+        $results = DB::table('guest_stay')
+        ->join('guests', 'guests.id', '=', 'guest_stay.guest_id')
+        ->select(
+            'guest_stay.guest_id','guest_stay.stay_id','guests.id','guests.name','guests.complete_checkin_data'
+        )
+        ->where('guest_stay.stay_id', $stayId)
+        ->where('guests.complete_checkin_data', 1)
+        ->get();
+    
+        return $results;    
+    }
+
 }

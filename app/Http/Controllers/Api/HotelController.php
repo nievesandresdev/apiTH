@@ -93,6 +93,16 @@ class HotelController extends Controller
         }
     }
 
+    public function getRewardsByHotel(Request $request){
+        try {
+            $modelHotel = $request->attributes->get('hotel');
+            $data = $this->service->getRewardsByHotel($modelHotel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getRewardsByHotel');
+        }
+    }
+
 
     public function findByParams (Request $request) {
         try {
@@ -250,7 +260,7 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateProfile');
         }
     }
-    
+
     public function updateVisivilityFacilities (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');

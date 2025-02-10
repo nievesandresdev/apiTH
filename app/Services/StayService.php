@@ -165,6 +165,7 @@ class StayService {
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
             $color = $this->guestService->updateColorGuestForStay($colorsExists);
+            $guest->complete_checkin_data = false;
             if($color){
                 // Log::info('se agregar el color al huesped '.$color);
                 $guest->color = $color;

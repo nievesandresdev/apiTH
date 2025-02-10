@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Reward;
+use App\Models\{Reward, RewardStay};
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use App\Services\RewardsServices;
-
+use Illuminate\Support\Facades\Log;
 class RewardsController extends Controller
 {
     public $service;
@@ -18,7 +18,7 @@ class RewardsController extends Controller
         $this->service = $_RewardsServices;
     }
 
-    public function getRewards (Request $request) {
+    public function getRewards(Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
             $rewards = $this->service->getRewards($request, $hotelModel);
@@ -53,16 +53,78 @@ class RewardsController extends Controller
         }
     }
 
-    public function storeRewardStay(Request $request){
+    public function storeRewardStay(Request $request)
+    {
+        try {
+            $data    = $request->all();
+            $code    = $data['code'];
+            $webUrl  = $data['webUrl'];
+            $hotelId = $data['hotel'];
+
+            $cleanUrl = explode('?', $webUrl)[0];
+
+            $rewardStay = RewardStay::where('code', $code)
+                ->where('hotel_id', $hotelId)
+                ->whereHas('reward', function($query) use ($cleanUrl) {
+                    $query->where('url', $cleanUrl);
+                })
+                ->where('used', false)
+            ->first();
+
+            if($rewardStay){
+               $rewardStay->reward()->update([
+                'used' => true
+               ]);
+            }
+
+
+            if (!$rewardStay) {
+                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un RewardStay con el código '$code' para el hotel indicado.");
+            }
+
+            if($cleanUrl == $rewardStay->reward->url){
+
+                $rewardStay->update([
+                    'used' => true
+                ]);
+                Log::info('sendEmailReferent', ['rewardStay' => $rewardStay]);
+                $this->service->sendEmailReferent($rewardStay);
+                return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                    'message' => 'RewardStay encontrado y enviado',
+                ]);
+            }
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'message' => 'RewardStay encontrado pero no coincide la url',
+            ]);
+
+
+
+            /* return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'request' => $request->all(),
+                'code' => $code,
+                'webUrl' => $webUrl,
+                'hotelId' => $hotelId,
+                'cleanUrl' => $cleanUrl,
+                'rewardStay' => $rewardStay
+            ]); */
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, ['message' => $e->getMessage()], [], $e->getMessage());
+        }
+    }
+
+
+
+
+    public function createCodeReferent(Request $request){
         try {
             $hotelModel = $request->attributes->get('hotel');
 
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                'requestCreate' => $request->all(),
-            ]);
-            //$rewards = $this->service->storeRewardStay($request, $hotelModel);
+            $code = $this->service->createCodeReferent($request, $hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $code);
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeRewardStay');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.createCodeReferent');
         }
     }
 }

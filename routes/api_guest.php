@@ -25,6 +25,7 @@ Route::group(['prefix' => 'guest'], function () {
 
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/inviteToHotel', [GuestHosterController::class, 'inviteToHotel']);
+        Route::get('/findById', [GuestHosterController::class, 'findById']);
     });
 
     Route::group(['prefix' => 'auth'], function () {
