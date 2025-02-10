@@ -448,7 +448,7 @@ class UtilsController extends Controller
                 $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
                 $querySettings = $this->querySettingsServices->getAll($hotel->id);
                 $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
-                $answered = Query::where('stay_id',$stay->id)->where('guest_id',$guest->id)->first();
+                //$answered = Query::where('stay_id',$stay->id)->where('guest_id',$guest->id)->first();
 
                 $showQuerySection = true;
 
@@ -468,7 +468,7 @@ class UtilsController extends Controller
                     'currentPeriod' => $currentPeriod,
                     'webappLinkInbox' => $webappLinkInbox,
                     'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-                    'answered' => $answered->answered == 1 ? true : false
+                    //'answered' => $answered->answered == 1 ? true : false
 
                 ];
 
