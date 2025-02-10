@@ -140,6 +140,7 @@
         @include('components.mails.rewards.howReedem',['linkRedeem' => $rewardStay->reward->url,'hotel' => $hotel])
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
+
         @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
