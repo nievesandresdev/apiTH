@@ -50,7 +50,8 @@ class HotelMainDataWebappResource extends JsonResource
             "longitude"=> $this->longitude,
             "city_id"=> $this->city_id,
             "checkin"=> $this->checkin,
-            "checkout"=> $this->checkout
+            "checkout"=> $this->checkout,
+            "image"=> $this->image
         ];
     }
 }

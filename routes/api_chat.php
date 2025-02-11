@@ -14,6 +14,7 @@ Route::group(['prefix' => 'chat'], function () {
     Route::get('/unreadMsgs', [ChatController::class, 'unreadMsgs']);
     Route::get('/getAvailavilityByHotel/', [ChatController::class, 'getAvailavilityByHotel']);
     Route::get('/getAvailableLanguages', [ChatController::class, 'getAvailableLanguages']);
+    Route::get('/getAllSettings', [ChatController::class, 'getAllSettings']);
     //hoster endpoints
     Route::group(['prefix' => 'hoster'], function () {
 

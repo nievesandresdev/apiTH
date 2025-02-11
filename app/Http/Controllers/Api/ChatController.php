@@ -128,4 +128,21 @@ class ChatController extends Controller
         }
     }
 
+    public function getAllSettings(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->getAllSettings($hotel->id);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAllSettings');
+        }
+    }
+
 }
