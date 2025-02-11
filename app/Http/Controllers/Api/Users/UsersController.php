@@ -296,4 +296,19 @@ class UsersController extends Controller
         }
     }
 
+    public function checkCurrentPassword(Request $request)
+    {
+        try {
+            $user = $this->userServices->checkCurrentPassword($request);
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'valid' => $user['valid'],
+                'message' => $user['message'],
+            ]);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, [
+                'message' => $e->getMessage(),
+            ],null,$e->getMessage());
+        }
+    }
 }

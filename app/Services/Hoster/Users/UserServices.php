@@ -479,4 +479,16 @@ class UserServices
         return $user;
     }
 
+    public function checkCurrentPassword($request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        // Comparar la nueva contraseña con la actual
+        if (Hash::check($request->password, $user->password)) {
+            return ['valid' => false, 'message' => 'La nueva contraseña no puede ser igual a la actual'];
+        }
+
+        return ['valid' => true, 'message' => 'Contraseña actualizada correctamente'];
+    }
+
 }

@@ -59,6 +59,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 
     Route::post('password/verify-token', [ForgotPasswordController::class, 'verifyToken'])->name('password.verify');
+    Route::post('/check-current-password', [UsersController::class, 'checkCurrentPassword']);
 });
 
  //prefix dossier
@@ -83,6 +84,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/update-profile', [UsersController::class, 'updateProfile']);
         Route::get('/getUsers', [UsersController::class, 'getUsers']);
         Route::get('/getUser', [UsersController::class, 'getUser']);
+
+
 
         Route::get('/getTrial', [UsersController::class, 'getTrial']);
         //getUserData
