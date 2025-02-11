@@ -25,6 +25,7 @@ Route::group(['prefix' => 'chat'], function () {
         Route::get('/pendingCountByHotel', [StayChatHosterController::class, 'pendingCountByHotel']);
         Route::get('/pendingCountByStay/{stayId}', [StayChatHosterController::class, 'pendingCountByStay']);
         Route::post('/markGuesMsgstAsRead/{stayId}/{guestId}', [StayChatHosterController::class, 'markGuesMsgstAsRead']);
+        Route::post('/markHosterMsgstAsRead/{stayId}/{guestId}', [StayChatHosterController::class, 'markHosterMsgstAsRead']);
         //settings endopoints
         Route::group(['prefix' => 'settings'], function () {
             Route::get('/getAll', [ChatSettingsController::class, 'getAll']);

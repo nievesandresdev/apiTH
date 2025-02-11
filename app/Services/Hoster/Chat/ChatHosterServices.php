@@ -209,5 +209,14 @@ class ChatHosterServices {
             return $e;
         }
     }
+
+    public function markHosterMsgstAsRead($stayId, $guestId){
+        try {
+            $chat = Chat::where('stay_id',$stayId)->where('guest_id',$guestId)->first();
+            $chat->messages()->where('by','Hoster')->where('status','Entregado')->update(['status' => 'Leído']);
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
     
 }
