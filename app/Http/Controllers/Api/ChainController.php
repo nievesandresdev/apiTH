@@ -168,4 +168,14 @@ class ChainController extends Controller
         }
     }
 
+    public function getChainBySubdomain (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $chain = $this->chainServices->getChainBySubdomain($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $chain);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getChainBySubdomain');
+        }
+    }
+
 }

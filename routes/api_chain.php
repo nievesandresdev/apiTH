@@ -11,4 +11,5 @@ Route::group(['prefix' => 'chain'], function () {
     Route::get('/findBySubdomain', [ChainController::class, 'findBySubdomain']);
     Route::get('/getCustomatizacion', [ChainController::class, 'getCustomatizacion']);
     Route::get('/getStaysGuest', [ChainController::class, 'getStaysGuest']);
+    Route::get('/getChainBySubdomain', [ChainController::class, 'getChainBySubdomain']);
 });

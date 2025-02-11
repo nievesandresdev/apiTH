@@ -85,7 +85,7 @@ class ChainService
             return $e;
         }
     }
-   
+
     public function getStaysGuest($chainId, $guestId, $currentStayId)
     {
         $hotels = Hotel::where('chain_id', $chainId)->active()->pluck('id');
@@ -93,16 +93,16 @@ class ChainService
         // Obtenemos todas las estancias de los hoteles en la cadena
         $stays = DB::table('guest_stay as gs')
         ->select(
-            'gs.stay_id', 
-            'gs.guest_id', 
-            'gs.chain_id', 
-            'stays.hotel_id', 
-            'stays.room', 
-            'stays.number_guests', 
-            'stays.id as stayId', 
-            'stays.check_in', 
-            'stays.check_out', 
-            'hotels.name as hotel_name', 
+            'gs.stay_id',
+            'gs.guest_id',
+            'gs.chain_id',
+            'stays.hotel_id',
+            'stays.room',
+            'stays.number_guests',
+            'stays.id as stayId',
+            'stays.check_in',
+            'stays.check_out',
+            'hotels.name as hotel_name',
             'hotels.zone as hotel_zone',
             'hotels.subdomain as hotel_subdomain',
         )
@@ -133,6 +133,10 @@ class ChainService
         ];
 
         return $result;
+    }
+
+    public function getChainBySubdomain ($hotelModel) {
+        return $hotelModel->chain;
     }
 }
 
