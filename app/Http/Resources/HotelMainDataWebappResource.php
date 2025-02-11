@@ -49,6 +49,8 @@ class HotelMainDataWebappResource extends JsonResource
             "latitude"=> $this->latitude,
             "longitude"=> $this->longitude,
             "city_id"=> $this->city_id,
+            "checkin"=> $this->checkin,
+            "checkout"=> $this->checkout
         ];
     }
 }
