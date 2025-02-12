@@ -24,6 +24,7 @@ class StayResource extends JsonResource
             "id"=> $this->id,
             "check_out"=> $this->check_out,
             "check_in"=> $this->check_in,
+            "hotel_id"=> $this->hotel_id,
             "room" => $this->room,
             "language" => $this->language,
             "number_guests" => $this->number_guests,
