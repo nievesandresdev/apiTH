@@ -21,13 +21,15 @@ class RewardsServices {
     {
         $rewards = Reward::where('hotel_id', $modelHotel->id)
             ->whereIn('type_rewards', ['referrals', 'referent'])
-            ->get();
+            ->get()
+            ->groupBy('type_rewards');
 
         return [
-            'benefitSReferrals' => $rewards->where('type_rewards', 'referrals')->first(),
-            'benefitReferent' => $rewards->where('type_rewards', 'referent')->first(),
+            'benefitSReferrals' => isset($rewards['referrals']) ? $rewards['referrals']->first() : null,
+            'benefitReferent'   => isset($rewards['referent'])   ? $rewards['referent']->first()   : null,
         ];
     }
+
 
 
     function storeOrUpdateRewards($request, $modelHotel)
