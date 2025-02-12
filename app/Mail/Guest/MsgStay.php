@@ -68,7 +68,7 @@ class MsgStay extends Mailable
         if($this->hotel->sender_mail_mask){
             $senderEmail = $this->hotel->sender_mail_mask;
         }
-        return $this->from($senderEmail, $senderName)
+        return $this->from($senderEmail, $this->hotel->name)
                     ->subject($subject)->view('Mails.guest.msgStay');
 
     }
