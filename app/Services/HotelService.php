@@ -84,15 +84,16 @@ class HotelService {
         return $newDefaultHotel;
     }
 
-    public function getRewardsByHotel($modelHotel){
+    public function getRewardsByHotel($modelHotel)
+    {
+        $modelHotel->loadMissing(['referrals', 'referent']);
 
-        $rewards = [
-             'referrals' => $modelHotel->referrals->first(),
-             'referent' => $modelHotel->referent->first(),
+        return [
+            'referrals' => $modelHotel->referrals->first(),
+            'referent'  => $modelHotel->referent->first(),
         ];
-
-        return $rewards;
     }
+
 
 
 
