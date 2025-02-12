@@ -71,6 +71,11 @@ class Hotel extends Model
         'show_checkin_stay'
     ];
 
+    //bool offer_benefits
+    protected $casts = [
+        'offer_benefits' => 'boolean',
+    ];
+
     /* public function user()
     {
         return $this->belongsToMany(User::class);

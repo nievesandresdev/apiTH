@@ -40,11 +40,13 @@ class HotelService {
             if ($user->parent_id) {
                 $hotelsCollection = User::find($user->parent_id)
                     ->hotel() // Relación de hoteles del usuario padre
+                    ->select('hotels.name', 'hotels.id')
                     ->where('del', 0) // Condición para excluir hoteles eliminados
                     ->where('hotels.id', '!=', $modelHotel->id) // Excluir el hotel actual
                     ->get();
             } else {
                 $hotelsCollection = $user->hotel()
+                    ->select('hotels.name', 'hotels.id')
                     ->where('del', 0)
                     ->where('hotels.id', '!=', $modelHotel->id)
                     ->get();
@@ -455,7 +457,7 @@ class HotelService {
             )
             // chatSettings
             ->where('subdomain', $subdomain)
-            ->first();            
+            ->first();
         } catch (\Exception $e) {
             return $e;
         }
