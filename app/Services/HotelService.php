@@ -452,7 +452,7 @@ class HotelService {
                 'hotels.show_profile','hotels.subdomain','hotels.logo','hotels.favicon','hotels.show_experiences','hotels.instagram_url',
                 'hotels.language_default_webapp','hotels.x_url','hotels.show_facilities','hotels.show_places','hotels.buttons_home',
                 'hotels.show_referrals','hotels.show_checkin_stay','hotels.offer_benefits','hotels.latitude','hotels.longitude',
-                'hotels.city_id'
+                'hotels.city_id','hotels.checkin','hotels.checkout'
             )
             // chatSettings
             ->where('subdomain', $subdomain)
