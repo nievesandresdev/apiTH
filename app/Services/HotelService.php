@@ -40,7 +40,7 @@ class HotelService {
             if ($user->parent_id) {
                 $hotelsCollection = User::find($user->parent_id)
                     ->hotel() // Relación de hoteles del usuario padre
-                    ->select('hotels.name', 'hotels.id')
+                    ->select('hotels.name', 'hotels.id') //agregado para optimizar la consulta
                     ->where('del', 0) // Condición para excluir hoteles eliminados
                     ->where('hotels.id', '!=', $modelHotel->id) // Excluir el hotel actual
                     ->get();
