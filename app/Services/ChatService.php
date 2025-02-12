@@ -523,4 +523,34 @@ class ChatService {
         }
     }
 
+
+    public function getAvailableLanguages ($hotelId) {
+        try{
+            $settings = ChatSetting::select('chat_settings.id','chat_settings.hotel_id')
+                ->with('languages')
+                ->where('hotel_id',$hotelId)->first();
+        if($settings){
+            return $settings->languages;
+        }
+        $default = defaultChatSettings();
+        return $default->languages;
+         
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function getAllSettings ($hotelId) {
+        try {
+            $default = ChatSetting::where('hotel_id',$hotelId)->first();
+            if(!$default){
+                $default = defaultChatSettings();
+            }else{
+                $default->load('languages');
+            }
+            return $default;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }
