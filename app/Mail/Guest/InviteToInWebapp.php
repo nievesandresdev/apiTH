@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 class InviteToInWebapp extends Mailable
 {
     use Queueable, SerializesModels;
-    
+
     public $hotel;
     public $crosselling;
     /**
@@ -32,13 +32,13 @@ class InviteToInWebapp extends Mailable
      */
     public function build()
     {
-        
+
         $senderName = $this->hotel['sender_for_sending_email'];
         $senderEmail = "no-reply@thehoster.es";
         if($this->hotel['sender_mail_mask']){
             $senderEmail = $this->hotel['sender_mail_mask'];
         }
-        return $this->from($senderEmail, $senderName)
+        return $this->from($senderEmail, $this->hotel->name)
                     ->subject('Asunto test')->view('Mails.guest.InviteToInWebapp');
 
     }
