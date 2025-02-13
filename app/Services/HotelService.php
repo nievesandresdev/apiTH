@@ -88,6 +88,7 @@ class HotelService {
     {
         $modelHotel->loadMissing(['referrals', 'referent']);
 
+
         return [
             'name' => $modelHotel->name,
             'referrals' => $modelHotel->referrals->first(),
