@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Services\GuestService;
 use App\Services\Hoster\UtilsHosterServices;
 use App\Services\MailService;
+use App\Utils\Enums\EnumsLanguages;
 
 class StayService {
     public $mailService;
@@ -111,16 +112,10 @@ class StayService {
             $guestId = $request->guestId;
             $guest = Guest::find($guestId);
 
-            $langs = [
-                'en' => 'Inglés',
-                'es' => 'Español',
-                'fr' => 'Francés'
-            ];
-
             $stay = Stay::create([
                 'hotel_id' =>$hotel->id,
                 'number_guests' => $request->numberGuests,
-                'language' => $langs[$request->language],
+                'language' => EnumsLanguages::NAME[$request->language],
                 'check_in' => $request->checkDate['start'],
                 'check_out' => $request->checkDate['end'],
                 'guest_id' => $guest->id,
