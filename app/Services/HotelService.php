@@ -89,12 +89,11 @@ class HotelService {
         $modelHotel->loadMissing(['referrals', 'referent']);
 
         return [
+            'name' => $modelHotel->name,
             'referrals' => $modelHotel->referrals->first(),
             'referent'  => $modelHotel->referent->first(),
         ];
     }
-
-
 
 
     public function findByParams ($request) {
