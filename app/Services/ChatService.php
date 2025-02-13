@@ -61,6 +61,7 @@ class ChatService {
             // Usuarios con notificaciones push
             $pushUsers = $usersByChannel['push'];
             $emailUserChatNew = $usersByChannel['email'];
+            return $pushUsers;
 
 
             DB::beginTransaction();
@@ -534,7 +535,7 @@ class ChatService {
         }
         $default = defaultChatSettings();
         return $default->languages;
-         
+
         } catch (\Exception $e) {
             return $e;
         }

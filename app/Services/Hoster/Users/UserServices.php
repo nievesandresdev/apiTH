@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use App\Services\Hoster\Users\ProfileServices;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Support\Facades\Log;
 
 
 class UserServices
@@ -227,6 +227,9 @@ class UserServices
 
     function getUsersHotelBasicData($hotelId, $notificationFilters = [], $specificChannels = [])
     {
+        //Log::info('getUsersHotelBasicData $hotelId'. $hotelId);
+        //Log::info('getUsersHotelBasicData $notificationFilters'. json_encode($notificationFilters));
+        //Log::info('getUsersHotelBasicData $specificChannels'. json_encode($specificChannels));
         // Validar que $specificChannels sea un array
         if (!is_array($specificChannels)) {
             $specificChannels = [];
@@ -240,11 +243,16 @@ class UserServices
             ->where('del', 0)
             ->where('status', 1);
 
+        //Log::info('getUsersHotelBasicData $queryUsers'. json_encode($queryUsers->get()));
+
         // Validar si se pasaron filtros de notificación
         if (!empty($notificationFilters)) {
             foreach ($notificationFilters as $key => $value) {
+                //Log::info('getUsersHotelBasicData $key '. $key);
                 $queryUsers->where(function ($query) use ($key, $value, $specificChannels) {
+                    //Log::info('getUsersHotelBasicData $specificChannels '. json_encode($specificChannels));
                     foreach ($specificChannels as $channel) {
+                        //Log::info('getUsersHotelBasicData $channelxX '. $channel);
                         $query->orWhere("notifications->{$channel}->$key", $value);
                     }
                 });
@@ -253,16 +261,25 @@ class UserServices
 
         $queryUsers = $queryUsers->orderBy('created_at', 'desc')->get();
 
+        //Log::info('getUsersHotelBasicData $queryUsers '. json_encode($queryUsers));
+
         if ($queryUsers->isEmpty()) {
             // Retorna un array con colecciones vacías para cada canal
             return collect(array_fill_keys($specificChannels, collect()));
         }
 
+        //Log::info('getUsersHotelBasicData $specificChannelsxXXxxX: ' . json_encode($specificChannels, JSON_PRETTY_PRINT));
+
+
+
         // Separar los resultados en grupos dinámicos según $specificChannels
         $groupedUsers = [];
         foreach ($specificChannels as $channel) {
-            $groupedUsers[$channel] = collect();
+            //Log::info('getUsersHotelBasicData $channelxX '. $channel);
+            $groupedUsers[$channel] = collect($queryUsers);
         }
+
+        //Log::info('getUsersHotelBasicData $groupedUsersxXX ' . json_encode($groupedUsers, JSON_PRETTY_PRINT));
 
         $queryUsers->each(function ($user) use (&$groupedUsers, $specificChannels, $notificationFilters) {
             $notifications = $user->notifications;
@@ -275,6 +292,8 @@ class UserServices
                 }
             }
         });
+
+        //Log::info('getUsersHotelBasicData $groupedUsers '. json_encode($groupedUsers));
 
         return collect($groupedUsers);
     }
