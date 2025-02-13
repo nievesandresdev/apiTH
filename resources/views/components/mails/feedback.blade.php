@@ -23,6 +23,8 @@
         </p>
     </div>
 
+
+
     <!-- Tabla de íconos -->
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-right: 70px">
         <tr>
