@@ -196,7 +196,7 @@ class UtilsController extends Controller
                 'hotel' => $hotel
             ];
 
-            dd($dataEmail);
+            //dd($dataEmail);
 
             //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
             // Log::info('dataEmail '.json_encode($dataEmail));
