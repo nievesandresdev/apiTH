@@ -1,4 +1,4 @@
-<section style="background: #FFFFFF; border-radius: 3px; margin-left: 16px; margin-right: 16px;">
+<section style="background: #FFFFFF; border-radius: 3px; margin-left: 16px; margin-right: 36px;">
     @if($currentPeriod == 'in-stay')
         <div style="margin-top: 32px;"></div>
     @endif
@@ -26,7 +26,7 @@
 
 
     <!-- Tabla de íconos -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center; padding-right: 70px">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 16px; text-align: center;" class="padding-feedback">
         <tr>
             <!-- Muy Mala -->
             <td style="text-align: center; padding: 0 10px;">
@@ -70,8 +70,15 @@
     <p style="margin:0;margin-top: 8px;color: #333;font-family: Arial;font-size: 16px;line-height: 175%;">Cuéntanos cómo recibirte.</p>
     @endif
     <!-- Botón -->
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{{$webappLinkInbox}}" class="response-button" target="_blank" style="color: #F3F3F3;">
+    <div style="max-width:260px;margin:10px auto;">
+        {{-- <a href="{{$webappLinkInbox}}" class="response-button" target="_blank" style="color: #F3F3F3;">
+            Responder en la WebApp
+        </a> --}}
+        <a
+            href="{{$webappLinkInbox}}"
+            target="_blank"
+            style="margin:0;border-radius: 6px;background-color: #333;padding: 12px 0;text-align:center;color:#F3F3F3;font-size: 18px;font-weight: 600;line-height: 110%;font-family:Arial;margin-top:16px;display:block;text-decoration: none;width:100%"
+        >
             Responder en la WebApp
         </a>
     </div>

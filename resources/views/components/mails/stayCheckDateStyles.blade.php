@@ -44,6 +44,11 @@
             max-width:530px;
             margin: 16px auto 0 auto;
         }
+
+        .padding-feedback{
+            padding-left: 10px;
+            padding-right: 0px;
+        }
     }
     /* @media only screen and (max-width: 600px) {
         .title-section{
@@ -143,6 +148,11 @@
             padding-bottom: 12px;
             padding-top: 15px;
             max-width: 450px;
+        }
+
+        .padding-feedback{
+            padding-left: 0px;
+            padding-right: 90px;
         }
 }
 

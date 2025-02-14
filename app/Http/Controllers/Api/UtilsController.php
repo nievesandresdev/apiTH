@@ -192,10 +192,11 @@ class UtilsController extends Controller
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
-                'urlCheckin' => $urlCheckin
+                'urlCheckin' => $urlCheckin,
+                'hotel' => $hotel
             ];
 
-            //dd($dataEmail);
+            dd($dataEmail);
 
             //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
             // Log::info('dataEmail '.json_encode($dataEmail));
