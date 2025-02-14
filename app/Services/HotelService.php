@@ -100,24 +100,32 @@ class HotelService {
     public function findByParams ($request) {
         try {
             $subdomain = $request->subdomain ?? null;
+            $id = $request->id ?? null;
 
             // $query = Hotel::where(function($query) use($subdomain){
             //     if ($subdomain) {
             //         $query->where('subdomain', $subdomain);
             //     }
             // });
+            if ($subdomain) {
+                $query = Hotel::where('subdomain', $subdomain);
+            }
 
-            $query = Hotel::where('subdomain', $subdomain);
+            if ($id) {
+                $query = Hotel::where('id', $id);
+            }
+
+
             // $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
             //     if ($subdomain) {
             //         $query->where('name', $subdomain);
             //     }
             // });
 
-            if (!$subdomain) {
+            /* if (!$subdomain) {
                 return null;
             }
-
+ */
             $model = $query->first();
 
             // $data = new HotelResource($model);

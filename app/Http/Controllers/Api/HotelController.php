@@ -506,4 +506,5 @@ class HotelController extends Controller
 
 
 
+
 }

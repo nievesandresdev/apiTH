@@ -29,11 +29,11 @@ class HotelResource extends JsonResource
         //dejo el descripcion normal para tener a la mano el original
         //guardado en el perfil del hotel en el sass
 
-        // if (localeCurrent() == 'es') {
-        //     $description = $this->description;
-        // } else {
-        //     $description = $this->translate->description ?? null;
-        // }
+        if (localeCurrent() == 'es') {
+            $description = $this->description;
+        } else {
+             $description = $this->translate->description ?? null;
+        }
 
         $type = $this->type;
         if (!in_array($this->type, ['hotel', 'at', 'vft'])) {
