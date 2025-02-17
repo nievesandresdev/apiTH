@@ -19,7 +19,7 @@ class StayResource extends JsonResource
         $uniqueAccessesCount = StayAccess::where('stay_id', $this->id)
                      ->distinct('guest_id')
                      ->count(['guest_id']);
-
+        $guestsIds = $this->guests()->pluck('guests.id');
         return [
             "id"=> $this->id,
             "check_out"=> $this->check_out,
@@ -34,6 +34,7 @@ class StayResource extends JsonResource
             "hotelSubdomain" => $this->hotel->subdomain,
             "middle_reservation" => $this->middle_reservation,
             "guestIdCreator" => $this->guest_id,
+            "guestsIds" => $guestsIds,
         ];
     }
 }
