@@ -49,10 +49,13 @@ class ChainController extends Controller
     public function getHotelsList (Request $request) {
         try {
             $chainSubdomain = $request->attributes->get('chainSubdomain');
-            $hotels = $this->chainServices->getHotelsList($chainSubdomain);
+            $select = ['id','name','zone','image','subdomain','website_google','category','address','phone','email'];
+
             if($request->type == 'reservation'){
-                $hotels = HotelResource::collection($hotels);
+                $hotels = $this->chainServices->getHotelsListSelect($chainSubdomain,$select);
+                $hotels = HotelCardResource::collection($hotels);
             }else{
+                $hotels = $this->chainServices->getHotelsList($chainSubdomain);
                 $hotels = HotelCardResource::collection($hotels);
             }
 

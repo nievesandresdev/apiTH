@@ -25,6 +25,7 @@ class HotelCardResource extends JsonResource
             "zone"=> $this->zone,
             "image"=> $this->image,
             "subdomain"=> $this->subdomain,
+            "website_google"=> $this->website_google,
         ];
 
     }

@@ -86,6 +86,18 @@ class ChainService
         }
     }
 
+    public function getHotelsListSelect ($subdomain,$select) {
+        try {
+            $chain = $this->findBySubdomain($subdomain);
+            if($chain){
+                return Hotel::where('chain_id',$chain->id)->where('del', 0)->select($select)->get();
+            }
+            return [];
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
     public function getStaysGuest($chainId, $guestId, $currentStayId)
     {
         $hotels = Hotel::where('chain_id', $chainId)->active()->pluck('id');
