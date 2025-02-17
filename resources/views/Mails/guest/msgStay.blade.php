@@ -155,13 +155,13 @@
             ])
         @endif
 
-        @if(($hotel->show_checkin_stay && $type != 'inviteGuestFromSaas') || ($beforeCheckin))
+        @if($hotel->show_checkin_stay && ($type != 'inviteGuestFromSaas' && $beforeCheckin))
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @include('components.mails.makeYourCheckLink', ['urlCheckin' => $data['urlCheckin']])
         @endif
 
         {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
-        @if(($type == 'welcome' || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
+        @if((($type == 'welcome' && !$beforeCheckin) || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
             @if($data['queryData']['currentPeriod'] !== 'in-stay')
                 <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @endif
