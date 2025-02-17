@@ -155,7 +155,7 @@
             ])
         @endif
 
-        @if($hotel->show_checkin_stay && $type != 'inviteGuestFromSaas')
+        @if(($hotel->show_checkin_stay && $type != 'inviteGuestFromSaas') || ($beforeCheckin))
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @include('components.mails.makeYourCheckLink', ['urlCheckin' => $data['urlCheckin']])
         @endif

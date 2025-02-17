@@ -152,6 +152,8 @@ class StayService {
 
                 if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
                     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
+                } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
+                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,false,true);
                 } else {
                     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
                 }
@@ -487,7 +489,7 @@ class StayService {
         }
     }
 
-    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null, $after = false)
+    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null, $after = false, $beforeCheckin = false)
     {
 
         try {
@@ -573,7 +575,7 @@ class StayService {
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after), $guest->email);
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());

@@ -203,7 +203,7 @@ class UtilsController extends Controller
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false,true), 'francisco20990@gmail.com');
 
 
             return view('Mails.guest.msgStay', [
@@ -211,7 +211,8 @@ class UtilsController extends Controller
                 'hotel' => $hotel,
                 'guest' => $guest,
                 'data'=> $dataEmail,
-                'after' => true
+                'after' => false,
+                'beforeCheckin' => true
             ]);
 
         } catch (\Exception $e) {

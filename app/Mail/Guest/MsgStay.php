@@ -18,6 +18,7 @@ class MsgStay extends Mailable
     public $urlQr;
     public $data;
     public $after;
+    public $beforeCheckin;
     /**
      * Create a new message instance.
      *
@@ -28,7 +29,8 @@ class MsgStay extends Mailable
         $hotel,
         $guest,
         $data = null,
-        $after = false
+        $after = false,
+        $beforeCheckin = false
     )
     {
         $this->type = $type;
@@ -36,7 +38,7 @@ class MsgStay extends Mailable
         $this->guest = $guest;
         $this->data = $data;
         $this->after = $after;
-
+        $this->beforeCheckin = $beforeCheckin;
     }
 
     /**
