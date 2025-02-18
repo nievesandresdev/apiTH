@@ -74,9 +74,9 @@ class RewardsController extends Controller
                 'codeClean' => $codeClean,
             ]);
 
-            if($codeClean == null){
+            if($codeClean == null){ //si no viene codigo, se busca un reward usado
 
-                $reward = Reward::where('hotel_id', $hotelId)
+                $reward = Reward::where('hotel_id', $hotelId) //busca un reward usado
                     ->where('used', true)
                     ->where('type_rewards', 'referent')
                     ->first();
@@ -86,7 +86,7 @@ class RewardsController extends Controller
                 }
 
                 //integrar codigo
-                $reward = Reward::where('url', $cleanUrl)
+                $reward = Reward::where('url', $cleanUrl) //busca un reward no usado
                     ->where('used', false)
                     ->where('hotel_id', $hotelId)
                     ->where('type_rewards', 'referent')
@@ -102,14 +102,14 @@ class RewardsController extends Controller
                 }else{
                     return bodyResponseRequest(EnumResponse::ACCEPTED, "No se encontró un Reward con la url '$cleanUrl' y el codigo '$code' y el type_rewards 'referent' y el used false.");
                 }
-            }else{
-                //search query reward with used true
-                $reward = Reward::where('hotel_id', $hotelId)
+            }else{ //si viene codigo, se busca un rewardStay con el codigo
+
+                $reward = Reward::where('hotel_id', $hotelId) //busca un reward usado
                     ->where('used', true)
                     ->where('type_rewards', 'referent')
                     ->first();
 
-                if($reward){
+                if($reward){ //si viene codigo, se busca un rewardStay con el codigo
                     $rewardStay = RewardStay::where('code', $codeClean)
                         ->where('hotel_id', $hotelId)
                         ->whereHas('reward', function($query) use ($cleanUrl) {
