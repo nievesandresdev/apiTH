@@ -100,7 +100,7 @@ class RewardsController extends Controller
                             ]);
                              //Log::info('sendEmailReferent', ['rewardStay' => $rewardStay]);
                              //$this->service->sendEmailReferent($rewardStay);
-                            return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado code $code , url $cleanUrl codeClean $codeClean url $rewardStay->reward");
+                            return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado code $code , url $cleanUrl codeClean $codeClean email $rewardStay->guest->email");
                         }
                     }else{
                         return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay no encontrado code $code , url $cleanUrl codeClean $codeClean");
