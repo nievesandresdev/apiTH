@@ -86,21 +86,14 @@ class RewardsController extends Controller
                     ]);
                     return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y actualizado");
                 }else{
-                    return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un Reward con la url '$cleanUrl' y el codigo '$code' y el type_rewards 'referent' y el used false.");
+                    return bodyResponseRequest(EnumResponse::ACCEPTED, "No se encontró un Reward con la url '$cleanUrl' y el codigo '$code' y el type_rewards 'referent' y el used false.");
                 }
             }
 
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                //'reward' => $reward,
-                'cleanUrl' => $cleanUrl,
-                'hotelId' => $hotelId,
-                'data' => $data,
-                'codeClean' => $codeClean,
-                'tt' => $tt
-            ]);
 
 
-            $rewardStay = RewardStay::where('code', $code)
+
+            $rewardStay = RewardStay::where('code', $codeClean)
                 ->where('hotel_id', $hotelId)
                 ->whereHas('reward', function($query) use ($cleanUrl) {
                     $query->where('url', $cleanUrl);
@@ -115,8 +108,17 @@ class RewardsController extends Controller
             } */
 
             if (!$rewardStay) {
-                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un RewardStay con el código '$code' para el hotel indicado.");
+                return bodyResponseRequest(EnumResponse::ACCEPTED, "No se encontró un RewardStay con el código '$codeClean' para el hotel indicado.");
             }
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'rewardStay' => $rewardStay,
+                'cleanUrl' => $cleanUrl,
+                'hotelId' => $hotelId,
+                'data' => $data,
+                'codeClean' => $codeClean,
+                'tt' => $tt
+            ]);
 
             if($cleanUrl == $rewardStay->reward->url){
 
