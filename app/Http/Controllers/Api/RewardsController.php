@@ -87,16 +87,20 @@ class RewardsController extends Controller
                 }else{
                     return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un Reward con la url '$cleanUrl' y el codigo '$code' y el type_rewards 'referent' y el used false.");
                 }
+            }else{
+
+                return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                    'reward' => $reward,
+                    'cleanUrl' => $cleanUrl,
+                    'hotelId' => $hotelId,
+                    'data' => $data,
+                    'codeClean' => $codeClean,
+                    'tt' => $tt
+                ]);
+
             }
 
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                'reward' => $reward,
-                'cleanUrl' => $cleanUrl,
-                'hotelId' => $hotelId,
-                'data' => $data,
-                'codeClean' => $codeClean,
-                'tt' => $tt
-            ]);
+
 
 
             $rewardStay = RewardStay::where('code', $code)
