@@ -60,8 +60,23 @@ class RewardsController extends Controller
             $code    = $data['code'];
             $webUrl  = $data['webUrl'];
             $hotelId = $data['hotel'];
-
             $cleanUrl = explode('?', $webUrl)[0];
+
+            //integrar codigo
+            $reward = Reward::where('url', $cleanUrl)->where('used', false)->where('hotel_id', $hotelId)->first();
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'reward' => $reward,
+                'cleanUrl' => $cleanUrl,
+                'hotelId' => $hotelId
+            ]);
+            //update used
+            $reward->update([
+                'used' => true
+            ]);
+
+
+
 
             $rewardStay = RewardStay::where('code', $code)
                 ->where('hotel_id', $hotelId)
@@ -71,11 +86,11 @@ class RewardsController extends Controller
                 ->where('used', false)
             ->first();
 
-            if($rewardStay){
+            /* if($rewardStay){
                $rewardStay->reward()->update([
                 'used' => true
                ]);
-            }
+            } */
 
 
             if (!$rewardStay) {
