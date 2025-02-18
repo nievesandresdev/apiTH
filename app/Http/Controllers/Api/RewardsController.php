@@ -68,6 +68,16 @@ class RewardsController extends Controller
             $codeClean = $queryParams['code'] ?? null; //codigo si la url viene con codigo sino es null
 
             if($codeClean == null){
+
+                $reward = Reward::where('hotel_id', $hotelId)
+                    ->where('used', true)
+                    ->where('type_rewards', 'referent')
+                    ->first();
+
+                if($reward){
+                    return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y usado1");
+                }
+
                 //integrar codigo
                 $reward = Reward::where('url', $cleanUrl)
                     ->where('used', false)
@@ -93,7 +103,7 @@ class RewardsController extends Controller
                     ->first();
 
                 if($reward){
-                    return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y usado");
+                    return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y usado2");
                 }
             }
 
