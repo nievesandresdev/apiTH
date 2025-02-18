@@ -102,10 +102,11 @@ class GuestController extends Controller
 
     public function saveAndFindValidLastStay(Request $request) {
         try {
+            // Log::info('test saveAndFindValidLastStay');
             $hotelId = $request->hotelId ?? null;
             $guestEmail = $request->guestEmail ?? null;
             $chainId = $request->chainId ?? null;
-
+            
             $models = $this->service->findAndValidLastStay($guestEmail, $chainId, $hotelId);
             $data = [];
             if(isset($models["stay"])){
@@ -117,7 +118,17 @@ class GuestController extends Controller
                 $guest = $this->service->saveOrUpdate($dataGuest);
                 $data['guest'] = new GuestResource($guest);
             }else{
-                $data['guest'] = new GuestResource($models["guest"]);
+                //si el huesped ya existe
+                //y no tiene una estancia asociado actualmente
+                if(!isset($models["stay"])){
+                    $dataGuest = new \stdClass();
+                    $dataGuest->email = $guestEmail;
+                    $guest = $this->service->saveOrUpdate($dataGuest, true); //hacemos el name null con el segundo param
+                    $data['guest'] = new GuestResource($guest);
+                }else{
+                    //sino todo transcurre igual
+                    $data['guest'] = new GuestResource($models["guest"]);
+                }
             }
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 

@@ -49,7 +49,7 @@ class GuestService {
         }
     }
 
-    public function saveOrUpdate($data)
+    public function saveOrUpdate($data, $makeNullname = false)
     {
         try {
 
@@ -63,7 +63,8 @@ class GuestService {
             $completeCheckinData = $data->complete_checkin_data ?? false;
             $guest = Guest::where('email',$email)->first();
             $acronym = $this->generateInitialsName($name ?? $email);
-
+            //guardar name vacio
+            if($makeNullname) $name = null;
             if(!$guest){
                 $guest = Guest::create([
                     'name' =>$name,
