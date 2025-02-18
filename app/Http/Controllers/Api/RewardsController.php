@@ -97,6 +97,8 @@ class RewardsController extends Controller
                             $rewardStay->update([
                                 'used' => true
                             ]);
+                             Log::info('sendEmailReferent', ['rewardStay' => $rewardStay]);
+                             $this->service->sendEmailReferent($rewardStay);
                             return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado code $code , url $cleanUrl codeClean $codeClean url $rewardStay->reward");
                         }
                     }else{
@@ -142,42 +144,6 @@ class RewardsController extends Controller
                 }
             }
 
-
-
-
-            /* $rewardStay = RewardStay::where('code', $codeClean)
-                ->where('hotel_id', $hotelId)
-                ->whereHas('reward', function($query) use ($cleanUrl) {
-                    $query->where('url', $cleanUrl);
-                })
-                ->where('used', false)
-            ->first(); */
-
-            /* if($rewardStay){
-               $rewardStay->reward()->update([
-                'used' => true
-               ]);
-            } */
-
-            if (!$rewardStay) {
-                return bodyResponseRequest(EnumResponse::ACCEPTED, "No se encontró un RewardStay con el código '$codeClean' para el hotel indicado.");
-            }else{
-                if($cleanUrl != $rewardStay->reward->url){
-                    $rewardStay->update([
-                        'used' => true
-                    ]);
-                    //Log::info('sendEmailReferent', ['rewardStay' => $rewardStay]);
-                    //$this->service->sendEmailReferent($rewardStay);
-                    return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                        'message' => 'RewardStay encontrado y enviado',
-                    ]);
-                }
-
-                return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                    'message' => 'RewardStay encontrado pero no coincide la url',
-                ]);
-            }
-
          /*    return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'rewardStay' => $rewardStay,
                 'cleanUrl' => $cleanUrl,
@@ -187,18 +153,6 @@ class RewardsController extends Controller
                 'tt' => $tt
             ]); */
 
-
-
-
-
-            /* return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                'request' => $request->all(),
-                'code' => $code,
-                'webUrl' => $webUrl,
-                'hotelId' => $hotelId,
-                'cleanUrl' => $cleanUrl,
-                'rewardStay' => $rewardStay
-            ]); */
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, ['message' => $e->getMessage()], [], $e->getMessage());
