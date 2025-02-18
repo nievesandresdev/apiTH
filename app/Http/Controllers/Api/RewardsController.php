@@ -90,7 +90,7 @@ class RewardsController extends Controller
                             $query->where('used', true);
                         })
                         ->where('used', false)
-                        ->with('guest')
+                        ->with(['hotel', 'guest'])
                         ->first();
 
                     if($rewardStay){
@@ -98,9 +98,9 @@ class RewardsController extends Controller
                             $rewardStay->update([
                                 'used' => true
                             ]);
-                             //Log::info('sendEmailReferent', ['rewardStay' => $rewardStay]);
-                             //$this->service->sendEmailReferent($rewardStay);
-                            return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado code $code , url $cleanUrl codeClean $codeClean email $rewardStay->guest->email");
+                             Log::info('sendEmailReferent', ['rewardStay' => $rewardStay]);
+                             $this->service->sendEmailReferent($rewardStay);
+                            return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado code $code , url $cleanUrl codeClean $codeClean");
                         }
                     }else{
                         return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay no encontrado code $code , url $cleanUrl codeClean $codeClean");
