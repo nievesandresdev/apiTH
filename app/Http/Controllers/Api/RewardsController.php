@@ -67,6 +67,13 @@ class RewardsController extends Controller
             parse_str(parse_url($webUrl, PHP_URL_QUERY), $queryParams);
             $codeClean = $queryParams['code'] ?? null; //codigo si la url viene con codigo sino es null
 
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                'cleanUrl' => $cleanUrl,
+                'hotelId' => $hotelId,
+                'data' => $data,
+                'codeClean' => $codeClean,
+            ]);
+
             if($codeClean == null){
 
                 $reward = Reward::where('hotel_id', $hotelId)
@@ -103,20 +110,29 @@ class RewardsController extends Controller
                     ->first();
 
                 if($reward){
-                    return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y usado2");
+                    $rewardStay = RewardStay::where('code', $codeClean)
+                        ->where('hotel_id', $hotelId)
+                        ->whereHas('reward', function($query) use ($cleanUrl) {
+                            $query->where('url', $cleanUrl);
+                            $query->where('used', true);
+                        })
+                        ->where('used', false)
+                    ->first();
+
+                    return bodyResponseRequest(EnumResponse::ACCEPTED, "rewardStay encontrado");
                 }
             }
 
 
 
 
-            $rewardStay = RewardStay::where('code', $codeClean)
+            /* $rewardStay = RewardStay::where('code', $codeClean)
                 ->where('hotel_id', $hotelId)
                 ->whereHas('reward', function($query) use ($cleanUrl) {
                     $query->where('url', $cleanUrl);
                 })
                 ->where('used', false)
-            ->first();
+            ->first(); */
 
             /* if($rewardStay){
                $rewardStay->reward()->update([
