@@ -92,11 +92,15 @@ class RewardsController extends Controller
                         ->where('used', false)
                         ->first();
 
-                    if($cleanUrl != $rewardStay->reward->url){
-                        $rewardStay->update([
-                            'used' => true
-                        ]);
-                        return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado");
+                    if($rewardStay){
+                        if($cleanUrl != $rewardStay->reward->url){
+                            $rewardStay->update([
+                                'used' => true
+                            ]);
+                            return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado");
+                        }
+                    }else{
+                        return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay no encontrado");
                     }
                 }
 
