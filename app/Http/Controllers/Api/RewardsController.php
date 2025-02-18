@@ -62,33 +62,41 @@ class RewardsController extends Controller
             $hotelId = $data['hotel'];
             // Limpiar la URL base
             $cleanUrl = explode('?', $webUrl)[0];
+            $tt = false;
 
             // Obtener el código del parámetro "code" en la URL
             parse_str(parse_url($webUrl, PHP_URL_QUERY), $queryParams);
-            $codeClean = $queryParams['code'] ?? null;
+            $codeClean = $queryParams['code'] ?? null; //codigo si la url viene con codigo sino es null
 
-            //integrar codigo
-            $reward = Reward::where('url', $cleanUrl)
-                ->where('used', false)
-                ->where('hotel_id', $hotelId)
-                ->where('type_rewards', 'referent')
-                ->first(); //siempre busca el primero por que un hotel siempre tendra un solo codigo referente, si cambia a que un hotel puede tener varios, esto hay que cambiarlo OJO
+            if($codeClean == null){
+                $tt = true;
+                //integrar codigo
+                $reward = Reward::where('url', $cleanUrl)
+                    ->where('used', false)
+                    ->where('hotel_id', $hotelId)
+                    ->where('type_rewards', 'referent')
+                    ->first(); //siempre busca el primero por que un hotel siempre tendra un solo codigo referente, si cambia a que un hotel puede tener varios, esto hay que cambiarlo OJO
+
+
+
+                //update used
+                if($reward){
+                    $reward->update([
+                        'used' => true
+                    ]);
+                }else{
+                    return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un Reward con la url '$cleanUrl' y el codigo '$code' y el type_rewards 'referent' y el used false.");
+                }
+            }
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'reward' => $reward,
                 'cleanUrl' => $cleanUrl,
                 'hotelId' => $hotelId,
                 'data' => $data,
-                'codeClean' => $codeClean
+                'codeClean' => $codeClean,
+                'tt' => $tt
             ]);
-            //update used
-            if($reward){
-                $reward->update([
-                    'used' => true
-                ]);
-            }else{
-                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un Reward con la url '$cleanUrl' y el codigo '$code' y el type_rewards 'referent' y el used false.");
-            }
 
 
             $rewardStay = RewardStay::where('code', $code)
