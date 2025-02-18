@@ -81,7 +81,7 @@ class RewardsController extends Controller
                     'used' => true
                 ]);
             }else{
-                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un Reward con la url '$cleanUrl'.");
+                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un Reward con la url '$cleanUrl' y el codigo '$code' y el type_rewards 'referent' y el used false.");
             }
 
 
