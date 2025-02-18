@@ -109,32 +109,33 @@ class RewardsController extends Controller
 
             if (!$rewardStay) {
                 return bodyResponseRequest(EnumResponse::ACCEPTED, "No se encontró un RewardStay con el código '$codeClean' para el hotel indicado.");
+            }else{
+                if($cleanUrl != $rewardStay->reward->url){
+                    $rewardStay->update([
+                        'used' => true
+                    ]);
+                    //Log::info('sendEmailReferent', ['rewardStay' => $rewardStay]);
+                    //$this->service->sendEmailReferent($rewardStay);
+                    return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                        'message' => 'RewardStay encontrado y enviado',
+                    ]);
+                }
+
+                return bodyResponseRequest(EnumResponse::ACCEPTED, [
+                    'message' => 'RewardStay encontrado pero no coincide la url',
+                ]);
             }
 
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+         /*    return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'rewardStay' => $rewardStay,
                 'cleanUrl' => $cleanUrl,
                 'hotelId' => $hotelId,
                 'data' => $data,
                 'codeClean' => $codeClean,
                 'tt' => $tt
-            ]);
+            ]); */
 
-            if($cleanUrl == $rewardStay->reward->url){
 
-                $rewardStay->update([
-                    'used' => true
-                ]);
-                Log::info('sendEmailReferent', ['rewardStay' => $rewardStay]);
-                $this->service->sendEmailReferent($rewardStay);
-                return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                    'message' => 'RewardStay encontrado y enviado',
-                ]);
-            }
-
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
-                'message' => 'RewardStay encontrado pero no coincide la url',
-            ]);
 
 
 

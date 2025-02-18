@@ -34,7 +34,6 @@ class DossierData extends Model
     }
 
 
-
     public function dossier()
     {
         return $this->belongsTo(Dossier::class);
@@ -47,4 +46,11 @@ class DossierData extends Model
     {
         return self::max('tab_number') + 1;
     }
+
+    //accesors sin decimales
+    public function getOccupancyRateAttribute($value)
+    {
+        return (int) round($value);
+    }
+
 }
