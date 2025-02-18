@@ -69,18 +69,20 @@ class RewardsController extends Controller
                 ->where('type_rewards', 'referent')
                 ->first(); //siempre busca el primero por que un hotel siempre tendra un solo codigo referente, si cambia a que un hotel puede tener varios, esto hay que cambiarlo OJO
 
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+            /* return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'reward' => $reward,
                 'cleanUrl' => $cleanUrl,
                 'hotelId' => $hotelId,
                 'data' => $data
-            ]);
+            ]); */
             //update used
-            $reward->update([
-                'used' => true
-            ]);
-
-
+            if($reward){
+                $reward->update([
+                    'used' => true
+                ]);
+            }else{
+                return bodyResponseRequest(EnumResponse::ERROR, "No se encontró un Reward con la url '$cleanUrl'.");
+            }
 
 
             $rewardStay = RewardStay::where('code', $code)
