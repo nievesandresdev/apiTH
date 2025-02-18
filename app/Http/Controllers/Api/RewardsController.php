@@ -67,12 +67,12 @@ class RewardsController extends Controller
             parse_str(parse_url($webUrl, PHP_URL_QUERY), $queryParams);
             $codeClean = $queryParams['code'] ?? null; //codigo si la url viene con codigo sino es null
 
-            return bodyResponseRequest(EnumResponse::ACCEPTED, [
+            /* return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'cleanUrl' => $cleanUrl,
                 'hotelId' => $hotelId,
                 'data' => $data,
                 'codeClean' => $codeClean,
-            ]);
+            ]); */
 
             if($codeClean == null){ //si no viene codigo, se busca un reward usado
 
@@ -82,7 +82,22 @@ class RewardsController extends Controller
                     ->first();
 
                 if($reward){
-                    return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y usado1");
+                    //return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y usado1");
+                    $rewardStay = RewardStay::where('code', $code)
+                        ->where('hotel_id', $hotelId)
+                        ->whereHas('reward', function($query) use ($cleanUrl) {
+                            $query->where('url', $cleanUrl);
+                            $query->where('used', true);
+                        })
+                        ->where('used', false)
+                        ->first();
+
+                    if($cleanUrl != $rewardStay->reward->url){
+                        $rewardStay->update([
+                            'used' => true
+                        ]);
+                        return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado");
+                    }
                 }
 
                 //integrar codigo
