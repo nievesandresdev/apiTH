@@ -15,9 +15,14 @@ class RewardStay extends Model
         'stay_id',
         'guest_id',
         'reward_id',
+        'used',
     ];
 
     protected $appends = ['full_url'];
+
+    protected $casts = [
+        'used' => 'boolean',
+    ];
 
     public function reward()
     {

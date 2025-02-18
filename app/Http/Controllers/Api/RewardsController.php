@@ -85,7 +85,7 @@ class RewardsController extends Controller
                     //return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y usado1");
                     $rewardStay = RewardStay::where('code', $code)
                         ->where('hotel_id', $hotelId)
-                        ->whereHas('reward', function($query) use ($cleanUrl) {
+                        ->whereHas('reward', function($query) {
                             //$query->where('url', $cleanUrl);
                             $query->where('used', true);
                         })
@@ -97,7 +97,7 @@ class RewardsController extends Controller
                             $rewardStay->update([
                                 'used' => true
                             ]);
-                            return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado code $code , url $cleanUrl codeClean $codeClean url $rewardStay->reward->url");
+                            return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado code $code , url $cleanUrl codeClean $codeClean url $rewardStay->reward");
                         }
                     }else{
                         return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay no encontrado code $code , url $cleanUrl codeClean $codeClean");
