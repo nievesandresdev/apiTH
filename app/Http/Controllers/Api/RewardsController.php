@@ -97,7 +97,7 @@ class RewardsController extends Controller
                             $rewardStay->update([
                                 'used' => true
                             ]);
-                            return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado");
+                            return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado code $code , url $cleanUrl codeClean $codeClean url $rewardStay->reward->url");
                         }
                     }else{
                         return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay no encontrado code $code , url $cleanUrl codeClean $codeClean");
