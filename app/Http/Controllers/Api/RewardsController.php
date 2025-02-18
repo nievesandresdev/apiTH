@@ -100,7 +100,7 @@ class RewardsController extends Controller
                             return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado");
                         }
                     }else{
-                        return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay no encontrado");
+                        return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay no encontrado code $code , url $cleanUrl codeClean $codeClean");
                     }
                 }
 
