@@ -61,7 +61,7 @@ class RewardsController extends Controller
             $webUrl  = $data['webUrl'];
             $hotelId = $data['hotel'];
             $cleanUrl = explode('?', $webUrl)[0];
-            $codeClean = explode('?', $webUrl)[1];
+            $codeClean = explode('?', $webUrl)[1] ?? null;
 
             //integrar codigo
             $reward = Reward::where('url', $cleanUrl)
