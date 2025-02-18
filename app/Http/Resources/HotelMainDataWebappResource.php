@@ -39,6 +39,8 @@ class HotelMainDataWebappResource extends JsonResource
             "x_url" => $this->x_url,
             "show_facilities" => $this->show_facilities,
             "show_places" => $this->show_places,
+            "show_confort" => $this->show_confort,
+            "show_transport" => $this->show_transport,
             "hidden_categories" => $this->hiddenCategories->pluck('id'),
             "hidden_type_places" => $this->hiddenTypePlaces->pluck('id'),
             "buttons_home" => $this->buttons_home,
