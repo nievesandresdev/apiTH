@@ -63,12 +63,17 @@ class RewardsController extends Controller
             $cleanUrl = explode('?', $webUrl)[0];
 
             //integrar codigo
-            $reward = Reward::where('url', $cleanUrl)->where('used', false)->where('hotel_id', $hotelId)->first();
+            $reward = Reward::where('url', $cleanUrl)
+                ->where('used', false)
+                ->where('hotel_id', $hotelId)
+                ->where('type_rewards', 'referent')
+                ->first(); //siempre busca el primero por que un hotel siempre tendra un solo codigo referente, si cambia a que un hotel puede tener varios, esto hay que cambiarlo OJO
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'reward' => $reward,
                 'cleanUrl' => $cleanUrl,
-                'hotelId' => $hotelId
+                'hotelId' => $hotelId,
+                'data' => $data
             ]);
             //update used
             $reward->update([
