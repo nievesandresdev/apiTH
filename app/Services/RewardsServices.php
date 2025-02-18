@@ -105,7 +105,7 @@ class RewardsServices {
         ];
 
         Log::info('sendEmailReferentSErvices', ['data' => $data]);
-        //$this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
+        $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
         $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), 'francisco20990@gmail.com');
 
     }
