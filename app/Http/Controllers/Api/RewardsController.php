@@ -86,7 +86,7 @@ class RewardsController extends Controller
                     $rewardStay = RewardStay::where('code', $code)
                         ->where('hotel_id', $hotelId)
                         ->whereHas('reward', function($query) use ($cleanUrl) {
-                            $query->where('url', $cleanUrl);
+                            //$query->where('url', $cleanUrl);
                             $query->where('used', true);
                         })
                         ->where('used', false)
