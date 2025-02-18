@@ -62,21 +62,18 @@ class RewardsController extends Controller
             $hotelId = $data['hotel'];
             // Limpiar la URL base
             $cleanUrl = explode('?', $webUrl)[0];
-            $tt = false;
 
             // Obtener el código del parámetro "code" en la URL
             parse_str(parse_url($webUrl, PHP_URL_QUERY), $queryParams);
             $codeClean = $queryParams['code'] ?? null; //codigo si la url viene con codigo sino es null
 
             if($codeClean == null){
-                $tt = true;
                 //integrar codigo
                 $reward = Reward::where('url', $cleanUrl)
                     ->where('used', false)
                     ->where('hotel_id', $hotelId)
                     ->where('type_rewards', 'referent')
                     ->first(); //siempre busca el primero por que un hotel siempre tendra un solo codigo referente, si cambia a que un hotel puede tener varios, esto hay que cambiarlo OJO
-
 
 
                 //update used
@@ -87,6 +84,16 @@ class RewardsController extends Controller
                     return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y actualizado");
                 }else{
                     return bodyResponseRequest(EnumResponse::ACCEPTED, "No se encontró un Reward con la url '$cleanUrl' y el codigo '$code' y el type_rewards 'referent' y el used false.");
+                }
+            }else{
+                //search query reward with used true
+                $reward = Reward::where('hotel_id', $hotelId)
+                    ->where('used', true)
+                    ->where('type_rewards', 'referent')
+                    ->first();
+
+                if($reward){
+                    return bodyResponseRequest(EnumResponse::ACCEPTED, "Reward encontrado y usado");
                 }
             }
 
