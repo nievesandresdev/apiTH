@@ -128,7 +128,6 @@ class HotelController extends Controller
     public function getMainData (Request $request) {
         try {
             $model = $this->service->getMainData($request);
-
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

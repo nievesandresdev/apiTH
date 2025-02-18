@@ -458,7 +458,7 @@ class HotelService {
             ->select(
                 'hotels.id','hotels.name','hotels.type','hotels.zone','hotels.instagram_url','hotels.facebook_url','hotels.pinterest_url',
                 'hotels.show_profile','hotels.subdomain','hotels.logo','hotels.favicon','hotels.show_experiences','hotels.instagram_url',
-                'hotels.language_default_webapp','hotels.x_url','hotels.show_facilities','hotels.show_places','hotels.buttons_home',
+                'hotels.language_default_webapp','hotels.x_url','hotels.show_facilities','hotels.show_places','hotels.show_transport','hotels.show_confort','hotels.buttons_home',
                 'hotels.show_referrals','hotels.show_checkin_stay','hotels.offer_benefits','hotels.latitude','hotels.longitude',
                 'hotels.city_id','hotels.checkin','hotels.checkout'
             )
