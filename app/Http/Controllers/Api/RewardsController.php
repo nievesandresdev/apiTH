@@ -67,12 +67,12 @@ class RewardsController extends Controller
             parse_str(parse_url($webUrl, PHP_URL_QUERY), $queryParams);
             $codeClean = $queryParams['code'] ?? null; //codigo si la url viene con codigo sino es null
 
-            /* return bodyResponseRequest(EnumResponse::ACCEPTED, [
+            return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'cleanUrl' => $cleanUrl,
                 'hotelId' => $hotelId,
                 'data' => $data,
                 'codeClean' => $codeClean,
-            ]); */
+            ]);
 
             if($codeClean == null){ //si no viene codigo, se busca un reward usado
 
@@ -108,8 +108,7 @@ class RewardsController extends Controller
                 }
 
                 //integrar codigo
-                $reward = Reward::where('url', $cleanUrl) //busca un reward no usado
-                    ->where('used', false)
+                $reward = Reward::where('used', false)
                     ->where('hotel_id', $hotelId)
                     ->where('type_rewards', 'referent')
                     ->first(); //siempre busca el primero por que un hotel siempre tendra un solo codigo referente, si cambia a que un hotel puede tener varios, esto hay que cambiarlo OJO
