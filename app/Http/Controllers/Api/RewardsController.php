@@ -90,7 +90,7 @@ class RewardsController extends Controller
                             $query->where('used', true);
                         })
                         ->where('used', false)
-                        ->with(['hotel', 'guest'])
+                        ->with(['hotel', 'guest', 'reward'])
                         ->first();
 
                     if($rewardStay){
