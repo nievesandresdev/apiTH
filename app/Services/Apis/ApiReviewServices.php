@@ -35,7 +35,7 @@ class ApiReviewServices {
         $headers = ['x-api-key' => $this->KEY_API_REVIEW];
         $url = "$URL_BASE_API_REVIEW/hotels/getSummaryReviewsOtas?googleMapCid=$code";
         $response_request = $http_client_service->make_request('get', $url, $params, $headers, 60);
-        
+        //
         /* return [
             'response_request' => $response_request,
             'hotel' => $hotel,
