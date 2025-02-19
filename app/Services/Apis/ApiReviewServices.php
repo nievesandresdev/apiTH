@@ -34,7 +34,6 @@ class ApiReviewServices {
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->KEY_API_REVIEW];
         $url = "$URL_BASE_API_REVIEW/hotels/getSummaryReviewsOtas";
-        return $url;
         $response_request = $http_client_service->make_request('get', $url, $params, $headers, 60);
         //
         /* return [
