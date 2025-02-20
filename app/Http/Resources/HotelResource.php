@@ -36,7 +36,7 @@ class HotelResource extends JsonResource
         }
 
         $type = $this->type;
-        if (!in_array($this->type, ['hotel', 'at', 'vft'])) {
+        if (!in_array($this->type, ['hotel', 'at', 'vft','hostal'])) {
             $type = 'hotel';
         }
         return [

@@ -994,6 +994,7 @@ if (! function_exists('formatTypeLodging')) {
 
         $typeLodging = [
             "hotel" => !$title ? "hotel" : "Hotel",
+            "hostal" => !$title ? "hostal" : "Hostal",
             "at" => !$title ? "apartamento" : "Apartamento",
             "vft" => !$title ? "apartamento" : "Apartamento",
         ];
