@@ -225,8 +225,8 @@ class UtilsController extends Controller
 
     public function test()
     {
-        $hotel = Hotel::find(193);
-        return $this->stayHosterServices->getAllByHotel($hotel,[]);
+        // return config('app.url');
+        return url('');
     }
 
     public function testEmailPostCheckout(){
