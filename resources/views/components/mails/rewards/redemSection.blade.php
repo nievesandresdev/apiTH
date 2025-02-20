@@ -1,5 +1,5 @@
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
-       style="background: url('{{ asset('mails/rewards/fondo1.png') }}') no-repeat center center; background-size: cover; height: 354px; font-family: Roboto, Roboto, sans-serif;margin-top: 32px;">
+       style="background: url('{{ asset('mails/rewards/fondo1.png') }}') no-repeat center center; background-size: cover; height: 354px; font-family: Roboto, sans-serif; margin-top: 32px;">
     <tr>
         <td style="height: 354px; vertical-align: middle; text-align: center; padding: 16px;">
             <!-- Tabla interna con contenido, ancho fijo -->
@@ -31,10 +31,10 @@
                     <!-- Fila: Código de regalo -->
                     <td colspan="2" style="text-align: center; padding-top: 4px;">
                         <table role="presentation" cellspacing="0" cellpadding="0"
-                               style="margin: 0 auto; display: table; border-collapse: separate; border-radius: 12px; overflow: hidden; border: 2px solid #333333; width: 400px; ">
+                               style="margin: 0 auto; display: table; border-collapse: separate; border-radius: 12px; overflow: hidden; border: 2px solid #333333; width: 400px;">
                             <tr>
-                                <td style="background-color: #fff !important; color: #333333 !important; font-size: 24px; font-weight: 400; text-align: center; word-wrap: break-word;
-                                height: 48px; line-height: 48px; vertical-align: middle;">
+                                <td style="background-color: #fff; color: #000; font-size: 24px; font-weight: 400; text-align: center; word-wrap: break-word;
+                                           width: 400px; height: 48px; line-height: 48px; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     {{ $rewardStay->reward->code }}
                                 </td>
                             </tr>

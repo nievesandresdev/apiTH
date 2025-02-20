@@ -400,7 +400,7 @@ class UtilsController extends Controller
             //dd($dataEmail,$hotel);
 
 
-            $this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            //$this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
 
 
             return view('Mails.guest.prepareYourArrival', [
