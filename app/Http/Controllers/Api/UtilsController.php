@@ -14,7 +14,7 @@ use App\Models\Guest;
 use App\Models\Hotel;
 use App\Models\Query;
 use App\Models\Stay;
-
+use App\Models\RewardStay;
 /*services*/
 use App\Services\ChatService;
 use App\Services\Hoster\Chat\ChatSettingsServices;
@@ -420,73 +420,19 @@ class UtilsController extends Controller
     }
 
     public function testEmailReferent(){
-        $type = 'referent';
-        $hotel = Hotel::with(['referrals','referent'])->find(191);
-        //$guest = Guest::find(146);
-        $guest = Guest::find(280);
-        $chainSubdomain = $hotel->subdomain;
-        //$stay = Stay::find(630);
-        $stay = Stay::with('queries')->where('id',629)->first();
 
-        //dd($hotel);
+
+
+        $rewardStay = RewardStay::with(['reward','guest','stay','hotel'])->find(1);
+        //dd($rewardStay);
 
         try {
-            $checkData = [];
-            $queryData = [];
-            //stay section
-            /* if($type == 'welcome'){ */
-                if($stay->check_in && $stay->check_out){
-                    $formatCheckin = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_in);
-                    $formatCheckout = $this->utilsHosterServices->formatDateToDayWeekDateAndMonth($stay->check_out);
-                }
-                $webappEditStay = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'editar-estancia/'.$stay->id);
 
-                //
-
-                $checkData = [
-                    'title' => "Datos de tu estancia en {$hotel->name}",
-                    'formatCheckin' => $formatCheckin,
-                    'formatCheckout' => $formatCheckout,
-                    'editStayUrl' => $webappEditStay,
-                ];
-           /*  } */
-
-
-        //     //query section
-                $currentPeriod = $this->stayServices->getCurrentPeriod($hotel, $stay);
-                $querySettings = $this->querySettingsServices->getAll($hotel->id);
-                $hoursAfterCheckin = $this->stayServices->calculateHoursAfterCheckin($hotel, $stay);
-                //$answered = Query::where('stay_id',$stay->id)->where('guest_id',$guest->id)->first();
-
-                $showQuerySection = true;
-
-                if(
-                    $currentPeriod == 'pre-stay' && !$querySettings->pre_stay_activate ||
-                    $currentPeriod == 'in-stay' && $hoursAfterCheckin < 24 ||
-                    $currentPeriod == 'post-stay'
-                ){
-                    $showQuerySection = false;
-                }
-                //
-                $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
-                $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
-
-                $queryData = [
-                    'showQuerySection' => $showQuerySection,
-                    'currentPeriod' => $currentPeriod,
-                    'webappLinkInbox' => $webappLinkInbox,
-                    'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-                    //'answered' => $answered->answered == 1 ? true : false
-
-                ];
-
-            $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
 
 
             //
-            $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
-            $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
-            $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
+            $webappChatLink = buildUrlWebApp($rewardStay->hotel->subdomain, $rewardStay->hotel->subdomain,'chat');
+            //$urlQr = generateQr($rewardStay->hotel->subdomain, $urlWebapp);
 
 
 
@@ -498,31 +444,20 @@ class UtilsController extends Controller
 
 
             $dataEmail = [
-                'checkData' => $checkData,
-                'queryData' => $queryData,
-                'places' => $crosselling['places'],
-                'experiences' => $crosselling['experiences'],
-                'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
-                'urlWebapp' => $urlWebapp,
-                'urlCheckin' => $urlCheckin,
-                'referent' => $hotel->referent,
             ];
 
             //dd($dataEmail,$hotel);
 
 
-            $this->mailService->sendEmail(new RewardsEmail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $dataEmail), 'francisco20990@gmail.com');
 
 
             return view('Mails.users.rewards', [
-                'type' => $type,
-                'hotel' => $hotel,
-                'guest' => $guest,
+                'hotel' => $rewardStay->hotel,
+                'rewardStay' => $rewardStay,
                 'data'=> $dataEmail,
-                'referent' => $hotel->referent,
-                'after' => true
             ]);
 
         } catch (\Exception $e) {
