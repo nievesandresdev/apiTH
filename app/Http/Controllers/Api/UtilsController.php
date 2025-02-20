@@ -225,8 +225,9 @@ class UtilsController extends Controller
 
     public function test()
     {
-        // return config('app.url');
-        return url('');
+        $stayId = 7;
+        sendEventPusher('private-reload-data-stay-webapp.' . $stayId, 'App\Events\ReloadDataStayWebapp', ['stayId'=>$stayId]);
+        return 'enviado';
     }
 
     public function testEmailPostCheckout(){
