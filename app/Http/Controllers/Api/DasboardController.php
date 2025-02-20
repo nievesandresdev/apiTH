@@ -186,6 +186,7 @@ class DasboardController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, [
                 'message' => $e->getMessage()
         ], null, $e->getMessage());
