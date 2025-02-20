@@ -61,6 +61,6 @@ class Reward extends Model
             return intval($this->amount) . '%';
         }
 
-        return number_format($this->amount, 2, ',', '.') . '€';
+        return number_format($this->amount, 0, ',', '.') . '€';
     }
 }
