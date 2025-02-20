@@ -16,7 +16,7 @@
                            width: 53%;
                            vertical-align: top;
                            padding-top:22px;">
-                    <span style="margin: 0; font-size: 26px; font-style: normal; font-weight: 600; line-height: 110%;">Te esperamos de vuelta!</span>
+                    <span style="margin: 0; font-size: 26px; font-style: normal; font-weight: 600; line-height: 110%;">Te esperamos de vuelta</span>
                     <p style="margin: 10px 0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 110%; margin-top:12px !important;">
                         Hola {{ $guest_name }} <br><br> Esperamos que hayas disfrutado de tu estancia con nosotros y haberte brindado la atención de calidad que mereces.<br><br> Deseamos volver a recibirte muy pronto.
                     </p>

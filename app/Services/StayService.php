@@ -157,6 +157,7 @@ class StayService {
                 } else {
                     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
                 }
+
                 // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
             //}
 
