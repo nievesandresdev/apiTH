@@ -406,6 +406,7 @@ class HotelController extends Controller
 
     public function updateVisivilityTypePlace (Request $request) {
         try {
+            \DB::beginTransaction();
             $hotelModel = $request->attributes->get('hotel');
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
             if(!$hotelModel){
@@ -415,12 +416,14 @@ class HotelController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
-            $this->service->updateVisivilityTypePlace($request, $hotelModel);
-
+            $r = $this->service->updateVisivilityTypePlace($request, $hotelModel);
+            return $r;
+            \DB::commit();
             $hotelModel->refresh();
             $data = new HotelResource($hotelModel);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
+            \DB::rollback();
             return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityTypePlace');
         }
