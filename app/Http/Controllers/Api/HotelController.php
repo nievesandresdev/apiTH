@@ -417,7 +417,6 @@ class HotelController extends Controller
             }
 
             $r = $this->service->updateVisivilityTypePlace($request, $hotelModel);
-            return $r;
             \DB::commit();
             $hotelModel->refresh();
             $data = new HotelResource($hotelModel);
