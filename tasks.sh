@@ -13,6 +13,8 @@ echo "Ejecutando seeders..."
 # Cargar el campo city_id en la tabla hotels
 #php /var/www/html/artisan db:seed --class=loadCityObjectidInHotelSeeder
 
+#seeders de sprint 4 helpers
+
 #Ejecutar custom commmands sprint 4
 echo "Ejecutando customs commands..."
 # php /var/www/html/artisan custom:command

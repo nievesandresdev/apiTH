@@ -111,7 +111,7 @@ class UtilsController extends Controller
 
 
     public function testEmailGeneral(){
-        $type = 'welcome';
+        $type = 'checkout';
         $hotel = Hotel::find(274);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
