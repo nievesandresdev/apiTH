@@ -50,7 +50,9 @@ class StayAccessObserver
                 $query = $this->queryservice->firstOrCreate($stay->id, $stayAccess->guest_id, $period, $disabled);    
                 // Log::info('observer access: $query' . $query);
             }   
-            
+            //aprovechamos el observer para actualizar la data local de cada huesped de la estancia.
+            $stayId = $stayAccess->stay_id;
+            sendEventPusher('private-reload-data-stay-webapp.' . $stayId, 'App\Events\ReloadDataStayWebapp', ['stayId'=>$stayId]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.StayAccessObserver');
         }

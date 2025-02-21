@@ -130,12 +130,13 @@
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
         </div>
         @include('components.mails.rewards.headerRewards',['rewardStay' => $rewardStay])
+
+        @include('components.mails.rewards.redemSection',['rewardStay' => $rewardStay])
     </div>
     <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
 
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @include('components.mails.rewards.redemSection',['rewardStay' => $rewardStay])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+
+       {{--  <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div> --}}
 
         @include('components.mails.rewards.howReedem',['reward' => $rewardStay->reward,'hotel' => $hotel])
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>

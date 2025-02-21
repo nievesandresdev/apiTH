@@ -46,7 +46,7 @@ class postCheckoutMail extends Mailable
      */
     public function build()
     {
-        $subject = 'Gracias por elegirnos.';
+        $subject = 'Te esperamos de vuelta';
 
         $senderName = $this->hotel->sender_for_sending_email;
         $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";

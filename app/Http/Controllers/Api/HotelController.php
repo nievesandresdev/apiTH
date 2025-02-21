@@ -503,7 +503,25 @@ class HotelController extends Controller
         }
     }
 
-
+    public function getDataLegal (Request $request) {
+        try {
+            $environment = env('APP_ENV');
+            $hotelModel = $request->attributes->get('hotel');
+            if($hotelModel && $hotelModel->generalLegal){
+                return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel->generalLegal);
+            }else{
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getDataLegal');
+        }
+    }
 
 
 }

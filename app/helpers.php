@@ -571,6 +571,7 @@ if (! function_exists('buildUrlWebApp')) {
             $hotelSlug ? $resultURL .= "/$hotelSlug": '';
             $uri ? $resultURL .= "/$uri": '';
             $paramsString ? $resultURL .= "?{$paramsString}" : '';
+            $resultURL = str_replace('.io', '.app', $resultURL); // sustituir .io por .app para el sprint #4
         }
         return $resultURL;
     }
@@ -994,6 +995,7 @@ if (! function_exists('formatTypeLodging')) {
 
         $typeLodging = [
             "hotel" => !$title ? "hotel" : "Hotel",
+            "hostal" => !$title ? "hostal" : "Hostal",
             "at" => !$title ? "apartamento" : "Apartamento",
             "vft" => !$title ? "apartamento" : "Apartamento",
         ];
