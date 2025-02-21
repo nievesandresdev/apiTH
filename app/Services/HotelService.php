@@ -309,16 +309,33 @@ class HotelService {
     public function updateVisivilityCategory ($request, $hotelModel) {
         if ($hotelModel->hiddenCategories()->where('categori_places_id', $request->categori_places_id)->exists()) {
             $hotelModel->hiddenCategories()->detach($request->categori_places_id);
+
+            $categoriplace = CategoriPlaces::find($request->categori_places_id);
+    
+            $typeplace = $categoriplace->TypePlaces;
+    
+            $categoriesActives = $typeplace->categoriPlaces()->where(['show' => 1, 'active' => 1])->pluck('id');
+
+            $categoriesHiddenHotel = $hotelModel->hiddenCategories;
+
+            if (count($categoriesActives) == count($categoriesHiddenHotel)) {
+                $hotelModel->hiddenTypePlaces()->detach($typeplace->id);
+            }
+
         } else {
             $hotelModel->hiddenCategories()->attach($request->categori_places_id);
         }
-    }
 
+    }
+    
     public function updateVisivilityTypePlace ($request, $hotelModel) {
+        $categoriplaces = CategoriPlaces::where(['show' => 1, 'active' => 1])->get()->pluck('id');
         if ($hotelModel->hiddenTypePlaces()->where('type_places_id', $request->type_places_id)->exists()) {
             $hotelModel->hiddenTypePlaces()->detach($request->type_places_id);
+            $hotelModel->hiddenCategories()->detach($categoriplaces);
         } else {
             $hotelModel->hiddenTypePlaces()->attach($request->type_places_id);
+            $hotelModel->hiddenCategories()->syncWithoutDetaching($categoriplaces);
         }
     }
 
