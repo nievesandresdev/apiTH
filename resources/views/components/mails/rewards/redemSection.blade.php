@@ -15,7 +15,7 @@
                     <td style="width: 50%; text-align: left; padding-left: 8px; vertical-align: middle;">
                         <h2 style="margin: 0; color: #fff; line-height: 145.455%;">
                             <span class="discount-percentage" style="font-size: 61px; font-weight: 600; display: block;">{{ $rewardStay->reward->reward_amount }}</span>
-                            <span class="discount-text" style="font-size: 28px; font-weight: 400; display: block; margin-top: 16px;">de descuento</span>
+                            <span class="discount-text" style="font-size: 26px; font-weight: 400; display: block; margin-top: 16px;">de descuento</span>
                         </h2>
                     </td>
                 </tr>
