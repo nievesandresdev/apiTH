@@ -124,7 +124,7 @@
 
     @include('components.mails.rewards.redemSectionStyles')
 </head>
-<body style="margin: 0; padding: 0; background-color: #FAFAFA;">
+<body style="margin: 0; padding: 0; background-color: #FFFFFF;">
     <div style="max-width: 568px; margin: 0 auto">
         <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
