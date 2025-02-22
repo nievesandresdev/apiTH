@@ -57,7 +57,7 @@ class Reward extends Model
 
     public function getRewardAmountAttribute()
     {
-        if ($this->type_discount === 'percent') {
+        if ($this->type_discount === 'percentage') {
             return intval($this->amount) . '%';
         }
 
