@@ -333,23 +333,28 @@ class HotelService {
     public function updateVisivilityTypePlace ($request, $hotelModel) {
         $categoriplaces = CategoriPlaces::where(['show' => 1, 'active' => 1, 'type_places_id' => $request->type_places_id])->get()->pluck('id');
         $typeplaces = TypePlaces::where(['show' => 1, 'active' => 1])->get()->pluck('id');
+        // $typeplacesHiddenHotel = $hotelModel->hiddenTypePlaces;
+        // return $typeplacesHiddenHotel;
         if ($hotelModel->hiddenTypePlaces()->where('type_places_id', $request->type_places_id)->exists()) {
+            // return 'e';
             $hotelModel->hiddenTypePlaces()->detach($request->type_places_id);
             $hotelModel->hiddenCategories()->detach($categoriplaces);
-
+            
+            $hotelModel->show_places = true;
+            $hotelModel->save();
+            
+        } else {
+            // return 't';
+            $hotelModel->hiddenTypePlaces()->attach($request->type_places_id);
+            $hotelModel->hiddenCategories()->syncWithoutDetaching($categoriplaces);
             $typeplacesHiddenHotel = $hotelModel->hiddenTypePlaces;
-
+            
+            $typeplacesHiddenHotel = $hotelModel->hiddenTypePlaces;
             if (count($typeplaces) == count($typeplacesHiddenHotel)) {
                 $hotelModel->show_places = false;
                 $hotelModel->save();
             }
 
-        } else {
-            $hotelModel->hiddenTypePlaces()->attach($request->type_places_id);
-            $hotelModel->hiddenCategories()->syncWithoutDetaching($categoriplaces);
-
-            $hotelModel->show_places = true;
-            $hotelModel->save();
         }
     }
 

@@ -394,7 +394,7 @@ class HotelController extends Controller
             }
 
             $r = $this->service->updateVisivilityCategory($request, $hotelModel);
-            
+
             $hotelModel->refresh();
             $data = new HotelResource($hotelModel);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
@@ -408,6 +408,7 @@ class HotelController extends Controller
         try {
             \DB::beginTransaction();
             $hotelModel = $request->attributes->get('hotel');
+            // return $hotelModel;
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
             if(!$hotelModel){
                 $data = [
@@ -417,6 +418,7 @@ class HotelController extends Controller
             }
 
             $r = $this->service->updateVisivilityTypePlace($request, $hotelModel);
+            // return $r;
             \DB::commit();
             $hotelModel->refresh();
             $data = new HotelResource($hotelModel);
