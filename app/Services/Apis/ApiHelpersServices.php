@@ -15,7 +15,7 @@ class ApiHelpersServices {
                 "hotel" => [
                     "id" => $hotel->id,
                     "name" => $hotel->name,
-                    "zone" => 3564,
+                    "zone" => $hotel->city_id,
                     "latitude" => $hotel->latitude,
                     "longitude" => $hotel->longitude,
                 ]

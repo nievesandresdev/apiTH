@@ -173,8 +173,9 @@
             ])
         @endif
 
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+
         @if(count($data['places']) > 0 && $hotel->show_places)
+            <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
         @endif
 
@@ -184,11 +185,13 @@
 
         @if($type == 'welcome' || $type == 'postCheckin' || $type == 'inviteGuestFromSaas')
             @if(count($data['facilities']) > 0 && $hotel->show_facilities)
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
                 @include('components.mails.facilities', ['facilities' => $data['facilities']])
             @endif
         @endif
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+
         @if($type == 'welcome' || $type == 'postCheckin' || $type == 'inviteGuestFromSaas')
+            <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
             @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])

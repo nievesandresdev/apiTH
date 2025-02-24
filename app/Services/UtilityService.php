@@ -89,6 +89,7 @@ class UtilityService {
             }
 
             $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);
+            //dd($helpers,$modelHotel->city_id);
             //dd($helpers);
             //places
             $placesArr = [];
@@ -116,6 +117,7 @@ class UtilityService {
                     'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"lugares/{$item['id']}"),
                 ];
             }, $placesArr);
+
 
             //experiences
             $experiences = $helpers['crosselling_experiences'] ?? [];
