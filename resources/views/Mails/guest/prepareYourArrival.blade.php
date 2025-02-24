@@ -126,56 +126,59 @@
     @include('components.mails.headerPostCheckinStyles')
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
-    <div style="max-width: 568px; margin: 0 auto">
-        <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
-            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
+    <div style="background-color: #ffffff;max-width: 568px; margin: 0 auto;">
+        <div style="max-width: 568px; margin: 0 auto">
+            <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
+                <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
+            </div>
+            @include('components.mails.headerPrepareArrival',['hotel_name' => $hotel->name,'guest_name' => $guest->name,'after' => $after,'data' => $data])
         </div>
-        @include('components.mails.headerPrepareArrival',['hotel_name' => $hotel->name,'guest_name' => $guest->name,'after' => $after,'data' => $data])
-    </div>
-    <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
+        <div class="container" style="max-width: 488px; margin: 0 auto; margin-top: 24px;background-color: #ffff;">
 
-        @if(isset($data['checkData']['title']))
-            @include('components.mails.stayCheckDate',[
-                'title' => $data['checkData']['title'],
-                'formatCheckin' => $data['checkData']['formatCheckin'],
-                'formatCheckout' => $data['checkData']['formatCheckout'],
-                'editUrl' => $data['checkData']['editStayUrl']
-            ])
-        @endif
+            @if(isset($data['checkData']['title']))
+                @include('components.mails.stayCheckDate',[
+                    'title' => $data['checkData']['title'],
+                    'formatCheckin' => $data['checkData']['formatCheckin'],
+                    'formatCheckout' => $data['checkData']['formatCheckout'],
+                    'editUrl' => $data['checkData']['editStayUrl']
+                ])
+            @endif
 
-        @if($hotel->show_checkin_stay)
+            @if($hotel->show_checkin_stay)
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                @include('components.mails.makeYourCheckLink', ['urlCheckin' => $data['urlCheckin']])
+            @endif
+
+            @if(!$data['queryData']['answered'])
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                @include('components.mails.needArrivalHotel')
+            @endif
+
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-            @include('components.mails.makeYourCheckLink', ['urlCheckin' => $data['urlCheckin']])
-        @endif
+            @if(count($data['places']) > 0 && $hotel->show_places)
+                @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
+            @endif
 
-        @if(!$data['queryData']['answered'])
+            {{-- @if(count($data['experiences']) > 0 && $hotel->show_experiences)
+                @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
+            @endif --}}
+
+
+            @if(count($data['facilities']) > 0 && $hotel->show_facilities)
+                @include('components.mails.facilities', ['facilities' => $data['facilities']])
+            @endif
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-            @include('components.mails.needArrivalHotel')
-        @endif
 
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @if(count($data['places']) > 0 && $hotel->show_places)
-            @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
-        @endif
-
-        {{-- @if(count($data['experiences']) > 0 && $hotel->show_experiences)
-            @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
-        @endif --}}
-
-
-        @if(count($data['facilities']) > 0 && $hotel->show_facilities)
-            @include('components.mails.facilities', ['facilities' => $data['facilities']])
-        @endif
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-
-        @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
+            @if($hotel->chatSettings?->show_guest)
+                @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+            @endif
+            @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
 
 
 
+        </div>
     </div>
-
     <!-- Footer -->
     @include('components.mails.footerRed')
 </body>
