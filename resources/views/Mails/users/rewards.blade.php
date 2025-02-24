@@ -141,9 +141,11 @@
         @include('components.mails.rewards.howReedem',['reward' => $rewardStay->reward,'hotel' => $hotel])
         <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
+        @if($hotel->chatSettings->show_guest)
+            @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
+            <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+        @endif
 
-        @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
         @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
 
     </div>

@@ -424,6 +424,9 @@ class UtilsController extends Controller
 
 
         $rewardStay = RewardStay::with(['reward','guest','stay','hotel'])->find(1);
+        $chatSettings = $this->chatSettingsServices->getAll($rewardStay->hotel->id);
+
+        //dd($chatSettings->show_guest);
         //dd($rewardStay);
 
         try {
@@ -448,7 +451,7 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
             ];
 
-            //dd($dataEmail,$hotel);
+            //dd($dataEmail,$rewardStay->hotel->chatSettings->show_guest);
 
 
             $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $dataEmail), 'francisco20990@gmail.com');
