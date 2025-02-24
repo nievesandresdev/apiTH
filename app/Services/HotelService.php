@@ -347,6 +347,9 @@ class HotelService {
         } else {
             $hotelModel->hiddenTypePlaces()->attach($request->type_places_id);
             $hotelModel->hiddenCategories()->syncWithoutDetaching($categoriplaces);
+
+            $hotelModel->show_places = true;
+            $hotelModel->save();
         }
     }
 
