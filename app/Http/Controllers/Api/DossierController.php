@@ -55,4 +55,13 @@ class DossierController extends Controller
         return response()->json($dossier->load('dossierData'));
     }
 
+    public function deleteDossierData($id)
+    {
+        $dossierData = DossierData::where('id', $id)->first();
+        if($dossierData->delete()){
+            return response()->json(['error' => false]);
+        }
+        return response()->json(['error' => true]);
+    }
+
 }

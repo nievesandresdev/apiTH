@@ -62,13 +62,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/check-current-password', [UsersController::class, 'checkCurrentPassword']);
 });
 
- //prefix dossier
- Route::group(['prefix' => 'dossier'], function () {
-    Route::get('/getDossier/{domain}/{type}', [DossierController::class, 'getDossier']);
-    Route::get('/getDossierData/{tabNumber}', [DossierController::class, 'getDossierData']);
-    Route::post('/storeUpdateOrCreate', [DossierController::class, 'storeUpdateOrCreate']);
-    Route::post('/createNewScenario', [DossierController::class, 'storeDossierData']);
-});
+
 
 //prefix users
 Route::middleware('auth:api')->group(function () {
@@ -107,7 +101,7 @@ Route::middleware('auth:api')->group(function () {
 
 
     //dashboard
-    
+
 });
         Route::group(['prefix' => 'dashboard'], function () {
             Route::get('/dataCustomerExperience', [DasboardController::class, 'dataCustomerExperience']);
