@@ -124,31 +124,40 @@
 
     @include('components.mails.rewards.redemSectionStyles')
 </head>
-<body style="margin: 0; padding: 0; background-color: #FFFFFF;">
-    <div style="max-width: 568px; margin: 0 auto">
-        <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
-            <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
+<body style="margin: 0; padding: 0px; background-color:#FAFAFA;">
+    <div style="max-width: 568px; margin: 0 auto; padding: 0; background-color: #ffff;">
+        <div class="content-container" style="max-width: 568px; margin: 0 auto; padding: 0 12px; background-color: #ffff;">
+            <div style="padding-top: 16px; text-align: center; padding-bottom:24px">
+                <span style="margin: 0; font-size: 28px; font-style: normal; font-weight: 600; line-height: 110%; color: #333333;">
+                    {{ $hotel->name }}
+                </span>
+            </div>
+            @include('components.mails.rewards.headerRewards',['rewardStay' => $rewardStay])
+
+            {{-- @include('components.mails.rewards.redemSection',['rewardStay' => $rewardStay]) --}}
         </div>
-        @include('components.mails.rewards.headerRewards',['rewardStay' => $rewardStay])
+        <div class="content-container" style="max-width: 568px; background-color: #ffff;">
+            @include('components.mails.rewards.redemSection',['rewardStay' => $rewardStay])
+        </div>
 
-        @include('components.mails.rewards.redemSection',['rewardStay' => $rewardStay])
-    </div>
-    <div class="container" style="max-width: 488px; margin: 0 auto;background-color: #ffff;">
+        <div class="container" style="max-width: 568px; margin: 0 auto;  padding: 0 12px; background-color: #ffffff;">
+            @include('components.mails.rewards.howReedem',['reward' => $rewardStay->reward,'hotel' => $hotel])
+            <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
 
+            @if($hotel->chatSettings->show_guest)
+                @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+            @endif
 
-       {{--  <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div> --}}
-
-        @include('components.mails.rewards.howReedem',['reward' => $rewardStay->reward,'hotel' => $hotel])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-
-
-        @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
-        <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-        @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
-
+            @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
+        </div>
     </div>
 
     <!-- Footer -->
-    @include('components.mails.footerRed')
+
+        @include('components.mails.footerRed')
+
 </body>
+
+
 </html>

@@ -1,4 +1,4 @@
-<div style="margin-left: 16px; margin-right: 16px; padding-top: 32px;">
+<div style="margin-left: 32px; margin-right: 32px; padding-top: 32px;">
     <h2 style="margin:0;color: #333; font-family: Roboto;font-size: 22px;font-weight: 500;line-height: 145.455%">
         Cómo canjearlo
     </h2>

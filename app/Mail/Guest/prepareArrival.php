@@ -46,7 +46,7 @@ class prepareArrival extends Mailable
      */
     public function build()
     {
-        $subject = 'Todo listo '.$this->hotel->name;
+        $subject = '¿Todo listo '.$this->guest->name;
 
         $senderName = $this->hotel->sender_for_sending_email;
         $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";

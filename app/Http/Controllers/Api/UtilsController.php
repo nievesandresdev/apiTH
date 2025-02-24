@@ -111,7 +111,7 @@ class UtilsController extends Controller
 
 
     public function testEmailGeneral(){
-        $type = 'checkout';
+        $type = 'postCheckin';
         $hotel = Hotel::find(274);
         $guest = Guest::find(9);
         $chainSubdomain = $hotel->subdomain;
@@ -203,7 +203,7 @@ class UtilsController extends Controller
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            //$this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false,true), 'francisco20990@gmail.com');
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false,true), 'francisco20990@gmail.com');
 
 
             return view('Mails.guest.msgStay', [
@@ -424,6 +424,9 @@ class UtilsController extends Controller
 
 
         $rewardStay = RewardStay::with(['reward','guest','stay','hotel'])->find(1);
+        $chatSettings = $this->chatSettingsServices->getAll($rewardStay->hotel->id);
+
+        //dd($chatSettings->show_guest);
         //dd($rewardStay);
 
         try {
@@ -448,7 +451,7 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
             ];
 
-            //dd($dataEmail,$hotel);
+            //dd($dataEmail,$rewardStay->hotel->chatSettings->show_guest);
 
 
             $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $dataEmail), 'francisco20990@gmail.com');
