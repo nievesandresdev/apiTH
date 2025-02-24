@@ -17,6 +17,7 @@ class DossierData extends Model
         'reputationIncrease',
         'pricePerNightIncrease',
         'occupancyRateIncrease',
+        'recurrenceIndex',
         'pricePerRoomPerMonth',
         'implementationPrice',
         'investmentInHoster',
