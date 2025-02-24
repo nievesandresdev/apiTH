@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\ImagesHotels;
 use App\Models\HotelSubdomain;
 use App\Models\CategoriPlaces;
+use App\Models\TypePlaces;
 
 use App\Http\Resources\HotelBasicDataResource;
 use App\Models\ChatHour;
@@ -331,9 +332,18 @@ class HotelService {
     
     public function updateVisivilityTypePlace ($request, $hotelModel) {
         $categoriplaces = CategoriPlaces::where(['show' => 1, 'active' => 1, 'type_places_id' => $request->type_places_id])->get()->pluck('id');
+        $typeplaces = TypePlaces::where(['show' => 1, 'active' => 1])->get()->pluck('id');
         if ($hotelModel->hiddenTypePlaces()->where('type_places_id', $request->type_places_id)->exists()) {
             $hotelModel->hiddenTypePlaces()->detach($request->type_places_id);
             $hotelModel->hiddenCategories()->detach($categoriplaces);
+
+            $typeplacesHiddenHotel = $hotelModel->hiddenTypePlaces;
+
+            if (count($typeplaces) == count($typeplacesHiddenHotel)) {
+                $hotelModel->show_places = false;
+                $hotelModel->save();
+            }
+
         } else {
             $hotelModel->hiddenTypePlaces()->attach($request->type_places_id);
             $hotelModel->hiddenCategories()->syncWithoutDetaching($categoriplaces);
