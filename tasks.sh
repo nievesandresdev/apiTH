@@ -15,6 +15,10 @@ echo "Ejecutando seeders..."
 
 #seeders de sprint 4 helpers
 
+#php /var/www/html/artisan db:seed --class=LoadCityObjectidInProductSeeder
+#php /var/www/html/artisan db:seed --class=LoadCityObjectidPlaceSeeder
+#php /var/www/html/artisan db:seed --class=assignCityInProductByHosterSeeder
+
 #Ejecutar custom commmands sprint 4
 echo "Ejecutando customs commands..."
 # php /var/www/html/artisan custom:command
