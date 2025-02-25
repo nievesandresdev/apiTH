@@ -85,7 +85,7 @@ class SendPreStayEmail extends Command
                     $query->select('id', 'name', 'email');
                 },
                 'hotel' => function ($query) {
-                    $query->select('id', 'name', 'checkout', 'checkin', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone');
+                    $query->select('id', 'name', 'checkout', 'checkin', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id');
                 }
             ])
             ->get();

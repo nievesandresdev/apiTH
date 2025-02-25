@@ -48,7 +48,6 @@ class prepareArrival extends Mailable
     {
         $subject = '¿Todo listo '.$this->guest->name;
 
-        $senderName = $this->hotel->sender_for_sending_email;
         $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
         if($this->hotel->sender_mail_mask){
             $senderEmail = $this->hotel->sender_mail_mask;

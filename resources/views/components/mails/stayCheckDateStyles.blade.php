@@ -128,6 +128,7 @@
         .checkout-description .h5 {
             font-size: 12px; /* Reduce el tamaño de los días de la semana */
             line-height: 80%; /* Ajusta la altura de línea */
+            padding-bottom: 8px;
         }
 
         .checkin-description .h2,

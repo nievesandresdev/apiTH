@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Bienvenido a Thehoster</title>
+    <title>{{ $hotel->name }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
@@ -144,7 +144,7 @@
                 ])
             @endif
 
-            @if($hotel->show_checkin_stay)
+            @if($hotel->show_checkin_stay == 1)
                 <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
                 @include('components.mails.makeYourCheckLink', ['urlCheckin' => $data['urlCheckin']])
             @endif

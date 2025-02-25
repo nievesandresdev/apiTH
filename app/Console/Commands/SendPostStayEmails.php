@@ -303,7 +303,7 @@ class SendPostStayEmails extends Command
                     $query->select('id', 'name', 'email');
                 },
                 'hotel' => function ($query) {
-                    $query->select('id', 'name', 'checkout', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone');
+                    $query->select('id', 'name', 'checkout', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id');
                 }
             ])
             ->get();
@@ -373,11 +373,11 @@ class SendPostStayEmails extends Command
                 ];
 
                 Log::info('handleSendEmailPostCheckout email send', ['guest_email' => $query->guest->email, 'type' => $type]);
-                Log::info('handleSendEmailPostCheckout data email', ['dataEmail' => $dataEmail]);
+                //Log::info('handleSendEmailPostCheckout data email', ['dataEmail' => $dataEmail]);
 
                 try {
                     $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                    $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
+                    //$this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'xxxx');
                     Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailPostCheckout', [
