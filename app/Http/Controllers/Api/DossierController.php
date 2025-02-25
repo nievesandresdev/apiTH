@@ -38,7 +38,6 @@ class DossierController extends Controller
     //store dossierdata new data
     public function storeDossierData(Request $request)
     {
-
         $dossier_id = $request->dossier_id;
 
         $lastData = DossierData::where('dossier_id', $dossier_id)
@@ -58,8 +57,12 @@ class DossierController extends Controller
     public function deleteDossierData($id)
     {
         $dossierData = DossierData::where('id', $id)->first();
+        $dossier = Dossier::find($dossierData->dossier_id);
         if($dossierData->delete()){
-            return response()->json(['error' => false]);
+            return response()->json([
+                'error' => false,
+                'dossier' => $dossier->load('dossierData')
+            ]);
         }
         return response()->json(['error' => true]);
     }
