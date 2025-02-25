@@ -67,8 +67,8 @@ class UtilityService {
         try {
             $url_bucket  = config('app.url_bucket');
             $facilities = [];
-            $citySlug = \Str::slug($modelHotel->zone);
-            $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+            // $citySlug = \Str::slug($modelHotel->zone);
+            // $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
 
             if($modelHotel->show_facilities){
                 $facilities = $this->facilityService->getCrosselling($modelHotel, 3);
@@ -78,7 +78,7 @@ class UtilityService {
                     return [
                         'title' => $item->title,
                         'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"ver-instalacion/{$item->id}"),
-                        'url_image' => $url_bucket.$item->images[0]->url
+                        'url_image' => count($item->images) > 0 ? $url_bucket.$item->images[0]->url : null
                     ];
                 });
             }
