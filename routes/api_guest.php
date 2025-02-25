@@ -16,7 +16,8 @@ Route::group(['prefix' => 'guest'], function () {
     Route::post('/sendMailTo', [GuestController::class, 'sendMailTo']);
     Route::post('/createAccessInStay', [GuestController::class, 'createAccessInStay']);
     Route::post('/deleteGuestOfStay', [GuestController::class, 'deleteGuestOfStay']);
-
+    Route::post('/saveCheckinData', [GuestController::class, 'saveCheckinData']);
+    Route::post('/deleteCheckinData', [GuestController::class, 'deleteCheckinData']);
     //update data huesped
     Route::post('/updatePasswordGuest', [GuestController::class, 'updatePasswordGuest']);
     //updateDataGuest
@@ -24,6 +25,7 @@ Route::group(['prefix' => 'guest'], function () {
 
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/inviteToHotel', [GuestHosterController::class, 'inviteToHotel']);
+        Route::get('/findById', [GuestHosterController::class, 'findById']);
     });
 
     Route::group(['prefix' => 'auth'], function () {

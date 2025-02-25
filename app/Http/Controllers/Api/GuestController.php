@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Utils\Enums\EnumResponse;
 use App\Services\GuestService;
+use App\Services\QueryServices;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Google\Client as GoogleClient;
@@ -18,12 +19,15 @@ use Google\Client as GoogleClient;
 class GuestController extends Controller
 {
     public $service;
+    public $queryService;
 
     function __construct(
-        GuestService $_GuestService
+        GuestService $_GuestService,
+        QueryServices $_QueryServices,
     )
     {
         $this->service = $_GuestService;
+        $this->queryService = $_QueryServices;
     }
 
     public function findById ($id) {
@@ -98,10 +102,11 @@ class GuestController extends Controller
 
     public function saveAndFindValidLastStay(Request $request) {
         try {
+            // Log::info('test saveAndFindValidLastStay');
             $hotelId = $request->hotelId ?? null;
             $guestEmail = $request->guestEmail ?? null;
             $chainId = $request->chainId ?? null;
-
+            
             $models = $this->service->findAndValidLastStay($guestEmail, $chainId, $hotelId);
             $data = [];
             if(isset($models["stay"])){
@@ -113,7 +118,17 @@ class GuestController extends Controller
                 $guest = $this->service->saveOrUpdate($dataGuest);
                 $data['guest'] = new GuestResource($guest);
             }else{
-                $data['guest'] = new GuestResource($models["guest"]);
+                //si el huesped ya existe
+                //y no tiene una estancia asociado actualmente
+                if(!isset($models["stay"])){
+                    $dataGuest = new \stdClass();
+                    $dataGuest->email = $guestEmail;
+                    $guest = $this->service->saveOrUpdate($dataGuest, true); //hacemos el name null con el segundo param
+                    $data['guest'] = new GuestResource($guest);
+                }else{
+                    //sino todo transcurre igual
+                    $data['guest'] = new GuestResource($models["guest"]);
+                }
             }
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
@@ -209,6 +224,67 @@ class GuestController extends Controller
 
         $data = new GuestResource($model);
         return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+    }
+
+    public function saveCheckinData(Request $request) {
+        
+        $hotel = $request->attributes->get('hotel');
+        $guest = Guest::find($request->id);
+
+        if (!$guest) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        try {
+            $queryPreStay = $guest->queries()->where('period','pre-stay')->where('stay_id',$request->stayId)->first();
+            $saveQuery = true;
+            if($queryPreStay && $request->comment){
+                $saveQuery = $this->queryService->saveResponse($queryPreStay->id, $request, $hotel);
+            }
+            
+            $model = $this->service->updateDataGuest($guest, $request, true);
+
+            if (!$model || !$saveQuery) {
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveCheckinData');
+        }
+    }
+
+    public function deleteCheckinData(Request $request) {
+        
+        $guest = Guest::find($request->id);
+
+        if (!$guest) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        try {
+            $model = $this->service->deleteCheckinData($guest);
+
+            if (!$model) {
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteCheckinData');
+        }
     }
 
     public function createAccessInStay(Request $request) {

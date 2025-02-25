@@ -172,6 +172,7 @@ class GuestAuthController extends Controller
             $dataGuest->name = $firstName;
             $dataGuest->avatar = $avatar;
             $dataGuest->googleId = $googleId;
+            $dataGuest->complete_checkin_data = false;
             // Log::info('$avatar '.$avatar);
             
             // $findGuest = $this->service->findByEmail($email);
@@ -183,7 +184,7 @@ class GuestAuthController extends Controller
             if(isset($findValidLastStay["stay"])){
                 $stay = $findValidLastStay["stay"];
                 $hotel = $this->hotelServices->findById($stay->hotel_id);
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}&action=toLogin");
             }else{
                 if(!$hotelId){
                     $subdomainHotel = null;
@@ -259,6 +260,7 @@ class GuestAuthController extends Controller
             $dataGuest->name = $firstName;
             $dataGuest->avatar = $avatar;
             $dataGuest->facebookId = $facebookId;
+            $dataGuest->complete_checkin_data = false;
             // Log::info('$avatar '.$avatar);
           
           // $findGuest = $this->service->findByEmail($email);

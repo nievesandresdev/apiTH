@@ -17,13 +17,16 @@ class Guest extends Authenticatable
         'lastname',
         'email',
         'phone',
+        'birthdate',
         'lang_web',
         'acronym',
         'color',
         'googleId',
         'avatar',
         'password',
-        'facebookId'
+        'facebookId',
+        'complete_checkin_data',
+        'checkin_email'
     ];
 
     // protected static function boot()
@@ -64,6 +67,10 @@ class Guest extends Authenticatable
         return false;
     }
 
+    public function getcompleteCheckinDataAttribute($value)
+    {
+        return boolval($value);
+    }
 
 
     public function chatMessages()

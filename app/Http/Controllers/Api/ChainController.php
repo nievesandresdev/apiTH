@@ -7,7 +7,7 @@ use App\Http\Resources\ChainResource;
 use Illuminate\Http\Request;
 use App\Services\Hoster\ChainCustomizationServices;
 use App\Http\Resources\CustomizationResource;
-use App\Http\Resources\HotelCardResource;
+use App\Http\Resources\{HotelCardResource, HotelResource};
 use App\Services\ChainService;
 use App\Services\HotelService;
 
@@ -49,8 +49,16 @@ class ChainController extends Controller
     public function getHotelsList (Request $request) {
         try {
             $chainSubdomain = $request->attributes->get('chainSubdomain');
-            $hotels = $this->chainServices->getHotelsList($chainSubdomain);
-            $hotels = HotelCardResource::collection($hotels);
+            $select = ['id','name','zone','image','subdomain','website_google','category','address','phone','email'];
+
+            if($request->type == 'reservation'){
+                $hotels = $this->chainServices->getHotelsListSelect($chainSubdomain,$select);
+                $hotels = HotelCardResource::collection($hotels);
+            }else{
+                $hotels = $this->chainServices->getHotelsList($chainSubdomain);
+                $hotels = HotelCardResource::collection($hotels);
+            }
+
             if(!$hotels){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -60,7 +68,7 @@ class ChainController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotels);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAll');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getHotelsList');
         }
     }
 
@@ -160,6 +168,16 @@ class ChainController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $stays);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getStayByHotel');
+        }
+    }
+
+    public function getChainBySubdomain (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $chain = $this->chainServices->getChainBySubdomain($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $chain);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getChainBySubdomain');
         }
     }
 

@@ -18,6 +18,7 @@ use App\Jobs\Queries\FeedbackMsg;
 use Carbon\Carbon;
 use App\Services\ChatGPTService;
 use Illuminate\Support\Facades\Log;
+use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -27,18 +28,21 @@ class QueryServices {
     public $settings;
     public $requestSettings;
     public $userServices;
+    public $mailService;
 
     public function __construct(
         ChatGPTService $chatGPTService,
         QuerySettingsServices $_QuerySettingsServices,
         RequestSettingService $_RequestSettingService,
-        UserServices $userServices
+        UserServices $userServices,
+        MailService $mailService
     )
     {
         $this->chatGPTService = $chatGPTService;
         $this->settings = $_QuerySettingsServices;
         $this->requestSettings = $_RequestSettingService;
         $this->userServices = $userServices;
+        $this->mailService = $mailService;
 
     }
 
@@ -345,7 +349,8 @@ class QueryServices {
                 $emailUserNewFeedback->each(function ($user) use ($dates, $urlQuery, $hotel, $query, $guest, $stay) {
                     $email = $user->email;
                     //$this->mailService->sendEmail(new ChatEmail($urlChat, 'new'), $email);
-                    Mail::to($email)->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
+                    $this->mailService->sendEmail(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'), $email);
+                    //Mail::to($email)->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
                 });
             }
             /**

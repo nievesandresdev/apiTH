@@ -571,6 +571,7 @@ if (! function_exists('buildUrlWebApp')) {
             $hotelSlug ? $resultURL .= "/$hotelSlug": '';
             $uri ? $resultURL .= "/$uri": '';
             $paramsString ? $resultURL .= "?{$paramsString}" : '';
+            $resultURL = str_replace('.io', '.app', $resultURL); // sustituir .io por .app para el sprint #4
         }
         return $resultURL;
     }
@@ -601,24 +602,36 @@ if (!function_exists('defaultChatSettings')) {
             "es" => "Hola. Un miembro del personal atenderá tu consulta lo antes posible.",
             "en" => "Hello. A member of staff will attend to your query as soon as possible.",
             "fr" => "Salut. Un membre du personnel répondra à votre demande dans les plus brefs délais.",
+            "pt" => "Olá. Um membro da equipe atenderá sua consulta o mais rápido possível.",
+            "it" => "Ciao. Un membro del personale risponderà alla tua richiesta il prima possibile.",
+            "de" => "Hallo. Ein Mitarbeiter wird Ihre Anfrage so schnell wie möglich bearbeiten."
         ];
         $chat_settings->first_available_show = true;
         $chat_settings->not_available_msg = [
             "es" => "Ahora mismo no contamos con personal disponible. Puedes consultar nuestro horario de disponibilidad en la barra del chat.",
             "en" => "Right now we do not have staff available. You can check our availability hours in the chat bar.",
             "fr" => "Pour le moment, nous n'avons pas de personnel disponible. Vous pouvez vérifier nos heures de disponibilité dans la barre de discussion.",
+            "pt" => "No momento, não temos pessoal disponível. Você pode verificar nosso horário de disponibilidade na barra do chat.",
+            "it" => "Al momento non abbiamo personale disponibile. Puoi controllare il nostro orario di disponibilità nella barra della chat.",
+            "de" => "Zurzeit ist kein Personal verfügbar. Sie können unsere Verfügbarkeitszeiten in der Chatleiste einsehen."
         ];
         $chat_settings->not_available_show = true;
         $chat_settings->second_available_msg = [
             "es" => "Perdona la tardanza, nuestro personal está ocupado ahora mismo. Intentaremos atender tu consulta cuando haya personal libre.",
             "en" => "Sorry for the delay, our staff is busy right now. We will try to answer your question when there are free staff.",
             "fr" => "Désolé pour le retard, notre personnel est occupé en ce moment. Nous essaierons de répondre à votre question lorsqu'il y aura du personnel libre.",
+            "pt" => "Desculpe a demora, nossa equipe está ocupada no momento. Tentaremos responder à sua pergunta assim que houver pessoal disponível.",
+            "it" => "Mi scuso per il ritardo, il nostro personale è al momento occupato. Cercheremo di rispondere alla tua domanda non appena sarà disponibile del personale libero.",
+            "de" => "Entschuldigung für die Verzögerung, unser Personal ist momentan beschäftigt. Wir werden versuchen, Ihre Frage zu beantworten, sobald Personal verfügbar ist."
         ];
         $chat_settings->second_available_show = true;
         $chat_settings->three_available_msg = [
             "es" => "Parece que está tardando más de lo esperado, disculpa las molestias. Podrías dejarnos lo que necesitas y te responderemos lo antes posible. También te avisaremos de la respuesta por mail.",
             "en" => "Seems to be taking longer than expected, sorry for the inconvenience. You could leave us what you need and we will reply to you as soon as possible. We will also notify you of the response by email.",
             "fr" => "Cela semble prendre plus de temps que prévu, désolé pour le désagrément. Vous pouvez nous laisser ce dont vous avez besoin et nous vous répondrons dans les plus brefs délais. Nous vous informerons également de la réponse par e-mail.",
+            "pt" => "Parece que está demorando mais do que o esperado, pedimos desculpas pelo transtorno. Você pode nos deixar o que precisa e responderemos o mais rápido possível. Também enviaremos uma notificação por e-mail com a resposta.",
+            "it" => "Sembra che ci stia volendo più tempo del previsto, ci scusiamo per il disagio. Puoi lasciarci il tuo messaggio e ti risponderemo il prima possibile. Ti informeremo anche della risposta via email.",
+            "de" => "Es scheint länger zu dauern als erwartet, entschuldigen Sie bitte die Unannehmlichkeiten. Bitte hinterlassen Sie uns Ihre Anfrage, und wir werden Ihnen so schnell wie möglich antworten. Wir werden Sie auch per E-Mail über die Antwort informieren."
         ];
         $chat_settings->three_available_show = true;
         $chat_settings->email_notify_new_message_to = [];
@@ -689,7 +702,7 @@ if (! function_exists('inStayqueriesTextDefault')) {
             "it" => "Ci piacerebbe sapere più dettagli sulla tua opinione sull'hotel e sul personale, cerchiamo di migliorare la tua esperienza.",
             "pt" => "Adoraríamos saber mais detalhes sobre a sua opinião sobre o hotel e a equipe, buscamos melhorar sua experiência."
         ];
-        
+
         $queriesTextDefault->in_stay_thanks_normal = [
             "es" => "Lamentamos que tu estancia no esté siendo la ideal. Nos gustaría saber más para tratar de mejorarla.",
             "en" => "We are sorry that your stay was not ideal. We would like to know more to try to improve it.",
@@ -707,7 +720,7 @@ if (! function_exists('inStayqueriesTextDefault')) {
             "it" => "Ci piacerebbe conoscere maggiori dettagli, cerchiamo di migliorare la tua esperienza.",
             "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
         ];
-        
+
         $queriesTextDefault->in_stay_comment = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
             "en" => "We would love to know more details, we seek to improve your experience.",
@@ -731,7 +744,7 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "it" => "Siamo lieti che tu abbia gradito il tuo soggiorno con noi!",
             "de" => "Wir freuen uns, dass Sie Ihren Aufenthalt bei uns genossen haben!"
         ];
-        
+
         $queriesTextDefault->post_stay_assessment_good_activate = true;
         $queriesTextDefault->post_stay_assessment_good = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
@@ -749,7 +762,7 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "it" => "Ci dispiace che il tuo soggiorno non sia stato ideale. Ci piacerebbe sapere di più per cercare di migliorarlo.",
             "pt" => "Lamentamos que a sua estadia não tenha sido ideal. Gostaríamos de saber mais para tentar melhorá-la."
         ];
-        
+
         $queriesTextDefault->post_stay_assessment_normal_activate = true;
         $queriesTextDefault->post_stay_assessment_normal = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
@@ -819,8 +832,8 @@ if (! function_exists('requestSettingsDefault')) {
             "it" => "<p>Siamo felici che tu stia godendo del tuo soggiorno!</p>",
             "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genießen!</p>"
         ];
-        
-        
+
+
         $requestSettings->in_stay_msg_text = [
             "es" => '<p>Tu experiencia es muy importante, compartirla ayudaría a otros viajeros a conocernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si reservaste online, podrían solicitarte tu opinión pronto. Valoramos mucho que la compartieras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos tu tiempo y ¡Gracias por habernos elegido!</strong></p>',
             "en" => '<p>Your experience is very important, sharing it would help other travelers get to know us.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>If you booked online, you may be asked for your opinion soon. We really appreciate that you shared it.</p><p><br></p><p class="ql-align-center"><strong>We appreciate your time and thank you for choosing us!</strong></p>',
@@ -844,7 +857,7 @@ if (! function_exists('requestSettingsDefault')) {
             "it" => "<p>Siamo felici che tu abbia apprezzato il tuo soggiorno!</p>",
             "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genossen haben!</p>"
         ];
-        
+
         $requestSettings->msg_text = [
             "es" => '<p>Tu experiencia es muy importante, compartirla ayudaría a otros viajeros a conocernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si reservaste online, podrían solicitarte tu opinión pronto. Valoramos mucho que la compartieras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos tu tiempo y ¡Gracias por habernos elegido!</strong></p>',
             "en" => '<p>Your experience is very important, sharing it would help other travelers get to know us.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>If you booked online, you may be asked for your opinion soon. We really appreciate that you shared it.</p><p><br></p><p class="ql-align-center"><strong>We appreciate your time and thank you for choosing us!</strong></p>',
@@ -959,7 +972,7 @@ function getImageSavePath($model, $name_file) {
 if (! function_exists('generateQr')) {
     function generateQr($concept, $content) {
 
-        $qr = QrCode::format('png')->size(300)->generate($content);
+        $qr = QrCode::format('png')->size(600)->generate($content);
         // Definir el nombre del archivo con una marca de tiempo única
         $nombreArchivo = 'qr_' . $concept . '.png';
 
@@ -977,4 +990,19 @@ if (! function_exists('generateQr')) {
     }
 }
 
-            
+if (! function_exists('formatTypeLodging')) {
+    function formatTypeLodging($type, $title = false) {
+
+        $typeLodging = [
+            "hotel" => !$title ? "hotel" : "Hotel",
+            "hostal" => !$title ? "hostal" : "Hostal",
+            "at" => !$title ? "apartamento" : "Apartamento",
+            "vft" => !$title ? "apartamento" : "Apartamento",
+        ];
+        $defaultLetter = !$title ? "alojamiento" : "Alojamiento";
+        return $typeLodging[$type] ?? $defaultLetter;
+    }
+}
+
+
+

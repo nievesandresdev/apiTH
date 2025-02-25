@@ -23,6 +23,7 @@ class Hotel extends Model
         'type',
         'address',
         'zone',
+        'city_id',
         'image',
         'category',
         'phone',
@@ -47,6 +48,8 @@ class Hotel extends Model
         'scraper_run',
         'last_date_historical',
         'show_experiences',
+        'show_confort',
+        'show_transport',
         'show_places',
         'phone_optional',
         'with_wifi',
@@ -62,6 +65,15 @@ class Hotel extends Model
         'sender_for_sending_email',
         'code',
         'chain_id',
+        'show_referrals',
+        'offer_benefits',
+        //
+        'show_checkin_stay'
+    ];
+
+    //bool offer_benefits
+    protected $casts = [
+        'offer_benefits' => 'boolean',
     ];
 
     /* public function user()
@@ -83,6 +95,18 @@ class Hotel extends Model
     {
         return $this->belongsTo(Chain::class);
     }
+
+    //hasMany rewards
+    public function referrals()
+    {
+        return $this->hasMany(Reward::class)->where('type_rewards', 'referrals');
+    }
+
+    public function referent()
+    {
+        return $this->hasMany(Reward::class)->where('type_rewards', 'referent');
+    }
+
 
     public function facilities()
     {
@@ -207,6 +231,11 @@ class Hotel extends Model
     public function getImageAttribute($value)
     {
         return $value ? $value : '/storage/gallery/general-1.jpg';
+    }
+
+    public function getShowCheckinStayAttribute($value)
+    {
+        return boolval($value);
     }
 
 

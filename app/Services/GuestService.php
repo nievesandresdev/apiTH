@@ -49,7 +49,7 @@ class GuestService {
         }
     }
 
-    public function saveOrUpdate($data)
+    public function saveOrUpdate($data, $makeNullname = false)
     {
         try {
 
@@ -60,10 +60,11 @@ class GuestService {
             $avatar = $data->avatar ?? null;
             $googleId = $data->googleId ?? null;
             $facebookId = $data->facebookId ?? null;
-
+            $completeCheckinData = $data->complete_checkin_data ?? false;
             $guest = Guest::where('email',$email)->first();
             $acronym = $this->generateInitialsName($name ?? $email);
-
+            //guardar name vacio
+            if($makeNullname) $name = null;
             if(!$guest){
                 $guest = Guest::create([
                     'name' =>$name,
@@ -83,6 +84,8 @@ class GuestService {
                 $guest->avatar = $avatar ?? $guest->avatar;
                 $guest->googleId = $googleId ?? $guest->googleId;
                 $guest->facebookId = $facebookId ?? $guest->facebookId;
+                $guest->complete_checkin_data = $completeCheckinData;
+                
                 if($acronym){
                     $guest->acronym = $acronym;
                 }
@@ -132,18 +135,70 @@ class GuestService {
         }
     }
 
-    public function updateDataGuest($guest,$request) {
+    public function updateDataGuest($guest, $request, $completeCheckin = false) {
         try {
             $guest->name = $request->name ?? $guest->name;
             $guest->lastname = $request->lastname ?? $guest->lastname;
+            $guest->second_lastname = $request->secondLastname ?? $guest->second_lastname;
             $guest->email = $request->email ?? $guest->email;
             $guest->phone = $request->phone ?? $guest->phone;
+            $guest->sex = $request->gender ?? $guest->sex;
+            if($request->birthdate){
+                $birthdate = Carbon::createFromFormat('d/m/Y', $request->birthdate)
+                ->format('Y-m-d');
+                $guest->birthdate = $birthdate;
+            }
+            //
+            $guest->responsible_adult = $request->responsibleAdult ?? $guest->responsible_adult;
+            $guest->kinship_relationship = $request->kinshipRelationship ?? $guest->kinship_relationship;
+            //
+            $guest->nationality = $request->nationality ?? $guest->nationality;
+            $guest->doc_type = $request->docType ?? $guest->doc_type;
+            $guest->doc_support_number = $request->docSupportNumber ?? $guest->doc_support_number;
+            $guest->doc_num = $request->docNumber ?? $guest->doc_num;
+            $guest->country_address = $request->countryResidence ?? $guest->country_address;
+            $guest->postal_code = $request->postalCode ?? $guest->postal_code;
+            $guest->municipality = $request->municipality ?? $guest->municipality;
+            $guest->address = $request->addressResidence ?? $guest->address;
+            $guest->checkin_email = $request->checkinEmail ?? null;
 
+            if($completeCheckin){
+                $guest->complete_checkin_data = true;
+            }
+            //   
             $guest->save();
             return $guest;
 
         } catch (\Exception $e) {
             logger()->error("Error en updateDataGuest: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function deleteCheckinData($guest) {
+        try {
+            $guest->second_lastname = null;
+            $guest->phone = null;
+            $guest->sex = null;
+            //
+            $guest->responsible_adult = null;
+            $guest->kinship_relationship = null;
+            //
+            $guest->nationality = null;
+            $guest->doc_type = null;
+            $guest->doc_support_number = null;
+            $guest->doc_num = null;
+            $guest->country_address = null;
+            $guest->postal_code = null;
+            $guest->municipality = null;
+            $guest->address = null;
+            $guest->complete_checkin_data = false;
+            //   
+            $guest->save();
+            return $guest;
+
+        } catch (\Exception $e) {
+            logger()->error("Error en deleteCheckinData: " . $e->getMessage());
             return null;
         }
     }
@@ -495,7 +550,7 @@ class GuestService {
                     $stay->save();
                 }
                 
-                if($chatExists || $queryAnsweredExists){
+                if($chatExists || $queryAnsweredExists || $guest->complete_checkin_data){
                     Log::info('proceso para huesped con actividad ');
                     // Crear una nueva estancia solo para el huésped
                     $newStay = new Stay();

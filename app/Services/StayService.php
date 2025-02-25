@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Services\GuestService;
 use App\Services\Hoster\UtilsHosterServices;
 use App\Services\MailService;
+use App\Utils\Enums\EnumsLanguages;
 
 class StayService {
     public $mailService;
@@ -111,16 +112,10 @@ class StayService {
             $guestId = $request->guestId;
             $guest = Guest::find($guestId);
 
-            $langs = [
-                'en' => 'Inglés',
-                'es' => 'Español',
-                'fr' => 'Francés'
-            ];
-
             $stay = Stay::create([
                 'hotel_id' =>$hotel->id,
                 'number_guests' => $request->numberGuests,
-                'language' => $langs[$request->language],
+                'language' => EnumsLanguages::NAME[$request->language],
                 'check_in' => $request->checkDate['start'],
                 'check_out' => $request->checkDate['end'],
                 'guest_id' => $guest->id,
@@ -157,14 +152,18 @@ class StayService {
 
                 if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
                     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
+                } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
+                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,false,true);
                 } else {
                     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
                 }
+
                 // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
             //}
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
             $color = $this->guestService->updateColorGuestForStay($colorsExists);
+            $guest->complete_checkin_data = false;
             if($color){
                 // Log::info('se agregar el color al huesped '.$color);
                 $guest->color = $color;
@@ -321,6 +320,30 @@ class StayService {
         }
     }
 
+    public function getGuestsAndSortByAccess($stayId){
+
+        try{
+            $subquery = StayAccess::select('guest_id', DB::raw('MIN(created_at) as first_access'))
+                ->where('stay_id', $stayId)
+                ->groupBy('guest_id');
+
+            $guests = StayAccess::select('guests.*', 'sub.first_access')
+                ->join('guests', 'guests.id', '=', 'stay_accesses.guest_id')
+                ->joinSub($subquery, 'sub', function ($join) {
+                    $join->on('stay_accesses.guest_id', '=', 'sub.guest_id')
+                         ->on('stay_accesses.created_at', '=', 'sub.first_access');
+                })
+                ->where('stay_accesses.stay_id', $stayId)
+                ->orderBy('sub.first_access', 'asc') // Orden ascendente (el más antiguo primero)
+                ->get();
+
+
+            return $guests;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getGuestsAndSortByAccess');
+        }
+    }
+
     public function getCheckoutDateTime($stayId){
         $stay = Stay::where('id',$stayId)->first();
         $checkOutDate = Carbon::parse($stay->check_out);
@@ -403,7 +426,7 @@ class StayService {
 
             $dayCheckin = $stay->check_in;
             $dayCheckout = $stay->check_out;
-            $hourCheckin = $hotel->checkin ?? '16:00';
+            $hourCheckin = $hotel->checkin ?? '14:00';
 
             // Crear objeto Carbon para check-in
             $checkinDateTimeString = $dayCheckin . ' ' . $hourCheckin;
@@ -467,7 +490,7 @@ class StayService {
         }
     }
 
-    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null,$after = false)
+    public function guestWelcomeEmail($type, $chainSubdomain, $hotel, $guest, $stay = null, $after = false, $beforeCheckin = false)
     {
 
         try {
@@ -491,8 +514,8 @@ class StayService {
             }
 
 
-        //     //query section
-            if($type == 'welcome'){
+            //     //query section
+            if($type == 'welcome' || $type == 'postCheckin'){
                 $currentPeriod = $this->getCurrentPeriod($hotel, $stay);
                 $querySettings = $this->querySettingsServices->getAll($hotel->id);
                 $hoursAfterCheckin = $this->calculateHoursAfterCheckin($hotel, $stay);
@@ -509,12 +532,12 @@ class StayService {
                 $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox');
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
 
+
                 $queryData = [
                     'showQuerySection' => $showQuerySection,
                     'currentPeriod' => $currentPeriod,
                     'webappLinkInbox' => $webappLinkInbox,
                     'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-
                 ];
             }
 
@@ -531,6 +554,8 @@ class StayService {
 
             //
             $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
             //  $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
 
@@ -543,7 +568,8 @@ class StayService {
                 'facilities' => $crosselling['facilities'],
                 'webappChatLink' => $webappChatLink,
                 'urlQr' => $urlQr,
-                'urlWebapp' => $urlWebapp
+                'urlWebapp' => $urlWebapp,
+                'urlCheckin' => $urlCheckin,
             ];
 
             //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
@@ -551,7 +577,7 @@ class StayService {
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after), $guest->email);
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());

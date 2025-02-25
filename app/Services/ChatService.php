@@ -76,8 +76,7 @@ class ChatService {
                 ], [
                     'pending' => true,
             ]);
-
-            // Log::info('sendMsgToHoster $chat'. json_encode($chat));
+            
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
                 'text' => $request->text,
@@ -89,8 +88,10 @@ class ChatService {
              * actualizacion de notificaciones en el saas
              *
              */
-
+            // Log::info('sendMsgToHoster $chatMessage'. json_encode($chatMessage));
+            
             $msg = $guest->chatMessages()->save($chatMessage);
+            
             //$this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
             $msg->load('messageable');
             if($msg){
@@ -129,14 +130,12 @@ class ChatService {
                     });
                 }
 
-
                 /**
                  * cola de mensajes automaticos para el huesped
                  *
                 */
                 // Antes de encolar nuevos trabajos, elimina los trabajos antiguos guardados para el mismo huesped.
                 DB::table('jobs')->where('payload', 'like', '%send-by' . $guest->id . '%')->delete();
-
                 //se envia el mensaje si el hoster no responde en 1 min
                 if($request->isAvailable && $settings->first_available_show){
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->first_available_msg[$langPage])->delay(now()->addMinutes(1));
@@ -150,7 +149,6 @@ class ChatService {
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(10));//10
 
                 }
-
                 //se envia el mensaje si no hay agente disponible
                 if(!$request->isAvailable && $settings->not_available_show){
                     $chatMessage = new ChatMessage([
@@ -195,7 +193,6 @@ class ChatService {
                 });
             } */
              $this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg,$emailUserChatNew);
-
             }
 
 
@@ -203,6 +200,7 @@ class ChatService {
             DB::commit();
             return true;
         } catch (\Exception $e) {
+            Log::error('Error service sendMsgToHoster: ' . $e->getMessage());
             DB::rollback();
             return $e;
         }
@@ -523,4 +521,34 @@ class ChatService {
         }
     }
 
+
+    public function getAvailableLanguages ($hotelId) {
+        try{
+            $settings = ChatSetting::select('chat_settings.id','chat_settings.hotel_id')
+                ->with('languages')
+                ->where('hotel_id',$hotelId)->first();
+        if($settings){
+            return $settings->languages;
+        }
+        $default = defaultChatSettings();
+        return $default->languages;
+         
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function getAllSettings ($hotelId) {
+        try {
+            $default = ChatSetting::where('hotel_id',$hotelId)->first();
+            if(!$default){
+                $default = defaultChatSettings();
+            }else{
+                $default->load('languages');
+            }
+            return $default;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }

@@ -44,6 +44,11 @@
             max-width:530px;
             margin: 16px auto 0 auto;
         }
+
+        .padding-feedback{
+            padding-left: 10px;
+            padding-right: 0px;
+        }
     }
     /* @media only screen and (max-width: 600px) {
         .title-section{
@@ -115,19 +120,20 @@
 
         .checkin-description .h1,
         .checkout-description .h1 {
-            font-size: 45px; /* Reduce el tamaño de la fuente para los días */
+            font-size: 35px; /* Reduce el tamaño de la fuente para los días */
             line-height: 70%; /* Ajusta la altura de línea */
         }
 
         .checkin-description .h5,
         .checkout-description .h5 {
-            font-size: 13px; /* Reduce el tamaño de los días de la semana */
+            font-size: 12px; /* Reduce el tamaño de los días de la semana */
             line-height: 80%; /* Ajusta la altura de línea */
+            padding-bottom: 8px;
         }
 
         .checkin-description .h2,
         .checkout-description .h2 {
-            font-size: 18px; /* Reduce el tamaño de los meses */
+            font-size: 16px; /* Reduce el tamaño de los meses */
             line-height: 75%; /* Ajusta la altura de línea */
             margin-top: 5px; /* Reduce el margen superior */
         }
@@ -143,6 +149,11 @@
             padding-bottom: 12px;
             padding-top: 15px;
             max-width: 450px;
+        }
+
+        .padding-feedback{
+            padding-left: 0px;
+            padding-right: 90px;
         }
 }
 

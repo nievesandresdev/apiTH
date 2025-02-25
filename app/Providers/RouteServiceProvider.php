@@ -40,6 +40,7 @@ class RouteServiceProvider extends ServiceProvider
                  $this->loadModuleRoutes('api_guest.php');
                  $this->loadModuleRoutes('api_stay_survey.php');
                  $this->loadModuleRoutes('api_city.php');
+                 $this->loadModuleRoutes('api_rewards.php');
                  $this->loadModuleRoutes('api_external_platforms.php');
                  $this->loadModuleRoutes('api_experience.php');
                  $this->loadModuleRoutes('api_place.php');
@@ -55,6 +56,7 @@ class RouteServiceProvider extends ServiceProvider
                  $this->loadModuleRoutes('api_gallery.php');
                  $this->loadModuleRoutes('api_notifications.php');
                  $this->loadModuleRoutes('api_chain.php');
+                 $this->loadModuleRoutes('api_dossier.php');
                  // Aquí puedes añadir más archivos de módulos según sea necesario
              });
     }

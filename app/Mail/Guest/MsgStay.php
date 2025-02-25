@@ -18,6 +18,7 @@ class MsgStay extends Mailable
     public $urlQr;
     public $data;
     public $after;
+    public $beforeCheckin;
     /**
      * Create a new message instance.
      *
@@ -28,7 +29,8 @@ class MsgStay extends Mailable
         $hotel,
         $guest,
         $data = null,
-        $after = false
+        $after = false,
+        $beforeCheckin = false
     )
     {
         $this->type = $type;
@@ -36,7 +38,7 @@ class MsgStay extends Mailable
         $this->guest = $guest;
         $this->data = $data;
         $this->after = $after;
-
+        $this->beforeCheckin = $beforeCheckin;
     }
 
     /**
@@ -46,10 +48,12 @@ class MsgStay extends Mailable
      */
     public function build()
     {
+        $subject = 'Gracias por elegirnos.';
         if($this->type == 'welcome' || $this->type == 'inviteGuestFromSaas'){
             $subject = 'Te damos la bienvenida a la WebApp de '.$this->hotel->name;
-        }else{
-            $subject = 'Gracias por elegirnos.';
+        }
+        if($this->type == 'postCheckin'){
+            $subject = '¿Qué tal va todo?';
         }
 
         // if($this->type == 'welcome'){
@@ -61,12 +65,12 @@ class MsgStay extends Mailable
         // $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
         // }
 
-        $senderName = $this->hotel['sender_for_sending_email'];
+        $senderName = $this->hotel->sender_for_sending_email;
         $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
-        if($this->hotel['sender_mail_mask']){
-            $senderEmail = $this->hotel['sender_mail_mask'];
+        if($this->hotel->sender_mail_mask){
+            $senderEmail = $this->hotel->sender_mail_mask;
         }
-        return $this->from($senderEmail, $senderName)
+        return $this->from($senderEmail, $this->hotel->name)
                     ->subject($subject)->view('Mails.guest.msgStay');
 
     }

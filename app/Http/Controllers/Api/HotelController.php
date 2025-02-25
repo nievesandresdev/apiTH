@@ -23,6 +23,7 @@ use App\Http\Resources\HotelBasicDataResource;
 use App\Utils\Enums\EnumResponse;
 
 use App\Http\Requests\Hotel\UpdateProfileRequest;
+use App\Http\Resources\HotelMainDataWebappResource;
 
 class HotelController extends Controller
 {
@@ -93,6 +94,16 @@ class HotelController extends Controller
         }
     }
 
+    public function getRewardsByHotel(Request $request){
+        try {
+            $modelHotel = $request->attributes->get('hotel');
+            $data = $this->service->getRewardsByHotel($modelHotel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getRewardsByHotel');
+        }
+    }
+
 
     public function findByParams (Request $request) {
         try {
@@ -111,6 +122,25 @@ class HotelController extends Controller
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findByParams');
+        }
+    }
+
+    public function getMainData (Request $request) {
+        try {
+            $model = $this->service->getMainData($request);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+
+            $data = new HotelMainDataWebappResource($model);
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getMainData');
         }
     }
 
@@ -271,6 +301,25 @@ class HotelController extends Controller
         }
     }
 
+    public function updateVisivilityServices (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelModel = Hotel::with('translations')->find($hotelModel->id);
+            if(!$hotelModel){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            $this->service->updateVisivilityServices($request, $hotelModel);
+
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityFacilities');
+        }
+    }
+
     public function updateVisivilityExperiences (Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
@@ -344,7 +393,7 @@ class HotelController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
-            $this->service->updateVisivilityCategory($request, $hotelModel);
+            $r = $this->service->updateVisivilityCategory($request, $hotelModel);
 
             $hotelModel->refresh();
             $data = new HotelResource($hotelModel);
@@ -357,7 +406,9 @@ class HotelController extends Controller
 
     public function updateVisivilityTypePlace (Request $request) {
         try {
+            \DB::beginTransaction();
             $hotelModel = $request->attributes->get('hotel');
+            // return $hotelModel;
             $hotelModel = Hotel::with('translations')->find($hotelModel->id);
             if(!$hotelModel){
                 $data = [
@@ -366,12 +417,14 @@ class HotelController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
-            $this->service->updateVisivilityTypePlace($request, $hotelModel);
-
+            $r = $this->service->updateVisivilityTypePlace($request, $hotelModel);
+            // return $r;
+            \DB::commit();
             $hotelModel->refresh();
             $data = new HotelResource($hotelModel);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
+            \DB::rollback();
             return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisivilityTypePlace');
         }
@@ -443,6 +496,36 @@ class HotelController extends Controller
         }
     }
 
+    public function handleShowReferrals (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $data = $this->service->handleShowReferrals($hotelModel);
+            $hotelModel->refresh();
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.handleShowReferrals');
+        }
+    }
+
+    public function getDataLegal (Request $request) {
+        try {
+            $environment = env('APP_ENV');
+            $hotelModel = $request->attributes->get('hotel');
+            if($hotelModel && $hotelModel->generalLegal){
+                return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel->generalLegal);
+            }else{
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelModel);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getDataLegal');
+        }
+    }
 
 
 }

@@ -15,6 +15,7 @@ use App\Models\Stay;
 use App\Http\Resources\{PlaceResource};
 use App\Services\Apis\ApiHelpersServices;
 use Google\Service\ApigeeRegistry\Api;
+use Illuminate\Support\Str;
 
 class UtilityService {
 
@@ -70,20 +71,26 @@ class UtilityService {
             // $citySlug = \Str::slug($modelHotel->zone);
             // $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
 
-            if($modelHotel->show_facilities){
+
+
+            if($modelHotel->show_facilities == 1){
                 $facilities = $this->facilityService->getCrosselling($modelHotel, 3);
+
 
                 //$crossellingPlacesWhatvisit = PlaceResource::collection($placesWhatvisit)->toArray(request());
                 $facilities = $facilities->map(function ($item) use($modelHotel, $chainSubdomain, $url_bucket){
                     return [
-                        'title' => $item->title,
+                        'title' => Str::limit($item->title, 28, '...'),
                         'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"ver-instalacion/{$item->id}"),
                         'url_image' => count($item->images) > 0 ? $url_bucket.$item->images[0]->url : null
                     ];
                 });
+
             }
 
             $helpers = $this->api_helpers_service->get_crosseling_hotel($modelHotel);
+            //dd($helpers,$modelHotel->city_id);
+            //dd($helpers);
             //places
             $placesArr = [];
             if (!empty($helpers['crosselling_places_whatvisit'][0])) {
@@ -96,19 +103,21 @@ class UtilityService {
                 $placesArr[] = $helpers['crosselling_places_leisure'][0];
             }
 
+
             $placesArr = array_map(function($item) use($modelHotel, $chainSubdomain, $url_bucket){
                 $img = null;
-                if($item['place_images']){
-                    $img = $url_bucket."/storage/places/".$item['place_images'][0]['image'];
+                if($item['image']){
+                    $img = $url_bucket."/storage/places/".$item['image']['image'];
                 }
 
                 return [
-                    'title' => $item['title'],
+                    'title' => Str::limit($item['title'], 28, '...'),
                     'image' => $img,
-                    'num_stars' => $item['num_stars'],
+                    'num_stars' => str_replace(',', '.', $item['num_stars']),
                     'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"lugares/{$item['id']}"),
                 ];
             }, $placesArr);
+
 
             //experiences
             $experiences = $helpers['crosselling_experiences'] ?? [];
@@ -120,27 +129,22 @@ class UtilityService {
             if (!empty($experiences[1])) {
                 $experiencesArr[] = $experiences[1];
             }
-            $experiences = array_map(function($item) use($modelHotel, $chainSubdomain, $url_bucket){
+
+            //dd($experiencesArr);
+            /* $experiences = array_map(function($item) use($modelHotel, $chainSubdomain, $url_bucket){
                 $formattedRating = number_format($item['reviews']['combined_average_rating'], 1);
                 return [
-                    'title' => $item['title'],
+                    'title' => Str::limit($item['title'], 28, '...'),
                     'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"experiencias/{$item['slug']}"),
                     'image_url' => $item['image']['url'],
                     'num_stars' => $formattedRating
                 ];
-            }, $experiencesArr);
-
-            /* dd([
-                'facilities' => $facilities,
-                'places' => $placesArr,
-                'experiences' => $experiences
-
-            ]); */
+            }, $experiencesArr); */
 
             return [
                 'facilities' => $facilities,
                 'places' => $placesArr,
-                'experiences' => $experiences
+                'experiences' => null
 
             ];
         } catch (\Exception $e) {

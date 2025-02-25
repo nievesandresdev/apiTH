@@ -11,6 +11,8 @@ use App\Models\Hotel;
 use App\Models\User;
 use App\Models\ImagesHotels;
 use App\Models\HotelSubdomain;
+use App\Models\CategoriPlaces;
+use App\Models\TypePlaces;
 
 use App\Http\Resources\HotelBasicDataResource;
 use App\Models\ChatHour;
@@ -84,29 +86,48 @@ class HotelService {
         return $newDefaultHotel;
     }
 
+    public function getRewardsByHotel($modelHotel)
+    {
+        $modelHotel->loadMissing(['referrals', 'referent']);
+
+
+        return [
+            'name' => $modelHotel->name,
+            'referrals' => $modelHotel->referrals->first(),
+            'referent'  => $modelHotel->referent->first(),
+        ];
+    }
 
 
     public function findByParams ($request) {
         try {
             $subdomain = $request->subdomain ?? null;
+            $id = $request->id ?? null;
 
             // $query = Hotel::where(function($query) use($subdomain){
             //     if ($subdomain) {
             //         $query->where('subdomain', $subdomain);
             //     }
             // });
+            if ($subdomain) {
+                $query = Hotel::where('subdomain', $subdomain);
+            }
 
-            $query = Hotel::where('subdomain', $subdomain);
+            if ($id) {
+                $query = Hotel::where('id', $id);
+            }
+
+
             // $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
             //     if ($subdomain) {
             //         $query->where('name', $subdomain);
             //     }
             // });
 
-            if (!$subdomain) {
+            /* if (!$subdomain) {
                 return null;
             }
-
+ */
             $model = $query->first();
 
             // $data = new HotelResource($model);
@@ -270,6 +291,13 @@ class HotelService {
         return $hotelModel;
     }
 
+    public function updateVisivilityServices ($request, $hotelModel) {
+        $nameService = $request->service;
+        $input = "show_$nameService";
+        $hotelModel = $hotelModel->update([$input => !$hotelModel[$input]]);
+        return $hotelModel;
+    }
+
     public function updateVisivilityPlaces ($hotelModel) {
         $hotelModel = $hotelModel->update(['show_places' => !$hotelModel->show_places]);
         return $hotelModel;
@@ -283,16 +311,50 @@ class HotelService {
     public function updateVisivilityCategory ($request, $hotelModel) {
         if ($hotelModel->hiddenCategories()->where('categori_places_id', $request->categori_places_id)->exists()) {
             $hotelModel->hiddenCategories()->detach($request->categori_places_id);
+
+            $categoriplace = CategoriPlaces::find($request->categori_places_id);
+    
+            $typeplace = $categoriplace->TypePlaces;
+    
+            $categoriesActives = $typeplace->categoriPlaces()->where(['show' => 1, 'active' => 1])->pluck('id');
+
+            $categoriesHiddenHotel = $hotelModel->hiddenCategories;
+
+            if (count($categoriesActives) == count($categoriesHiddenHotel)) {
+                $hotelModel->hiddenTypePlaces()->detach($typeplace->id);
+            }
+
         } else {
             $hotelModel->hiddenCategories()->attach($request->categori_places_id);
         }
-    }
 
+    }
+    
     public function updateVisivilityTypePlace ($request, $hotelModel) {
+        $categoriplaces = CategoriPlaces::where(['show' => 1, 'active' => 1, 'type_places_id' => $request->type_places_id])->get()->pluck('id');
+        $typeplaces = TypePlaces::where(['show' => 1, 'active' => 1])->get()->pluck('id');
+        // $typeplacesHiddenHotel = $hotelModel->hiddenTypePlaces;
+        // return $typeplacesHiddenHotel;
         if ($hotelModel->hiddenTypePlaces()->where('type_places_id', $request->type_places_id)->exists()) {
+            // return 'e';
             $hotelModel->hiddenTypePlaces()->detach($request->type_places_id);
+            $hotelModel->hiddenCategories()->detach($categoriplaces);
+            
+            $hotelModel->show_places = true;
+            $hotelModel->save();
+            
         } else {
+            // return 't';
             $hotelModel->hiddenTypePlaces()->attach($request->type_places_id);
+            $hotelModel->hiddenCategories()->syncWithoutDetaching($categoriplaces);
+            $typeplacesHiddenHotel = $hotelModel->hiddenTypePlaces;
+            
+            $typeplacesHiddenHotel = $hotelModel->hiddenTypePlaces;
+            if (count($typeplaces) == count($typeplacesHiddenHotel)) {
+                $hotelModel->show_places = false;
+                $hotelModel->save();
+            }
+
         }
     }
 
@@ -414,4 +476,33 @@ class HotelService {
         }
     }
 
+    public function handleShowReferrals ($hotelModel) {
+       $hotelModel->update(['show_referrals' => !$hotelModel->show_referrals]);
+
+        return $hotelModel;
+    }
+
+
+    public function getMainData ($request) {
+        try {
+            $subdomain = $request->subdomain ?? null;
+            Log::error('subdomain '.$subdomain);
+
+            return Hotel::with([
+                'chatSettings:id,hotel_id,show_guest'
+            ])
+            ->select(
+                'hotels.id','hotels.name','hotels.type','hotels.zone','hotels.instagram_url','hotels.facebook_url','hotels.pinterest_url',
+                'hotels.show_profile','hotels.subdomain','hotels.logo','hotels.favicon','hotels.show_experiences','hotels.instagram_url',
+                'hotels.language_default_webapp','hotels.x_url','hotels.show_facilities','hotels.show_places','hotels.show_transport','hotels.show_confort','hotels.buttons_home',
+                'hotels.show_referrals','hotels.show_checkin_stay','hotels.offer_benefits','hotels.latitude','hotels.longitude',
+                'hotels.city_id','hotels.checkin','hotels.checkout','hotels.image'
+            )
+            // chatSettings
+            ->where('subdomain', $subdomain)
+            ->first();
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }

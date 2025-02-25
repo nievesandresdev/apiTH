@@ -17,4 +17,9 @@ Route::group(['prefix' => 'legal'], function () {
     Route::post('/deletePolicy', [LegalPolicyController::class, 'deletePolicylLegal']);
 
     Route::post('/generate-pdf', [LegalPolicyController::class, 'generatePDF']);
+
+    //webapp routes
+    Route::get('/getNormsByHotel', [LegalGeneralController::class, 'getNormsByHotel']);
 });
+
+
