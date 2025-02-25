@@ -15,8 +15,13 @@ echo "Ejecutando seeders..."
 
 #seeders de sprint 4 helpers
 
+# Cargar el campo city_id en la tabla products
 #php /var/www/html/artisan db:seed --class=LoadCityObjectidInProductSeeder
+
+# Cargar el campo city_id en la tabla places
 #php /var/www/html/artisan db:seed --class=LoadCityObjectidPlaceSeeder
+
+# Cargar el campo city_id los products que fueron creados por un hoster
 #php /var/www/html/artisan db:seed --class=assignCityInProductByHosterSeeder
 
 #Ejecutar custom commmands sprint 4
