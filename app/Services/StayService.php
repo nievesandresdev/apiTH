@@ -135,31 +135,15 @@ class StayService {
                 $settings = (object)$settingsArray;
             }
 
+            //envio de emails
+            // if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
+            //     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
+            // } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
+            //     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,false,true);
+            // } else {
+            //     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            // }
 
-            // $data = [
-            //     'stay_id' => $stay->id,
-            //     'guest_id' => $guest->id,
-            //     'stay_lang' => $guest->lang_web,
-            //     'msg_text' => $settings->guestcreate_msg_email[$guest->lang_web],
-            //     'guest_name' => $guest->name,
-            //     'hotel_name' => $hotel->name,
-            //     'hotel_id' => $hotel->id,
-            // ];
-            //if($settings->guestcreate_check_email){
-                // $msg = prepareMessage($data,$hotel,'&subject=invited');
-                // $link = prepareLink($data,$hotel,'&subject=invited');
-                // Maiil::to($guest->email)->send(new MsgStay($msg,$hotel));
-
-                 if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
-                     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
-                } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
-                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,false,true);
-                } else {
-                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
-                }
-
-                // SendEmailGuest::dispatch('welcome', $chainSubdomain, $hotel, $guest, $stay);
-            //}
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
             $color = $this->guestService->updateColorGuestForStay($colorsExists);
