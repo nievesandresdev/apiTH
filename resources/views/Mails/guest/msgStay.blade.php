@@ -192,7 +192,7 @@
             @endif
 
             @if($type == 'welcome' || $type == 'postCheckin' || $type == 'inviteGuestFromSaas')
-                @if($hotel->chatSettings?->show_guest)
+                @if($hotel->chatSettings->show_guest)
                     <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
                     @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
                 @endif
