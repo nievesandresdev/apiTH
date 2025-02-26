@@ -23,7 +23,7 @@ class ApiHelpersServices {
 
 
             $http_client_service = new HttpClientService();
-            $response_request = $http_client_service->make_request('POST', $URL_BASE_API_HELPERS."place/getCrosselling", $body, [], 60);
+            $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_HELPERS/place/getCrosselling", $body, [], 60);
 
             $data = null;
             if (!isset($response_request['ok']) || !$response_request['ok']) {
