@@ -178,8 +178,8 @@ class UtilsController extends Controller
 
 
             //
-            // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
 
 
@@ -196,7 +196,7 @@ class UtilsController extends Controller
                 'hotel' => $hotel
             ];
 
-            //dd($dataEmail);
+            dd($dataEmail,$hotel->chatSettings);
 
             //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
             // Log::info('dataEmail '.json_encode($dataEmail));
