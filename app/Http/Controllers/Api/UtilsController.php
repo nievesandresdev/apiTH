@@ -193,10 +193,11 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
-                'hotel' => $hotel
+                'hotel' => $hotel,
+                'chatSettings' => $hotel->chatSettings ?? defaultChatSettings()
             ];
 
-            dd($dataEmail,$hotel->chatSettings);
+            dd($dataEmail);
 
             //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
             // Log::info('dataEmail '.json_encode($dataEmail));
