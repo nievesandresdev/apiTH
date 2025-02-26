@@ -112,10 +112,10 @@ class UtilsController extends Controller
 
     public function testEmailGeneral(){
         $type = 'welcome';
-        $hotel = Hotel::find(274);
-        $guest = Guest::find(9);
+        $hotel = Hotel::find(361);
+        $guest = Guest::find(186);
         $chainSubdomain = $hotel->subdomain;
-        $stay = Stay::find(565);
+        $stay = Stay::find(282);
 
 
         try {
