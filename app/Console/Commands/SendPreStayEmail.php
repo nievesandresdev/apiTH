@@ -106,9 +106,17 @@ class SendPreStayEmail extends Command
         // Procesar cada estancia
         foreach ($stays as $stay) {
             // Manejar checkin nulo asignando la última hora del día
+            /*
+            asi estaba antes
             $hotelCheckinTime = $stay->hotel->checkin
                 ? Carbon::parse($stay->hotel->checkin)->addHours($hours)
-                : Carbon::today()->endOfDay()->addHours($hours);
+                : Carbon::today()->endOfDay()->addHours($hours); */
+
+                //asi esta ahora , que si checkin es null se ejecute a las 20:00 (propuesto por ari)
+                $hotelCheckinTime = $stay->hotel->checkin
+                    ? Carbon::parse($stay->hotel->checkin)->addHours($hours)
+                    : Carbon::today()->setHour(20)->setMinute(0)->setSecond(0)->addHours($hours);
+
 
 
             // Verificar si la hora actual está dentro del rango de 48 horas antes del checkin
