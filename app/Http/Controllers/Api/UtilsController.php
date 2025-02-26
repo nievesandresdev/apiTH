@@ -197,7 +197,7 @@ class UtilsController extends Controller
                 'chatSettings' => $hotel->chatSettings ?? defaultChatSettings()
             ];
 
-            dd($dataEmail);
+            dd($dataEmail,$dataEmail['chatSettings']);
 
             //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
             // Log::info('dataEmail '.json_encode($dataEmail));
