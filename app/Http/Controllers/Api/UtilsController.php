@@ -225,8 +225,10 @@ class UtilsController extends Controller
 
     public function test()
     {
-        $stayId = 7;
-        sendEventPusher('private-reload-data-stay-webapp.' . $stayId, 'App\Events\ReloadDataStayWebapp', ['stayId'=>$stayId]);
+        $hotel = Hotel::find(280);
+        $stay = Stay::find(35);
+        $guest = Guest::find(1);
+        $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
         return 'enviado';
     }
 
