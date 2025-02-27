@@ -226,7 +226,7 @@ class UtilsController extends Controller
     public function test()
     {
         $hotel = Hotel::find(280);
-        $stay = Stay::find(35);
+        $stay = Stay::find(43);
         $guest = Guest::find(1);
         $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
         return 'enviado';
