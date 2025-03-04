@@ -21,6 +21,7 @@ class DossierData extends Model
         'pricePerRoomPerMonth',
         'implementationPrice',
         'investmentInHoster',
+        'openMonths',
         'benefit',
     ];
 

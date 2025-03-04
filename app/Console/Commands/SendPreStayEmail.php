@@ -3,22 +3,16 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Mail\Queries\InsistencePostStayResponse;
-use App\Mail\Queries\RequestReviewGuest;
 use App\Models\Stay;
 use App\Services\RequestSettingService;
 use App\Services\StayService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use App\Services\MailService;
-use App\Mail\Guest\MsgStay;
-use App\Mail\Guest\postCheckoutMail;
 use App\Services\QuerySettingsServices;
 use App\Mail\Guest\{prepareArrival};
 use App\Services\UtilityService;
 use App\Services\Hoster\UtilsHosterServices;
-use stdClass;
 
 class SendPreStayEmail extends Command
 {
@@ -106,16 +100,16 @@ class SendPreStayEmail extends Command
         // Procesar cada estancia
         foreach ($stays as $stay) {
             // Manejar checkin nulo asignando la última hora del día
-            /*
-            asi estaba antes
+
+            //asi estaba antes
             $hotelCheckinTime = $stay->hotel->checkin
                 ? Carbon::parse($stay->hotel->checkin)->addHours($hours)
-                : Carbon::today()->endOfDay()->addHours($hours); */
+                : Carbon::today()->endOfDay()->addHours($hours);
 
                 //asi esta ahora , que si checkin es null se ejecute a las 20:00 (propuesto por ari)
-                $hotelCheckinTime = $stay->hotel->checkin
+                /* $hotelCheckinTime = $stay->hotel->checkin
                     ? Carbon::parse($stay->hotel->checkin)->addHours($hours)
-                    : Carbon::today()->setHour(20)->setMinute(0)->setSecond(0)->addHours($hours);
+                    : Carbon::today()->setHour(20)->setMinute(0)->setSecond(0)->addHours($hours); */
 
 
 
