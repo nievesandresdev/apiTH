@@ -84,7 +84,7 @@ class UserServices
                 ->orWhereHas('profile.workPosition', function ($subQuery) use ($filter) {
                     $subQuery->where('name', 'like', '%' . $filter['search_terms'] . '%');
                 });
-        })->orderBy('created_at', 'desc');
+        })->where('del', 0)->orderBy('created_at', 'desc');
 
         $query->when(isset($filter['type']), function ($query) use ($filter) {
             switch ($filter['type']) {
