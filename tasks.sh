@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Ejecutando tareas programadas..."
-qawedqwewq
+
 # Ejecutar migraciones
 echo "Ejecutando migraciones..."
 php /var/www/html/artisan migrate --force
