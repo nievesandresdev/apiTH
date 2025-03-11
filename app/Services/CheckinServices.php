@@ -434,6 +434,12 @@ class CheckinServices {
             'F' => 'Mujer'
         ];
 
+        if($doctype == 'DNI' &&  $nationality == "España"){
+            $doctype = 'DNI español';
+        }else if($doctype == 'DNI' &&  $nationality !== "España"){
+            $doctype = null;
+        }
+
         return [
             'DateOfBirth'=> $birthDate,
             'DocumentType_translated'=> $doctype,
