@@ -80,11 +80,14 @@ class UserServices
         $query = User::myHotels($hotelIds)->where('del', 0);
 
         $query->when(isset($filter['search_terms']) ? $filter['search_terms'] : null, function ($query) use ($filter) {
-            $query->where('name', 'like', '%' . $filter['search_terms'] . '%')
-                ->orWhereHas('profile.workPosition', function ($subQuery) use ($filter) {
-                    $subQuery->where('name', 'like', '%' . $filter['search_terms'] . '%');
-                });
-        })->where('del', 0)->orderBy('created_at', 'desc');
+            $query->where(function ($q) use ($filter) {
+                $q->where('name', 'like', '%' . $filter['search_terms'] . '%')
+                  ->orWhereHas('profile.workPosition', function ($subQuery) use ($filter) {
+                      $subQuery->where('name', 'like', '%' . $filter['search_terms'] . '%');
+                  });
+            });
+        })->orderBy('created_at', 'desc');
+
 
         $query->when(isset($filter['type']), function ($query) use ($filter) {
             switch ($filter['type']) {
