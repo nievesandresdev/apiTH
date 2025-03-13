@@ -1,0 +1,47 @@
+{
+    "function_expected_parameter": {
+      "{{ language_code }}": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The translated text."
+          },
+          "description": {
+            "type": "string",
+            "description": "The translated text."
+          },
+          "include_experience": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "The translated text."
+            }
+          },
+          "not_include_experience": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "The translated text."
+            }
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "The translated text."
+            }
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "include_experience",
+          "not_include_experience",
+          "recommendations"
+        ]
+      }
+    },
+    "system_expected_parameter": "\n    \"{{ language_code }}\": {\n        \"title\": <text>,\n        \"description\": <text>,\n        \"include_experience\": [<text>],\n        \"not_include_experience\": [<text>],\n        \"recommendations\": [<text>]\n    }"
+  }
+  

@@ -1,0 +1,53 @@
+{
+    "name": "translation",
+    "description": "Translate webapp experience content into multiple languages, including arrays of strings.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "{{language_key}}": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Translated experience title."
+            },
+            "description": {
+              "type": "string",
+              "description": "Translated detailed description of the experience."
+            },
+            "include_experience": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Translated text indicating what's included in the experience."
+              }
+            },
+            "not_include_experience": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Translated text indicating what's not included in the experience."
+              }
+            },
+            "recommendations": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Translated recommendations related to the experience."
+              }
+            }
+          },
+          "required": [
+            "title",
+            "description",
+            "include_experience",
+            "not_include_experience",
+            "recommendations"
+          ]
+        }
+      },
+      "required": [
+        "{{ expected_languages_keys }}"
+      ]
+    }
+  }

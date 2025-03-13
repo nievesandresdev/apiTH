@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\File;
 
 use App\Utils\Templates\Translation\PathTemplate;
 
+use OpenAI\Client;
+use OpenAI;
+
 class TranslateService {
 
     function __construct()
@@ -127,7 +130,6 @@ class TranslateService {
             $errorTranslate = null;
             $inputTranslation = $this->loadInputTranslation($payload);
             if (!$inputTranslation) null;
-
             $outputTranslationChagpt = $this->requestChatgpt($inputTranslation);
             if (isset($outputTranslationChagpt['error'])) {
                    $errorTranslate = $outputTranslationChagpt['body'];
@@ -156,7 +158,7 @@ class TranslateService {
 
             $function_call = ['name' => 'translation'];
             $data = [
-                'model' => 'gpt-3.5-turbo',
+                'model' => 'gpt-35-turbo',
                 'messages' => $messageContext,
                 'functions' => $functionContext,
                 'function_call' => $function_call,
@@ -175,7 +177,23 @@ class TranslateService {
 
     public function requestChatgpt ($input) {
         try {
+            $client = OpenAI::factory()
+            ->withBaseUri('https://thehoster-test-openai.openai.azure.com/openai/deployments/gpt-35-turbo/')
+            ->withApiKey(config('app.azure_openia_key'))
+            ->withHttpHeader('api-key', config('app.azure_openia_key'))
+            ->withQueryParam('api-version', '2024-02-15-preview')
+            ->make();
+            $response = $client->chat()->create($input);
+            return $response;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 
+    public function requestChatgptOld ($input) {
+        try {
+
+            // $client = OpenAI::client(env('OPENAI_API_KEY'));
             $headers = [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . config('app.openia_key'),
@@ -191,7 +209,6 @@ class TranslateService {
     // VALIDATION OUTPUT
 
     public function validate ($input, $output, $attempts = 0) {
-
         $status = null;
         $valid = null;
         $errorValidate = null;
@@ -203,7 +220,6 @@ class TranslateService {
 
             $inputValidationTranslation = $this->loadInputValidationTranslate($input, $output);
             if (!$inputValidationTranslation) null;
-
             $outputValidationTranslationChagpt = $this->requestChatgpt($inputValidationTranslation);
             if (isset($outputValidationTranslationChagpt['error'])) {
                 $errorValidate = $outputValidationTranslationChagpt['body'];
@@ -211,7 +227,6 @@ class TranslateService {
 
             $arguments = $outputValidationTranslationChagpt['choices'][0]['message']['function_call']['arguments'] ?? [];
             $dataValidation = $arguments ? json_decode($arguments, true) : [];
-
             $valid = isset($dataValidation['valid']) && gettype($dataValidation['valid']) === 'boolean' ? $dataValidation['valid'] : null;
             
             if ($valid  === true) {
@@ -412,9 +427,7 @@ class TranslateService {
         try {
 
             ['dirTemplate' => $dirTemplate, 'context' => $context, 'languageCodes' => $languageCodes] = $payload;
-
             $messageContext = [];
-
             if (array_key_exists('system_expected_parameter', $baseContext)) {
                 $messageContext['system_expected_parameters'] = $this->generateSystemExpectedParameters(
                     $languageCodes,

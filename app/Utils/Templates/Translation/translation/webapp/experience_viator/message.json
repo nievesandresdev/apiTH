@@ -1,0 +1,20 @@
+[
+    {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "Translate the following hotel experience webapp content, including arrays of strings, into multiple languages, structured exactly as follows:\n\n{\n  {{ system_expected_parameters }}\n}"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n    \"title\": \"{{ title }}\",\n    \"description\": \"{{ description }}\",\n    \"include_experience\": {{ include_experience }},\n    \"not_include_experience\": {{ not_include_experience }},\n    \"recommendations\": {{ recommendations }}\n}"
+        }
+      ]
+    }
+  ]
