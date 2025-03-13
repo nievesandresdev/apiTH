@@ -113,9 +113,6 @@ jobs:
             echo "PASSPORT_PUBLIC_KEY=\"${{ secrets.PASSPORT_PUBLIC_KEY_MAIN }}\"" >> .env
 
             echo "AZURE_OPENAI_API_KEY=\"${{ secrets.AZURE_OPENAI_API_KEY_MAIN }}\"" >> .env
-            echo "AZURE_OPENAI_BASE_URI=\"${{ secrets.AZURE_OPENAI_BASE_URI_MAIN }}\"" >> .env
-            echo "AZURE_OPENAI_DEPLOYMENT=\"${{ secrets.AZURE_OPENAI_DEPLOYMENT_MAIN }}\"" >> .env
-            echo "AZURE_OPENAI_VERSION=\"${{ secrets.AZURE_OPENAI_VERSION_MAIN }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
           else
@@ -181,9 +178,6 @@ jobs:
             echo "PASSPORT_PUBLIC_KEY=\"${{ secrets.PASSPORT_PUBLIC_KEY_TEST }}\"" >> .env
 
             echo "AZURE_OPENAI_API_KEY=\"${{ secrets.AZURE_OPENAI_API_KEY_TEST }}\"" >> .env
-            echo "AZURE_OPENAI_BASE_URI=\"${{ secrets.AZURE_OPENAI_BASE_URI_TEST }}\"" >> .env
-            echo "AZURE_OPENAI_DEPLOYMENT=\"${{ secrets.AZURE_OPENAI_DEPLOYMENT_TEST }}\"" >> .env
-            echo "AZURE_OPENAI_VERSION=\"${{ secrets.AZURE_OPENAI_VERSION_TEST }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
           fi
