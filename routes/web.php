@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\UtilsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
-    return view('Mails.chats.test');
-});
+
+Route::get('/test', [UtilsController::class, 'test']);
+Route::get('/testEmailPostCheckout', [UtilsController::class, 'testEmailPostCheckout']);
+Route::get('/testPrepareYourArrival', [UtilsController::class, 'testPrepareYourArrival']);
+Route::get('/testEmailGeneral', [UtilsController::class, 'testEmailGeneral']);
+Route::get('/testEmailReferent', [UtilsController::class, 'testEmailReferent']);

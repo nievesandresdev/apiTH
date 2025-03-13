@@ -12,15 +12,10 @@ use App\Utils\Enums\EnumResponse;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use App\Services\MailService;
-use App\Mail\User\WelcomeUser;
-use App\Mail\Queries\NewFeedback;
-use App\Models\Guest;
-use App\Models\Stay;
-use App\Models\Query;
 use App\Models\User;
-use App\Mail\Chats\ChatEmail;
 use App\Services\ChatService;
-use Illuminate\Support\Facades\Mail;
+use App\Services\UtilityService;
+
 
 
 class UsersController extends Controller
@@ -32,6 +27,7 @@ class UsersController extends Controller
     protected $settings;
     protected $api_review_service;
     protected $chatService;
+    protected $utilityService;
 
 
     public function __construct(
@@ -41,7 +37,8 @@ class UsersController extends Controller
         QueryServices $serviceQuery,
         QuerySettingsServices $_QuerySettingsServices,
         ApiReviewServices $_api_review_service,
-        ChatService $_ChatService
+        ChatService $_ChatService,
+        UtilityService $_UtilityService,
     )
     {
         $this->userServices = $userServices;
@@ -51,6 +48,7 @@ class UsersController extends Controller
         $this->settings = $_QuerySettingsServices;
         $this->api_review_service = $_api_review_service;
         $this->chatService = $_ChatService;
+        $this->utilityService = $_UtilityService;
     }
 
     public function getUsers()
@@ -131,11 +129,6 @@ class UsersController extends Controller
                 'email.unique' => 'El correo electrónico ya está en uso',
             ]);
 
-            /* return bodyResponseRequest(EnumResponse::SUCCESS, [
-                'message' => 'Usuario actualizado con éxito',
-                'user' => request()->all()
-            ]); */
-
             $user = $this->userServices->updateUserHoster(request(),request()->user_id);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
@@ -199,7 +192,7 @@ class UsersController extends Controller
         try {
             $email = request()->email;
             $id = request()->userId;
-            $query = User::where('email',$email);
+            $query = User::where('email',$email)->where('del',0);
 
 
             if($id){
@@ -246,7 +239,7 @@ class UsersController extends Controller
             $user = $this->userServices->deleteUserHoster(request()->user_id);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
-                'message' => 'Usuario eliminado con éxito',
+                'message' => 'Usuario eliminado',
                 'user' => $user
             ]);
         } catch (\Exception $e) {
@@ -303,80 +296,18 @@ class UsersController extends Controller
         }
     }
 
-
-    public function testMail(Request $request){
+    public function checkCurrentPassword(Request $request)
+    {
         try {
-            $url = config('app.hoster_url');
-            $hotel = $request->attributes->get('hotel');
-            $query = Query::find(245);
-            $guest = Guest::select('id','phone','email','name')->where('id',171)->first();
-            $stay = Stay::find(46);
-            $periodUrl = $query->period_id;
-            $urlQuery = config('app.hoster_url')."tablero-hoster/estancias/consultas/".$periodUrl."?selected=".$stay->id;
-            //url para atender chat $url/estancias/{stayId}/chat?g=guestId
-            $urlChat = config('app.hoster_url')."/estancias/".$stay->id."/chat?g=".$guest->id;
-            $user = User::findOrFail(1);
-
-            $checkinFormat = date('d/m/Y', strtotime($stay->check_in));
-            $checkoutFormat = date('d/m/Y', strtotime($stay->check_out));
-
-            $dates = "$checkinFormat - $checkoutFormat";
-            // Filtros para las notificaciones
-            $notificationFilters = [
-                'newChat' => true,
-            ];
-
-            // Obtener los usuarios filtrados
-
-            $queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFilters);
-            $unansweredLastMessageData = $this->chatService->unansweredMessagesData(54,'ToHoster',true);
-
-
-            // Verificar si hay usuarios
-            if ($queryUsers->isNotEmpty()) {
-                // Datos necesarios para el correo electrónico
-                //$unansweredMessagesData = []; // Proporciona los datos reales aquí
-
-                // Enviar correo electrónico a cada usuario
-                $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
-                /* $queryUsers->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
-                    //$emailArray [] = $user->name;
-                    $email = $user->email;
-                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), 'francisco20990@gmail.com');
-                }); */
-            }
-            $this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
-            Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
-            $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,2337, 'test'), 'francisco20990@gmail.com');
+            $user = $this->userServices->checkCurrentPassword($request);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
-                'message' => 'Correo enviado con éxito',
-                'data' => [
-                    'queryUsers' => $queryUsers,
-                    'unansweredLastMessageData' => $unansweredLastMessageData,
-                    //'emailArray' => $emailArray,
-                    //'isNotEmpty' => $$queryUsers->isNotEmpty()
-                    //'getUsersRoleNewMsg' => $getUsersRoleNewMsg,
-                ]
-            ]);
-            //$this->mailService->sendEmail(new ChatEmail('sss'), "francisco20990@gmail.com");
-            //$this->mailService->sendEmail(new WelcomeUser($user,$url,'12345',auth()->user()), "francisco20990@gmail.com");
-            //$this->mailService->sendEmail(new ChatEmail([],$url,'new'), 'francisco20990@gmail.com');
-            //Mail::to('francisco20990@gmail.com')->send(new NewFeedback($dates, $urlQuery, $hotel ,$query,$guest,$stay, 'new'));
-
-            return bodyResponseRequest(EnumResponse::SUCCESS, [
-                'message' => 'Correo enviado con éxito',
-                'data' => [
-                    'query' => $query,
-                    'guest' => $guest,
-                    'stay' => $stay,
-                    'hotel' => $hotel,
-                    'url' => $urlQuery,
-                ]
+                'valid' => $user['valid'],
+                'message' => $user['message'],
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [
-                'message22' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ],null,$e->getMessage());
         }
     }

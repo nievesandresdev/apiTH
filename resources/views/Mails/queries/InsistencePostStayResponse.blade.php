@@ -1,0 +1,1 @@
+<p>responde la consulta post-stay; url de accesso: {{$access_url}}</p>

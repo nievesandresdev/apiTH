@@ -13,6 +13,8 @@ use App\Mail\Test\TestMailer;
 use Illuminate\Http\Request;
 use App\Models\User;
 use SoapClient;
+use App\Jobs\TestJob;
+use Illuminate\Support\Facades\Log;
 
 class TestsController extends Controller
 {
@@ -212,7 +214,7 @@ public function updateWhatsAppProfile(Request $request)
 }
 public function sendEmail(Request $request)
 {
-    $email = 'xavierclasesit@gmail.com';
+    $email = $request->email;
     $sendMail = Mail::to($email)->send(new TestMailer());
 
     return response()->json([
@@ -220,4 +222,15 @@ public function sendEmail(Request $request)
         'msg' => $sendMail
         ]);
 }
+    public function testJob()
+    {
+        // Mensaje antes de ejecutar el job
+        Log::info('Preparando para ejecutar TestJob.');
+
+        // Despachar el job
+        TestJob::dispatch();
+
+        return response()->json(['message' => 'TestJob dispatchado. Revisa los logs y la consola.']);
+    }
+    
 }

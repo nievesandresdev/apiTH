@@ -130,7 +130,7 @@ class QueryController extends Controller
             //     if(!$settings->$periodKey)  return bodyResponseRequest(EnumResponse::ACCEPTED, false);
             // }
             $request->merge(['period' => $currenPeriod]);
-            $request->merge(['visited' => false]);
+            $request->merge(['answered' => false]);
 
             $query = $this->service->findByParams($request);
             

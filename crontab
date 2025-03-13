@@ -1,0 +1,10 @@
+0 4 * * * /usr/local/bin/php /var/www/html/artisan freetrealcommand >> /var/log/cron.log 2>&1 #diariamente a las 4 am / migrado de admin
+#0 5 * * * /usr/local/bin/php /var/www/html/artisan arrivalhotel >> /var/log/cron.log 2>&1 #diariamente 5 am / DEPRECADO
+#5 5 * * * /usr/local/bin/php /var/www/html/artisan pre-out-hotel >> /var/log/cron.log 2>&1 #diariamente 5:05 am / DEPRECADO
+#10 5 * * * /usr/local/bin/php /var/www/html/artisan welcomecreatestay >> /var/log/cron.log 2>&1 #diariamente 5:10 am / DEPRECADO
+0 5 * * * /usr/local/bin/php /var/www/html/artisan sendqueriescommand >> /var/log/cron.log 2>&1 #diariamente 5 am / migrado / de admin
+* * * * * /usr/local/bin/php /var/www/html/artisan app:periodicity-chat >> /var/log/cron.log 2>&1 #cada minuto
+#0 12 * * * /usr/local/bin/php /var/www/html/artisan backup:hoster >> /var/log/cron.log 2>&1 #diariamente 12 pm backups
+0 * * * * /usr/local/bin/php /var/www/html/artisan send-post-stay-emails >> /var/log/cron.log 2>&1 #Cada hora
+2 * * * * /usr/local/bin/php /var/www/html/artisan send-pre-stay-email >> /var/log/cron.log 2>&1 #Cada hora en el segundo minuto pre-stay
+

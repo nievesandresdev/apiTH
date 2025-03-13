@@ -10,27 +10,11 @@ use App\Models\Stay;
 
 class PeriodicityChat extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'app:periodicity-chat';
+    protected $description = 'Chat y feedback pendientes según periodicidad de los usuarios de los hoteles.';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'chat y feedback pendientes segun periodicidad de los usuarios de los hoteles';
-
-    /**
-     * Execute the console command.
-     */
-
-     public function handle()
+    public function handle()
     {
-        //Log::info('Inicio de la tarea programada app:periodicity-chat');
         $filters = ['periods' => ['in-stay', 'pre-stay']];
 
         try {
@@ -38,31 +22,29 @@ class PeriodicityChat extends Command
             $limit = $filters['limit'] ?? 10;
             $offset = $filters['offset'] ?? 0;
 
-            // Definimos las relaciones y los campos a seleccionar
             $query = Stay::with([
                 'hotel.user' => function ($q) {
                     $q->where('del', 0)
-                    ->where('status', 1)
-                    ->whereNotNull('periodicity_chat') // Solo usuarios con periodicity_chat no nulo
-                    ->whereNotNull('periodicity_stay'); // Solo usuarios con periodicity_stay no nulo
+                        ->where('status', 1)
+                        ->whereNotNull('periodicity_chat')
+                        ->whereNotNull('periodicity_stay');
                 },
-                // Relación para traer queries respondidas pero no atendidas
                 'queries' => function ($q) {
-                    $q->where('answered', 1)   // Respondida por el huésped
-                    ->where('attended', 0);  // No atendida por el hoster
+                    $q->where('answered', 1)
+                        ->where('attended', 0);
                 },
             ])
             ->whereHas('chats', function ($q) {
                 $q->where('pending', 1)
-                ->with(['messages' => function ($q) {
-                    $q->where('by', 'Guest')
-                        ->orderBy('created_at', 'desc')
-                        ->limit(1); // Traemos solo el último mensaje
-                }]);
+                    ->with(['messages' => function ($q) {
+                        $q->where('by', 'Guest')
+                            ->orderBy('created_at', 'desc')
+                            ->limit(1);
+                    }]);
             })
             ->orWhereHas('queries', function ($q) {
                 $q->where('answered', 1)
-                ->where('attended', 0);  // No atendida por el hoster
+                    ->where('attended', 0);
             })
             ->select([
                 'stays.id',
@@ -74,11 +56,10 @@ class PeriodicityChat extends Command
                 DB::raw("CASE
                             WHEN '$now' < DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) THEN 'pre-stay'
                             WHEN '$now' >= DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) AND '$now' < stays.check_out THEN 'in-stay'
-                            WHEN '$now' >= stays.check_out AND '$now' THEN 'post-stay'
+                            WHEN '$now' >= stays.check_out THEN 'post-stay'
                         END as period")
             ]);
 
-            // Filtramos por periodo
             if (!empty($filters['periods'])) {
                 $query->havingRaw("period IN ('" . implode("','", $filters['periods']) . "')");
             }
@@ -88,36 +69,41 @@ class PeriodicityChat extends Command
                 ->limit($limit)
                 ->get();
 
-            // Procesamos los resultados
-            $result = $stays->map(function ($stay) use ($now) {
-                // Log::info('$stay '. json_encode($stay));
-                $firstPendingChat = $stay->chats()->where('pending',1)->first();
-                $firstguestIdChat = $firstPendingChat->guest_id ?? null;
-                // Log::info('firstguestIdChat '. $firstguestIdChat);
-                $firstPendingQuery = $stay->queries()->where('answered', 1)->where('attended', 0)->first();
-                $firstguestIdQuery = $firstPendingQuery->guest_id ?? null;
-                // Log::info('firstguestIdQuery '. $firstguestIdQuery);
-                $stayData = [
-                    'stay_id' => $stay->id,
-                    'room' => $stay->room,
-                    'hotel_id' => $stay->hotel_id,
-                    'period' => $stay->period,
-                    'total_users' => $stay->hotel->user->count(),
-                    'total_chats_pending' => $stay->chats->count(),
-                    'total_queries_pending' => $stay->queries->count(), // Total de queries pendientes
-                    'users' => $stay->hotel->user->map(function ($user) use ($now, $stay, $firstguestIdChat, $firstguestIdQuery) {
+            $stays->each(function ($stay) use ($now) {
+                $stay->hotel->user->each(function ($user) use ($stay, $now) {
+                    $notifications = is_string($user->notifications)
+                        ? json_decode($user->notifications, true) ?? []
+                        : ($user->notifications ?? []);
 
-                        // Verificar periodicity_chat con el último mensaje
-                        $lastChatMessage = $stay->chats->flatMap->messages->first();
-                        $lastMessageTime = $lastChatMessage ? Carbon::parse($lastChatMessage->created_at) : null;
+                    $chatLastNotified = is_string($user->chat_last_notified_at)
+                        ? json_decode($user->chat_last_notified_at, true) ?? []
+                        : ($user->chat_last_notified_at ?? []);
 
-                        // Validar si ha pasado el tiempo suficiente desde la última notificación de chat
-                        if ($lastMessageTime && $lastMessageTime->diffInMinutes($now) >= $user->periodicity_chat) {
-                            // Verificamos si el usuario ha sido notificado recientemente
-                            $lastNotified = $user->chat_last_notified_at ? Carbon::parse($user->chat_last_notified_at) : null;
+                    $feedbackLastNotified = is_string($user->feedback_last_notified_at)
+                        ? json_decode($user->feedback_last_notified_at, true) ?? []
+                        : ($user->feedback_last_notified_at ?? []);
 
-                            if (!$lastNotified || $lastNotified->diffInMinutes($now) >= $user->periodicity_chat) {
-                                // Enviar pusher para chats pendientes
+                    $periodicityChat = is_string($user->periodicity_chat)
+                        ? json_decode($user->periodicity_chat, true) ?? []
+                        : ($user->periodicity_chat ?? []);
+
+                    $periodicityFeedback = is_string($user->periodicity_stay)
+                        ? json_decode($user->periodicity_stay, true) ?? []
+                        : ($user->periodicity_stay ?? []);
+
+                    // Verificar notificaciones de chats
+                    foreach (['pendingChat10', 'pendingChat30'] as $type) {
+
+                        // Push notification
+                        if (($notifications['push'][$type] ?? false) && isset($periodicityChat[$type])) {
+                            $lastMessage = $stay->chats->flatMap->messages->first();
+                            $lastMessageTime = $lastMessage ? Carbon::parse($lastMessage->created_at) : null;
+
+                            if (
+                                $lastMessageTime &&
+                                $lastMessageTime->diffInMinutes($now) >= $periodicityChat[$type] &&
+                                (!isset($chatLastNotified[$type]) || Carbon::parse($chatLastNotified[$type])->diffInMinutes($now) >= $periodicityChat[$type])
+                            ) {
 
                                 sendEventPusher(
                                     'private-notify-unread-msg-hotel.' . $stay->hotel_id,
@@ -125,7 +111,7 @@ class PeriodicityChat extends Command
                                     [
                                         'user_id' => $user->id,
                                         'showLoadPage' => false,
-                                        'guest_id' => $firstguestIdChat,
+                                        'guest_id' => $stay->chats->first()?->guest_id ?? null,
                                         'stay_id' => $stay->id,
                                         'room' => $stay->room,
                                         'guest' => true,
@@ -137,225 +123,45 @@ class PeriodicityChat extends Command
                                     ]
                                 );
 
-                                // Actualizamos el campo chat_last_notified_at del usuario
-                                $user->update(['chat_last_notified_at' => $now]);
+                                $chatLastNotified[$type] = $now->toDateTimeString();
+                                $user->update(['chat_last_notified_at' => $chatLastNotified]);
 
-                                // usuario para log
-                                return [
-                                    'id' => $user->id,
-                                    'name' => $user->name,
-                                    'email' => $user->email,
-                                    'periodicity_chat' => $user->periodicity_chat,
-                                    'chat_last_notified_at' => $now,
-                                ];
+
                             }
                         }
 
-                        // Verificar periodicity_stay para enviar notificación de feedback
-                        $lastFeedbackNotified = $user->feedback_last_notified_at ? Carbon::parse($user->feedback_last_notified_at) : null;
 
-                        // Si nunca ha sido notificado sobre feedback o ha pasado suficiente tiempo según periodicity_stay
-                        if (!$lastFeedbackNotified || $lastFeedbackNotified->diffInMinutes($now) >= $user->periodicity_stay) {
-                            // Enviar pusher para feedback pendiente
-                            sendEventPusher('notify-send-query.' . $stay->hotel_id, 'App\Events\NotifySendQueryEvent',
-                                [
+                    }
+
+                    // Verificar notificaciones de feedback
+                    foreach (['pendingFeedback30', 'pendingFeedback60'] as $type) {
+                        // Push notification
+                        if (($notifications['push'][$type] ?? false) && isset($periodicityFeedback[$type])) {
+                            if (
+                                !isset($feedbackLastNotified[$type]) ||
+                                Carbon::parse($feedbackLastNotified[$type])->diffInMinutes($now) >= $periodicityFeedback[$type]
+                            ) {
+                                sendEventPusher('notify-send-query.' . $stay->hotel_id, 'App\Events\NotifySendQueryEvent', [
                                     "userId" => $user->id,
                                     "stayId" => $stay->id,
-                                    "guestId" => $firstguestIdQuery,
+                                    "guestId" => $stay->queries->first()?->guest_id ?? null,
                                     "title" => "Feedback Pendiente",
                                     "text" => "Tienes un Feedback pendiente",
                                     "concept" => "pending",
-                                    "countPendingQueries" => 1
-                                ]
-                            );
+                                    "countPendingQueries" => 1,
+                                ]);
 
-                            // Actualizamos el campo feedback_last_notified_at del usuario
-                            $user->update(['feedback_last_notified_at' => $now]);
+                                $feedbackLastNotified[$type] = $now->toDateTimeString();
+                                $user->update(['feedback_last_notified_at' => $feedbackLastNotified]);
+                            }
                         }
-
-                        return null; // No enviar si no se cumplen las condiciones
-                    })->filter(),
-
-                    'pending_chats' => $stay->chats->map(function ($chat) {
-                        $lastMessage = $chat->messages->first(); // Obtenemos el último mensaje enviado por 'Guest'
-                        return [
-                            'chat_id' => $chat->id,
-                            'last_message' => $lastMessage ? $lastMessage->text : null, // Verificamos si hay mensaje
-                            'last_message_by' => $lastMessage ? $lastMessage->by : null,
-                            'last_message_status' => $lastMessage ? $lastMessage->status : null,
-                            'LAST_MESSAGE_DATE' => $lastMessage->created_at ?? null,
-                        ];
-                    }),
-
-                    'pending_queries' => $stay->queries->map(function ($query) {
-                        return [
-                            'query_id' => $query->id,
-                            'comment' => $query->comment,
-                            'answered' => $query->answered,
-                            'attended' => $query->attended,
-                            'responded_at' => $query->responded_at,
-                        ];
-                    }),
-                ];
-
-                return $stayData;
+                    }
+                });
             });
 
-            // Log
-            Log::info('Usuarios de Hoteles y Chats Pendientes con Último Mensaje y Queries: ' . json_encode([
-                'stays' => $result,
-                'total_count' => count($stays)
-            ], JSON_PRETTY_PRINT));
-
+            // Log::info('Finalizado PeriodicityChat con éxito.');
         } catch (\Exception $e) {
             Log::error('Error al obtener los usuarios de los hoteles y chats/queries pendientes', ['error' => $e->getMessage()]);
         }
     }
-
-public function handle2()
-    {
-        $filters = ['periods' => ['in-stay', 'pre-stay']];
-
-        try {
-            $now = Carbon::now();
-            $limit = $filters['limit'] ?? 10;
-            $offset = $filters['offset'] ?? 0;
-
-            $query = Stay::with([
-                /* 'chats' => function ($q) {
-                    $q->where('pending', 1)
-                      ->with(['messages' => function ($q) {
-                          $q->where('by', 'Guest')
-                            ->orderBy('created_at', 'desc')
-                            ->limit(1); // Traemos solo el último mensaje
-                      }]);
-                }, */
-                'hotel.user' => function ($q) {
-                    $q->where('del', 0)
-                      ->where('status', 1)
-                      ->whereNotNull('periodicity_chat'); // Solo usuarios con periodicity_chat no nulo
-                },
-            ])
-            ->whereHas('chats', function ($q) {
-                $q->where('pending', 1)
-                  ->with(['messages' => function ($q) {
-                      $q->where('by', 'Guest')
-                        ->orderBy('created_at', 'desc')
-                        ->limit(1); // Traemos solo el último mensaje
-                  }]);
-            })
-            ->select([
-                'stays.id',
-                'stays.updated_at',
-                'stays.room',
-                'stays.check_out',
-                'stays.check_in',
-                'stays.hotel_id',
-                DB::raw("CASE
-                            WHEN '$now' < DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) THEN 'pre-stay'
-                            WHEN '$now' >= DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) AND '$now' < stays.check_out THEN 'in-stay'
-                            WHEN '$now' >= stays.check_out AND '$now' THEN 'post-stay'
-                         END as period")
-            ]);
-
-            // Filtramos por periodo
-            if (!empty($filters['periods'])) {
-                $query->havingRaw("period IN ('" . implode("','", $filters['periods']) . "')");
-            }
-
-            $stays = $query->orderBy('stays.updated_at', 'DESC')
-                ->offset($offset)
-                ->limit($limit)
-                ->get();
-
-            $result = $stays->map(function ($stay) use ($now) {
-                $stayData = [
-                    'stay_id' => $stay->id,
-                    'room' => $stay->room,
-                    'hotel_id' => $stay->hotel_id,
-                    'period' => $stay->period,
-                    'total_users' => $stay->hotel->user->count(),
-                    'total_chats_pending' => $stay->chats->count(),
-                    'users' => $stay->hotel->user->map(function ($user) use ($now, $stay) {
-                        // Verificar periodicity_chat con el ultimo mensaje
-                        $lastChatMessage = $stay->chats->flatMap->messages->first();
-                        $lastMessageTime = $lastChatMessage ? Carbon::parse($lastChatMessage->created_at) : null;
-
-                        // Validar si ha pasado el tiempo suficiente desde la última notificación
-                        if ($lastMessageTime && $lastMessageTime->diffInMinutes($now) >= $user->periodicity_chat) {
-                            // Verificamos si el usuario ha sido notificado recientemente
-                            $lastNotified = $user->chat_last_notified_at ? Carbon::parse($user->chat_last_notified_at) : null;
-
-                            // Verificamos si el usuario ha sido notificado recientemente
-                            // Condiciones para enviar una nueva notificación:
-                            // 1. Si nunca ha sido notigicado antes ($lastNotified es nulo).
-                            // 2. Si ha sido notigicado antes, verificamos que el tiempo transcurrido desde la última notificación
-                            //    sea mayor o iual a lo especificado en 'periodicity_chat'.
-                            if (!$lastNotified || $lastNotified->diffInMinutes($now) >= $user->periodicity_chat) {
-                                // Enviar pusher
-                                sendEventPusher(
-                                    'private-notify-unread-msg-hotel.' . $stay->hotel_id,
-                                    'App\Events\NotifyUnreadMsg',
-                                    [
-                                        'user_id' => $user->id,
-                                        'showLoadPage' => false,
-                                        'guest_id' => $stay->guest_id ?? null,
-                                        'stay_id' => $stay->id,
-                                        'room' => $stay->room,
-                                        'guest' => true,
-                                        'text' => 'Tienes un chat sin responder',
-                                        'automatic' => false,
-                                        'add' => false,
-                                        'pending' => false,
-                                        'concept' => "pending",
-                                    ]
-                                );
-
-                                // Actualizamos el campo chat_last_notified_at del usuario
-                                $user->update(['chat_last_notified_at' => $now]);
-
-                                // usuario para log
-                                return [
-                                    'id' => $user->id,
-                                    'name' => $user->name,
-                                    'email' => $user->email,
-                                    'periodicity_chat' => $user->periodicity_chat,
-                                    'chat_last_notified_at' => $now,
-                                ];
-                            }
-                        }
-
-                        return null; // No enviar
-                    })->filter(),
-
-                    'pending_chats' => $stay->chats->map(function ($chat) {
-                        $lastMessage = $chat->messages->first(); // Obtenemos el último mensaje enviado por 'Guest'
-                        return [
-                            'chat_id' => $chat->id,
-                            'last_message' => $lastMessage ? $lastMessage->text : null, // Verificamos si hay mensaje
-                            'last_message_by' => $lastMessage ? $lastMessage->by : null,
-                            'last_message_status' => $lastMessage ? $lastMessage->status : null,
-                            'LAST_MESSAGE_DATE' => $lastMessage->created_at ?? null,
-                        ];
-                    }),
-                ];
-
-                return $stayData;
-            });
-
-            // Log
-            Log::info('Usuarios de Hoteles y Chats Pendientes con Último Mensaje: ' . json_encode([
-                'stays' => $result,
-                'total_count' => count($stays)
-            ], JSON_PRETTY_PRINT));
-
-        } catch (\Exception $e) {
-            Log::error('Error al obtener los usuarios de los hoteles y chats pendientes', ['error' => $e->getMessage()]);
-        }
-    }
-
-
-
-
-
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\CheckinController;
+use App\Http\Controllers\Api\Hoster\CheckinHosterController;
 use App\Http\Controllers\Api\Hoster\StayHosterController;
 use App\Http\Controllers\Api\Hoster\StaySessionsHosterController;
 use Illuminate\Support\Facades\Route;
@@ -13,9 +15,11 @@ Route::group(['prefix' => 'stay'], function () {
     Route::post('/existingStayThenMatchAndInvite', [StayController::class, 'existingStayThenMatchAndInvite']);
     Route::post('/existingThenMatchOrSave', [StayController::class, 'existingThenMatchOrSave']);
     Route::get('/getGuestsAndSortByCurrentguestIdApi/{stayId}/{guestId}', [StayController::class, 'getGuestsAndSortByCurrentguestId']);
+    Route::get('/getGuestsAndSortByAccess/{stayId}', [StayController::class, 'getGuestsAndSortByAccess']);
     Route::post('/updateStayAndGuests', [StayController::class, 'updateStayAndGuests']);
     Route::post('/deleteGuestOfStay/{stayId}/{guestId}', [StayController::class, 'deleteGuestOfStay']);
-
+    Route::get('/findbyId/{stayId}', [StayController::class, 'findbyId']);
+    
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/getAllByHotel', [StayHosterController::class, 'getAllByHotel']);
         Route::get('/statisticsByHotel', [StayHosterController::class, 'statisticsByHotel']);
@@ -37,7 +41,25 @@ Route::group(['prefix' => 'stay'], function () {
         Route::post('/deleteSession', [StaySessionsHosterController::class, 'deleteSession']);
         Route::post('/deleteSessionWithApiKey', [StaySessionsHosterController::class, 'deleteSessionWithApiKey']);
         Route::post('/deleteSessionByHotelAndEmail', [StaySessionsHosterController::class, 'deleteSessionByHotelAndEmail']);
+
+        Route::group(['prefix' => 'checkin'], function () {
+
+            Route::post('/updateGeneralSettings', [CheckinHosterController::class, 'updateGeneralSettings']);
+            Route::get('/getGeneralSettings', [CheckinHosterController::class, 'getGeneralSettings']);
+            Route::post('/updateFormSettings', [CheckinHosterController::class, 'updateFormSettings']);
+            Route::get('/getFormSettings', [CheckinHosterController::class, 'getFormSettings']);
+            Route::post('/updateToggleShowCheckinHotel', [CheckinHosterController::class, 'updateToggleShowCheckinHotel']);
+            Route::get('/getToggleShowCheckinHotel', [CheckinHosterController::class, 'getToggleShowCheckinHotel']);
+            Route::get('/getGuestsForTabsCheckinStay', [CheckinHosterController::class, 'getGuestsForTabsCheckinStay']);
+        });
     });
+
+    Route::group(['prefix' => 'checkin'], function () {
+
+        // Route::post('/updateGeneralSettings', [CheckinHosterController::class, 'updateGeneralSettings']);
+        Route::get('/getAllSettings', [CheckinController::class, 'getAllSettings']);
+    });
+    
 });
 
 

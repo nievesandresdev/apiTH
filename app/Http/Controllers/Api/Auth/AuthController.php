@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Http\RedirectResponse;
 use App\Utils\Enums\EnumResponse;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -73,16 +72,6 @@ class AuthController extends Controller
         // Obtener el usuario autenticado
         $authenticatedUser = Auth::guard('web')->user();
 
-         /* // Verificar si el usuario tiene status = 1
-         if ($authenticatedUser->status == 0) {
-            return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Su cuenta ha sido inactivada. Solicita acceso a tu responsable o superior para poder entrar.']);
-        }
-
-        //verify if del = 1
-        if ($authenticatedUser->del == 1) {
-            return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Su cuenta ha sido eliminada. Solicita acceso a tu responsable o superior para poder entrar.']);
-        } */
-
         // Crear el token de acceso
         $token = $authenticatedUser->createToken('appToken')->accessToken;
 
@@ -113,12 +102,7 @@ class AuthController extends Controller
     }
 
 
-   /*  public function getUsers(Request $request)
-    {
-        return response()->json($request->user()->load('profile'));
-    } */
-
-    public function sendResetLinkEmail(Request $request): RedirectResponse
+    public function sendResetLinkEmail(Request $request)
     {
 
         $request->validate([

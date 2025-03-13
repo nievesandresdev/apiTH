@@ -45,6 +45,7 @@ class HotelBasicDataResource extends JsonResource
             "subdomain"=> $this->subdomain,
             "type"=> $this->type,
             "zone"=> $this->zone,
+            "city_id"=> $this->city_id,
             "image"=> $this->image,
             "del" => $this->del,
             "subscribed"=> $this->subscription_active ? $is_subscribed : false,

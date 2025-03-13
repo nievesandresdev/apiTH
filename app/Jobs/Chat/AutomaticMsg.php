@@ -46,13 +46,13 @@ class AutomaticMsg implements ShouldQueue
      */
     public function handle(ChatHosterServices $_ChatHosterServices)
     {
-        Log::info('Automatic MSG $chat_id '.json_encode($this->chat_id));
+        /* Log::info('Automatic MSG $chat_id '.json_encode($this->chat_id)); */
         $this->chatHosterServices = $_ChatHosterServices;
         $message = ChatMessage::with('chat')->find($this->msg_id);
 
         $explode = explode("send-by", $this->guestId);
         $guestId = $explode[1];
-        
+
         if($message->chat->pending){
             $chatMessage = new ChatMessage([
                 'chat_id' => $this->chat_id,
@@ -61,11 +61,11 @@ class AutomaticMsg implements ShouldQueue
                 'by' => 'Hoster',
                 'automatic' => true
             ]);
-            
+
             $hotel = Hotel::find($this->hotel_id);
             $msg = $hotel->chatMessages()->save($chatMessage);
             $msg->load('messageable');
-            
+
             $countUnreadMsgsByGuest = $this->chatHosterServices->countUnreadMsgsByGuest($this->chat_id);
             sendEventPusher('private-update-chat.' . $guestId, 'App\Events\UpdateChatEvent', [
                 'message' => $msg,

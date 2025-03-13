@@ -1,114 +1,215 @@
-{{-- <p style="color: red">
-    {!! $msg !!}
-</p> --}}
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
+    <title>Bienvenido a Thehoster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <title>Document</title>
-    {{-- app.css --}}
     <style>
 
-        /* Media queries para ajustar la imagen de fondo en dispositivos móviles */
-        @media only screen and (max-width: 768px) {
-            body {
-                background-image: url('{{ asset("mails/fondomobile.png") }}');
-            }
+        body {
+            font-family: "Roboto", sans-serif;
         }
 
-        /* Media queries para ajustar la imagen de fondo en dispositivos más pequeños */
+        .hidden-responsive {
+            display: none;
+        }
+
+        .review-label {
+            white-space: nowrap;
+            font-size: 18px;
+            color: #A0A0A0;
+            font-family: Roboto, sans-serif;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .response-button {
+            text-decoration: none;
+            background: #333;
+            color: #FFFF;
+            font-family: Roboto, sans-serif;
+            font-size: 18px;
+            padding-bottom: 12px;
+            border-radius: 6px;
+            display: inline-block;
+            width: 260px;
+            height: 30px;
+            text-align: center;
+            line-height: 44px;
+        }
+
+        @media only screen and (min-width: 601px) {
+            .container{
+                padding:0;
+            }
+        }
         @media only screen and (max-width: 600px) {
-          body {
-            background-size: contain;
-            height: 10%;
-          }
+
+            .container{
+                padding:0 24px;
+            }
+
+            /* body {
+                background-color: #ffffff !important;
+            } */
+
+            .response-button {
+                height: 30px; /* Altura reducida */
+                line-height: 34px; /* Centrado del texto */
+                font-size: 14px; /* Tamaño de fuente más pequeño */
+                padding: 10px 25px; /* Espaciado ajustado */
+            }
+            .responsive-table, .responsive-table-2 {
+                width: 100% !important;
+                display: block !important;
+            }
+            .responsive-table td, .responsive-table-2 td {
+                display: block !important;
+                width: 100% !important;
+                text-align: center !important;
+                padding: 10px 0 !important;
+            }
+            .responsive-table .text-content, .responsive-table-2 .text-content {
+                text-align: left !important;
+            }
+            .full-width-button {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                text-align: center !important;
+            }
+            .image-frame {
+                height: auto !important;
+            }
+
+            .hidden-responsive {
+                display: block;
+            }
+
+            .show-not-responsive {
+                display: none !important;
+            }
+
+            .responsive-section .show-not-responsive {
+                display: none !important;
+            }
+
+
+            .div-normal {
+                display: none;
+            }
+
+            .responsive-section {
+                margin: 0 !important; /* Elimina el margen en pantallas pequeñas */
+            }
+
+            .responsive-section table {
+                display: block;
+            }
+            .responsive-section td {
+                display: block;
+                width: 100%;
+                text-align: center;
+            }
+            .responsive-section td img {
+                margin-bottom: 20px;
+            }
         }
 
-        @media (max-width: 768px) {
-            .welcome-text {
-                padding-right: 3px;
-            }
-
-            .welcome-text h1 {
-                font-size: 25px;
-                margin-left: 0;
-            }
-
-            .footer-text {
-                font-size: 12px;
-            }
-
-            /* Ajustar margen superior en pantallas pequeñas */
-            .welcome-message {
-                margin-top: 3px;
-                padding-left: 16px;
-                padding-right: 16px;
-                font-size: 20px;
-            }
-        }
-      </style>
+    </style>
+    @include('components.mails.stayCheckDateStyles')
+    @include('components.mails.facilitiesAndPlacesStyles')
+    @include('components.mails.experiencesStyles')
+    @include('components.mails.inviteGuestFromSaasStyles')
+    @include('components.mails.headerPostCheckinStyles')
 </head>
-<body style="background-image: url('{{ asset("mails/fondodesktop.png") }}'); background-size: cover; height: 100%; font-family: 'Montserrat'">
-    @if ($guest == true)
-        <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">¿Has probado la WebApp de {{ $hotel->name }}? Mira todo lo que hay para explorar!.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    @elseif ($create == true)
-        <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">Potencia tu experiencia de viaje, disfruta con nuestra WebApp.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    @else
-        <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">Todo lo que necesitas para optimizar tu estancia, en tu mano. Prueba nuestra WebApp.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    @endif
+<body style="margin: 0; padding: 0; background-color: #FAFAFA;">
+    <div style="background-color: #ffffff;max-width: 568px; margin: 0 auto;">
+        <div class="content-container" style="max-width: 568px; margin: 0 auto; padding: 0 12px; background-color: #ffff;">
+            <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
+                <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
+            </div>
+            @if($type == 'welcome')
+                @include('components.mails.headerWelcome',['guest_name' => $guest->name,'hotel_name' => $hotel->name,'after' => $after])
+            @endif
+            @if($type == 'postCheckin')
+                @include('components.mails.headerPostCheckin')
+            @endif
+            @if($type == 'checkout')
+                @include('components.mails.headerBye',['guest_name' => $guest->name])
+            @endif
 
-    <div class="welcome-text" style="height: 500px; padding: 16px; padding-right: 180px; text-align: right; font-family: 'Montserrat'">
-        @if ($guest == true)
-            <h1 style="color: #333; font-size: 48px; margin-left: -20px;">Échale un<br> vistazo a la <br> WebApp de<br> {{ $hotel->name }}</h1>
-        @elseif ($create == true)
-            <h1 style="color: #333; font-size: 48px; margin-left: -20px;">Potencia tu<br> experiencia de<br> viaje</h1>
-        @else
-            <h1 style="color: #333; font-size: 48px; margin-left: -20px;">Te damos la <br>bienvenida a la<br> Webapp</h1>
-        @endif
-    </div>
+            @if($type == 'inviteGuestFromSaas')
+                @include('components.mails.inviteGuestFromSaas',['urlWebapp' => $data['urlWebapp']])
+            @endif
+        </div>
+        <div class="container" style="max-width: 568px; margin: 0 auto;  padding: 0 12px; background-color: #ffffff;">
 
-    <!-- Nuevo texto -->
-    <div class="welcome-message" style="margin-top: 15px; margin-bottom: 35px; padding-left: 40px; padding-right: 40px; font-family: 'Montserrat'">
-        <p style="color: #333; font-size: 35px; font-style: normal; font-weight: 500; line-height: normal;">
-            {!! $msg !!}
-        </p>
-    </div>
+            @if($type == 'welcome' && isset($data['checkData']['title']))
+                @include('components.mails.stayCheckDate',[
+                    'title' => $data['checkData']['title'],
+                    'formatCheckin' => $data['checkData']['formatCheckin'],
+                    'formatCheckout' => $data['checkData']['formatCheckout'],
+                    'editUrl' => $data['checkData']['editStayUrl']
+                ])
+            @endif
 
-    <img src="{{ asset("mails/1.png") }}" alt="1" style="display: block; margin: 0 auto; padding: 10px;margin-top: 20px;">
-    <h1 style="font-size: 20px;text-align: center;font-family: Montserrat;font-weight: 600;margin-top: 32px;margin-bottom: 64px;">¿Qué encontrarás en nuestra WebApp?</h1>
-    <img src="{{ asset("mails/2.png") }}" alt="2" style="display: block; margin: 0 auto; padding: 10px">
-    <img src="{{ asset("mails/3.png") }}" alt="3" style="display: block; margin: 0 auto; padding: 10px">
-    <img src="{{ asset("mails/4.png") }}" alt="4" style="display: block; margin: 0 auto; padding: 10px">
-    <img src="{{ asset("mails/5.png") }}" alt="5" style="display: block; margin: 0 auto; padding: 10px">
+            @if($hotel->show_checkin_stay && ($type != 'inviteGuestFromSaas' && $beforeCheckin))
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                @include('components.mails.makeYourCheckLink', ['urlCheckin' => $data['urlCheckin']])
+            @endif
 
-    <!-- Texto y QR -->
-    <div style="text-align: center; padding: 20px;">
-        <p style="color: #333; font-size: 22px; font-family: 'Montserrat', sans-serif;">
-                Escanea el código QR o haz click en el botón para volver a la WebApp
-        </p>
-        <a href="{{ $link }}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #f5b700; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px;">Ingresar a WebApp</a>
-        <div>
-            <img src="{{ asset('mails/qr.png') }}" alt="QR Code" style="display: block; margin: 0 auto;">
+            {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
+            @if((($type == 'welcome' && !$beforeCheckin) || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
+                @if($data['queryData']['currentPeriod'] !== 'in-stay')
+                    <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                @endif
+                @include('components.mails.feedback',[
+                    'currentPeriod' => $data['queryData']['currentPeriod'],
+                    'webappLinkInbox' => $data['queryData']['webappLinkInbox'],
+                    'webappLinkInboxGoodFeel' => $data['queryData']['webappLinkInboxGoodFeel'],
+                    'after' => $after
+                ])
+            @endif
+
+
+            @if(count($data['places']) > 0 && $hotel->show_places)
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                @include('components.mails.places',['places' => $data['places'] , 'type' => $type])
+            @endif
+
+            {{-- @if(count($data['experiences']) > 0 && $hotel->show_experiences)
+                @include('components.mails.experiences', ['exp' => $data['experiences'], 'type' => $type])
+            @endif --}}
+
+            @if($type == 'welcome' || $type == 'postCheckin' || $type == 'inviteGuestFromSaas')
+                @if(count($data['facilities']) > 0 && $hotel->show_facilities)
+                    <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                    @include('components.mails.facilities', ['facilities' => $data['facilities']])
+                @endif
+            @endif
+
+            @if($type == 'welcome' || $type == 'postCheckin' || $type == 'inviteGuestFromSaas')
+                @if($hotel->chatSettings?->show_guest)
+                    <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                    @include('components.mails.chatLink',['webappChatLink' => $data['webappChatLink']])
+                @endif
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
+            @endif
+            @if($type == 'checkout')
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                @include('components.mails.qrHotel',['urlQr' => $data['urlQr']])
+            @endif
+
+
+
         </div>
     </div>
 
-    <!-- Pie de página -->
-    <div style="background-color: #333333; color: #F3F3F3; padding: 20px; text-align: center">
-        <span class="footer-text" style="font-size: 16px;font-style: normal; font-weight: 100; line-height: 1.1;">
-            Le informamos que ha recibido este correo electrónico en relación con su estancia en nuestro alojamiento, 
-            gestionada a través de una de nuestras plataforma de reservas en línea.  Conforme a lo establecido en la 
-            normativa de Protección de datos, le informamos que los datos facilitados son tratados por (Denominación social del hotel) 
-            en calidad de responsable del tratamiento de sus datos, con la finalidad de mejorar su experiencia como cliente y brindarle 
-            información relevante sobre nuestros servicios. Puede obtener más información consultando nuestra Política de Privacidad 
-            (enlace redirigiendo a Política de privacidad hoster-huésped o enlace para pop up de Política de privacidad hoster-huésped).
-        </span>
-    </div>
+    <!-- Footer -->
+    @include('components.mails.footerRed')
 </body>
-
-
-
 </html>

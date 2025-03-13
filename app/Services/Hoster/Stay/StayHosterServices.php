@@ -40,7 +40,7 @@ class StayHosterServices {
             $query = Stay::with([
                     'chats:id,stay_id,pending',
                     'chats.messages:by,chat_id,status',
-                    'guests:acronym,color,lang_web',
+                    'guests:acronym,color,lang_web,complete_checkin_data,id',
                 ])
                 ->select([
                     'stays.id',
@@ -55,10 +55,10 @@ class StayHosterServices {
                     DB::raw('(SELECT MAX(pending) FROM chats WHERE chats.stay_id = stays.id) as has_pending_chats'),
                     DB::raw('(SELECT COUNT(*) FROM chats WHERE chats.stay_id = stays.id) as has_chats'),
                     DB::raw("CASE 
-                                WHEN '$now' < DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) THEN 'pre-stay'
-                                WHEN '$now' >= DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) AND '$now' < stays.check_out THEN 'in-stay'
-                                WHEN '$now' >= stays.check_out AND '$now' THEN 'post-stay'
-                             END as period")
+                        WHEN '$now' < DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) THEN 'pre-stay'
+                        WHEN '$now' >= DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) AND '$now' < stays.check_out THEN 'in-stay'
+                        WHEN '$now' >= stays.check_out AND '$now' THEN 'post-stay'
+                        END as period")
                 ])
                 ->where('hotel_id', $hotel->id);
     
@@ -128,7 +128,13 @@ class StayHosterServices {
             }, []);
 
     
-            
+            $stays->each(function ($stay) {
+                // Verificamos si al menos uno de sus huéspedes tiene complete_checkin_data = 1
+                $atLeastOneCheckin = $stay->guests->contains(fn($guest) => $guest->complete_checkin_data == 1);
+                // Agregamos la propiedad al modelo (no se guarda en DB, sino en la instancia)
+                $stay->has_complete_checkin_data = $atLeastOneCheckin;
+            });
+
             return [
                 'stays' => $stays,
                 'total_count' => $totalCount,
@@ -323,7 +329,7 @@ class StayHosterServices {
     public function getDefaultGuestIdAndSessions($stayId) {
         try {
             $stay = Stay::with(['guests' => function($query){
-                $query->select('guests.id as guestId')->first();
+                $query->select('guests.id as guestId','guests.complete_checkin_data')->get();
             }])->select('sessions','id')
                     ->where('id',$stayId)
                     ->first();

@@ -31,7 +31,7 @@ class QuerySettingsHosterController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }   
-            $model = new QuerySettingsHosterResource($model,['pre_stay_activate', 'pre_stay_thanks', 'pre_stay_comment']);
+            $model = new QuerySettingsHosterResource($model,['pre_stay_activate', 'pre_stay_thanks']);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
@@ -42,7 +42,7 @@ class QuerySettingsHosterController extends Controller
     public function updatePreStaySettings(Request $request){
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->updateSettings($hotel->id, ['pre_stay_activate','pre_stay_thanks','pre_stay_comment'], $request, 'pre-stay');
+            $model = $this->service->updateSettings($hotel->id, ['pre_stay_activate','pre_stay_thanks'], $request, 'pre-stay');
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -66,7 +66,10 @@ class QuerySettingsHosterController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }   
-            $model = new QuerySettingsHosterResource($model,['in_stay_activate','in_stay_thanks_good','in_stay_thanks_normal','in_stay_comment']);
+            $model = new QuerySettingsHosterResource($model,[
+                'in_stay_thanks_good','in_stay_assessment_good_activate','in_stay_assessment_good',
+                'in_stay_thanks_normal','in_stay_assessment_normal_activate','in_stay_assessment_normal'
+            ]);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
@@ -77,7 +80,10 @@ class QuerySettingsHosterController extends Controller
     public function updateStaySettings(Request $request){
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->updateSettings($hotel->id, ['in_stay_activate','in_stay_thanks_good','in_stay_thanks_normal','in_stay_comment'], $request, 'in-stay');
+            $model = $this->service->updateSettings($hotel->id, [
+                'in_stay_thanks_good','in_stay_assessment_good_activate','in_stay_assessment_good',
+                'in_stay_thanks_normal','in_stay_assessment_normal_activate','in_stay_assessment_normal'
+            ], $request, 'in-stay');
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -101,7 +107,10 @@ class QuerySettingsHosterController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }   
-            $model = new QuerySettingsHosterResource($model,['post_stay_thanks_normal','post_stay_comment']);
+            $model = new QuerySettingsHosterResource($model,[
+                'post_stay_thanks_good','post_stay_assessment_good_activate','post_stay_assessment_good',
+                'post_stay_thanks_normal','post_stay_assessment_normal_activate','post_stay_assessment_normal'
+            ]);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
@@ -112,7 +121,11 @@ class QuerySettingsHosterController extends Controller
     public function updatePostStaySettings(Request $request){
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->updateSettings($hotel->id, ['post_stay_thanks_normal','post_stay_comment'], $request, 'post-stay');
+            $model = $this->service->updateSettings($hotel->id, [
+                'post_stay_thanks_good','post_stay_assessment_good_activate','post_stay_assessment_good',
+                'post_stay_thanks_normal','post_stay_assessment_normal_activate','post_stay_assessment_normal'
+            ]
+                , $request, 'post-stay');
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

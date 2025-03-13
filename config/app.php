@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+    'env' => env('APP_ENV', 'pro'),
 
     /*
     |--------------------------------------------------------------------------
@@ -57,11 +57,12 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
     'guest_path' => env('LOCAL_GUEST_URL', 'http://localhost'),
-    'storage_image' => env('APP_IMAGE', 'https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/'),
+    'url_bucket' => env('URL_BUCKET', 'https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test'),
     'storage_env' => env('AWS_STORAGE_PATH', null),
     'asset_url' => env('ASSET_URL'),
     'hoster_url' => env('HOSTER_URL'),
     'url_base_api_review' => env('URL_BASE_API_REVIEW',null),
+    'url_base_helpers' => env('URL_BASE_API_HELPERS',null),
     'key_api_review' => env('KEY_API_REVIEW',null),
     //OPENAI
     'openia_key' => env('OPENAI_API_KEY', null),

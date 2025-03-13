@@ -104,7 +104,6 @@ class DasboardController extends Controller
     {
         try {
             $hotel = $request->attributes->get('hotel');
-            Log::info('Hotel ID:', ['hotel_id' => $hotel->id]);
 
             // Rconsulta
             $stays = Stay::with(['queries' => function($query) {
@@ -187,6 +186,7 @@ class DasboardController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, [
                 'message' => $e->getMessage()
         ], null, $e->getMessage());

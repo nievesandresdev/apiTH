@@ -5,10 +5,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UtilityController;
+use App\Http\Controllers\Api\revieNotificationController;
 use App\Http\Controllers\Subdomain\SubdomainController;
 use App\Http\Controllers\Api\{
     LanguageController,
-    DasboardController
+    DasboardController,
+    DossierController
 };
 use App\Http\Controllers\Api\Auth\{
     AuthController,
@@ -18,7 +20,7 @@ use App\Http\Controllers\Api\Users\{
     UsersController,
     WorkPositionController
 };
-
+use App\Http\Controllers\Api\RewardsController;
 
 
 /*
@@ -32,6 +34,8 @@ use App\Http\Controllers\Api\Users\{
 |
 */
 
+Route::post('/storeRewardStay', [RewardsController::class, 'storeRewardStay']);
+
 Route::group(['prefix' => 'utility'], function () {
     Route::get('/getExpAndPlaceBySaearch', [UtilityController::class, 'getExpAndPlace']);
     Route::get('/getPhoneCodesApi', [UtilityController::class, 'getPhoneCodesApi']);
@@ -41,6 +45,7 @@ Route::post('/send-message-to-thehoster', [ContactController::class, 'send_messa
 Route::post('/create-dns-record', [SubdomainController::class, 'createDNSRecord']);
 
 Route::get('/language/getAll', [LanguageController::class, 'getAll']);
+Route::post('/language/getforItem', [LanguageController::class, 'getLanguageForItem']);
 
 
 Route::group(['prefix' => 'auth'], function () {
@@ -54,7 +59,10 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 
     Route::post('password/verify-token', [ForgotPasswordController::class, 'verifyToken'])->name('password.verify');
+    Route::post('/check-current-password', [UsersController::class, 'checkCurrentPassword']);
 });
+
+
 
 //prefix users
 Route::middleware('auth:api')->group(function () {
@@ -70,6 +78,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/update-profile', [UsersController::class, 'updateProfile']);
         Route::get('/getUsers', [UsersController::class, 'getUsers']);
         Route::get('/getUser', [UsersController::class, 'getUser']);
+
+
 
         Route::get('/getTrial', [UsersController::class, 'getTrial']);
         //getUserData
@@ -88,13 +98,24 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/testMail', [UsersController::class, 'testMail']);
     });
 
+
+
     //dashboard
-    Route::group(['prefix' => 'dashboard'], function () {
-        Route::get('/dataCustomerExperience', [DasboardController::class, 'dataCustomerExperience']);
-        Route::get('/dataFeedback', [DasboardController::class, 'dataFeedback']);
-        Route::get('/getDataReviewOTA', [DasboardController::class, 'getDataReviewOTA']);
-    });
+
 });
+        Route::group(['prefix' => 'dashboard'], function () {
+            Route::get('/dataCustomerExperience', [DasboardController::class, 'dataCustomerExperience']);
+            Route::get('/dataFeedback', [DasboardController::class, 'dataFeedback']);
+            Route::get('/getDataReviewOTA', [DasboardController::class, 'getDataReviewOTA']);
+        });
+
+
+Route::group(['prefix' => 'review/notification'], function () {
+    Route::post('/', [revieNotificationController::class, 'send']);
+});
+
+
+
 
 
 

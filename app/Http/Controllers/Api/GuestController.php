@@ -7,9 +7,11 @@ use App\Http\Resources\GuestResource;
 use App\Http\Resources\StayResource;
 use App\Models\Guest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 use App\Utils\Enums\EnumResponse;
 use App\Services\GuestService;
+use App\Services\QueryServices;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Google\Client as GoogleClient;
@@ -17,12 +19,15 @@ use Google\Client as GoogleClient;
 class GuestController extends Controller
 {
     public $service;
+    public $queryService;
 
     function __construct(
-        GuestService $_GuestService
+        GuestService $_GuestService,
+        QueryServices $_QueryServices,
     )
     {
         $this->service = $_GuestService;
+        $this->queryService = $_QueryServices;
     }
 
     public function findById ($id) {
@@ -70,23 +75,69 @@ class GuestController extends Controller
         }
     }
 
-    public function findLastStay($id,Request $request) {
+    public function findAndValidLastStay(Request $request) {
         try {
-            $hotel = $request->attributes->get('hotel');
-            $model = $this->service->findLastStayAndAccess($id,$hotel);
-            if(!$model){
+            $hotelId = $request->hotelId ?? null;
+            $guestEmail = $request->guestEmail ?? null;
+            $chainId = $request->chainId ?? null;
+
+            $models = $this->service->findAndValidLastStay($guestEmail, $chainId, $hotelId);
+            if(!$models){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            $data = new StayResource($model);
+            $data = [];
+            if(isset($models["stay"])){
+                $data['stay'] = new StayResource($models["stay"]);
+            }
+            $data['guest'] = new GuestResource($models["guest"]);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findLastStay');
         }
     }
+
+    public function saveAndFindValidLastStay(Request $request) {
+        try {
+            // Log::info('test saveAndFindValidLastStay');
+            $hotelId = $request->hotelId ?? null;
+            $guestEmail = $request->guestEmail ?? null;
+            $chainId = $request->chainId ?? null;
+            
+            $models = $this->service->findAndValidLastStay($guestEmail, $chainId, $hotelId);
+            $data = [];
+            if(isset($models["stay"])){
+                $data['stay'] = new StayResource($models["stay"]);
+            }
+            if(!isset($models["guest"])){
+                $dataGuest = new \stdClass();
+                $dataGuest->email = $guestEmail;
+                $guest = $this->service->saveOrUpdate($dataGuest);
+                $data['guest'] = new GuestResource($guest);
+            }else{
+                //si el huesped ya existe
+                //y no tiene una estancia asociado actualmente
+                if(!isset($models["stay"])){
+                    $dataGuest = new \stdClass();
+                    $dataGuest->email = $guestEmail;
+                    $guest = $this->service->saveOrUpdate($dataGuest, true); //hacemos el name null con el segundo param
+                    $data['guest'] = new GuestResource($guest);
+                }else{
+                    //sino todo transcurre igual
+                    $data['guest'] = new GuestResource($models["guest"]);
+                }
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findLastStay');
+        }
+    }
+
+
 
     public function sendMailTo(Request $request){
         $stayId = $request->stayId;
@@ -101,204 +152,187 @@ class GuestController extends Controller
         return bodyResponseRequest(EnumResponse::ACCEPTED, $sent);
     }
 
-    public function getDataByGoogle(Request $request)
+    public function findByEmail (Request $request) {
+        try {
+
+            $model = $this->service->findByEmail($request->email);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findByEmail');
+        }
+    }
+
+    public function updatePasswordGuest(Request $request)
     {
+        try {
+            $response = $this->service->updatePasswordGuest($request);
+
+
+            if (!$response['valid_password']) {
+                $data = [
+                    'message' => __('response.invalid_password')
+                ];
+                return bodyResponseRequest(EnumResponse::BAD_REQUEST, $data);
+            }
+
+            // Si la contraseña es correcta, devuelve el recurso actualizado
+            $data = $response['data'];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, $e->getMessage(), $e->getMessage());
+        }
+    }
+
+
+    public function updateDataGuest(Request $request) {
+        $guest = Guest::find($request->id);
+
+        if (!$guest) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+
+        if ($request->hasFile('avatar')) {
+            if ($guest->avatar) {
+                // Elimina el avatar antiguo si existe
+                Storage::delete($guest->avatar);
+            }
+
+            // Guarda el nuevo avatar usando el helper
+            $guest->avatar = saveImage($request->file('avatar'), 'guest-avatar', null, null, false, null);
+        }
+
+        $model = $this->service->updateDataGuest($guest, $request);
+
+        if (!$model) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+
+        $data = new GuestResource($model);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+    }
+
+    public function saveCheckinData(Request $request) {
         
-        // Obtener la URL de redirección actual para volver después de la autenticación
-        $redirectUrl = $request->input('redirect'); // e.g., https://nobuhotelsevillatex.test.thehoster.io
-        Log::info('$redirectUrl '. $redirectUrl);
+        $hotel = $request->attributes->get('hotel');
+        $guest = Guest::find($request->id);
 
-
-        // Serializar la URL de redirección en el parámetro state
-        $state = base64_encode(json_encode(['redirect' => $redirectUrl]));
-        Log::info("redirectToGoogle: state: {$state}");
-
-        // Redirigir al usuario a Google para la autenticación con el parámetro state
-        return Socialite::driver('google')->stateless()->with(['state' => $state])->redirect();
-    }
-    
-    public function handleGoogleCallback(Request $request)
-    {
+        if (!$guest) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
         try {
-            // Obtener y decodificar el parámetro state para extraer la URL de redirección
-            $state = $request->input('state');
-            if (!$state) {
-                throw new \Exception('State parameter is missing.');
+            $queryPreStay = $guest->queries()->where('period','pre-stay')->where('stay_id',$request->stayId)->first();
+            $saveQuery = true;
+            if($queryPreStay && $request->comment){
+                $saveQuery = $this->queryService->saveResponse($queryPreStay->id, $request, $hotel);
+            }
+            
+            $model = $this->service->updateDataGuest($guest, $request, true);
+
+            if (!$model || !$saveQuery) {
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
-            $decodedState = json_decode(base64_decode($state), true);
-            $redirectUrl = $decodedState['redirect'] ?? 'https://thehoster.io';
-
-            // Obtener el usuario autenticado de Google
-            $googleUser = Socialite::driver('google')->stateless()->user();
-
-            // Extraer información del usuario
-            $googleId = $googleUser->getId();
-            $firstName = $googleUser->user['given_name'] ?? '';
-            $lastName = $googleUser->user['family_name'] ?? '';
-            $email = $googleUser->getEmail();
-            $avatar = $googleUser->getAvatar();
-            
-            $names = $firstName.' '.$lastName;
-            
-            // Buscar al usuario por email
-            $dataGuest = new \stdClass();
-            $dataGuest->email = $email;
-            $guest = $this->service->saveOrUpdate($dataGuest);
-            // $guest = Guest::where('email', $email)->first();
-            // Log::info('$guest'. json_encode($guest));
-            // Generar un token de autenticación (usando Laravel Sanctum)
-            $token = $guest->createToken('auth_token')->plainTextToken;
-            // Log::info('$token'. json_encode($token));
-            
-            // Redirigir de vuelta al subdominio original con el token
-            return redirect()->to("{$redirectUrl}?auth_token={$token}&googleId={$googleId}&names={$names}&email={$email}&avatar={$avatar}");
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
-            // Manejar errores y redirigir con un mensaje de error
-            $state = $request->input('state');
-            $decodedState = $state ? json_decode(base64_decode($state), true) : null;
-            $redirectUrl = $decodedState['redirect'] ?? 'https://default-subdomain.test.thehoster.io';
-            return redirect()->to("{$redirectUrl}?error=authentication_failed");
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.saveCheckinData');
         }
     }
-    
-    
 
-    public function authWithFacebook(Request $request)
-    {
-        // Obtener la URL de redirección desde el frontend
-        $redirectUrl = $request->input('redirect'); // Ejemplo: https://subdominio.tu-dominio.com
+    public function deleteCheckinData(Request $request) {
+        
+        $guest = Guest::find($request->id);
 
-        // Serializar la URL de redirección en el parámetro state
-        $state = base64_encode(json_encode(['redirect' => $redirectUrl]));
-
-        // Redirigir al usuario a Facebook para la autenticación con los permisos y parámetros necesarios
-        return Socialite::driver('facebook')
-            ->stateless() // Modo sin estado
-            ->with(['state' => $state])
-            ->scopes(['public_profile', 'email']) // Solicitar permisos necesarios
-            ->redirect();
-    }
-
-
-
-
-
-    public function handleFacebookCallback(Request $request)
-    {
+        if (!$guest) {
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
         try {
-            // Obtener y decodificar el parámetro state para extraer la URL de redirección
-            $state = $request->input('state');
-            if (!$state) {
-                throw new \Exception('El parámetro state está ausente.');
+            $model = $this->service->deleteCheckinData($guest);
+
+            if (!$model) {
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
-            $decodedState = json_decode(base64_decode($state), true);
-            $redirectUrl = $decodedState['redirect'] ?? 'https://thehoster.io';
-
-            // Obtener el usuario autenticado de Facebook
-            $facebookUser = Socialite::driver('facebook')->stateless()->user();
-            Log::info('$facebookUser '.json_encode($facebookUser));
-            Log::info('$facebookUser->user '.json_encode($facebookUser->user));
-            // Extraer información del usuario
-            $facebookId = $facebookUser->getId();
-            $firstName = $facebookUser->user['name'] ?? '';
-            $lastName = $facebookUser->user['last_name'] ?? '';
-            $email = $facebookUser->getEmail();
-            $avatar = $facebookUser->getAvatar();
-            // $avatar = $facebookUser->attributes['avatar_original'] ?? 'avatarnulo';
-            
-
-            $names = $firstName;
-            
-            // Buscar al usuario por email
-            $dataGuest = new \stdClass();
-            $dataGuest->email = $email;
-            $guest = $this->service->saveOrUpdate($dataGuest);
-            
-            // Generar un token de autenticación (usando Laravel Sanctum)
-            $token = $guest->createToken('auth_token')->plainTextToken;
-
-            // Redirigir de vuelta al subdominio original con el token
-            return redirect()->to("{$redirectUrl}?auth_token={$token}&facebookId={$facebookId}&names={$names}&email={$email}&avatar={$avatar}");
+            $data = new GuestResource($model);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
-            // Manejar errores y redirigir con un mensaje de error
-            Log::error('Error en handleFacebookCallback: ' . $e->getMessage());
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteCheckinData');
+        }
+    }
 
-            $state = $request->input('state');
-            $decodedState = $state ? json_decode(base64_decode($state), true) : null;
-            $redirectUrl = $decodedState['redirect'] ?? 'https://tu-dominio.com';
+    public function createAccessInStay(Request $request) {
+        try {
+            $guestId = $request->guestId;
+            $stayId = $request->stayId;
+            $chainId = $request->chainId;
 
-            return redirect()->to("{$redirectUrl}?error=authentication_failed");
+            $model = $this->service->createAccessInStay($guestId, $stayId, $chainId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            $data = [
+                'guest' => new GuestResource($model['guest']),
+                'stay' => new StayResource($model['stay']),
+            ];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.createAccessInStay');
+        }
+    }
+
+    public function deleteGuestOfStay(Request $request) {
+        try {
+            $guestId = $request->guestId;
+            $stayId = $request->stayId;
+            $chainId = $request->chainId;
+            $hotelId = $request->hotelId;
+
+            $model = $this->service->deleteGuestOfStay($guestId, $stayId, $hotelId, $chainId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.deleteGuestOfStay');
         }
     }
 
 
-
-    public function deleteFacebookData(Request $request)
-    {
-        Log::info('deleteFacebookData');
-        // Verificar la firma de la solicitud (opcional pero recomendado)
-        // $signature = $request->header('x-hub-signature');
-        // Log::info('$signature '.json_encode($signature));
-        // if (!$this->isValidSignature($request->getContent(), $signature)) {
-        //     return response()->json(['error' => 'Firma inválida.'], 403);
-        // }
-
-        // Validar la solicitud
-        $validated = $request->validate([
-            'email' => 'required|email', // Utilizamos el email para identificar al usuario
-            'data_deletion' => 'required|string|in:requested',
-        ]);
-
-        $email = $validated['email'];
-
-        // Buscar al usuario en la base de datos usando el email
-        $guest = Guest::where('email', $email)->first();
-
-        if ($guest) {
-            // Anonimizar los datos del usuario
-            $guest->update([
-                'name' => null,
-                'email' => null
-            ]);
-
-            // Responder a Facebook para confirmar la eliminación
-            return response()->json([
-                'result' => 'success',
-                'message' => 'Datos de usuario eliminados correctamente.'
-            ], 200);
-        }
-
-        // Si el usuario no se encuentra, responde con éxito según las especificaciones de Facebook
-        return response()->json([
-            'result' => 'success',
-            'message' => 'Usuario no encontrado, pero se asume que los datos están eliminados.'
-        ], 200);
-    }
-
-    private function isValidSignature($payload, $signature)
-    {
-        if (!$signature) {
-            return false;
-        }
-
-        list($algo, $hash) = explode('=', $signature, 2) + [null, null];
-
-        if ($algo !== 'sha1') {
-            return false;
-        }
-
-        $appSecret = config('services.facebook.client_secret');
-        $computedHash = hash_hmac('sha1', $payload, $appSecret, false);
-
-        // Logs para depuración
-        Log::info('Payload: ' . $payload);
-        Log::info('Computed Hash: ' . $computedHash);
-        Log::info('Received Hash: ' . $hash);
-
-        return hash_equals($hash, $computedHash);
-    }
 
 
 }

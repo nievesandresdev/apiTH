@@ -153,4 +153,20 @@ class StayChatHosterController extends Controller
         }
     }
 
+    public function markHosterMsgstAsRead($stayId, $guestId){
+        try {
+            $model = $this->service->markHosterMsgstAsRead($stayId, $guestId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }   
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.markHosterMsgstAsRead');
+        }
+    }
+
 }

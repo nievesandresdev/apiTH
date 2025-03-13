@@ -34,10 +34,10 @@ class StayAccessObserver
                     ->where('stays.id',$stayAccess->stay_id)
                     ->join('hotels', 'stays.hotel_id', '=', 'hotels.id')
                     ->first();
-            Log::info('observer access: $stay' . $stay);
+            // Log::info('observer access: $stay' . $stay);
             
             $period = $this->queryservice->getCurrentPeriod($stay->hotel, $stay->id);    
-            Log::info('observer access: $period' . $period);
+            // Log::info('observer access: $period' . $period);
             if($period == 'pre-stay' || $period == 'in-stay'){
                 $settings = $this->settingsService->getAll($stay->hotel_id);
                 $periodKey = str_replace("-", "_", $period).'_activate';
@@ -48,9 +48,11 @@ class StayAccessObserver
             
             if($period){
                 $query = $this->queryservice->firstOrCreate($stay->id, $stayAccess->guest_id, $period, $disabled);    
-                Log::info('observer access: $query' . $query);
+                // Log::info('observer access: $query' . $query);
             }   
-            
+            //aprovechamos el observer para actualizar la data local de cada huesped de la estancia.
+            $stayId = $stayAccess->stay_id;
+            sendEventPusher('private-reload-data-stay-webapp.' . $stayId, 'App\Events\ReloadDataStayWebapp', ['stayId'=>$stayId]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.StayAccessObserver');
         }

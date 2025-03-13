@@ -1,0 +1,24 @@
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: api:latest
+    container_name: thehoster-app-api-backend
+    restart: always
+    volumes:
+      - ../api:/var/www/html
+      - ../api/vendor:/var/www/html/vendor
+    ports:
+      - "8001:80"
+    networks:
+      - bd-data_hoster_network
+    env_file: 
+      - .env
+    # Supervisord gestionará todos los procesos en este contenedor
+    command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+
+networks:
+  bd-data_hoster_network:
+    external: true

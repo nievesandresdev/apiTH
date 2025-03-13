@@ -22,17 +22,17 @@ class LanguageController extends Controller
         // $this->service = $_LanguageServices;
     }
 
-    
+
 
     public function getAll(Request $request){
-        
+
         try {
             $isWebapp = isset($request->isWebapp) ? intval($request->isWebapp) : true;
             if ($isWebapp) {
-                $data = ['es', 'en', 'fr'];
+                $data = ['es', 'en', 'fr','pt','it','de'];
                 return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
             }
-            
+
             $languagesModel = Language::all();
             $languagesCollection = LanguageResource::collection($languagesModel);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $languagesCollection);
@@ -42,7 +42,19 @@ class LanguageController extends Controller
         }
     }
 
+    // Nuevo método para obtener idiomas específicos basado en un array de IDs o nombres
+    public function getLanguageForItem(Request $request)
+    {
+        //return bodyResponseRequest(EnumResponse::ACCEPTED, $request->all());
+        // Filtramos los idiomas según el array recibido
+        $languages = Language::whereIn('abbreviation', $request->languages)->orderBy('name')->get();
 
-    
+        // Devolvemos la colección de idiomas como un recurso
+        return bodyResponseRequest(EnumResponse::ACCEPTED,$languages);
+    }
+
+
+
+
 
 }

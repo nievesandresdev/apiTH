@@ -22,6 +22,7 @@ class ChatMessageResource extends JsonResource
             "status"=> $this->status,
             "by"=> $this->by,
             "created_at" => $this->created_at,
+            "automatic" => $this->automatic,
         ];
     }
 }

@@ -5,6 +5,7 @@ use App\Models\Chat;
 use App\Models\Guest;
 use App\Models\Query;
 use App\Models\Stay;
+use App\Services\Hoster\RequestReviews\RequestReviewsSettingsServices;
 use App\Services\Hoster\Stay\StayHosterServices;
 use App\Services\Hoster\Stay\StaySessionServices;
 use App\Services\QueryServices;
@@ -19,17 +20,20 @@ class QueryHosterServices {
     public $queryService;
     public $chatHosterServices;
     public $staySessionServices;
-    
+    public $requestReviewsSettingsServices;
 
     function __construct(
         StayHosterServices $_StayHosterServices,
         QueryServices $_QueryServices,
-        StaySessionServices $_StaySessionServices
+        StaySessionServices $_StaySessionServices,
+        RequestReviewsSettingsServices $_RequestReviewsSettingsServices
+        
     )
     {
         $this->stayHosterServices = $_StayHosterServices;
         $this->queryService = $_QueryServices;
         $this->staySessionServices = $_StaySessionServices;
+        $this->requestReviewsSettingsServices = $_RequestReviewsSettingsServices;
     }
 
     public function getFeedbackSummaryByGuest ($stayId, $guestId, $hotel) {
@@ -77,14 +81,19 @@ class QueryHosterServices {
             $preStayQuery = $this->getPrestayStatus($guestData, $stay->id, $period, $stay->check_in, $guestAccess);
             $stayQuery  = $this->geStayStatus($guestData, $stay->id, $period, $stay->check_in, $stay->check_out, $guestAccess);
             $queryPostStay =  $guestData->queries()->where('stay_id',$stay->id)->where('period','post-stay')->orderBy('created_at','asc')->first();
+            $queryInStay =  $guestData->queries()->where('stay_id',$stay->id)->where('period','in-stay')->orderBy('created_at','asc')->first();
             $postStayQuery  = $this->getPostStayStatus($guestData, $stay->id, $period, $stay->check_out, $guestAccess);
-            $postStayRequest = $this->getPostStayRequest($queryPostStay, $period);
+            $inStayRequest = $this->getInStayRequest($queryInStay, $hotel->id);
+            $postStayRequest = $this->getPostStayRequest($queryPostStay, $hotel->id);
 
             $timeLineData = [
                 'pre-stay' => $preStayQuery,
                 'in-stay' => $stayQuery,
                 'post-stay' => $postStayQuery,
-                'request' => $postStayRequest,
+                'request' => [
+                    'in-stay' => $inStayRequest,
+                    'post-stay' => $postStayRequest
+                ],
                 'guestAccess' => $guestAccess,
                 'currentPeriod' => $period,
                 'stay' => $stay,
@@ -123,19 +132,21 @@ class QueryHosterServices {
         }
     }
 
-    public function getPostStayRequest($queryPostStay, $currentPeriod){
+    public function getPostStayRequest($queryPostStay, $hotelId){
 
-        $icon = "Pendiente";
+        $icon = "Aún por determinar";
         $answeredTime = null;
         $goodAnswers = ['GOOD','VERYGOOD'];
-        $goodFeedback = $queryPostStay ? in_array($queryPostStay->qualification, $goodAnswers) : false;
-        if($currentPeriod == 'post-stay' || $currentPeriod == 'invalid-stay'){
-            if($goodFeedback && $queryPostStay->answered){
-                $icon = "Solicitado";
+        if($queryPostStay && $queryPostStay->answered){
+            $arrActiveWhenResponding = $this->requestReviewsSettingsServices->fieldAtTheMoment('request_to', $queryPostStay->responded_at, $hotelId);
+            $goodAnswers = json_decode($arrActiveWhenResponding);
+            $goodFeedback = $queryPostStay ? in_array($queryPostStay->qualification, $goodAnswers) : false;
+            
+            if($goodFeedback){
+                $icon = "Reseña solicitada";
                 $answeredTime = $queryPostStay->responded_at;
-            }
-            if(!$goodFeedback && $queryPostStay && $queryPostStay->answered){
-                $icon = "No solicitado";
+            }else{
+                $icon = "Reseña no solicitada";
             }
         }
         return [
@@ -144,6 +155,32 @@ class QueryHosterServices {
         ];
     }
 
+    public function getInStayRequest($queryInStay, $hotelId){
+
+        $icon = "Aún por determinar";
+        $answeredTime = null;
+        $goodAnswers = ['GOOD','VERYGOOD'];
+        if($queryInStay && $queryInStay->answered){
+            $goodFeedback = $queryInStay ? in_array($queryInStay->qualification, $goodAnswers) : false;
+            $activeWhenResponding = $this->requestReviewsSettingsServices->fieldAtTheMoment('in_stay_activate', $queryInStay->responded_at, $hotelId);
+            if(!$activeWhenResponding){
+                $icon = "Solicitud desactivada";
+            }else{
+                if($goodFeedback){
+                    $icon = "Reseña solicitada";
+                    $answeredTime = $queryInStay->responded_at;
+                }else{
+                    $icon = "Reseña no solicitada";
+                }
+            }
+        }
+        return [
+            "icon" => $icon,
+            "answeredTime" => $answeredTime
+        ];
+    }
+
+    
     public function getPrestayStatus($guest, $stayId, $period, $stayCheckin, $guestAccess){
         
         try {

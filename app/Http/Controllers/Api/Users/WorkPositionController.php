@@ -13,9 +13,13 @@ class WorkPositionController extends Controller
         $work_positions = WorkPosition::active()->byHotel()->get();
 
         $work_positions_mapped = $work_positions->map(function($work_position) {
-            $has_profile = $work_position->profiles()->exists();
+            $has_profile = $work_position->profiles()
+            ->whereHas('user', function ($query) {
+                $query->where('del', 0);
+            })
+            ->exists();
 
-            $work_position->relation = $has_profile ? 1 : 0;
+            $work_position->relation = $has_profile;
 
             return $work_position;
         });
@@ -32,10 +36,10 @@ class WorkPositionController extends Controller
             // Guarda la posición de trabajo con los permisos y notificaciones enviados
             $work_position = WorkPosition::create([
                 'name' => request()->name,
-                'permissions' => json_encode(request()->permissions), // Guarda el JSON de permisos
-                'notifications' => json_encode(request()->notifications), // Guarda el JSON de notificaciones
-                'periodicity_chat' => request()->periodicityChat,
-                'periodicity_stay' => request()->periodicityStay,
+                'permissions' => json_encode(request()->permissions),
+                'notifications' => json_encode(request()->notifications),
+                'periodicity_chat' => json_encode(request()->periodicityChat),
+                'periodicity_stay' => json_encode(request()->periodicityStay),
             ]);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
@@ -56,20 +60,20 @@ class WorkPositionController extends Controller
         $work_position = WorkPosition::find(request()->id);
 
         $data = request()->validate([
-            'permissions' => 'required|array', // Asegura que los permisos se envían como un array
-            'notifications' => 'required|array', // Asegura que las notificaciones se envían como un array
-            'periodicityChat' => 'required|integer',
-            'periodicityStay' => 'required|integer'
+            'permissions' => 'required|array',
+            'notifications' => 'required|array',
+            'periodicityChat' => 'required|array',
+            'periodicityStay' => 'required|array'
         ]);
 
 
         try {
             $work_position->update([
                 'name' => request()->name,
-                'permissions' => json_encode($data['permissions']), // Guarda el JSON de permisos
-                'notifications' => json_encode($data['notifications']), // Guarda el JSON de notificaciones
-                'periodicity_chat' => $data['periodicityChat'],
-                'periodicity_stay' => $data['periodicityStay']
+                'permissions' => json_encode($data['permissions']),
+                'notifications' => json_encode($data['notifications']),
+                'periodicity_chat' => json_encode($data['periodicityChat']),
+                'periodicity_stay' => json_encode($data['periodicityStay'])
 
             ]);
 
@@ -77,8 +81,8 @@ class WorkPositionController extends Controller
                 $profile->user->update([
                     'permissions' => json_encode($data['permissions']),
                     'notifications' => json_encode($data['notifications']),
-                    'periodicity_chat' => $data['periodicityChat'],
-                    'periodicity_stay' => $data['periodicityStay']
+                    'periodicity_chat' => json_encode($data['periodicityChat']),
+                    'periodicity_stay' => json_encode($data['periodicityStay'])
                 ]);
             }
 
@@ -99,16 +103,18 @@ class WorkPositionController extends Controller
 
         try {
             // Buscar perfiles asociados
-            $profiles = $work_position->profiles;
+            $hasActiveUsers = $work_position->profiles()
+                ->whereHas('user', function ($query) {
+                    $query->where('del', 0);
+                })->exists();
 
-            // Si existen perfiles, actualizar el campo work_position_id a null
-            if ($profiles && $profiles->count() > 0) {
-                foreach ($profiles as $profile) {
-                    $profile->update(['work_position_id' => null]);
-                }
+            if ($hasActiveUsers) {
+                return bodyResponseRequest(EnumResponse::ERROR, [
+                    'message' => 'No se puede eliminar la posición de trabajo porque tiene usuarios activos asociados.'
+                ]);
             }
 
-            // Actualizar el estado de la posición de trabajo a 0
+            // Actualizar  posición de trabajo a 0
             $work_position->update(['status' => 0]);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
@@ -117,9 +123,11 @@ class WorkPositionController extends Controller
             ]);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, [
-                'message' => 'Error al eliminar la posición de trabajo'
+                'message' => 'Error al eliminar la posición de trabajo',
+                'error' => $e->getMessage()
             ]);
         }
     }
+
 
 }

@@ -23,7 +23,7 @@ class FacilityService {
 
     }
 
-    public function getCrosselling ($modelHotel) {
+    public function getCrosselling ($modelHotel, $limit = 12) {
         try {
 
             $facilities = FacilityHoster::with('images', 'translate')
@@ -32,8 +32,9 @@ class FacilityService {
                             ->where('select',1)
                             ->orderBy('order')
                             ->orderBy('updated_at', 'desc')
-                            ->limit(12)
+                            ->limit($limit)
                             ->get();
+
 
             return $facilities;
 
@@ -41,6 +42,7 @@ class FacilityService {
             return $e;
         }
     }
+
 
     public function getAll ($request, $modelHotel) {
         try {
@@ -193,7 +195,11 @@ class FacilityService {
     public function processTranslate ($request, $facilityHosterModel, $hotelModel) {
 
         $dirTemplateTranslate = 'translation/webapp/hotel_input/facility';
-        $inputsTranslate = ['title' => $request->title, 'description' => $request->description, 'schedule' => $request->ad_tag];
+        $inputsTranslate = [
+            'title' => $facilityHosterModel->title,
+            'description' => $facilityHosterModel->description,
+            'schedule' => $request->ad_tag
+        ];
         TranslateModelJob::dispatch($dirTemplateTranslate, $inputsTranslate, $this, $facilityHosterModel);
     }
 
