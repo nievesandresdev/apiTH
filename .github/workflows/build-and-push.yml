@@ -48,7 +48,7 @@ jobs:
           echo "PUSHER_APP_SECRET=${{ secrets.PUSHER_APP_SECRET }}" >> .env
           echo "PUSHER_APP_CLUSTER=us2" >> .env
           echo "MIX_PUSHER_APP_KEY=${{ secrets.PUSHER_APP_KEY }}" >> .env
-          echo "MIX_PUSHER_APP_CLUSTER=us2" >> .env
+          echo "MIX_PUSHER_APP_CLUSTER=us2" >> .APP_ENV
 
           if [ "${{ github.ref_name }}" == "main" ]; then
             echo "ASSET_URL=${{ secrets.APP_URL_MAIN }}" >> .env
@@ -112,6 +112,11 @@ jobs:
             echo "PASSPORT_PRIVATE_KEY=\"${{ secrets.PASSPORT_PRIVATE_KEY_MAIN }}\"" >> .env
             echo "PASSPORT_PUBLIC_KEY=\"${{ secrets.PASSPORT_PUBLIC_KEY_MAIN }}\"" >> .env
 
+            echo "AZURE_OPENAI_API_KEY=\"${{ secrets.AZURE_OPENAI_API_KEY_MAIN }}\"" >> .env
+            echo "AZURE_OPENAI_BASE_URI=\"${{ secrets.AZURE_OPENAI_BASE_URI_MAIN }}\"" >> .env
+            echo "AZURE_OPENAI_DEPLOYMENT=\"${{ secrets.AZURE_OPENAI_DEPLOYMENT_MAIN }}\"" >> .env
+            echo "AZURE_OPENAI_VERSION=\"${{ secrets.AZURE_OPENAI_VERSION_MAIN }}\"" >> .env
+
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
           else
             echo "ASSET_URL=${{ secrets.APP_URL_TEST }}" >> .env
@@ -174,6 +179,11 @@ jobs:
 
             echo "PASSPORT_PRIVATE_KEY=\"${{ secrets.PASSPORT_PRIVATE_KEY_TEST }}\"" >> .env
             echo "PASSPORT_PUBLIC_KEY=\"${{ secrets.PASSPORT_PUBLIC_KEY_TEST }}\"" >> .env
+
+            echo "AZURE_OPENAI_API_KEY=\"${{ secrets.AZURE_OPENAI_API_KEY_TEST }}\"" >> .env
+            echo "AZURE_OPENAI_BASE_URI=\"${{ secrets.AZURE_OPENAI_BASE_URI_TEST }}\"" >> .env
+            echo "AZURE_OPENAI_DEPLOYMENT=\"${{ secrets.AZURE_OPENAI_DEPLOYMENT_TEST }}\"" >> .env
+            echo "AZURE_OPENAI_VERSION=\"${{ secrets.AZURE_OPENAI_VERSION_TEST }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
           fi
