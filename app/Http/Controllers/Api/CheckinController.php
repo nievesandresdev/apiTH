@@ -38,5 +38,35 @@ class CheckinController extends Controller
         }
     }
 
+    public function sendPassportImage(Request $request){
+        try {
+            // 1. Recibir el archivo
+            if (!$request->hasFile('passportImage')) {
+                return response()->json([
+                    'ok' => false,
+                    'error' => 'No file uploaded',
+                ], 400);
+            }
+    
+            $file = $request->file('passportImage'); 
+            // Aquí obtienes un \Illuminate\Http\UploadedFile
+    
+            // 2. Leer su contenido (Byte Stream) para enviarlo a Azure
+            $fileContent = file_get_contents($file->getRealPath());
+            $mimeType = $file->getMimeType();
+            // Ej: "image/jpeg", "image/png", etc.
+    
+            // 3. Llamar a la API de Azure Form Recognizer
+            //    (Puedes usar Guzzle, Http::, etc.)
+            $azureResponse = $this->service->callAzureFormRecognizer($fileContent, $mimeType);
+            // 4. Devolver esa respuesta (parseada o tal cual) al front
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $azureResponse);
+    
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.sendPassportImage');
+        }
+    }
+    
+
     
 }

@@ -68,8 +68,8 @@ class UtilityService {
         try {
             $url_bucket  = config('app.url_bucket');
             $facilities = [];
-            $citySlug = \Str::slug($modelHotel->zone);
-            $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
+            // $citySlug = \Str::slug($modelHotel->zone);
+            // $cityData  = $this->cityService->findByParams([ 'slug' => $citySlug]);
 
 
 

@@ -112,10 +112,10 @@ class UtilsController extends Controller
 
     public function testEmailGeneral(){
         $type = 'welcome';
-        $hotel = Hotel::find(274);
-        $guest = Guest::find(9);
+        $hotel = Hotel::find(361);
+        $guest = Guest::find(186);
         $chainSubdomain = $hotel->subdomain;
-        $stay = Stay::find(565);
+        $stay = Stay::find(282);
 
 
         try {
@@ -225,8 +225,10 @@ class UtilsController extends Controller
 
     public function test()
     {
-        $stayId = 7;
-        sendEventPusher('private-reload-data-stay-webapp.' . $stayId, 'App\Events\ReloadDataStayWebapp', ['stayId'=>$stayId]);
+        $hotel = Hotel::find(280);
+        $stay = Stay::find(43);
+        $guest = Guest::find(1);
+        $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
         return 'enviado';
     }
 

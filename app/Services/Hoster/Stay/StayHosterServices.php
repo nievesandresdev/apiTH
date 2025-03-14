@@ -40,7 +40,7 @@ class StayHosterServices {
             $query = Stay::with([
                     'chats:id,stay_id,pending',
                     'chats.messages:by,chat_id,status',
-                    'guests:acronym,color,lang_web,complete_checkin_data',
+                    'guests:acronym,color,lang_web,complete_checkin_data,id',
                 ])
                 ->select([
                     'stays.id',

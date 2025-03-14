@@ -50,6 +50,10 @@ jobs:
           echo "MIX_PUSHER_APP_KEY=${{ secrets.PUSHER_APP_KEY }}" >> .env
           echo "MIX_PUSHER_APP_CLUSTER=us2" >> .env
 
+          echo "AZURE_FORM_RECOGNIZER_ENDPOINT=${{ secrets.AZURE_FORM_RECOGNIZER_ENDPOINT }}" >> .env
+          echo "AZURE_FORM_RECOGNIZER_API_KEY=${{ secrets.AZURE_FORM_RECOGNIZER_API_KEY }}" >> .env
+          echo "AZURE_FORM_RECOGNIZER_MODEL_ID=${{ secrets.AZURE_FORM_RECOGNIZER_MODEL_ID }}" >> .env
+
           if [ "${{ github.ref_name }}" == "main" ]; then
             echo "ASSET_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             echo "APP_DEBUG=${{ secrets.APP_DEBUG_MAIN }}" >> .env
