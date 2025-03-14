@@ -19,13 +19,15 @@ class TranslateModelJob implements ShouldQueue
     protected $inputsTranslate;
     protected $service;
     protected $model;
+    protected $languages;
 
-    public function __construct($dirTemplate, $inputsTranslate, $service, $model)
+    public function __construct($dirTemplate, $inputsTranslate, $service, $model, $languages = [])
     {
         $this->dirTemplate = $dirTemplate;
         $this->inputsTranslate = $inputsTranslate;
         $this->service = $service;
         $this->model = $model;
+        $this->languages = $languages;
     }
 
     public function handle()
@@ -40,7 +42,7 @@ class TranslateModelJob implements ShouldQueue
             $responseTranslation = $translateService->load([
                 'dirTemplate' => $this->dirTemplate,
                 'context' => $this->inputsTranslate,
-                'languageCodes' => getAllLanguages(),
+                'languageCodes' => $this->languages ?? getAllLanguages(),
             ]);
             $translation = $responseTranslation['translation'] ?? [];
             $this->service->updateTranslation($this->model, $translation);
