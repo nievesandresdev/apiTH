@@ -140,6 +140,7 @@ class TranslateService {
             return ['errorTranslate' => $errorTranslate, 'input' => $inputTranslation, 'output' => $outputTranslationChagpt, 'translation' => $dataTranslate];
 
         } catch (\Exception $e) {
+            var_dump($e->getMessage());
             return $e;
         }
     }
@@ -158,7 +159,7 @@ class TranslateService {
 
             $function_call = ['name' => 'translation'];
             $data = [
-                'model' => 'gpt-35-turbo',
+                'model' => 'gpt-3.5-turbo',
                 'messages' => $messageContext,
                 'functions' => $functionContext,
                 'function_call' => $function_call,
@@ -186,25 +187,27 @@ class TranslateService {
             $response = $client->chat()->create($input);
             return $response;
         } catch (\Exception $e) {
+            \Log::error('ERROR_TRANSLATION', ['message' => $e->getMessage()]);
             return $e;
         }
     }
 
-    public function requestChatgptOld ($input) {
-        try {
+    // public function requestChatgpt ($input) {
+    //     try {
 
-            // $client = OpenAI::client(env('OPENAI_API_KEY'));
-            $headers = [
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . config('app.openia_key'),
-            ];
-            $http_client_service = new HttpClientService();
-            $response_request = $http_client_service->make_request('post', 'https://api.openai.com/v1/chat/completions', $input, $headers);
-            return $response_request;
-        } catch (\Exception $e) {
-            return $e;
-        }
-    }
+    //         // $client = OpenAI::client(env('OPENAI_API_KEY'));
+    //         $headers = [
+    //             'Content-Type' => 'application/json',
+    //             'Authorization' => 'Bearer ' . config('app.openia_key'),
+    //         ];
+    //         $http_client_service = new HttpClientService();
+    //         $response_request = $http_client_service->make_request('post', 'https://api.openai.com/v1/chat/completions', $input, $headers);
+    //         return $response_request;
+    //     } catch (\Exception $e) {
+    //         var_dump($e->getMessage());
+    //         return $e;
+    //     }
+    // }
 
     // VALIDATION OUTPUT
 
@@ -241,6 +244,7 @@ class TranslateService {
             }
 
             if ($status === 300) {
+                sleep(5);
                 return $this->validate($input, $output, $attempts);
             }
 
