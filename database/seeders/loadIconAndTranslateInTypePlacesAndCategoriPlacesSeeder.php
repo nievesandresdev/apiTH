@@ -20,9 +20,13 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Qué visitar',
                     'en' => 'What to visit',
                     'fr' => 'Que visiter',
-                    'pr' => 'O que visitar',
+                    'pt' => 'O que visitar',
                     'de' => 'Was besichtigen',
                     'it' => 'Cosa visitare',
+                    'ca' => 'Què visitar',
+                    'eu' => 'Zer bisitatu',
+                    'gl' => 'Que visitar',
+                    'nl' => 'Wat te bezoeken',
                 ]
             ],
             [
@@ -32,9 +36,13 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Dónde comer',
                     'en' => 'Where to eat',
                     'fr' => 'Où manger',
-                    'pr' => 'Onde comer',
+                    'pt' => 'Onde comer',
                     'de' => 'Wo essen',
                     'it' => 'Dove mangiare',
+                    'ca' => 'On menjar',
+                    'eu' => 'Non jan',
+                    'gl' => 'Onde comer',
+                    'nl' => 'Waar te eten',
                 ]
             ],
             [
@@ -44,13 +52,17 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Ocio',
                     'en' => 'Leisure',
                     'fr' => 'Loisir',
-                    'pr' => 'Lazer',
+                    'pt' => 'Lazer',
                     'de' => 'Freizeit',
                     'it' => 'Svago',
+                    'ca' => 'Oci',
+                    'eu' => 'Aisia',
+                    'gl' => 'Lecer',
+                    'nl' => 'Vrije tijd',
                 ]
-                
             ],
         ];
+        
 
         foreach ($iconByNameInTypePlaces as $typePlace) {
             $typePlaceModel = TypePlaces::where('name', $typePlace['name'])->first();
@@ -67,9 +79,13 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Monumentos',
                     'en' => 'Monuments',
                     'fr' => 'Monuments',
-                    'pr' => 'Monumentos',
+                    'pt' => 'Monumentos',
                     'de' => 'Denkmäler',
                     'it' => 'Monumenti',
+                    'ca' => 'Monuments',
+                    'eu' => 'Monumentuak',
+                    'gl' => 'Monumentos',
+                    'nl' => 'Monumenten',
                 ]
             ],
             [
@@ -79,9 +95,13 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Museos',
                     'en' => 'Museums',
                     'fr' => 'Musées',
-                    'pr' => 'Museus',
+                    'pt' => 'Museus',
                     'de' => 'Museen',
                     'it' => 'Musei',
+                    'ca' => 'Museus',
+                    'eu' => 'Museoak',
+                    'gl' => 'Museos',
+                    'nl' => 'Musea',
                 ]
             ],
             [
@@ -91,9 +111,13 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Naturaleza',
                     'en' => 'Nature',
                     'fr' => 'Nature',
-                    'pr' => 'Natureza',
+                    'pt' => 'Natureza',
                     'de' => 'Natur',
                     'it' => 'Natura',
+                    'ca' => 'Natura',
+                    'eu' => 'Natura',
+                    'gl' => 'Natureza',
+                    'nl' => 'Natuur',
                 ]
             ],
             [
@@ -103,9 +127,13 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Cafeterías y postres',
                     'en' => 'Cafes and desserts',
                     'fr' => 'Cafés et desserts',
-                    'pr' => 'Cafés e sobremesas',
+                    'pt' => 'Cafeterias e sobremesas',
                     'de' => 'Cafés und Desserts',
                     'it' => 'Caffè e dessert',
+                    'ca' => 'Cafeteries i postres',
+                    'eu' => 'Kafetegiak eta postreak',
+                    'gl' => 'Cafetarías e sobremesas',
+                    'nl' => 'Cafés en desserts',
                 ]
             ],
             [
@@ -115,9 +143,13 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Restaurantes',
                     'en' => 'Restaurants',
                     'fr' => 'Restaurants',
-                    'pr' => 'Restaurantes',
+                    'pt' => 'Restaurantes',
                     'de' => 'Restaurants',
                     'it' => 'Ristoranti',
+                    'ca' => 'Restaurants',
+                    'eu' => 'Jatetxeak',
+                    'gl' => 'Restaurantes',
+                    'nl' => 'Restaurants',
                 ]
             ],
             [
@@ -127,9 +159,13 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Vida nocturna',
                     'en' => 'Nightlife',
                     'fr' => 'Vie nocturne',
-                    'pr' => 'Vida noturna',
+                    'pt' => 'Vida noturna',
                     'de' => 'Nachtleben',
                     'it' => 'Vita notturna',
+                    'ca' => 'Vida nocturna',
+                    'eu' => 'Gau-bizitza',
+                    'gl' => 'Vida nocturna',
+                    'nl' => 'Nachtleven',
                 ]
             ],
             [
@@ -139,9 +175,13 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Compras',
                     'en' => 'Shopping',
                     'fr' => 'Achats',
-                    'pr' => 'Compras',
+                    'pt' => 'Compras',
                     'de' => 'Einkaufen',
                     'it' => 'Shopping',
+                    'ca' => 'Compres',
+                    'eu' => 'Erosketak',
+                    'gl' => 'Compras',
+                    'nl' => 'Winkelen',
                 ]
             ],
             [
@@ -151,12 +191,17 @@ class loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder extends Seeder
                     'es' => 'Otros',
                     'en' => 'Others',
                     'fr' => 'Autres',
-                    'pr' => 'Outros',
+                    'pt' => 'Outros',
                     'de' => 'Andere',
                     'it' => 'Altri',
+                    'ca' => 'Altres',
+                    'eu' => 'Bestelakoak',
+                    'gl' => 'Outros',
+                    'nl' => 'Overige',
                 ]
             ],
         ];
+        
 
         foreach ($iconByNameInCategoriPlaces as $categoriPlace) {
             $categoriPlaceModel = CategoriPlaces::where('name', $categoriPlace['name'])->first();
