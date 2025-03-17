@@ -18,9 +18,10 @@ class MailService
     {
         if (!$email) return;
         $emails_available = ['general@thehoster.es', 'contacto@thehoster.es', 'info@thehoster.es'];
-        if ((strpos($email, '@thehoster.es') !== false) && !in_array($email, $emails_available)) {
+        if (preg_match('/@thehoster\.es$/', $email) && !in_array($email, $emails_available)) {
             return;
         }
+    
 
         Mail::to($email)->send($mailable);
     }

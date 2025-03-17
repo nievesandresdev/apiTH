@@ -66,6 +66,10 @@ return [
     'key_api_review' => env('KEY_API_REVIEW',null),
     //OPENAI
     'openia_key' => env('OPENAI_API_KEY', null),
+    'azure_openia_key' => env('AZURE_OPENAI_API_KEY', null),
+    'azure_openia_base_uri' => env('AZURE_OPENAI_BASE_URI', null),
+    'azure_openia_deployment' => env('AZURE_OPENAI_DEPLOYMENT', null),
+    'azure_openia_version' => env('AZURE_OPENAI_VERSION', null),
 
     /*
     |--------------------------------------------------------------------------

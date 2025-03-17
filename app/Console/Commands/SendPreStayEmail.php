@@ -62,6 +62,7 @@ class SendPreStayEmail extends Command
 
     public function handleSendEmailPreCheckin()
     {
+        Log::info('handleSendEmailPreCheckin init');
         $currentTime = Carbon::now();
         $startOfHour = $currentTime->copy()->startOfHour(); // inicio hor actual
         $endOfHour = $currentTime->copy()->endOfHour();     // fin hora actuyal

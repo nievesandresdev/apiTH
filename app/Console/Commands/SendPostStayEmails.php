@@ -62,6 +62,7 @@ class SendPostStayEmails extends Command
 
     public function handleSendEmailCheckout()
     {
+        Log::info('handleSendEmailCheckout init');
         // Rango de tiempo basado en la fecha actual
         $today = Carbon::today();
 
@@ -285,6 +286,7 @@ class SendPostStayEmails extends Command
 
     public function handleSendEmailPostCheckout()
     {
+        Log::info('handleSendEmailPostCheckout init');
         $currentTime = Carbon::now();
         $startOfHour = $currentTime->copy()->startOfHour(); // inicio hor actual
         $endOfHour = $currentTime->copy()->endOfHour();     // fin hora actuyal
