@@ -147,7 +147,6 @@ class TranslateService {
 
     public function loadInputTranslation ($payload) {
         try {
-
             ['dirTemplate' => $dirTemplate, 'context' => $context, 'languageCodes' => $languageCodes] = $payload;
 
             $baseContext = $this->processTemplateBaseTranslate($payload);
@@ -159,7 +158,7 @@ class TranslateService {
 
             $function_call = ['name' => 'translation'];
             $data = [
-                'model' => 'gpt-3.5-turbo',
+                'model' => 'gpt-4o-min',
                 'messages' => $messageContext,
                 'functions' => $functionContext,
                 'function_call' => $function_call,
@@ -179,16 +178,16 @@ class TranslateService {
     public function requestChatgpt ($input) {
         try {
             $client = OpenAI::factory()
-            ->withBaseUri('https://thehoster-test-openai.openai.azure.com/openai/deployments/gpt-35-turbo/')
+            ->withBaseUri('https://thehoster-test-openai.openai.azure.com/openai/deployments/gpt-4o-mini/')
             ->withApiKey(config('app.azure_openia_key'))
             ->withHttpHeader('api-key', config('app.azure_openia_key'))
-            ->withQueryParam('api-version', '2024-02-15-preview')
+            ->withQueryParam('api-version', '2025-01-01-preview')
             ->make();
             $response = $client->chat()->create($input);
             return $response;
         } catch (\Exception $e) {
             \Log::error('ERROR_TRANSLATION', ['message' => $e->getMessage()]);
-            return $e;
+            return;
         }
     }
 

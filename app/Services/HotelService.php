@@ -246,7 +246,9 @@ class HotelService {
         $lgsAll = getAllLanguages()->toArray();
 
 
-        $query = Hotel::query();
+        $query = Hotel::whereHas('translations', function ($query) use ($lgsAll) {
+            $query->whereIn('language', $lgsAll);
+        }, '<', count($lgsAll));
 
         $hotelCollection = $query->limit(1)->get();
 
