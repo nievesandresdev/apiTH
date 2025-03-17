@@ -39,11 +39,14 @@ class TranslateModelJob implements ShouldQueue
             ini_set('max_execution_time', '2400');
             
             $translateService = new TranslateService();
-            $responseTranslation = $translateService->load([
+            $input = [
                 'dirTemplate' => $this->dirTemplate,
                 'context' => $this->inputsTranslate,
                 'languageCodes' => $this->languages ?? getAllLanguages(),
-            ]);
+            ];
+            // \Log::info($input);
+            $responseTranslation = $translateService->load($input);
+
             $translation = $responseTranslation['translation'] ?? [];
             $this->service->updateTranslation($this->model, $translation);
 

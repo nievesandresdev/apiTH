@@ -192,6 +192,32 @@ class FacilityService {
         return $baseTitle;
     }
 
+    public function translateAll () {
+
+        $lgsAll = getAllLanguages()->toArray();
+
+
+        $query = FacilityHoster::whereHas('translations', function ($query) use ($lgsAll) {
+            $query->whereIn('language', $lgsAll);
+        }, '<', count($lgsAll));
+
+        $facilityCollection = $query->limit(1)->get();
+
+        foreach ($facilityCollection as $facilityHosterModel) {
+            $translations = collect($facilityHosterModel->translations);            
+
+            $lgsWithTranslations = $translations->pluck('language')->toArray();
+            $lgsWithoutTranslations = array_values(array_diff($lgsAll, $lgsWithTranslations));
+            $dirTemplateTranslate = 'translation/webapp/hotel_input/facility';
+            $inputsTranslate = [
+                'title' => $facilityHosterModel->title,
+                'description' => $facilityHosterModel->description,
+                'schedule' => $facilityHosterModel->ad_tag ?? ''
+            ];
+            TranslateModelJob::dispatchSync($dirTemplateTranslate, $inputsTranslate, $this, $facilityHosterModel, $lgsWithoutTranslations);
+        }
+    }
+
     public function processTranslate ($request, $facilityHosterModel, $hotelModel) {
 
         $dirTemplateTranslate = 'translation/webapp/hotel_input/facility';
