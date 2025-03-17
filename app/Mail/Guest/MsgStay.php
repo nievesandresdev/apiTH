@@ -48,6 +48,7 @@ class MsgStay extends Mailable
      */
     public function build()
     {
+
         $subject = 'Gracias por elegirnos.';
         if($this->type == 'welcome' || $this->type == 'inviteGuestFromSaas'){
             $subject = 'Te damos la bienvenida a la WebApp de '.$this->hotel->name;
