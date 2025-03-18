@@ -48,7 +48,7 @@ class TranslateController extends Controller
 
             $responseTranslate = $this->service->translate($context);
             ['errorTranslate' => $errorTranslate, 'input' => $input, 'output' => $output, 'translation' => $translation] = $responseTranslate;
-            if ($withValidation) {
+            if ($withValidation && empty($errorTranslate) && !empty($translation)) {
                 $responseValidate = $this->service->validate($input, $output);
 
                 ['status' => $status, 'attempts'=>$attempts, 'errorValidate' => $errorValidate] =  $responseValidate;
@@ -85,6 +85,7 @@ class TranslateController extends Controller
             $input = $request->input ?? nulll;
             $output = $request->output ?? nulll;
             $responseValidate = $this->service->validate($input, $output);
+            return $responseValidate;
             ['status' => $status, 'attempts'=>$attempts, 'errorValidate' => $errorValidate] =  $responseValidate;
             $data = [
                 'output' => $output,

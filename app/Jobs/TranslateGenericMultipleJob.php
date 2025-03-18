@@ -10,6 +10,8 @@ use Illuminate\Queue\SerializesModels;
 use App\Services\Chatgpt\TranslateService;
 use Illuminate\Support\Facades\Log;
 
+use Illuminate\Support\Facades\Validator;
+
 class TranslateGenericMultipleJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -19,12 +21,15 @@ class TranslateGenericMultipleJob implements ShouldQueue
     protected $arrToTranslate;
     protected $service;
     protected $model;
-
-    public function __construct($arrToTranslate, $service, $model)
+    protected $langsToTranslate;
+    protected $withValidation;
+    public function __construct($arrToTranslate, $service, $model, $langsToTranslate = [], $withValidation = true)
     {
         $this->arrToTranslate = $arrToTranslate;
         $this->service = $service;
         $this->model = $model;
+        $this->langsToTranslate = $langsToTranslate;
+        $this->withValidation = $withValidation;
     }
 
     public function handle()
@@ -42,9 +47,17 @@ class TranslateGenericMultipleJob implements ShouldQueue
                 $responseRranslation = $translateService->load([
                     'dirTemplate' => 'translation/generic',
                     'context' => ['text' => $value],
-                    'languageCodes' => getAllLanguages(),
+                    'languageCodes' => count($this->langsToTranslate) > 0? $this->langsToTranslate: getAllLanguages(),
+                    'withValidation' => $this->withValidation
                 ]);
+
                 $translation = $responseRranslation['translation'] ?? [];
+
+                // if (!$this->validTranslation($translation)) {
+                //     $result[$key] = [];
+                //     continue;
+                // }
+
                 $result[$key] = $translation;
             }
             $this->service->updateTranslation($this->model, $result);
@@ -52,6 +65,16 @@ class TranslateGenericMultipleJob implements ShouldQueue
         } catch (\Exception $e) {
             Log::error("handle TranslateJob:", ['exception' => $e]);
         }
+    }
+
+    private function validTranslation($translation): bool
+    {
+        $validator = Validator::make($translation, [
+            '*' => ['required', 'array'],
+            '*.text' => ['required', 'string']
+        ]);
+    
+        return !$validator->fails();
     }
 
 }

@@ -13,6 +13,7 @@ use App\Mail\User\RewardsEmail;
 use App\Models\Guest;
 use App\Models\Hotel;
 use App\Models\Query;
+use App\Models\QuerySetting;
 use App\Models\Stay;
 use App\Models\RewardStay;
 /*services*/
@@ -227,81 +228,12 @@ class UtilsController extends Controller
 
     public function test()
     {
-
-        return 'test';
-    }
-
-    public function testPostCheckin()
-    {
-        $start = now()->startOfHour()->subDay();
-        $end = now()->startOfHour()->subDay()->addHour();
-
-        Log::info('PostCheckinEmails desde '.$start.' hasta '.$end);
-
-
-        Log::info('handleSendEmailPostChekin comienza consulta estancias hace 24h starthour: '.$start.' endhour: '.$end);
-
-        $stays = Stay::with(['guests:id,name,email'])->select(
-                'h.checkin','h.id as hotelId','h.chain_id','h.name as hotelName','h.subdomain as hotelSubdomain','h.zone',
-                'h.show_facilities','h.show_places','h.show_experiences','h.latitude','h.longitude','h.sender_for_sending_email','h.sender_mail_mask',
-                'h.show_checkin_stay','h.city_id','cs.show_guest',
-                //
-                'stays.check_in','stays.id','stays.check_out',
-                'c.subdomain as chainSubdomain',
-            )
-            ->join('hotels as h', 'stays.hotel_id', '=', 'h.id')
-            ->join('chains as c', 'c.id', '=', 'h.chain_id')
-            ->join('chat_settings as cs', 'cs.hotel_id', '=', 'h.id')
-            /* ->whereRaw("
-                TIMESTAMP(
-                    stays.check_in,
-                    COALESCE(NULLIF(h.checkin, ''), '14:00:00')
-                ) BETWEEN ? AND ?
-            ", [
-                $start,
-                $end
-            ]) */
-            ->whereRaw("
-                TIMESTAMP(
-                    stays.check_in,
-                    IFNULL(NULLIF(h.checkin, ''), '21:30:00')
-                ) BETWEEN ? AND ?
-            ", [$start, $end])->get();
-
-            //Log::info('stays '.json_encode($stays));
-            //dd($stays);
-
-        foreach($stays as $stay){
-            //create hotel object
-            $hotel = new \stdClass();
-            $hotel->checkin = $stay->checkin;
-            $hotel->id = $stay->hotelId;
-            $hotel->chain_id = $stay->chain_id;
-            $hotel->name = $stay->hotelName;
-            $hotel->subdomain = $stay->hotelSubdomain;
-            $hotel->zone = $stay->zone;
-            $hotel->show_facilities = $stay->show_facilities;
-            $hotel->show_places = $stay->show_places;
-            $hotel->show_experiences = $stay->show_experiences;
-            $hotel->latitude = $stay->latitude;
-            $hotel->longitude = $stay->longitude;
-            $hotel->sender_for_sending_email = $stay->sender_for_sending_email;
-            $hotel->sender_mail_mask = $stay->sender_mail_mask;
-            $hotel->show_checkin_stay = $stay->show_checkin_stay;
-            $hotel->city_id = $stay->city_id;
-            $hotel->chatSettings = (object) ['show_guest' => $stay->show_guest]; //convertir a objeto se imprime en el email como $hotel->chatSettings->show_guest
-
-
-
-
-            foreach ($stay->guests as $guest) {
-                //dd($stay->chainSubdomain, $hotel, $guest, $stay);
-
-                //dd($stay->chainSubdomain, $hotel, $guest, $stay);
-                $this->stayServices->guestWelcomeEmail('postCheckin', $stay->chainSubdomain, $hotel, $guest, $stay);
-            }
-        }
-        return 'enviado postCheckin';
+        // $hotel = Hotel::find(280);
+        // $stay = Stay::find(43);
+        // $guest = Guest::find(1);
+        // $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
+        // return 'enviado';
+        return $models = QuerySetting::all();
     }
 
     public function testEmailPostCheckout(){
