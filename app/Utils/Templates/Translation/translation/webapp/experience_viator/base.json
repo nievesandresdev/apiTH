@@ -1,0 +1,46 @@
+{
+  "function_expected_parameter": {
+    "{{ language_code }}": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The translated text of the experience title."
+        },
+        "description": {
+          "type": "string",
+          "description": "The translated text of the detailed experience description."
+        },
+        "include_experience": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The translated text indicating what is included in the experience."
+          }
+        },
+        "not_include_experience": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The translated text indicating what is not included in the experience."
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The translated text with recommendations related to the experience."
+          }
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "include_experience",
+        "not_include_experience",
+        "recommendations"
+      ]
+    }
+  },
+  "system_expected_parameter": "\n    \"{{ language_code }}\": {\n        \"title\": <text>,\n        \"description\": <text>,\n        \"include_experience\": [<text>],\n        \"not_include_experience\": [<text>],\n        \"recommendations\": [<text>]\n    }"
+}

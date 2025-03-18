@@ -27,21 +27,30 @@ class TranslateController extends Controller
         $this->service = $_TranslateService;
     }
 
+    function encodeArrayValuesToJsonStrings(array $data): array
+    {
+        return array_map(fn($value) => is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value, $data);
+    }
+
 
     public function load(LoadTranslateRequest $request){
         
         try {
 
             $withValidation = isset($request->withValidation) ? $request->withValidation  : true;
+            $inputs = $request->context;
+            $inputs = $this->encodeArrayValuesToJsonStrings($inputs);
             $context = [
                 "dirTemplate" => $request->dirTemplate,
                 "languageCodes" => $request->languageCodes,
-                "context" => $request->context
+                "context" => $inputs
             ];
+
             $responseTranslate = $this->service->translate($context);
             ['errorTranslate' => $errorTranslate, 'input' => $input, 'output' => $output, 'translation' => $translation] = $responseTranslate;
             if ($withValidation) {
                 $responseValidate = $this->service->validate($input, $output);
+
                 ['status' => $status, 'attempts'=>$attempts, 'errorValidate' => $errorValidate] =  $responseValidate;
                 if ($status != 200) {
                     \Log::error('ERROR_TRANSLATION', ['status' => $status, 'attempts' => $attempts,  'output' => $output]);

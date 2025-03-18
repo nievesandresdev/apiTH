@@ -36,3 +36,4 @@ class loadCityObjectidInHotelSeeder extends Seeder
         });
     }
 }
+|

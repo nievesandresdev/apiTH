@@ -241,6 +241,32 @@ class HotelService {
         return $hotelModel;
     }
 
+    public function translateAll () {
+
+        $lgsAll = getAllLanguages()->toArray();
+
+
+        $query = Hotel::whereHas('translations', function ($query) use ($lgsAll) {
+            $query->whereIn('language', $lgsAll);
+        }, '<', count($lgsAll));
+
+        $hotelCollection = $query->limit(1)->get();
+
+        foreach ($hotelCollection as $hotelModel) {
+            $translations = collect($hotelModel->translations);
+            
+
+            $lgsWithTranslations = $translations->pluck('language')->toArray();
+            $lgsWithoutTranslations = array_values(array_diff($lgsAll, $lgsWithTranslations));
+            $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
+            $description = $translations->first()->description;
+
+            $inputsTranslate = ['description' => $description];
+            TranslateModelJob::dispatchSync($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel, $lgsWithoutTranslations);
+
+        }
+    }
+
 
     public function updateTranslation ($model, $translation) {
         $translation = collect($translation ?? []);
@@ -505,4 +531,5 @@ class HotelService {
             return $e;
         }
     }
+
 }
