@@ -10,6 +10,8 @@ use Illuminate\Queue\SerializesModels;
 use App\Services\Chatgpt\TranslateService;
 use Illuminate\Support\Facades\Log;
 
+use Illuminate\Support\Facades\Validator;
+
 class TranslateGenericMultipleJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -48,8 +50,14 @@ class TranslateGenericMultipleJob implements ShouldQueue
                     'languageCodes' => count($this->langsToTranslate) > 0? $this->langsToTranslate: getAllLanguages(),
                     'withValidation' => $this->withValidation
                 ]);
-                
+
                 $translation = $responseRranslation['translation'] ?? [];
+
+                if ($this->validTranslation($translation)) {
+                    $result[$key] = [];
+                    continue;
+                }
+
                 $result[$key] = $translation;
             }
             $this->service->updateTranslation($this->model, $result);
@@ -58,5 +66,17 @@ class TranslateGenericMultipleJob implements ShouldQueue
             Log::error("handle TranslateJob:", ['exception' => $e]);
         }
     }
+
+    private function validTranslation($translation) {
+        
+
+        $validator = Validator::make($translation->toArray(), [
+            '*' => ['required', 'array'],
+            '*.title' => ['required', 'string']
+         ]);
+
+        $is_valid = !$validator->fails();
+        return $is_valid;
+    }
 
 }
