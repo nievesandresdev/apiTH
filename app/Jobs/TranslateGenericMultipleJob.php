@@ -48,6 +48,7 @@ class TranslateGenericMultipleJob implements ShouldQueue
                     'languageCodes' => count($this->langsToTranslate) > 0? $this->langsToTranslate: getAllLanguages(),
                     'withValidation' => $this->withValidation
                 ]);
+                
                 $translation = $responseRranslation['translation'] ?? [];
                 $result[$key] = $translation;
             }

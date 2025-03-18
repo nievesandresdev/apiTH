@@ -61,6 +61,8 @@ class TranslateService {
             'translation' => $translation,
             'errorTranslate' => $errorTranslate,
         ];
+
+        return $data;
     }
 
     // TRANSLATION
