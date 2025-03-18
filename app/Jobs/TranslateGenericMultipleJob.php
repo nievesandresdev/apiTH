@@ -20,13 +20,14 @@ class TranslateGenericMultipleJob implements ShouldQueue
     protected $service;
     protected $model;
     protected $langsToTranslate;
-                    
-    public function __construct($arrToTranslate, $service, $model, $langsToTranslate = [])
+    protected $withValidation;
+    public function __construct($arrToTranslate, $service, $model, $langsToTranslate = [], $withValidation = true)
     {
         $this->arrToTranslate = $arrToTranslate;
         $this->service = $service;
         $this->model = $model;
         $this->langsToTranslate = $langsToTranslate;
+        $this->withValidation = $withValidation;
     }
 
     public function handle()
@@ -45,6 +46,7 @@ class TranslateGenericMultipleJob implements ShouldQueue
                     'dirTemplate' => 'translation/generic',
                     'context' => ['text' => $value],
                     'languageCodes' => count($this->langsToTranslate) > 0? $this->langsToTranslate: getAllLanguages(),
+                    'withValidation' => $this->withValidation
                 ]);
                 $translation = $responseRranslation['translation'] ?? [];
                 $result[$key] = $translation;
