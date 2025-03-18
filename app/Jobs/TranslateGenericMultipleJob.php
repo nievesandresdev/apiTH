@@ -53,7 +53,7 @@ class TranslateGenericMultipleJob implements ShouldQueue
 
                 $translation = $responseRranslation['translation'] ?? [];
 
-                if ($this->validTranslation($translation)) {
+                if (!$this->validTranslation($translation)) {
                     $result[$key] = [];
                     continue;
                 }
@@ -67,16 +67,14 @@ class TranslateGenericMultipleJob implements ShouldQueue
         }
     }
 
-    private function validTranslation($translation) {
-        
-
-        $validator = Validator::make($translation->toArray(), [
+    private function validTranslation($translation): bool
+    {
+        $validator = Validator::make($translation, [
             '*' => ['required', 'array'],
-            '*.title' => ['required', 'string']
-         ]);
-
-        $is_valid = !$validator->fails();
-        return $is_valid;
-    }
+            '*.text' => ['required', 'string']
+        ]);
+    
+        return !$validator->fails();
+    }
 
 }
