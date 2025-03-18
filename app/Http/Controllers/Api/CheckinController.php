@@ -42,7 +42,7 @@ class CheckinController extends Controller
     public function sendPassportImage(Request $request){
         try {
             // 1. Recibir el archivo
-            Log::info("sendPassportImage". json_encode($request->hasFile('passportImage')));
+            // Log::info("sendPassportImage". json_encode($request->hasFile('passportImage')));
             if (!$request->hasFile('passportImage')) {
                 return response()->json([
                     'ok' => false,

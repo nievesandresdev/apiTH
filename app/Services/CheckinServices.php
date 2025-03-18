@@ -43,19 +43,19 @@ class CheckinServices {
             if ($fileSize === 0) {
                 throw new \Exception('El contenido del archivo está vacío.');
             }
-            Log::info("Tamaño del contenido en bytes => $fileSize");
+            // Log::info("Tamaño del contenido en bytes => $fileSize");
 
             $validMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
             if (! in_array($mimeType, $validMimeTypes)) {
                 throw new \Exception("Tipo MIME no permitido: $mimeType");
             }
-            Log::info("Tipo MIME => $mimeType");
+            // Log::info("Tipo MIME => $mimeType");
         
             $fileHash = md5($fileContent);
-            Log::info("Hash MD5 del contenido => $fileHash");
+            // Log::info("Hash MD5 del contenido => $fileHash");
 
 
-            Log::info("callAzureFormRecognizer". json_encode($fileContent));
+            // Log::info("callAzureFormRecognizer". json_encode($fileContent));
             $endpoint = config('services.azure.form_recognizer_endpoint');
             $apiKey   = config('services.azure.form_recognizer_key');
             if (empty($endpoint)) {
@@ -64,8 +64,9 @@ class CheckinServices {
             if (empty($apiKey)) {
                 throw new \Exception('La clave de Azure no está configurada.');
             }
-
-            $analyzeUrl = $endpoint . '/formrecognizer/documentModels/prebuilt-idDocument:analyze?api-version=2022-08-31';
+            
+            $analyzeUrl = $endpoint . '/documentintelligence/documentModels/prebuilt-idDocument:analyze?_overload=analyzeDocument&api-version=2024-11-30';
+            // $analyzeUrl = $endpoint . '/formrecognizer/documentModels/prebuilt-idDocument:analyze?api-version=2022-08-31';
 
             // 1) Llamada a Azure
             $response = Http::withHeaders([
@@ -74,9 +75,7 @@ class CheckinServices {
                 ])
                 ->withBody($fileContent, $mimeType)
                 ->post($analyzeUrl);
-            Log::info('Status: '.$response->status());
-            Log::info('Body: '.$response->body());
-            Log::info('Json: '.json_encode($response->json()));
+            
                 
             // 2) Polling si es 202
             if ($response->status() == 202) {
@@ -92,7 +91,7 @@ class CheckinServices {
                     ])->get($operationLocation);
 
                     $analysisJson = $analysisResponse->json();
-                    Log::info("analysisJson => " . json_encode($analysisJson));
+                    // Log::info("analysisJson => " . json_encode($analysisJson));
                     $status = $analysisJson['status'] ?? null;
 
                     $retries++;
@@ -247,21 +246,27 @@ class CheckinServices {
 
     private function parseDocumentNumberDNI(array $mrzCandidates)
     {
-        // Verificar que exista la primera línea y tenga al menos 15 caracteres
-        if (!isset($mrzCandidates[0]) || strlen($mrzCandidates[0]) < 15) {
+        // Verificar que exista la primera línea
+        if (!isset($mrzCandidates[0])) {
             return null;
         }
         
-        $docLine = $mrzCandidates[0];
+        // Tomamos la primera línea y la limpiamos de espacios extra al inicio y al final
+        $line1 = trim($mrzCandidates[0]);
         
-        // Extraer los 9 caracteres que corresponden al número de documento
-        // Posiciones 6 a 14 (0-indexado: desde el índice 5 con longitud 9)
-        $rawDocNumber = substr($docLine, 5, 9);
+        // Nos aseguramos de que la línea tenga al menos 30 caracteres (formato TD1)
+        if (strlen($line1) < 30) {
+            return null;
+        }
         
-        // Eliminar el relleno con el carácter '<'
-        $documentNumber = str_replace('<', '', $rawDocNumber);
+        // Extraer el campo opcional: posiciones 16 a 30 (0-indexado: desde índice 15, longitud 15)
+        $supportRaw = substr($line1, 15, 15);
         
-        return $documentNumber;
+        // Eliminar los caracteres de relleno '<' y también limpiar espacios extra
+        $supportNumber = trim(str_replace('<', '', $supportRaw));
+        
+        // Si el resultado está vacío, se asume que no se usó ese campo
+        return $supportNumber !== '' ? $supportNumber : null;
     }
 
 
@@ -371,27 +376,21 @@ class CheckinServices {
 
     private function parseSupportNumberDNI(array $mrzCandidates)
     {
-        // Verificar que exista la primera línea
-        if (!isset($mrzCandidates[0])) {
+        // Verificar que exista la primera línea y tenga al menos 15 caracteres
+        if (!isset($mrzCandidates[0]) || strlen($mrzCandidates[0]) < 15) {
             return null;
         }
         
-        // Tomamos la primera línea y la limpiamos de espacios extra al inicio y al final
-        $line1 = trim($mrzCandidates[0]);
+        $docLine = $mrzCandidates[0];
         
-        // Nos aseguramos de que la línea tenga al menos 30 caracteres (formato TD1)
-        if (strlen($line1) < 30) {
-            return null;
-        }
+        // Extraer los 9 caracteres que corresponden al número de documento
+        // Posiciones 6 a 14 (0-indexado: desde el índice 5 con longitud 9)
+        $rawDocNumber = substr($docLine, 5, 9);
         
-        // Extraer el campo opcional: posiciones 16 a 30 (0-indexado: desde índice 15, longitud 15)
-        $supportRaw = substr($line1, 15, 15);
+        // Eliminar el relleno con el carácter '<'
+        $documentNumber = str_replace('<', '', $rawDocNumber);
         
-        // Eliminar los caracteres de relleno '<' y también limpiar espacios extra
-        $supportNumber = trim(str_replace('<', '', $supportRaw));
-        
-        // Si el resultado está vacío, se asume que no se usó ese campo
-        return $supportNumber !== '' ? $supportNumber : null;
+        return $documentNumber;
     }
 
     private function parseBirthDate(array $mrzCandidates, string $docType, ?string $nationalityISO = null)
