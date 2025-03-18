@@ -151,7 +151,7 @@
 
             @if(!$data['queryData']['answered'])
                 <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
-                @include('components.mails.needArrivalHotel')
+                @include('components.mails.needArrivalHotel',['webappLinkInbox' => $data['queryData']['webappLinkInbox']])
             @endif
 
             <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
