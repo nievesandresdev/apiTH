@@ -81,7 +81,7 @@ class UtilityService {
                 $facilities = $facilities->map(function ($item) use($modelHotel, $chainSubdomain, $url_bucket){
                     return [
                         'title' => Str::limit($item->title, 28, '...'),
-                        'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"ver-instalacion/{$item->id}"),
+                        'url_webapp' => buildUrlWebApp($chainSubdomain, $modelHotel->subdomain,"instalaciones/ver-instalacion/{$item->id}"),
                         'url_image' => count($item->images) > 0 ? $url_bucket.$item->images[0]->url : null
                     ];
                 });

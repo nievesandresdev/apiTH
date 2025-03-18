@@ -314,12 +314,12 @@ class UtilsController extends Controller
 
     public function testPrepareYourArrival(){
         $type = 'prepare-arrival';
-        $hotel = Hotel::find(240);
+        $hotel = Hotel::find(291);
         //$guest = Guest::find(146);
-        $guest = Guest::find(280);
+        $guest = Guest::find(22);
         $chainSubdomain = $hotel->subdomain;
         //$stay = Stay::find(630);
-        $stay = Stay::with('queries')->where('id',629)->first();
+        $stay = Stay::with('queries')->where('id',82)->first();
 
 
 
