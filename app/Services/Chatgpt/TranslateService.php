@@ -158,7 +158,7 @@ class TranslateService {
 
             $function_call = ['name' => 'translation'];
             $data = [
-                'model' => 'gpt-4o-min',
+                "model" => config('app.azure_openia_deployment'),
                 'messages' => $messageContext,
                 'functions' => $functionContext,
                 'function_call' => $function_call,
@@ -176,13 +176,15 @@ class TranslateService {
     }
 
     public function requestChatgpt ($input) {
+        $MODEL_DEPLOYMENT = config('app.azure_openia_deployment');
+        $BASE_URI = "https://thehoster-test-openai.openai.azure.com/openai/deployments/${MODEL_DEPLOYMENT}";
         try {
             $client = OpenAI::factory()
-            ->withBaseUri('https://thehoster-test-openai.openai.azure.com/openai/deployments/gpt-4o-mini/')
-            ->withApiKey(config('app.azure_openia_key'))
-            ->withHttpHeader('api-key', config('app.azure_openia_key'))
-            ->withQueryParam('api-version', '2025-01-01-preview')
-            ->make();
+                ->withBaseUri($BASE_URI)
+                ->withApiKey(config('app.azure_openia_key'))
+                ->withHttpHeader('api-key', config('app.azure_openia_key'))
+                ->withQueryParam('api-version', config('app.azure_openia_version'))
+                ->make();
             $response = $client->chat()->create($input);
             return $response;
         } catch (\Exception $e) {
