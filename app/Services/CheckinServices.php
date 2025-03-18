@@ -39,8 +39,31 @@ class CheckinServices {
     public function callAzureFormRecognizer($fileContent, $mimeType)
     {
         try {
+            $fileSize = strlen($fileContent);
+            if ($fileSize === 0) {
+                throw new \Exception('El contenido del archivo está vacío.');
+            }
+            Log::info("Tamaño del contenido en bytes => $fileSize");
+
+            $validMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            if (! in_array($mimeType, $validMimeTypes)) {
+                throw new \Exception("Tipo MIME no permitido: $mimeType");
+            }
+            Log::info("Tipo MIME => $mimeType");
+        
+            $fileHash = md5($fileContent);
+            Log::info("Hash MD5 del contenido => $fileHash");
+
+
+            Log::info("callAzureFormRecognizer". json_encode($fileContent));
             $endpoint = config('services.azure.form_recognizer_endpoint');
             $apiKey   = config('services.azure.form_recognizer_key');
+            if (empty($endpoint)) {
+                throw new \Exception('Endpoint de Azure no está configurado.');
+            }
+            if (empty($apiKey)) {
+                throw new \Exception('La clave de Azure no está configurada.');
+            }
 
             $analyzeUrl = $endpoint . '/formrecognizer/documentModels/prebuilt-idDocument:analyze?api-version=2022-08-31';
 
@@ -51,10 +74,17 @@ class CheckinServices {
                 ])
                 ->withBody($fileContent, $mimeType)
                 ->post($analyzeUrl);
-
+            Log::info('Status: '.$response->status());
+            Log::info('Body: '.$response->body());
+            Log::info('Json: '.json_encode($response->json()));
+                
             // 2) Polling si es 202
             if ($response->status() == 202) {
                 $operationLocation = $response->header('Operation-Location');
+                
+                $maxRetries = 20; // Por ejemplo, 60 intentos (60 segundos)
+                $retries = 0;
+
                 do {
                     sleep(1); 
                     $analysisResponse = Http::withHeaders([
@@ -62,8 +92,15 @@ class CheckinServices {
                     ])->get($operationLocation);
 
                     $analysisJson = $analysisResponse->json();
+                    Log::info("analysisJson => " . json_encode($analysisJson));
                     $status = $analysisJson['status'] ?? null;
-                } while ($analysisResponse->ok() && $status && !in_array($status, ['succeeded','failed']));
+
+                    $retries++;
+                    if ($retries >= $maxRetries) {
+                        throw new \Exception('Tiempo de espera excedido en el polling.');
+                    }
+                } while ($analysisResponse->ok() && $status && !in_array($status, ['succeeded', 'failed']));
+
 
                 if ($status === 'succeeded') {
                     $finalResult = $analysisJson;
