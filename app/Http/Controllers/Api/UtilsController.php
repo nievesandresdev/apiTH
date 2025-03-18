@@ -13,6 +13,7 @@ use App\Mail\User\RewardsEmail;
 use App\Models\Guest;
 use App\Models\Hotel;
 use App\Models\Query;
+use App\Models\QuerySetting;
 use App\Models\Stay;
 use App\Models\RewardStay;
 /*services*/
@@ -227,11 +228,12 @@ class UtilsController extends Controller
 
     public function test()
     {
-        $hotel = Hotel::find(280);
-        $stay = Stay::find(43);
-        $guest = Guest::find(1);
-        $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
-        return 'enviado';
+        // $hotel = Hotel::find(280);
+        // $stay = Stay::find(43);
+        // $guest = Guest::find(1);
+        // $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
+        // return 'enviado';
+        return $models = QuerySetting::all();
     }
 
     public function testEmailPostCheckout(){

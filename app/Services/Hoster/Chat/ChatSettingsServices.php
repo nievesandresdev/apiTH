@@ -2,6 +2,7 @@
 
 namespace App\Services\Hoster\Chat;
 
+use App\Jobs\TranslateGenericMultipleJob;
 use App\Models\{ChatSetting, ChatHour};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -55,10 +56,59 @@ class ChatSettingsServices {
                 $save->languages()->sync($newdata->languages_id);
             }
 
+            $this->processTranslateTexts($newdata, $save);
             return $save;
 
         } catch (\Exception $e) {
             return $e;
+        }
+    }
+
+    public function processTranslateTexts ($request, $model){
+
+        try {
+            $first_available_msg = $request->first_available_msg['es'] ?? $model->first_available_msg['es'];
+            $not_available_msg = $request->not_available_msg['es'] ?? $model->not_available_msg['es'];
+            $second_available_msg = $request->second_available_msg['es'] ?? $model->second_available_msg['es'];
+            $three_available_msg = $request->three_available_msg['es'] ?? $model->three_available_msg['es'];
+
+            $arrToTranslate = [
+                'first_available_msg' => $first_available_msg,
+                'not_available_msg' => $not_available_msg,
+                'second_available_msg' => $second_available_msg,
+                'three_available_msg' => $three_available_msg
+            ];
+            
+            TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model);
+        } catch (\Exception $e) {
+            Log::error('error processTranslateTextsCHAT: '.$e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateTranslation($model, $translation) {
+        try{
+            // Asegurarse de que $translation sea un arreglo
+            $translationFormat = json_decode(json_encode($translation), true);
+        
+            foreach ($translationFormat as $key => &$categories) {
+                foreach ($categories as $lang => &$details) {
+                    // Asegurarse de que 'text' existe antes de intentar accederlo
+                    if (isset($details['text'])) {
+                        $details = $details['text'];
+                    }
+                }
+            }
+            
+            $model->first_available_msg = isset($translationFormat['first_available_msg']) ? $translationFormat['first_available_msg'] : $model->first_available_msg;
+            $model->not_available_msg = isset($translationFormat['not_available_msg']) ? $translationFormat['not_available_msg'] : $model->not_available_msg;
+            $model->second_available_msg = isset($translationFormat['second_available_msg']) ? $translationFormat['second_available_msg'] : $model->second_available_msg;
+            $model->three_available_msg = isset($translationFormat['three_available_msg']) ? $translationFormat['three_available_msg'] : $model->three_available_msg;
+            //
+            $model->save();
+        } catch (\Exception $e) {
+            Log::error('error processTranslateTextsCHat: '.$e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 

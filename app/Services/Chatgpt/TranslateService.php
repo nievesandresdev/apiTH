@@ -38,7 +38,7 @@ class TranslateService {
         // $templates = PathTemplate::getAllowedTemplates();
         $responseTranslate = $this->translate($data);
         ['errorTranslate' => $errorTranslate, 'input' => $input, 'output' => $output, 'translation' => $translation] = $responseTranslate;
-        if ($withValidationn && empty($errorTranslate) && !empty($translation)) {
+        if ($withValidation && empty($errorTranslate) && !empty($translation)) {
             $responseValidate = $this->validate($input, $output);
             ['status' => $status, 'attempts'=>$attempts, 'errorValidate' => $errorValidate] =  $responseValidate;
             if ($status != 200) {
@@ -61,6 +61,8 @@ class TranslateService {
             'translation' => $translation,
             'errorTranslate' => $errorTranslate,
         ];
+
+        return $data;
     }
 
     // TRANSLATION
