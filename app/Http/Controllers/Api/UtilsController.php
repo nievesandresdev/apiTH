@@ -118,6 +118,8 @@ class UtilsController extends Controller
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(81);
 
+        //dd($stay->hotel->checkin);
+
 
         try {
             $checkData = [];
