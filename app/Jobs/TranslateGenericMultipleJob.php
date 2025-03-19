@@ -69,6 +69,10 @@ class TranslateGenericMultipleJob implements ShouldQueue
 
     private function validTranslation($translation): bool
     {
+        $translation = is_array($translation)
+            ? $translation
+            : json_decode(json_encode($translation), true);
+        
         $validator = Validator::make($translation, [
             '*' => ['required', 'array'],
             '*.text' => ['required', 'string']
