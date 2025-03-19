@@ -24,6 +24,7 @@ class VerifyApiKey
             'test',
             'testEmailPostCheckout',
             'testPrepareYourArrival',
+            'testPostCheckin',
             'testEmailGeneral',
             'api/storeRewardStay',
             'testEmailReferent'

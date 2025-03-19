@@ -250,11 +250,13 @@ class HotelService {
             $query->whereIn('language', $lgsAll);
         }, '<', count($lgsAll));
 
-        $hotelCollection = $query->limit(1)->get();
+        // $hotelCollection = $query->limit(1)->get();
+        $hotelCollection = $query->get();
 
         foreach ($hotelCollection as $hotelModel) {
+            var_dump("hotel:". $hotelModel->id);
+
             $translations = collect($hotelModel->translations);
-            
 
             $lgsWithTranslations = $translations->pluck('language')->toArray();
             $lgsWithoutTranslations = array_values(array_diff($lgsAll, $lgsWithTranslations));

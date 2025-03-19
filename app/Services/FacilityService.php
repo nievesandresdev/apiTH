@@ -201,9 +201,11 @@ class FacilityService {
             $query->whereIn('language', $lgsAll);
         }, '<', count($lgsAll));
 
-        $facilityCollection = $query->limit(1)->get();
+        // $facilityCollection = $query->limit(1)->get();
+        $facilityCollection = $query->get();
 
         foreach ($facilityCollection as $facilityHosterModel) {
+            var_dump("facility:". $facilityHosterModel->id);
             $translations = collect($facilityHosterModel->translations);            
 
             $lgsWithTranslations = $translations->pluck('language')->toArray();
