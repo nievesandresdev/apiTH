@@ -25,7 +25,7 @@ class UpdateTranslateV1 {
                 }
                 
                 // Despacha el job para cada registro
-                TranslateGenericMultipleJob::dispatch($fields, $this, $model, $languages);
+                TranslateGenericMultipleJob::dispatch($fields, $this, $model, $languages, false);
             }
         } catch (\Exception $e) {
             Log::error('error UpdateTranslate: ' . $e->getMessage());
