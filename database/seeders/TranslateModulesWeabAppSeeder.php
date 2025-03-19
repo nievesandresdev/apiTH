@@ -23,8 +23,8 @@ class TranslateModulesWeabAppSeeder extends Seeder
 
     public function run(): void
     {
-        // $this->hotelService->translateAll();
-        // var_dump('traslated hotel finish');
+        $this->hotelService->translateAll();
+        var_dump('traslated hotel finish');
         $this->facilityService->translateAll();
         var_dump('traslated facility finish');
         
