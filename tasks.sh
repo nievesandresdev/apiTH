@@ -35,3 +35,20 @@ echo "Ejecutando customs commands..."
 # php /var/www/html/artisan custom:command
 
 echo "Todas las tareas programadas se han ejecutado."
+
+#seeders de sprint 5
+
+#agregar traducciones a registros en chat_settings
+#php artisan db:seed --class="Database\Seeders\UpdateTranslateModels\UpdateTranslateChatSettingSeeder"
+
+#agregar traducciones a registros en checkin_settings
+#php artisan db:seed --class="Database\Seeders\UpdateTranslateModels\UpdateTranslateCheckinSettingSeeder"
+
+#agregar traducciones a registros en query_settings
+#php artisan db:seed --class="Database\Seeders\UpdateTranslateModels\UpdateTranslateQuerySettingSeeder"
+
+#agregar traducciones a registros en requests_settings
+#php artisan db:seed --class="Database\Seeders\UpdateTranslateModels\UpdateTranslateRequestsSettingSeeder"
+
+#corregir errores de traduccion en el seeder UpdateTranslateRequestsSettingSeeder
+#php artisan db:seed --class=FixLinkStringRequestSettingsSeeder

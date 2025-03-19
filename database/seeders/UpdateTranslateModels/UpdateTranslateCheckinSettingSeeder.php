@@ -17,8 +17,7 @@ class UpdateTranslateCheckinSettingSeeder extends Seeder
             // Instanciamos el servicio
             $translateService = new UpdateTranslateV1();
 
-            $languages = Language::whereIn('name', ['Catalán', 'Euskera', 'Gallego', 'Holandés'])
-                ->pluck('abbreviation');
+            $languages = ["nl","eu","gl","ca"];
             Log::info('UpdateTranslatecheckinsetting - Languages: ' . json_encode($languages));
 
             // Obtenemos todos los registros del modelo ChatSetting
