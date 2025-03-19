@@ -53,10 +53,10 @@ class TranslateGenericMultipleJob implements ShouldQueue
 
                 $translation = $responseRranslation['translation'] ?? [];
 
-                if (!$this->validTranslation($translation)) {
-                    $result[$key] = [];
-                    continue;
-                }
+                // if (!$this->validTranslation($translation)) {
+                //     $result[$key] = [];
+                //     continue;
+                // }
 
                 $result[$key] = $translation;
             }

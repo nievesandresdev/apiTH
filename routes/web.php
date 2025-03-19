@@ -20,3 +20,4 @@ Route::get('/testEmailPostCheckout', [UtilsController::class, 'testEmailPostChec
 Route::get('/testPrepareYourArrival', [UtilsController::class, 'testPrepareYourArrival']);
 Route::get('/testEmailGeneral', [UtilsController::class, 'testEmailGeneral']);
 Route::get('/testEmailReferent', [UtilsController::class, 'testEmailReferent']);
+Route::get('/testPostCheckin', [UtilsController::class, 'testPostCheckin']);

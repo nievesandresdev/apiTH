@@ -8,6 +8,7 @@ use App\Services\CheckinServices;
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CheckinController extends Controller
 {
@@ -41,6 +42,7 @@ class CheckinController extends Controller
     public function sendPassportImage(Request $request){
         try {
             // 1. Recibir el archivo
+            // Log::info("sendPassportImage". json_encode($request->hasFile('passportImage')));
             if (!$request->hasFile('passportImage')) {
                 return response()->json([
                     'ok' => false,
@@ -49,6 +51,7 @@ class CheckinController extends Controller
             }
     
             $file = $request->file('passportImage'); 
+
             // Aquí obtienes un \Illuminate\Http\UploadedFile
     
             // 2. Leer su contenido (Byte Stream) para enviarlo a Azure
