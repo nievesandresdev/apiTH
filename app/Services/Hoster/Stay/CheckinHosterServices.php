@@ -53,7 +53,7 @@ class CheckinHosterServices {
                 'succes_message' => $succes_message,
             ];
             
-            TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model);
+            TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model, [], false);
         } catch (\Exception $e) {
             Log::error('error processTranslateTextsCHECKIN: '.$e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
