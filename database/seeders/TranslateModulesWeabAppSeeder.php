@@ -27,5 +27,6 @@ class TranslateModulesWeabAppSeeder extends Seeder
         var_dump('traslated hotel finish');
         // $this->facilityService->translateAll();
         // var_dump('traslated facility finish');
+        
     }
 }
