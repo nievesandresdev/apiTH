@@ -16,7 +16,7 @@ class UpdateTranslateChatSettingSeeder extends Seeder
             // Instanciamos el servicio
             $translateService = new UpdateTranslateV1();
 
-            $languages = ["nl","eu","gl","ca"];
+            $languages = ["nl","eu","gl","ca","de","it","pt"];
 
             // Obtenemos todos los registros del modelo ChatSetting
             $models = ChatSetting::all();
