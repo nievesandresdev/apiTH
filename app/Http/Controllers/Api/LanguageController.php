@@ -45,8 +45,7 @@ class LanguageController extends Controller
     // Nuevo método para obtener idiomas específicos basado en un array de IDs o nombres
     public function getLanguageForItem(Request $request)
     {
-        return bodyResponseRequest(EnumResponse::ACCEPTED, $request->all());
-        //return bodyResponseRequest(EnumResponse::ACCEPTED, $request->all());
+        // return bodyResponseRequest(EnumResponse::ACCEPTED, $request->all());
         // Filtramos los idiomas según el array recibido
         $languages = Language::whereIn('abbreviation', $request->languages)->orderBy('name')->get();
 
