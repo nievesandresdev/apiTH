@@ -22,4 +22,9 @@ class LanguageServices {
                         ->where('name','like','%'.$request->search.'%')
                         ->limit(5)->get();
     }
+
+    public function getLangByISO3Code($code){
+        return Language::where('iso3_code',$code)
+                        ->first();
+    }
 }

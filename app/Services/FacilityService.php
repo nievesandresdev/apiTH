@@ -192,6 +192,46 @@ class FacilityService {
         return $baseTitle;
     }
 
+    public function translateAll () {
+
+        $lgsAll = getAllLanguages()->toArray();
+
+        $dateYearCurrent = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', now())->year;
+
+        $query = FacilityHoster::query()->whereYear('created_at', $dateYearCurrent)->whereHas('translations', function ($query) use ($lgsAll) {
+            $query->whereIn('language', $lgsAll);
+        }, '<', count($lgsAll));
+
+        // $facilityCollection = $query->limit(1)->get();
+        // $facilityCollection = $query->get();
+
+        var_dump("Numbers of faciltiies: ". "{$query->count()}");
+
+        $query->chunk(50, function($facilityCollection) use($lgsAll){
+            foreach ($facilityCollection as $facilityHosterModel) {
+                var_dump("facility:". $facilityHosterModel->id);
+                $translations = collect($facilityHosterModel->translations);            
+    
+                $lgsWithTranslations = $translations->pluck('language')->toArray();
+                $lgsWithoutTranslations = array_values(array_diff($lgsAll, $lgsWithTranslations));
+                $dirTemplateTranslate = 'translation/webapp/hotel_input/facility';
+                $inputsTranslate = [
+                    'title' => $facilityHosterModel->title,
+                    'description' => $facilityHosterModel->description,
+                    'schedule' => $facilityHosterModel->ad_tag ?? ''
+                ];
+                if((
+                    !empty($inputsTranslate['title']) ||
+                    !empty($inputsTranslate['description'])) &&
+                    !empty($lgsWithoutTranslations)
+                ) {
+                    TranslateModelJob::dispatchSync($dirTemplateTranslate, $inputsTranslate, $this, $facilityHosterModel, $lgsWithoutTranslations);
+                }
+            }
+        });
+
+    }
+
     public function processTranslate ($request, $facilityHosterModel, $hotelModel) {
 
         $dirTemplateTranslate = 'translation/webapp/hotel_input/facility';

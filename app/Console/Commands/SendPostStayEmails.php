@@ -62,6 +62,7 @@ class SendPostStayEmails extends Command
 
     public function handleSendEmailCheckout()
     {
+        Log::info('handleSendEmailCheckout init');
         // Rango de tiempo basado en la fecha actual
         $today = Carbon::today();
 
@@ -231,37 +232,33 @@ class SendPostStayEmails extends Command
 
     public function handleSendEmailPostChekin()
     {
-        // Ayer a esta misma hora (24h antes)
-        $start = now()->subDay();
-        // Ayer a esta misma hora + 1 hora
-        $end   = now()->subDay()->addHour();
+        $start = now()->startOfHour()->subDay();
+        $end = now()->startOfHour()->subDay()->addHour();
 
-
-        Log::info('comienza consulta estancias hace 24h starthour: '.$start.' endhour: '.$end);
+        Log::info('handleSendEmailPostChekin  24h starthour: '.$start.' endhour: '.$end);
 
         $stays = Stay::with(['guests:id,name,email'])->select(
                 'h.checkin','h.id as hotelId','h.chain_id','h.name as hotelName','h.subdomain as hotelSubdomain','h.zone',
                 'h.show_facilities','h.show_places','h.show_experiences','h.latitude','h.longitude','h.sender_for_sending_email','h.sender_mail_mask',
-                //
+                'h.show_checkin_stay','h.city_id',
+                'cs.show_guest',
                 'stays.check_in','stays.id','stays.check_out',
-                'c.subdomain as chainSubdomain',
+                'c.subdomain as chainSubdomain'
             )
             ->join('hotels as h', 'stays.hotel_id', '=', 'h.id')
             ->join('chains as c', 'c.id', '=', 'h.chain_id')
+            ->join('chat_settings as cs', 'cs.hotel_id', '=', 'h.id')
+            //aqui se valida si el hotel no tiene checkin entonces se usa 20:00:00 como checkin
             ->whereRaw("
                 TIMESTAMP(
                     stays.check_in,
-                    COALESCE(NULLIF(h.checkin, ''), '14:00:00')
+                    IFNULL(NULLIF(h.checkin, ''), '20:00:00')
                 ) BETWEEN ? AND ?
-            ", [
-                $start,
-                $end
-            ])
+            ", [$start, $end])
             ->get();
 
         foreach($stays as $stay){
-            //create hotel object
-            $hotel = new stdClass();
+            $hotel = new \stdClass();
             $hotel->checkin = $stay->checkin;
             $hotel->id = $stay->hotelId;
             $hotel->chain_id = $stay->chain_id;
@@ -275,16 +272,29 @@ class SendPostStayEmails extends Command
             $hotel->longitude = $stay->longitude;
             $hotel->sender_for_sending_email = $stay->sender_for_sending_email;
             $hotel->sender_mail_mask = $stay->sender_mail_mask;
+            $hotel->show_checkin_stay = $stay->show_checkin_stay;
+            $hotel->city_id = $stay->city_id;
+            $hotel->chatSettings = (object) ['show_guest' => $stay->show_guest];
 
             foreach ($stay->guests as $guest) {
-                $this->stayService->guestWelcomeEmail('postCheckin', $stay->chainSubdomain, $hotel, $guest, $stay);
-            }
-        }
+                Log::info("Enviando correo postCheckin a {$guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
 
+                $this->stayService->guestWelcomeEmail(
+                    'postCheckin',
+                    $stay->chainSubdomain,
+                    $hotel,
+                    $guest,
+                    $stay
+                );
+            }
+
+        }
     }
+
 
     public function handleSendEmailPostCheckout()
     {
+        Log::info('handleSendEmailPostCheckout init');
         $currentTime = Carbon::now();
         $startOfHour = $currentTime->copy()->startOfHour(); // inicio hor actual
         $endOfHour = $currentTime->copy()->endOfHour();     // fin hora actuyal

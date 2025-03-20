@@ -245,24 +245,31 @@ class HotelService {
 
         $lgsAll = getAllLanguages()->toArray();
 
+        $dateYearCurrent = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', now())->year;
 
-        $query = Hotel::query();
+        $query = Hotel::query()->whereYear('created_at', $dateYearCurrent)->whereHas('translations', function ($query) use ($lgsAll) {
+            $query->whereIn('language', $lgsAll);
+        }, '<', count($lgsAll));
 
-        $hotelCollection = $query->limit(1)->get();
-
-        foreach ($hotelCollection as $hotelModel) {
-            $translations = collect($hotelModel->translations);
-            
-
-            $lgsWithTranslations = $translations->pluck('language')->toArray();
-            $lgsWithoutTranslations = array_values(array_diff($lgsAll, $lgsWithTranslations));
-            $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
-            $description = $translations->first()->description;
-
-            $inputsTranslate = ['description' => $description];
-            TranslateModelJob::dispatchSync($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel, $lgsWithoutTranslations);
-
-        }
+        // $hotelCollection = $query->limit(1)->get();
+        // $hotelCollection = $query->get();
+        var_dump("Numbers of hotels: ". "{$query->count()}");
+        $query->chunk(50, function($hotelCollection) use($lgsAll){
+            foreach ($hotelCollection as $hotelModel) {
+                var_dump("hotel:". $hotelModel->id);
+    
+                $translations = collect($hotelModel->translations);
+    
+                $lgsWithTranslations = $translations->pluck('language')->toArray();
+                $lgsWithoutTranslations = array_values(array_diff($lgsAll, $lgsWithTranslations));
+                $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
+                $description = $hotelModel->description;
+                $inputsTranslate = ['description' => $description];
+                if(!empty($inputsTranslate['description']) && !empty($lgsWithoutTranslations)) {
+                    TranslateModelJob::dispatchSync($dirTemplateTranslate, $inputsTranslate, $this, $hotelModel, $lgsWithoutTranslations);
+                }
+            }
+        });
     }
 
 
