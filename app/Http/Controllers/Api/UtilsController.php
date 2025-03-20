@@ -12,7 +12,10 @@ use App\Mail\User\RewardsEmail;
 /*models*/
 use App\Models\Guest;
 use App\Models\Hotel;
+use App\Models\Language;
 use App\Models\Query;
+use App\Models\QuerySetting;
+use App\Models\RequestSetting;
 use App\Models\Stay;
 use App\Models\RewardStay;
 /*services*/
@@ -112,10 +115,12 @@ class UtilsController extends Controller
 
     public function testEmailGeneral(){
         $type = 'welcome';
-        $hotel = Hotel::find(361);
-        $guest = Guest::find(186);
+        $hotel = Hotel::find(292);
+        $guest = Guest::find(49);
         $chainSubdomain = $hotel->subdomain;
-        $stay = Stay::find(282);
+        $stay = Stay::find(81);
+
+        //dd($stay->hotel->checkin);
 
 
         try {
@@ -225,11 +230,35 @@ class UtilsController extends Controller
 
     public function test()
     {
-        $hotel = Hotel::find(280);
-        $stay = Stay::find(43);
-        $guest = Guest::find(1);
-        $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
-        return 'enviado';
+        // $hotel = Hotel::find(280);
+        // $stay = Stay::find(43);
+        // $guest = Guest::find(1);
+        // $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
+        // return 'enviado';
+        // return $models = QuerySetting::all();
+
+        // Obtener todos los registros de la tabla RequestSetting
+        // $models = RequestSetting::all();
+        $models = RequestSetting::select('id','in_stay_msg_text')->where('hotel_id', 191)->get();
+        
+        // Iterar sobre cada modelo
+        foreach ($models as $model) {
+            // Procesar el campo in_stay_msg_text
+            return $inStayMsgText = $model->in_stay_msg_text;
+            // Verificar que sea un arreglo
+            if (is_array($inStayMsgText)) {
+                foreach ($inStayMsgText as $lang => $text) {
+                    return $lang;
+                    // Reemplazar cualquier texto entre corchetes por "[Link a las OTAs]"
+                    $inStayMsgText[$lang] = preg_replace('/\[.*?\]/', '[Link a las OTAs]', $text);
+                }
+            }
+            // Actualizar el modelo con el nuevo valor
+            $model->in_stay_msg_text = $inStayMsgText;
+
+            // Guardar los cambios en la base de datos
+            // $model->save();
+        }
     }
 
     public function testEmailPostCheckout(){
@@ -312,12 +341,12 @@ class UtilsController extends Controller
 
     public function testPrepareYourArrival(){
         $type = 'prepare-arrival';
-        $hotel = Hotel::find(240);
+        $hotel = Hotel::find(291);
         //$guest = Guest::find(146);
-        $guest = Guest::find(280);
+        $guest = Guest::find(22);
         $chainSubdomain = $hotel->subdomain;
         //$stay = Stay::find(630);
-        $stay = Stay::with('queries')->where('id',629)->first();
+        $stay = Stay::with('queries')->where('id',82)->first();
 
 
 

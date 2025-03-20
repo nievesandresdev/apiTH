@@ -65,8 +65,8 @@ class RequestReviewsSettingsServices {
             'msg_title' => $msg_title,'msg_text' => $msg_text,
             'in_stay_msg_title' => $in_stay_msg_title,'in_stay_msg_text' => $in_stay_msg_text
         ];
-        
-        TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model);
+        Log::info('execute RequestReviewsSettingsServices $arrToTranslate '. json_encode($arrToTranslate));
+        TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model, [] , false);
     }
 
     public function updateTranslation($model, $translation) {

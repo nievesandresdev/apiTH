@@ -58,6 +58,7 @@ Route::group(['prefix' => 'stay'], function () {
 
         // Route::post('/updateGeneralSettings', [CheckinHosterController::class, 'updateGeneralSettings']);
         Route::get('/getAllSettings', [CheckinController::class, 'getAllSettings']);
+        Route::post('/sendPassportImage', [CheckinController::class, 'sendPassportImage']);
     });
     
 });

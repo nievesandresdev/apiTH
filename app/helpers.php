@@ -604,7 +604,11 @@ if (!function_exists('defaultChatSettings')) {
             "fr" => "Salut. Un membre du personnel répondra à votre demande dans les plus brefs délais.",
             "pt" => "Olá. Um membro da equipe atenderá sua consulta o mais rápido possível.",
             "it" => "Ciao. Un membro del personale risponderà alla tua richiesta il prima possibile.",
-            "de" => "Hallo. Ein Mitarbeiter wird Ihre Anfrage so schnell wie möglich bearbeiten."
+            "de" => "Hallo. Ein Mitarbeiter wird Ihre Anfrage so schnell wie möglich bearbeiten.",
+            "ca" => "Hola. Un membre del personal atendrà la teva consulta tan aviat com sigui possible.",
+            "eu" => "Kaixo. Langile batek zure galdera ahal bezain laster erantzungo dio.",
+            "gl" => "Ola. Un membro do persoal atenderá a túa consulta canto antes sexa posible.",
+            "nl" => "Hallo. Een medewerker zal je vraag zo snel mogelijk behandelen."
         ];
         $chat_settings->first_available_show = true;
         $chat_settings->not_available_msg = [
@@ -613,7 +617,11 @@ if (!function_exists('defaultChatSettings')) {
             "fr" => "Pour le moment, nous n'avons pas de personnel disponible. Vous pouvez vérifier nos heures de disponibilité dans la barre de discussion.",
             "pt" => "No momento, não temos pessoal disponível. Você pode verificar nosso horário de disponibilidade na barra do chat.",
             "it" => "Al momento non abbiamo personale disponibile. Puoi controllare il nostro orario di disponibilità nella barra della chat.",
-            "de" => "Zurzeit ist kein Personal verfügbar. Sie können unsere Verfügbarkeitszeiten in der Chatleiste einsehen."
+            "de" => "Zurzeit ist kein Personal verfügbar. Sie können unsere Verfügbarkeitszeiten in der Chatleiste einsehen.",
+            "ca" => "En aquest moment no comptem amb personal disponible. Pots consultar el nostre horari de disponibilitat a la barra del xat.",
+            "eu" => "Une honetan ez dugu pertsonal erabilgarri. Txat barran gure erabilgarritasun orduak kontsultatu ditzakezu.",
+            "gl" => "Agora mesmo non contamos con persoal dispoñible. Podes consultar o noso horario de dispoñibilidade na barra do chat.",
+            "nl" => "Op dit moment hebben we geen personeel beschikbaar. Je kunt onze beschikbaarheidsuren in de chatbalk bekijken."
         ];
         $chat_settings->not_available_show = true;
         $chat_settings->second_available_msg = [
@@ -622,7 +630,11 @@ if (!function_exists('defaultChatSettings')) {
             "fr" => "Désolé pour le retard, notre personnel est occupé en ce moment. Nous essaierons de répondre à votre question lorsqu'il y aura du personnel libre.",
             "pt" => "Desculpe a demora, nossa equipe está ocupada no momento. Tentaremos responder à sua pergunta assim que houver pessoal disponível.",
             "it" => "Mi scuso per il ritardo, il nostro personale è al momento occupato. Cercheremo di rispondere alla tua domanda non appena sarà disponibile del personale libero.",
-            "de" => "Entschuldigung für die Verzögerung, unser Personal ist momentan beschäftigt. Wir werden versuchen, Ihre Frage zu beantworten, sobald Personal verfügbar ist."
+            "de" => "Entschuldigung für die Verzögerung, unser Personal ist momentan beschäftigt. Wir werden versuchen, Ihre Frage zu beantworten, sobald Personal verfügbar ist.",
+            "ca" => "Perdona la tardança, el nostre personal està ocupat ara mateix. Intentarem atendre la teva consulta quan hi hagi personal lliure.",
+            "eu" => "Barkatu berandu egoteagatik, gure langileak une honetan lanpetuta daude. Saiatuko gara zure galdera erantzuten langile libreak egon direnean.",
+            "gl" => "Desculpa a tardanza, o noso persoal está ocupado no momento. Tentaremos atender a túa consulta cando haxa persoal libre.",
+            "nl" => "Sorry voor de vertraging, ons personeel is op dit moment druk bezig. We zullen proberen je vraag te beantwoorden zodra er personeel beschikbaar is."
         ];
         $chat_settings->second_available_show = true;
         $chat_settings->three_available_msg = [
@@ -631,7 +643,11 @@ if (!function_exists('defaultChatSettings')) {
             "fr" => "Cela semble prendre plus de temps que prévu, désolé pour le désagrément. Vous pouvez nous laisser ce dont vous avez besoin et nous vous répondrons dans les plus brefs délais. Nous vous informerons également de la réponse par e-mail.",
             "pt" => "Parece que está demorando mais do que o esperado, pedimos desculpas pelo transtorno. Você pode nos deixar o que precisa e responderemos o mais rápido possível. Também enviaremos uma notificação por e-mail com a resposta.",
             "it" => "Sembra che ci stia volendo più tempo del previsto, ci scusiamo per il disagio. Puoi lasciarci il tuo messaggio e ti risponderemo il prima possibile. Ti informeremo anche della risposta via email.",
-            "de" => "Es scheint länger zu dauern als erwartet, entschuldigen Sie bitte die Unannehmlichkeiten. Bitte hinterlassen Sie uns Ihre Anfrage, und wir werden Ihnen so schnell wie möglich antworten. Wir werden Sie auch per E-Mail über die Antwort informieren."
+            "de" => "Es scheint länger zu dauern als erwartet, entschuldigen Sie bitte die Unannehmlichkeiten. Bitte hinterlassen Sie uns Ihre Anfrage, und wir werden Ihnen so schnell wie möglich antworten. Wir werden Sie auch per E-Mail über die Antwort informieren.",
+            "ca" => "Sembla que està tardant més del previst, disculpa les molèsties. Podries deixar-nos el que necessites i et responrem tan aviat com sigui possible. També t'avisarem de la resposta per correu electrònic.",
+            "eu" => "Dirudienez, espero baino gehiago denbora behar du, barkatu eragozpenak. Utzi mesedez behar duzun eta ahal bezain laster erantzungo dizugu. Halaber, posta elektronikoz jakinaratuko dizugu erantzuna.",
+            "gl" => "Parece que está a demorar máis do esperado, desculpa as molestias. Poderías deixarnos o que necesitas e responderemos canto antes sexa posible. Tamén avisarémosche da resposta por correo electrónico.",
+            "nl" => "Het lijkt langer te duren dan verwacht, sorry voor het ongemak. Je kunt ons laten weten wat je nodig hebt en we zullen zo snel mogelijk reageren. We zullen je ook per e-mail op de hoogte stellen van het antwoord."
         ];
         $chat_settings->three_available_show = true;
         $chat_settings->email_notify_new_message_to = [];
@@ -667,7 +683,11 @@ if (! function_exists('preStayqueriesTextDefault')) {
             "fr" => "Nous apprécions sincèrement vos commentaires. Nous nous soucions de votre expérience et nous essayons de répondre à vos attentes.",
             "pt" => "Agradecemos sinceramente o seu feedback. Preocupamo-nos com a sua experiência e tentamos corresponder às suas expectativas.",
             "it" => "Apprezziamo sinceramente il tuo feedback. Abbiamo a cuore la tua esperienza e cerchiamo di soddisfare le tue aspettative.",
-            "de" => "Wir freuen uns sehr über Ihr Feedback. Ihre Erfahrung liegt uns am Herzen und wir versuchen, Ihre Erwartungen zu erfüllen."
+            "de" => "Wir freuen uns sehr über Ihr Feedback. Ihre Erfahrung liegt uns am Herzen und wir versuchen, Ihre Erwartungen zu erfüllen.",
+            "ca" => "Agraïm sincerament el teu feedback. Ens importa la teva experiència i intentem complir les teves expectatives.",
+            "eu" => "Zure feedbacka bihotzez eskertzen dugu. Zure esperientzia garrantzitsua zaigu eta zure itxaropenak betetzeko ahalegintzen gara.",
+            "gl" => "Agradecemos sinceramente o teu feedback. Importa-nos a túa experiencia e tratamos de cumprir as túas expectativas.",
+            "nl" => "We waarderen je feedback oprecht. We geven om je ervaring en we proberen aan je verwachtingen te voldoen."
         ];
         $queriesTextDefault->pre_stay_comment = [
             "es" => "Nos encantaría saber los detalles, nos importa tu experiencia.",
@@ -675,7 +695,11 @@ if (! function_exists('preStayqueriesTextDefault')) {
             "fr" => "Nous aimerions connaître les détails, nous nous soucions de votre expérience.",
             "pt" => "Adoraríamos saber os detalhes, preocupamo-nos com a sua experiência.",
             "it" => "Ci piacerebbe conoscere i dettagli, abbiamo a cuore la tua esperienza.",
-            "de" => "Wir würden gerne die Details erfahren, uns liegt Ihr Erlebnis am Herzen."
+            "de" => "Wir würden gerne die Details erfahren, uns liegt Ihr Erlebnis am Herzen.",
+            "ca" => "Ens encantaria saber els detalls, ens importa la teva experiència.",
+            "eu" => "Gustatuko litzaiguke xehetasunak jakitea, zure esperientzia zaigu.",
+            "gl" => "Encantaríanos saber os detalles, importanos a túa experiencia.",
+            "nl" => "We horen graag de details, we geven om je ervaring."
         ];
         return $queriesTextDefault;
     }
@@ -691,7 +715,11 @@ if (! function_exists('inStayqueriesTextDefault')) {
             "fr" => "Nous sommes très heureux de savoir que vous appréciez votre séjour. Nous apprécions sincèrement vos commentaires et espérons continuer à répondre à vos attentes.",
             "pt" => "Estamos muito felizes por saber que está a desfrutar da sua estadia. Agradecemos sinceramente o seu feedback e esperamos continuar a corresponder às suas expectativas.",
             "it" => "Siamo molto felici di sapere che ti stai godendo il tuo soggiorno. Apprezziamo sinceramente il tuo feedback e speriamo di continuare a soddisfare le tue aspettative.",
-            "de" => "Wir freuen uns sehr, dass Sie Ihren Aufenthalt genießen. Wir freuen uns sehr über Ihr Feedback und hoffen, Ihre Erwartungen weiterhin erfüllen zu können."
+            "de" => "Wir freuen uns sehr, dass Sie Ihren Aufenthalt genießen. Wir freuen uns sehr über Ihr Feedback und hoffen, Ihre Erwartungen weiterhin erfüllen zu können.",
+            "ca" => "Ens alegra molt saber que estàs gaudint de la teva estada. Agraïm sincerament el teu feedback i esperem continuar complint les teves expectatives.",
+            "eu" => "Oso pozik gaudezue zure egonaldia gozatzen ari zarela jakiteak. Zure feedbacka bihotzez eskertzen dugu eta zure itxaropenak betetzeko jarraitzea espero dugu.",
+            "gl" => "Encántanos saber que estás a gozar da túa estadía. Agradecemos sinceramente o teu feedback e esperamos seguir cumprindo as túas expectativas.",
+            "nl" => "We zijn erg blij te horen dat je geniet van je verblijf. We waarderen je feedback oprecht en hopen aan je verwachtingen te blijven voldoen."
         ];
         $queriesTextDefault->in_stay_assessment_good_activate = true;
         $queriesTextDefault->in_stay_assessment_good = [
@@ -700,7 +728,11 @@ if (! function_exists('inStayqueriesTextDefault')) {
             "fr" => "Nous aimerions connaître plus de détails, nous cherchons à améliorer votre expérience.",
             "de" => "Wir würden gerne mehr Details zu Ihrer Meinung über das Hotel und das Personal erfahren, da wir versuchen, Ihre Erfahrung zu verbessern.",
             "it" => "Ci piacerebbe sapere più dettagli sulla tua opinione sull'hotel e sul personale, cerchiamo di migliorare la tua esperienza.",
-            "pt" => "Adoraríamos saber mais detalhes sobre a sua opinião sobre o hotel e a equipe, buscamos melhorar sua experiência."
+            "pt" => "Adoraríamos saber mais detalhes sobre a sua opinião sobre o hotel e a equipe, buscamos melhorar sua experiência.",
+            "ca" => "Ens encantaria saber més detalls sobre la teva opinió sobre l'hotel i el personal, intentem millorar la teva experiència.",
+            "eu" => "Xehetasun gehiago jakitea gustatuko litzaiguke zure iritzia hotela eta langileei buruz, zure esperientzia hobetzeko saiatzen gara.",
+            "gl" => "Encantaríanos saber máis detalles sobre a túa opinión sobre o hotel e o persoal, buscamos mellorar a túa experiencia.",
+            "nl" => "We horen graag meer details over je mening over het hotel en het personeel, omdat we proberen je ervaring te verbeteren."
         ];
 
         $queriesTextDefault->in_stay_thanks_normal = [
@@ -709,7 +741,11 @@ if (! function_exists('inStayqueriesTextDefault')) {
             "fr" => "Nous sommes désolés que votre séjour n'ait pas été idéal. Nous aimerions en savoir plus pour essayer de l'améliorer.",
             "pt" => "Lamentamos que a sua estadia não tenha sido a ideal. Gostaríamos de saber mais para tentar melhorá-lo.",
             "it" => "Ci dispiace che il tuo soggiorno non sia stato l'ideale. Vorremmo saperne di più per provare a migliorarlo.",
-            "de" => "Es tut uns leid, dass Ihr Aufenthalt nicht optimal war. Wir würden gerne mehr wissen, um zu versuchen, es zu verbessern."
+            "de" => "Es tut uns leid, dass Ihr Aufenthalt nicht optimal war. Wir würden gerne mehr wissen, um zu versuchen, es zu verbessern.",
+            "ca" => "Lamentem que la teva estada no sigui l'ideal. Ens agradaria saber més per intentar-la millorar.",
+            "eu" => "Barkatu zure egonaldia ez den idealik. Gehiago jakin nahi genuke hobetzeko saiatu ahal izateko.",
+            "gl" => "Lamentamos que a túa estadía non sexa a ideal. Gustaríanos saber máis para intentar mellorala.",
+            "nl" => "Het spijt ons dat je verblijf niet ideaal was. We willen graag meer weten om te proberen het te verbeteren."
         ];
         $queriesTextDefault->in_stay_assessment_normal_activate = true;
         $queriesTextDefault->in_stay_assessment_normal = [
@@ -718,7 +754,11 @@ if (! function_exists('inStayqueriesTextDefault')) {
             "fr" => "Nous aimerions connaître plus de détails, nous cherchons à améliorer votre expérience.",
             "pt" => "Adoraríamos saber mais detalhes, procuramos melhorar a sua experiência.",
             "it" => "Ci piacerebbe conoscere maggiori dettagli, cerchiamo di migliorare la tua esperienza.",
-            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
+            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern.",
+            "ca" => "Ens encantaria saber més detalls, busquem millorar la teva experiència.",
+            "eu" => "Xehetasun gehiago jakitea gustatuko litzaiguke, zure esperientzia hobetzea bilatzen dugu.",
+            "gl" => "Encantaríanos saber máis detalles, procuramos mellorar a túa experiencia.",
+            "nl" => "We zouden graag meer details horen, we streven ernaar je ervaring te verbeteren."
         ];
 
         $queriesTextDefault->in_stay_comment = [
@@ -727,7 +767,11 @@ if (! function_exists('inStayqueriesTextDefault')) {
             "fr" => "Nous aimerions connaître plus de détails, nous cherchons à améliorer votre expérience.",
             "pt" => "Adoraríamos saber mais detalhes, procuramos melhorar a sua experiência.",
             "it" => "Ci piacerebbe conoscere maggiori dettagli, cerchiamo di migliorare la tua esperienza.",
-            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
+            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern.",
+            "ca" => "Ens encantaria saber més detalls, busquem millorar la teva experiència.",
+            "eu" => "Xehetasun gehiago jakitea gustatuko litzaiguke, zure esperientzia hobetzea bilatzen dugu.",
+            "gl" => "Encantaríanos saber máis detalles, procuramos mellorar a túa experiencia.",
+            "nl" => "We horen graag meer details, we streven ernaar je ervaring te verbeteren."
         ];
         return $queriesTextDefault;
     }
@@ -742,7 +786,11 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "fr" => "Nous sommes ravis que vous ayez apprécié votre séjour chez nous!",
             "pt" => "Estamos felizes que você tenha gostado da sua estadia conosco!",
             "it" => "Siamo lieti che tu abbia gradito il tuo soggiorno con noi!",
-            "de" => "Wir freuen uns, dass Sie Ihren Aufenthalt bei uns genossen haben!"
+            "de" => "Wir freuen uns, dass Sie Ihren Aufenthalt bei uns genossen haben!",
+            "ca" => "Ens alegra que hagis gaudit amb nosaltres!",
+            "eu" => "Pozik gaude gurekin gozatu duzula!",
+            "gl" => "Encántanos que desfrutaches connosco!",
+            "nl" => "We zijn blij dat je hebt genoten van je verblijf bij ons!"
         ];
 
         $queriesTextDefault->post_stay_assessment_good_activate = true;
@@ -752,7 +800,11 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "fr" => "Nous aimerions connaître plus de détails, nous cherchons à améliorer votre expérience.",
             "pt" => "Adoraríamos saber mais detalhes, procuramos melhorar a sua experiência.",
             "it" => "Ci piacerebbe conoscere maggiori dettagli, cerchiamo di migliorare la tua esperienza.",
-            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
+            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern.",
+            "ca" => "Ens encantaria saber més detalls, busquem millorar la teva experiència.",
+            "eu" => "Xehetasun gehiago jakitea gustatuko litzaiguke, zure esperientzia hobetzea bilatzen dugu.",
+            "gl" => "Encantaríanos saber máis detalles, procuramos mellorar a túa experiencia.",
+            "nl" => "We zouden graag meer details horen, we streven ernaar je ervaring te verbeteren."
         ];
         $queriesTextDefault->post_stay_thanks_normal = [
             "es" => "Lamentamos que tu estancia no esté siendo la ideal. Nos gustaría saber más para tratar de mejorarla.",
@@ -760,7 +812,11 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "fr" => "Nous sommes désolés que votre séjour ne soit pas parfait. Nous aimerions connaître votre avis pour mieux comprendre la situation, cela est très important pour nous.",
             "de" => "Es tut uns leid, dass Ihr Aufenthalt nicht perfekt war. Es würde uns helfen, Ihre Meinung zu erfahren, um die Situation besser zu verstehen. Es ist uns sehr wichtig.",
             "it" => "Ci dispiace che il tuo soggiorno non sia stato ideale. Ci piacerebbe sapere di più per cercare di migliorarlo.",
-            "pt" => "Lamentamos que a sua estadia não tenha sido ideal. Gostaríamos de saber mais para tentar melhorá-la."
+            "pt" => "Lamentamos que a sua estadia não tenha sido ideal. Gostaríamos de saber mais para tentar melhorá-la.",
+            "ca" => "Lamentem que la teva estada no sigui perfecta. Ens ajudaria a conèixer la teva opinió per entendre millor la situació, és molt important per a nosaltres.",
+            "eu" => "Sentitzen duguela ez dela zure egonaldia perfektua. Zure iritzia jakiteak lagunduko lidake egoera hobeto ulertzen, oso garrantzitsua delako.",
+            "gl" => "Lamentamos que a túa estadía non sexa perfecta. Sería moi útil coñecer a túa opinión para comprender mellor a situación, é moi importante para nós.",
+            "nl" => "Het spijt ons dat je verblijf niet perfect was. Het zou ons helpen je mening te horen om de situatie beter te begrijpen; dit is voor ons erg belangrijk."
         ];
 
         $queriesTextDefault->post_stay_assessment_normal_activate = true;
@@ -770,7 +826,11 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "fr" => "Nous aimerions connaître plus de détails, nous cherchons à améliorer votre expérience.",
             "pt" => "Adoraríamos saber mais detalhes, procuramos melhorar a sua experiência.",
             "it" => "Ci piacerebbe conoscere maggiori dettagli, cerchiamo di migliorare la tua esperienza.",
-            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
+            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern.",
+            "ca" => "Ens encantaria saber més detalls, busquem millorar la teva experiència.",
+            "eu" => "Xehetasun gehiago jakitea gustatuko litzaiguke, zure esperientzia hobetzea bilatzen dugu.",
+            "gl" => "Encantaríanos saber máis detalles, procuramos mellorar a túa experiencia.",
+            "nl" => "We zouden graag meer details horen, we streven ernaar je ervaring te verbeteren."
         ];
         $queriesTextDefault->post_stay_comment = [
             "es" => "Nos encantaría saber más detalles, buscamos mejorar tu experiencia.",
@@ -778,7 +838,11 @@ if (! function_exists('postStayqueriesTextDefault')) {
             "fr" => "Nous aimerions connaître plus de détails, nous cherchons à améliorer votre expérience.",
             "pt" => "Adoraríamos saber mais detalhes, procuramos melhorar a sua experiência.",
             "it" => "Ci piacerebbe conoscere maggiori dettagli, cerchiamo di migliorare la tua esperienza.",
-            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern."
+            "de" => "Wir würden gerne mehr Details erfahren, wir möchten Ihr Erlebnis verbessern.",
+            "ca" => "Ens encantaria saber més detalls, busquem millorar la teva experiència.",
+            "eu" => "Xehetasun gehiago jakitea gustatuko litzaiguke, zure esperientzia hobetzea bilatzen dugu.",
+            "gl" => "Encantaríanos saber máis detalles, procuramos mellorar a túa experiencia.",
+            "nl" => "We horen graag meer details, we streven ernaar je ervaring te verbeteren."
         ];
         return $queriesTextDefault;
     }
@@ -830,7 +894,11 @@ if (! function_exists('requestSettingsDefault')) {
             "fr" => "<p>Nous sommes heureux de savoir que vous profitez de votre séjour !</p>",
             "pt" => "<p>Estamos felizes que você esteja aproveitando sua estadia!</p>",
             "it" => "<p>Siamo felici che tu stia godendo del tuo soggiorno!</p>",
-            "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genießen!</p>"
+            "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genießen!</p>",
+            "ca" => "<p>Ens alegra que estiguis gaudint de la teva estada!</p>",
+            "eu" => "<p>Pozik gaude zure egonaldia gozatzen ari zarela!</p>",
+            "gl" => "<p>Encántanos que estés a gozar da túa estadía!</p>",
+            "nl" => "<p>We zijn blij dat je van je verblijf geniet!</p>"
         ];
 
 
@@ -840,7 +908,11 @@ if (! function_exists('requestSettingsDefault')) {
             "fr" => "<p>Votre expérience est très importante, la partager aiderait d'autres voyageurs à nous connaître.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si vous avez réservé en ligne, votre avis pourrait bientôt vous être demandé. Nous apprécions vraiment que vous l'ayez partagé.</p><p><br></p><p class='ql-align-center'><strong>Nous apprécions votre temps et merci de nous avoir choisis !</strong></p>",
             "pt" => "<p>Sua experiência é muito importante, compartilhá-la ajudaria outros viajantes a nos conhecerem.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se você reservou online, sua opinião pode ser solicitada em breve. Agradecemos muito que você a tenha compartilhado.</p><p><br></p><p class='ql-align-center'><strong>Agradecemos o seu tempo e obrigado por nos escolher!</strong></p>",
             "it" => "<p>La tua esperienza è molto importante, condividerla aiuterebbe altri viaggiatori a conoscerci.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se hai prenotato online, presto potrebbero chiederti la tua opinione. Apprezziamo molto che tu l'abbia condivisa.</p><p><br></p><p class='ql-align-center'><strong>Apprezziamo il tuo tempo e grazie per averci scelto!</strong></p>",
-            "de" => "<p>Ihre Erfahrung ist sehr wichtig, das Teilen würde anderen Reisenden helfen, uns kennenzulernen.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Wenn Sie online gebucht haben, könnte bald Ihre Meinung angefragt werden. Wir schätzen es sehr, wenn Sie sie teilen.</p><p><br></p><p class='ql-align-center'><strong>Wir schätzen Ihre Zeit und danken Ihnen, dass Sie uns gewählt haben!</strong></p>"
+            "de" => "<p>Ihre Erfahrung ist sehr wichtig, das Teilen würde anderen Reisenden helfen, uns kennenzulernen.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Wenn Sie online gebucht haben, könnte bald Ihre Meinung angefragt werden. Wir schätzen es sehr, wenn Sie sie teilen.</p><p><br></p><p class='ql-align-center'><strong>Wir schätzen Ihre Zeit und danken Ihnen, dass Sie uns gewählt haben!</strong></p>",
+            "ca" => '<p>La teva experiència és molt important, compartir-la ajudaria altres viatgers a conèixer-nos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si vas reservar en línia, és possible que et demanin la teva opinió aviat. Valorem molt que l’hagis compartida.</p><p><br></p><p class="ql-align-center"><strong>Agraïm el teu temps i gràcies per haver-nos triat!</strong></p>',
+            "eu" => '<p>Zure esperientzia oso garrantzitsua da, eta partekatzeak bidaiar beste batzuei gu ezagutzen lagunduko die.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Linean erreserbatu baduzu, berehala zure iritzia eskatu daiteke. Oso eskertzen dugu zure partekatzea.</p><p><br></p><p class="ql-align-center"><strong>Eskertzen dugu zure denbora eta mila esker gu aukeratzeagatik!</strong></p>',
+            "gl" => '<p>A túa experiencia é moi importante, compartila axudaría a outros viaxeiros a coñecernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se reservaches en liña, poden pedirche a túa opinión en breve. Valoramos moito que a compartiras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos o teu tempo e grazas por elixirnos!</strong></p>',
+            "nl" => '<p>Jouw ervaring is erg belangrijk, het delen ervan zou andere reizigers helpen ons te leren kennen.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Als je online geboekt hebt, kan het zijn dat binnenkort om jouw mening wordt gevraagd. We waarderen het zeer dat je deze deelt.</p><p><br></p><p class="ql-align-center"><strong>We waarderen je tijd en danken je dat je voor ons gekozen hebt!</strong></p>'
         ];
         $requestSettings->in_stay_otas_enabled = [
             "booking" => false,
@@ -855,7 +927,11 @@ if (! function_exists('requestSettingsDefault')) {
             "fr" => "<p>Nous sommes ravis que vous ayez apprécié votre séjour !</p>",
             "pt" => "<p>Estamos muito felizes que você tenha gostado da sua estadia!</p>",
             "it" => "<p>Siamo felici che tu abbia apprezzato il tuo soggiorno!</p>",
-            "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genossen haben!</p>"
+            "de" => "<p>Wir freuen uns, dass Sie Ihren Aufenthalt genossen haben!</p>",
+            "ca" => "<p>Ens alegra que hagis gaudit de la teva estada!</p>",
+            "eu" => "<p>Oso pozik gaude zure egonaldia gozatu duzula!</p>",
+            "gl" => "<p>Encántanos que desfrutaches a túa estadía!</p>",
+            "nl" => "<p>We zijn blij dat je hebt genoten van je verblijf!</p>"
         ];
 
         $requestSettings->msg_text = [
@@ -864,7 +940,11 @@ if (! function_exists('requestSettingsDefault')) {
             "fr" => "<p>Votre expérience est très importante, la partager aiderait d'autres voyageurs à nous connaître.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si vous avez réservé en ligne, votre avis pourrait bientôt vous être demandé. Nous apprécions vraiment que vous l'ayez partagé.</p><p><br></p><p class='ql-align-center'><strong>Nous apprécions votre temps et merci de nous avoir choisis !</strong></p>",
             "pt" => "<p>Sua experiência é muito importante, compartilhá-la ajudaria outros viajantes a nos conhecerem.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se você reservou online, sua opinião pode ser solicitada em breve. Agradecemos muito que você a tenha compartilhado.</p><p><br></p><p class='ql-align-center'><strong>Agradecemos o seu tempo e obrigado por nos escolher!</strong></p>",
             "it" => "<p>La tua esperienza è molto importante, condividerla aiuterebbe altri viaggiatori a conoscerci.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se hai prenotato online, presto potrebbero chiederti la tua opinione. Apprezziamo molto che tu l'abbia condivisa.</p><p><br></p><p class='ql-align-center'><strong>Apprezziamo il tuo tempo e grazie per averci scelto!</strong></p>",
-            "de" => "<p>Ihre Erfahrung ist sehr wichtig, das Teilen würde anderen Reisenden helfen, uns kennenzulernen.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Wenn Sie online gebucht haben, könnte bald Ihre Meinung angefragt werden. Wir schätzen es sehr, wenn Sie sie teilen.</p><p><br></p><p class='ql-align-center'><strong>Wir schätzen Ihre Zeit und danken Ihnen, dass Sie uns gewählt haben!</strong></p>"
+            "de" => "<p>Ihre Erfahrung ist sehr wichtig, das Teilen würde anderen Reisenden helfen, uns kennenzulernen.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Wenn Sie online gebucht haben, könnte bald Ihre Meinung angefragt werden. Wir schätzen es sehr, wenn Sie sie teilen.</p><p><br></p><p class='ql-align-center'><strong>Wir schätzen Ihre Zeit und danken Ihnen, dass Sie uns gewählt haben!</strong></p>",
+            "ca" => '<p>La teva experiència és molt important, compartir-la ajudaria altres viatgers a conèixer-nos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Si vas reservar en línia, és possible que et demanin la teva opinió aviat. Valorem molt que l’hagis compartida.</p><p><br></p><p class="ql-align-center"><strong>Agraïm el teu temps i gràcies per haver-nos triat!</strong></p>',
+            "eu" => '<p>Zure esperientzia oso garrantzitsua da, eta partekatzeak bidaiar beste batzuei gu ezagutzen lagunduko die.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Linean erreserbatu baduzu, berehala zure iritzia eskatu daiteke. Oso eskertzen dugu zure partekatzea.</p><p><br></p><p class="ql-align-center"><strong>Eskertzen dugu zure denbora eta mila esker gu aukeratzeagatik!</strong></p>',
+            "gl" => '<p>A túa experiencia é moi importante, compartila axudaría a outros viaxeiros a coñecernos.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Se reservaches en liña, poden pedirche a túa opinión en breve. Valoramos moito que a compartiras.</p><p><br></p><p class="ql-align-center"><strong>Agradecemos o teu tempo e grazas por elixirnos!</strong></p>',
+            "nl" => '<p>Jouw ervaring is erg belangrijk, het delen ervan zou andere reizigers helpen ons te leren kennen.</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p>Als je online geboekt hebt, kan het zijn dat binnenkort om jouw mening wordt gevraagd. We waarderen het zeer dat je deze deelt.</p><p><br></p><p class="ql-align-center"><strong>We waarderen je tijd en danken je dat je voor ons gekozen hebt!</strong></p>'
         ];
         $requestSettings->otas_enabled = [
             "booking" => true,

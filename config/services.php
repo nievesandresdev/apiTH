@@ -53,6 +53,11 @@ return [
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
         'redirect' => env('FACEBOOK_REDIRECT'),
     ],
+
+    'azure' => [
+        'form_recognizer_endpoint' => env('AZURE_FORM_RECOGNIZER_ENDPOINT'),
+        'form_recognizer_key' => env('AZURE_FORM_RECOGNIZER_API_KEY'),
+    ],
     
 
 ];

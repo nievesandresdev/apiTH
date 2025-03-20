@@ -62,14 +62,16 @@ class SendPreStayEmail extends Command
 
     public function handleSendEmailPreCheckin()
     {
+        Log::info('handleSendEmailPreCheckin init');
         $currentTime = Carbon::now();
         $startOfHour = $currentTime->copy()->startOfHour(); // inicio hor actual
         $endOfHour = $currentTime->copy()->endOfHour();     // fin hora actuyal
         $hours = 48;
+        $targetDate = $currentTime->copy()->addHours(48)->format('Y-m-d');
 
         // Obtener estancias cuyo checkin sera dentro de 48hrs
         $stays = Stay::select('id', 'hotel_id', 'check_in','check_out')
-            ->whereDate('check_in', $currentTime->addHours($hours)->format('Y-m-d'))
+            ->whereDate('check_in', $targetDate)
             ->with([
                 'queries' => function ($query) {
                     $query->select('id', 'stay_id', 'guest_id', 'answered', 'qualification','period')
@@ -185,6 +187,7 @@ class SendPreStayEmail extends Command
 
                 try {
                     $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                    $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
                     Log::info('Correo enviado correctamente handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailPreCheckin', [
