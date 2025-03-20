@@ -1,0 +1,12 @@
+{
+    "name": "translation",
+    "description": "Translate this place/restaurant content into multiple target languages, including fields like name, description, interesting facts, type of cuisine, dietary specifications, and other relevant details.",
+    "parameters": {
+      "type": "object",
+      "properties": "{{ function_expected_parameters }}",
+      "required": [
+        "{{ expected_languages_keys }}"
+      ]
+    }
+  }
+  
