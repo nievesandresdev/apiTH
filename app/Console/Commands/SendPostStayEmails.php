@@ -255,6 +255,7 @@ class SendPostStayEmails extends Command
                     IFNULL(NULLIF(h.checkin, ''), '20:00:00')
                 ) BETWEEN ? AND ?
             ", [$start, $end])
+            ->where('stays.check_out', '>', now()) //solo se envian correos a estancias que no han finalizado
             ->get();
 
         foreach($stays as $stay){
