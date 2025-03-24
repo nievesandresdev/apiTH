@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-
+use Illuminate\Support\Facades\App;
 class MsgStay extends Mailable
 {
     use Queueable, SerializesModels;
@@ -49,12 +49,15 @@ class MsgStay extends Mailable
     public function build()
     {
 
-        $subject = 'Gracias por elegirnos.';
+        $lang = $this->guest->lang_web ?? 'es'; //default'es'
+        App::setLocale($lang); // cambiar idioma
+
+        $subject = __('mail.subject_default');
         if($this->type == 'welcome' || $this->type == 'inviteGuestFromSaas'){
-            $subject = 'Te damos la bienvenida a la WebApp de '.$this->hotel->name;
+            $subject = __('mail.subject_welcome', ['hotel' => $this->hotel->name]);
         }
         if($this->type == 'postCheckin'){
-            $subject = '¿Qué tal va todo?';
+            $subject = __('mail.subject_post_checkin');
         }
 
         // if($this->type == 'welcome'){
