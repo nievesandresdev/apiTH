@@ -8,12 +8,12 @@
                 </td>
                 <!-- Columna de Texto -->
                 <td class="text-content" style="color: #333333;text-align: left;vertical-align: top;padding-right:20px;">
-                    <h1 style="margin: 0;color: #333;font-family: arial;font-size: 26px;font-weight: 600;line-height: 110%;">¿Qué tal va todo?</h1>
+                    <h1 style="margin: 0;color: #333;font-family: arial;font-size: 26px;font-weight: 600;line-height: 110%;">{{ __('mail.postCheckin.headerTitle') }}</h1>
                     <p style="margin: 0;color: #333;font-family: arial;font-size: 16px;font-weight: 400;line-height: 28px;margin-top:14px">
-                        Queremos conocer tu opinión para asegurarnos de que estés teniendo la mejor experiencia con nosotros.
+                        {{ __('mail.postCheckin.headerBody') }}
                     </p>
                     <p style="margin: 0;color: #333;font-family: arial;font-size: 16px;font-weight: 400;line-height: 28px;margin-top:7px">
-                        ¿Nos cuentas qué tal viene todo? Gracias por ayudarnos a mejorar.
+                        {{ __('mail.postCheckin.headerBody2') }}
                     </p>
 
 

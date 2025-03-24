@@ -55,13 +55,13 @@ class MsgStay extends Mailable
         switch ($this->type) {
             case 'welcome':
             case 'inviteGuestFromSaas':
-                $subject = __('mail.subject_welcome', ['hotel' => $this->hotel->name]);
+                $subject = __('mail.welcome.subject', ['hotel' => $this->hotel->name]);
                 break;
             case 'postCheckin':
-                $subject = __('mail.subject_post_checkin');
+                $subject = __('mail.postCheckin.subject');
                 break;
             default:
-                $subject = __('mail.subject_default');
+                $subject = __('mail.default.subject');
                 break;
         }
 
