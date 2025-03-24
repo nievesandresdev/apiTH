@@ -25,13 +25,18 @@ return [
         'headerBody3' => 'We look forward to welcoming you back very soon.',
     ],
     'inviteGuestFromSaas' => [
-        'subject' => 'Join the WebApp of :hotel now',
-        'headerTitle' => 'Join the WebApp of :hotel now',
+        'subject' => 'Join the WebApp of :hotel',
+        'headerTitle' => 'Join the WebApp of :hotel',
         'headerBody' => 'Join the WebApp of :hotel and discover how to make the most of your trip.',
         'button' => 'Explore the WebApp',
     ],
     'default' => [
         'subject' => 'Thank you for choosing us.',
         'body' => 'Thank you for choosing us.',
+    ],
+    'stayCheckDate' => [
+        'title' => 'Stay data in :hotel',
+        'warning' => 'Please verify that the check-in and check-out dates match the reservation made in the :type. If the data does not match, you can edit it from the WebApp.',
+        'editUrl' => 'edit it from the WebApp.',
     ],
 ];

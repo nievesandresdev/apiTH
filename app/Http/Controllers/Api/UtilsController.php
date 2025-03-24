@@ -114,7 +114,7 @@ class UtilsController extends Controller
 
 
     public function testEmailGeneral(){
-        $type = 'inviteGuestFromSaas';
+        $type = 'welcome';
         $hotel = Hotel::find(292);
         //dd($hotel->subdomain);
         $guest = Guest::find(49);
@@ -135,7 +135,7 @@ class UtilsController extends Controller
                 //
 
                 $checkData = [
-                    'title' => "Datos de tu estancia en {$hotel->name}",
+                    'title' => __('mail.stayCheckDate.title', ['hotel' => $hotel->name]),
                     'formatCheckin' => $formatCheckin,
                     'formatCheckout' => $formatCheckout,
                     'editStayUrl' => $webappEditStay

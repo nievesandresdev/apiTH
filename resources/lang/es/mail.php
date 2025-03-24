@@ -34,4 +34,9 @@ return [
         'subject' => 'Gracias por elegirnos.',
         'body' => 'Gracias por elegirnos.',
     ],
+    'stayCheckDate' => [
+        'title' => 'Datos de tu estancia en :hotel',
+        'warning' => 'Por favor, verifica que los fechas de Check-in y Check-out coincidan con la reserva realizada en el :type. Si los datos no coinciden',
+        'editUrl' => 'editarlos desde la WebApp.',
+    ],
 ];
