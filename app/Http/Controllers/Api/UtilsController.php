@@ -116,11 +116,10 @@ class UtilsController extends Controller
     public function testEmailGeneral(){
         $type = 'welcome';
         $hotel = Hotel::find(292);
+        //dd($hotel->subdomain);
         $guest = Guest::find(49);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(81);
-
-        //dd($stay->hotel->checkin);
 
 
         try {
@@ -240,7 +239,7 @@ class UtilsController extends Controller
         // Obtener todos los registros de la tabla RequestSetting
         // $models = RequestSetting::all();
         $models = RequestSetting::select('id','in_stay_msg_text')->where('hotel_id', 191)->get();
-        
+
         // Iterar sobre cada modelo
         foreach ($models as $model) {
             // Procesar el campo in_stay_msg_text

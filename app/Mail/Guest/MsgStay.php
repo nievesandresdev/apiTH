@@ -48,16 +48,21 @@ class MsgStay extends Mailable
      */
     public function build()
     {
+        // Establecer el idioma del huésped
+        App::setLocale($this->guest->lang_web ?? 'es');
 
-        $lang = $this->guest->lang_web ?? 'es'; //default'es'
-        App::setLocale($lang); // cambiar idioma
-
-        $subject = __('mail.subject_default');
-        if($this->type == 'welcome' || $this->type == 'inviteGuestFromSaas'){
-            $subject = __('mail.subject_welcome', ['hotel' => $this->hotel->name]);
-        }
-        if($this->type == 'postCheckin'){
-            $subject = __('mail.subject_post_checkin');
+        // Definir el asunto traducido según el tipo
+        switch ($this->type) {
+            case 'welcome':
+            case 'inviteGuestFromSaas':
+                $subject = __('mail.subject_welcome', ['hotel' => $this->hotel->name]);
+                break;
+            case 'postCheckin':
+                $subject = __('mail.subject_post_checkin');
+                break;
+            default:
+                $subject = __('mail.subject_default');
+                break;
         }
 
         // if($this->type == 'welcome'){
