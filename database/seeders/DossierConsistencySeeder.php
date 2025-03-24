@@ -27,7 +27,7 @@ class DossierConsistencySeeder extends Seeder
                 $dossierA = DB::table('dossiers')->where('name', $group->name)->where('type', 'A')->first();
                 echo "→ Faltante tipo B para '{$group->name}', creando...";
 
-                // Clonar dossier A a B
+
                 $newId = DB::table('dossiers')->insertGetId([
                     'name' => $dossierA->name,
                     'type' => 'B',
@@ -37,7 +37,7 @@ class DossierConsistencySeeder extends Seeder
                     'updated_at' => now(),
                 ]);
 
-                // Crear dossier_data para tipo B
+
                 DossierData::create([
                     'dossier_id' => $newId,
                     'tab_number' => null,
@@ -61,7 +61,7 @@ class DossierConsistencySeeder extends Seeder
                 $dossierB = DB::table('dossiers')->where('name', $group->name)->where('type', 'B')->first();
                 echo "→ Faltante tipo A para '{$group->name}', creando...";
 
-                // Clonar dossier B a A
+
                 $newId = DB::table('dossiers')->insertGetId([
                     'name' => $dossierB->name,
                     'type' => 'A',
