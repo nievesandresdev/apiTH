@@ -1,7 +1,7 @@
 <div style="margin-top:32px; margin-left: 16px; margin-right: 16px;">
     <!-- Título -->
     <h2 style="color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
-        Disfrutarás de estas instalaciones y más
+        {{ __('mail.facilities.title') }}
     </h2>
 
     <div style="margin-top:16px">
@@ -32,7 +32,7 @@
                                         style="color:#333;font-family: Arial;font-size: 10.5px;font-weight: 700;line-height: 114.286%;text-decoration: underline;"
                                         href="{{ $item['url_webapp'] }}"
                                     >
-                                        Ver en la WebApp
+                                        {{ __('mail.facilities.button') }}
                                     </a>
                                 </div>
                             </div>

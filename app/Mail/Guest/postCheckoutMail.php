@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 
 class postCheckoutMail extends Mailable
 {
@@ -46,7 +47,10 @@ class postCheckoutMail extends Mailable
      */
     public function build()
     {
-        $subject = 'Te esperamos de vuelta';
+        // Establecer el idioma del huésped
+        App::setLocale($this->guest->lang_web ?? 'es');
+
+        $subject = __('mail.postCheckout.subject');
 
         $senderName = $this->hotel->sender_for_sending_email;
         $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
