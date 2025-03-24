@@ -39,4 +39,15 @@ return [
         'warning' => 'Por favor, verifica que los fechas de Check-in y Check-out coincidan con la reserva realizada en el :type. Si los datos no coinciden',
         'editUrl' => 'editarlos desde la WebApp.',
     ],
+    'makeYourCheckLink' => [
+        'title' => '¡Realiza tu Check-in!',
+        'body1' => 'Evita filas y comienza tu viaje con tranquilidad.',
+        'body2' => 'Realiza tu check-in online ahora y dedícate solo a disfrutar!',
+        'button' => 'Completar Check-in',
+    ],
+    'places' => [
+        'titleWelcome' => 'Te esperan estos Destinos y muchos más',
+        'titleCheckout' => 'Estos destinos te estarán esperando',
+        'button' => 'Ver en la WebApp',
+    ],
 ];
