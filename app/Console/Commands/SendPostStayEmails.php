@@ -17,7 +17,7 @@ use App\Mail\Guest\postCheckoutMail;
 use App\Services\QuerySettingsServices;
 use App\Services\UtilityService;
 use stdClass;
-
+use Illuminate\Support\Facades\DB;
 class SendPostStayEmails extends Command
 {
     /**
@@ -248,6 +248,7 @@ class SendPostStayEmails extends Command
             ->join('hotels as h', 'stays.hotel_id', '=', 'h.id')
             ->join('chains as c', 'c.id', '=', 'h.chain_id')
             ->join('chat_settings as cs', 'cs.hotel_id', '=', 'h.id')
+            ->leftJoin('email_notifications as en', 'stays.id', '=', 'en.stay_id')
             //aqui se valida si el hotel no tiene checkin entonces se usa 20:00:00 como checkin
             ->whereRaw("
                 TIMESTAMP(
@@ -256,6 +257,10 @@ class SendPostStayEmails extends Command
                 ) BETWEEN ? AND ?
             ", [$start, $end])
             ->where('stays.check_out', '>', now()) //solo se envian correos a estancias que no han finalizado
+            ->where(function ($query) { //si no existe registro o existe pero no se ha enviado
+                $query->whereNull('en.post_checkin') // No existe registro
+                      ->orWhere('en.post_checkin', 0);
+            })
             ->get();
 
         foreach($stays as $stay){
@@ -289,6 +294,14 @@ class SendPostStayEmails extends Command
                 );
             }
 
+            DB::table('email_notifications')->insert(
+                [
+                    'stay_id' => $stay->id,
+                    'hotel_id' => $stay->hotelId,
+                    'post_checkin' => 1,
+                    'sent_at' => now()
+                ]
+            );
         }
     }
 

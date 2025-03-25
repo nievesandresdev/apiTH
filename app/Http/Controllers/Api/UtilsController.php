@@ -90,6 +90,86 @@ class UtilsController extends Controller
         $this->stayHosterServices = $_StayHosterServices;
     }
 
+    public function testPostCheckin()
+    {
+        $start = now()->startOfHour()->subDay();
+        $end = now()->startOfHour()->subDay()->addHour();
+
+        Log::info('handleSendEmailPostChekin  24h starthour: '.$start.' endhour: '.$end);
+
+        $stays = Stay::with(['guests:id,name,email'])->select(
+                'h.checkin','h.id as hotelId','h.chain_id','h.name as hotelName','h.subdomain as hotelSubdomain','h.zone',
+                'h.show_facilities','h.show_places','h.show_experiences','h.latitude','h.longitude','h.sender_for_sending_email','h.sender_mail_mask',
+                'h.show_checkin_stay','h.city_id',
+                'cs.show_guest',
+                'stays.check_in','stays.id','stays.check_out',
+                'c.subdomain as chainSubdomain'
+            )
+            ->join('hotels as h', 'stays.hotel_id', '=', 'h.id')
+            ->join('chains as c', 'c.id', '=', 'h.chain_id')
+            ->join('chat_settings as cs', 'cs.hotel_id', '=', 'h.id')
+            ->leftJoin('email_notifications as en', 'stays.id', '=', 'en.stay_id')
+            //aqui se valida si el hotel no tiene checkin entonces se usa 20:00:00 como checkin
+            ->whereRaw("
+                TIMESTAMP(
+                    stays.check_in,
+                    IFNULL(NULLIF(h.checkin, ''), '20:00:00')
+                ) BETWEEN ? AND ?
+            ", [$start, $end])
+            ->where('stays.check_out', '>', now()) //solo se envian correos a estancias que no han finalizado
+            ->where(function ($query) {
+                $query->whereNull('en.post_checkin') // No existe registro
+                      ->orWhere('en.post_checkin', 0); // O existe pero no se ha enviado
+            })
+            ->get();
+
+
+        foreach($stays as $stay){
+            $hotel = new \stdClass();
+            $hotel->checkin = $stay->checkin;
+            $hotel->id = $stay->hotelId;
+            $hotel->chain_id = $stay->chain_id;
+            $hotel->name = $stay->hotelName;
+            $hotel->subdomain = $stay->hotelSubdomain;
+            $hotel->zone = $stay->zone;
+            $hotel->show_facilities = $stay->show_facilities;
+            $hotel->show_places = $stay->show_places;
+            $hotel->show_experiences = $stay->show_experiences;
+            $hotel->latitude = $stay->latitude;
+            $hotel->longitude = $stay->longitude;
+            $hotel->sender_for_sending_email = $stay->sender_for_sending_email;
+            $hotel->sender_mail_mask = $stay->sender_mail_mask;
+            $hotel->show_checkin_stay = $stay->show_checkin_stay;
+            $hotel->city_id = $stay->city_id;
+            $hotel->chatSettings = (object) ['show_guest' => $stay->show_guest];
+
+            foreach ($stay->guests as $guest) {
+                Log::info("Enviando correo postCheckin a {$guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
+
+                $this->stayServices->guestWelcomeEmail(
+                    'postCheckin',
+                    $stay->chainSubdomain,
+                    $hotel,
+                    $guest,
+                    $stay
+                );
+            }
+
+            // Marcar esta estancia como enviada
+            DB::table('email_notifications')->insert(
+                [
+                    'stay_id' => $stay->id,
+                    'hotel_id' => $stay->hotelId,
+                    'post_checkin' => 1,
+                    'sent_at' => now()
+                ]
+            );
+
+        }
+
+        dd('fin',$stays);
+    }
+
     public function authPusher(Request $request)
     {
         $user = auth()->user(); // O tu lógica de autenticación personalizada
@@ -240,7 +320,7 @@ class UtilsController extends Controller
         // Obtener todos los registros de la tabla RequestSetting
         // $models = RequestSetting::all();
         $models = RequestSetting::select('id','in_stay_msg_text')->where('hotel_id', 191)->get();
-        
+
         // Iterar sobre cada modelo
         foreach ($models as $model) {
             // Procesar el campo in_stay_msg_text
