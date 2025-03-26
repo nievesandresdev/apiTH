@@ -1,9 +1,9 @@
 <div style="margin-left: 16px; margin-right: 16px; margin-top: 32px;">
     <h2 style="margin: 0; color: #333; font-family: Arial; font-size: 22px; font-weight: 500; line-height: 145.455%;">
-        ¿Nos ayudas con una reseña?
+        {{ __('mail.otas.title') }}
     </h2>
     <p style="margin: 0; padding-top: 8px; color: #333; font-family: Arial; font-size: 16px; font-weight: 400; line-height: 175%;">
-        Tu experiencia nos ayuda a mejorar y a crecer.
+        {{ __('mail.otas.subtitle') }}
     </p>
 </div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 24px; text-align: center;">
@@ -20,7 +20,7 @@
                                 </td>
                                 <!-- Text Section -->
                                 <td style="padding: 12px; font-family: Arial, sans-serif; font-size: 14px; font-weight: 400; color: #333333; text-align: left;">
-                                    Dejar reseña en  {{ $ota['name'] }}
+                                   {{ __('mail.otas.button', ['ota' => $ota['name']]) }}
                                 </td>
                             </tr>
                         </table>

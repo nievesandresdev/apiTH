@@ -8,15 +8,15 @@
                 </td>
                 <!-- Columna de Texto -->
                 <td class="text-content" style="color: #333333;text-align: left;vertical-align: top;padding-right:20px;">
-                    <h1 style="margin: 0;color: #333;font-family: arial;font-size: 26px;font-weight: 600;line-height: 110%;">¿Todo listo {{ $guest_name }}?</h1>
+                    <h1 style="margin: 0;color: #333;font-family: arial;font-size: 26px;font-weight: 600;line-height: 110%;">{{ __('mail.prepareArrival.headerTitle', ['guest_name' => $guest_name]) }}</h1>
                     <p style="margin: 0;color: #333;font-family: arial;font-size: 16px;font-weight: 400;line-height: 28px;margin-top:14px">
-                        Faltan sólo 2 días para recibirte en {{ $hotel_name }}! Queremos brindarte la mejor experiencia y asegurar tu disfrute al máximo.
+                        {{ __('mail.prepareArrival.headerBody', ['hotel_name' => $hotel_name]) }}
                     </p>
                     <a
                         href="{{ $data['urlWebapp'] }}"
                         style="margin:0;border-radius: 6px;background-color: #333;padding: 12px 0;text-align:center;color:#F3F3F3;font-size: 18px;font-weight: 600;line-height: 110%;font-family:Arial;margin-top:16px;display:block;text-decoration: none;width:100%"
                     >
-                        Ir a la WebApp
+                        {{ __('mail.prepareArrival.button') }}
                     </a>
 
 
