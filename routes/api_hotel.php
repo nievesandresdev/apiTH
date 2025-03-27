@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HotelController;
 use App\Http\Controllers\Subdomain\SubdomainController;
 use App\Http\Controllers\Api\Hoster\ChainCustomizationController;
-
+use App\Http\Controllers\Api\HotelCommunicationController;
 
 Route::post('/appearence', [ChainCustomizationController::class, 'update']);
 
@@ -43,4 +43,12 @@ Route::group(['prefix' => 'hotel'], function () {
 
     //handleShowReferrals
     Route::post('handleShowReferrals', [HotelController::class, 'handleShowReferrals']);
+
+    //manage communication hotel
+    Route::group(['prefix' => 'communication'], function () {
+        Route::get('getHotelCommunication', [HotelCommunicationController::class, 'getHotelCommunication']);
+        Route::post('updateHotelCommunication', [HotelCommunicationController::class, 'updateHotelCommunication']);
+    });
 });
+
+
