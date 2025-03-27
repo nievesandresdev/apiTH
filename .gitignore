@@ -1,5 +1,5 @@
 storage/*
-/storage/framework/cache/**
+storage/framework/cache/*
 !storage/app/phone-codes.json
 /.phpunit.cache
 /node_modules
