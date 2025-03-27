@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('hotel_communications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hotel_id')->unique()->constrained()->onDelete('cascade');
+            $table->foreignId('hotel_id')->constrained()->onDelete('cascade');
             $table->string('type')->default('email');
             $table->boolean('welcome_email')->default(true);
             $table->boolean('pre_checkin_email')->default(false);

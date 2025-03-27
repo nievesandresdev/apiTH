@@ -20,4 +20,20 @@ class HotelCommunication extends Model
         'new_chat_email',
         'referent_email',
     ];
+
+
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class);
+    }
+
+    //scopeType
+    public function scopeType($query, $type)
+    {
+        if($type){
+            return $query->where('type', $type);
+        }
+
+        return $query;
+    }
 }

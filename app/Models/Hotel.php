@@ -108,6 +108,12 @@ class Hotel extends Model
     }
 
 
+    public function hotelCommunications()
+    {
+        return $this->hasMany(HotelCommunication::class);
+    }
+
+
     public function facilities()
     {
         return $this->hasMany(FacilityHoster::class);

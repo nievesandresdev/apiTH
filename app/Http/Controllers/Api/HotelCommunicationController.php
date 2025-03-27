@@ -21,13 +21,14 @@ class HotelCommunicationController extends Controller
     public function getHotelCommunication(Request $request)
     {
         $hotel = $request->attributes->get('hotel');
-        $hotelCommunication = $this->hotelCommunicationServices->getHotelCommunication($hotel->id,'email');
+        $hotelCommunication = $this->hotelCommunicationServices->getHotelCommunication($hotel->id,'email'); //si quieres todos los tipos de notificacion en comuinicacion quitar email
         return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelCommunication);
     }
 
-    public function updateHotelCommunication($hotelId, Request $request)
+    public function updateOrStoreHotelCommunication( Request $request)
     {
-        $this->hotelCommunicationServices->updateHotelCommunication($hotelId, $request->all());
+        $hotel = $request->attributes->get('hotel');
+        $this->hotelCommunicationServices->updateOrStoreHotelCommunication($hotel->id, $request->all());
         return bodyResponseRequest(EnumResponse::ACCEPTED, ['message' => 'Hotel communication updated successfully']);
     }
 
