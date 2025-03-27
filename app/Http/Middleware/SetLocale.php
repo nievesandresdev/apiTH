@@ -20,7 +20,7 @@ class SetLocale
 
         if ($locale) {
             // Extraer solo el primer idioma válido
-            $localesValidos = ['es', 'en']; // Agrega más idiomas si es necesario
+            $localesValidos = ['es', 'en','fr', 'ca', 'eu', 'gl', 'nl', 'de', 'it', 'pt']; // Agrega más idiomas si es necesario
             $locale = strtok($locale, ','); // Toma solo la primera parte antes de la coma
 
             if (in_array($locale, $localesValidos)) {

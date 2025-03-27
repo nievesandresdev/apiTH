@@ -1,0 +1,42 @@
+{
+    "function_expected_parameter": {
+      "{{ language_code }}": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The translated name of the place."
+          },
+          "description": {
+            "type": "string",
+            "description": "The translated description of the place."
+          },
+          "interesting_facts": {
+            "type": "string",
+            "description": "The translated interesting facts about the place."
+          },
+          "type_cuisine": {
+            "type": "string",
+            "description": "The translated type of cuisine (if restaurant)."
+          },
+          "diet_specifications": {
+            "type": "string",
+            "description": "The translated dietary specifications."
+          },
+          "other": {
+            "type": "string",
+            "description": "The translated additional information."
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "interesting_facts",
+          "type_cuisine",
+          "diet_specifications",
+          "other"
+        ]
+      }
+    },
+    "system_expected_parameter": "\n    \"{{ language_code }}\": {\n        \"name\": <text>,\n        \"description\": <text>,\n        \"interesting_facts\": <text>,\n        \"type_cuisine\": <text>,\n        \"diet_specifications\": <text>,\n        \"other\": <text>\n    }"
+  }

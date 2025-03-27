@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('dossier_data', function (Blueprint $table) {
-            if (!Schema::hasColumn('dossier_data', 'openMonths')) {
-                $table->integer('openMonths')->after('occupancyRateIncrease')->default(0);
+        Schema::table('facility_hoster_languages', function (Blueprint $table) {
+            if (Schema::hasColumn('facility_hoster_languages', 'description')) {
+                $table->text('description')->nullable()->change();
             }
         });
     }
@@ -23,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('dossier_data', function (Blueprint $table) {
-            $table->dropColumn('openMonths');
+        Schema::table('facility_hoster_languages', function (Blueprint $table) {
+            //
         });
     }
 };

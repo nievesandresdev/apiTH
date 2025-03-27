@@ -134,7 +134,7 @@ class QuerySettingsHosterServices {
             ];
         }
         
-        TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model);
+        TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model, [], false);
     }
 
     

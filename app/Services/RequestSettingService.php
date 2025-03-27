@@ -28,13 +28,14 @@ class RequestSettingService {
 
 
     public function getRequestData($settings, $hotel, $period){
-
+        Log::info('msg_text: ' . json_encode($settings->msg_text));
+        Log::info('in_stay_msg_text: ' . json_encode($settings->in_stay_msg_text));
         try {
             $localLang = localeCurrent();
-
+            
             //titulo
             $nameHotelText = "[nombre del hotel]";
-
+            
             $title = $settings->msg_title[$localLang];
             $text = preg_replace('/>\s+</', '><', $settings->msg_text[$localLang]);
             if($period == 'in-stay'){

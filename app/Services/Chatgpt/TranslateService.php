@@ -122,12 +122,12 @@ class TranslateService {
         $BASE_URI = "https://thehoster-test-openai.openai.azure.com/openai/deployments/${MODEL_DEPLOYMENT}";
         try {
             $client = OpenAI::factory()
-                ->withBaseUri($BASE_URI)
+            ->withBaseUri($BASE_URI)
                 ->withApiKey(config('app.azure_openia_key'))
                 ->withHttpHeader('api-key', config('app.azure_openia_key'))
                 ->withQueryParam('api-version', config('app.azure_openia_version'))
                 ->make();
-            $response = $client->chat()->create($input);
+                $response = $client->chat()->create($input);
             return $response;
         } catch (\Exception $e) {
             \Log::error('ERROR_TRANSLATION', ['message' => $e->getMessage()]);

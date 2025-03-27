@@ -36,7 +36,6 @@ class TranslateController extends Controller
     public function load(LoadTranslateRequest $request){
         
         try {
-
             $withValidation = isset($request->withValidation) ? $request->withValidation  : true;
             $inputs = $request->context;
             $inputs = $this->encodeArrayValuesToJsonStrings($inputs);

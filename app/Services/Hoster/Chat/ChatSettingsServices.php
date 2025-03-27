@@ -79,7 +79,7 @@ class ChatSettingsServices {
                 'three_available_msg' => $three_available_msg
             ];
             
-            TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model);
+            TranslateGenericMultipleJob::dispatch($arrToTranslate, $this, $model, [], false);
         } catch (\Exception $e) {
             Log::error('error processTranslateTextsCHAT: '.$e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);

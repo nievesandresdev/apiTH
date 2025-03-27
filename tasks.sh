@@ -10,22 +10,39 @@ php /var/www/html/artisan migrate --force
 echo "Ejecutando seeders..."
 #php /var/www/html/artisan db:seed --force
 
-# Cargar el campo city_id en la tabla hotels
-#php /var/www/html/artisan db:seed --class=loadCityObjectidInHotelSeeder
+# Cargar lenguages
+#php /var/www/html/artisan db:seed --class=LoadLanguagesSeeder
+
+# Cargar las traducciones de todos los hoteles e instalaciones
+#php /var/www/html/artisan db:seed --class=TranslateModulesWeabAppSeeder
 
 #seeders de sprint 4 helpers
 
-# Cargar el campo city_id en la tabla products
-#php /var/www/html/artisan db:seed --class=LoadCityObjectidInProductSeeder
+# Cargar las traducciones de las categorias y subcategorias
+#php /var/www/html/artisan db:seed --class=loadIconAndTranslateInTypePlacesAndCategoriPlacesSeeder
 
-# Cargar el campo city_id en la tabla places
-#php /var/www/html/artisan db:seed --class=LoadCityObjectidPlaceSeeder
-
-# Cargar el campo city_id los products que fueron creados por un hoster
-#php /var/www/html/artisan db:seed --class=assignCityInProductByHosterSeeder
+# Cargar las traducciones de los places, experiencias y servicios
+#php /var/www/html/artisan db:seed --class=TranslateModulesWeabAppSeeder
 
 #Ejecutar custom commmands sprint 4
 echo "Ejecutando customs commands..."
 # php /var/www/html/artisan custom:command
 
 echo "Todas las tareas programadas se han ejecutado."
+
+#seeders de sprint 5
+
+#agregar traducciones a registros en chat_settings
+#php artisan db:seed --class="Database\Seeders\UpdateTranslateModels\UpdateTranslateChatSettingSeeder"
+
+#agregar traducciones a registros en checkin_settings
+#php artisan db:seed --class="Database\Seeders\UpdateTranslateModels\UpdateTranslateCheckinSettingSeeder"
+
+#agregar traducciones a registros en query_settings
+#php artisan db:seed --class="Database\Seeders\UpdateTranslateModels\UpdateTranslateQuerySettingSeeder"
+
+#agregar traducciones a registros en requests_settings
+#php artisan db:seed --class="Database\Seeders\UpdateTranslateModels\UpdateTranslateRequestsSettingSeeder"
+
+#corregir errores de traduccion en el seeder UpdateTranslateRequestsSettingSeeder
+#php artisan db:seed --class=FixLinkStringRequestSettingsSeeder
