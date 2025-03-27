@@ -346,6 +346,29 @@ if (!function_exists('localeCurrent')) {
     }
 }
 
+if (!function_exists('getDefaultHotelCommunications')) {
+    function getDefaultHotelCommunications()
+    {
+        return [
+            'email' => [
+                'welcome_email' => true,
+                'pre_checkin_email' => true,
+                'post_checkin_email' => true,
+                'checkout_email' => true,
+                'pre_checkout_email' => true,
+                'new_chat_email' => true,
+                'referent_email' => true,
+            ],
+            // se pueden agregar más tipos en el futuro
+            // 'ejemplo' => [
+            //     'welcome' => false,
+            //     'pre_checkin' => false,
+            //     ...
+            // ],
+        ];
+    }
+}
+
 if (! function_exists('getAllLanguages')) {
     function getAllLanguages(){
         $lgs = Language::where('active', 1)->get()->pluck('abbreviation');

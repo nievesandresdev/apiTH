@@ -12,14 +12,16 @@ class HotelCommunicationController extends Controller
 {
     protected $hotelCommunicationServices;
 
+
     public function __construct(HotelCommunicationServices $hotelCommunicationServices)
     {
         $this->hotelCommunicationServices = $hotelCommunicationServices;
     }
 
-    public function getHotelCommunication($hotelId)
+    public function getHotelCommunication(Request $request)
     {
-        $hotelCommunication = $this->hotelCommunicationServices->getHotelCommunication($hotelId);
+        $hotel = $request->attributes->get('hotel');
+        $hotelCommunication = $this->hotelCommunicationServices->getHotelCommunication($hotel->id,'email');
         return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelCommunication);
     }
 

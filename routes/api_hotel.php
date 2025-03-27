@@ -46,7 +46,7 @@ Route::group(['prefix' => 'hotel'], function () {
 
     //manage communication hotel
     Route::group(['prefix' => 'communication'], function () {
-        Route::get('getHotelCommunication', [HotelCommunicationController::class, 'getHotelCommunication']);
+        Route::post('getHotelCommunication', [HotelCommunicationController::class, 'getHotelCommunication']);
         Route::post('updateHotelCommunication', [HotelCommunicationController::class, 'updateHotelCommunication']);
     });
 });
