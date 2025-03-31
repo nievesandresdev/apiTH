@@ -104,9 +104,16 @@ class RewardsServices {
             'urlQr' => generateQr($rewardStay->hotel->subdomain, $urlWebapp),
         ];
 
-        Log::info('sendEmailReferentSErvices', ['data' => $data]);
-        $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
-        $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), 'francisco20990@gmail.com');
+        $communication = $rewardStay->hotel->hotelCommunications->firstWhere('type', 'email');
+        $shouldSend = !$communication || $communication->referent_email;
+
+        if($shouldSend){
+            Log::info('sendEmailReferentSErvices', ['data' => $data]);
+            $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
+            $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), 'francisco20990@gmail.com');
+        }else{
+            Log::info('sendEmailReferentSErvices no se envia', ['data' => $data]);
+        }
 
     }
 

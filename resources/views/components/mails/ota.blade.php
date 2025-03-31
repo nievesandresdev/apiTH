@@ -16,7 +16,7 @@
                             <tr>
                                 <!-- Logo Section with Diagonal Background -->
                                 <td style="padding: 0; background: linear-gradient(105deg, #F3F3F3 75%, transparent 40%); width: 50px; text-align: center;">
-                                    <img src="<?= asset('mails/icons/services/' . $ota['name'] . '.svg'); ?>" alt=" {{ $ota['name'] }}" style="width: 24px; height: 24px; display: block; margin: 9px" />
+                                    <img src="<?= asset('mails/icons/services/' . strtolower($ota['name']) . '.svg'); ?>" alt=" {{ $ota['name'] }}" style="width: 24px; height: 24px; display: block; margin: 9px" />
                                 </td>
                                 <!-- Text Section -->
                                 <td style="padding: 12px; font-family: Arial, sans-serif; font-size: 14px; font-weight: 400; color: #333333; text-align: left;">

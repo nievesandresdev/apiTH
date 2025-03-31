@@ -185,11 +185,17 @@ class SendPreStayEmail extends Command
 
                 Log::info('handleSendEmailPreCheckin email send', ['guest_email' => $query->guest->email, 'type' => $type]);
                 //Log::info('handleSendEmailPreCheckin data email', ['dataEmail' => $dataEmail]);
+                $communication = $stay->hotel->hotelCommunications->firstWhere('type', 'email');
+                $shouldSend = !$communication || $communication->pre_checkin_email;
 
                 try {
-                    $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                    $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
-                    Log::info('Correo enviado correctamente handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                    if($shouldSend){
+                        $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                        $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
+                        Log::info('Correo enviado correctamente handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                    }else{
+                        Log::info('Correo no enviado handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                    }
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailPreCheckin', [
                         'guest_email' => $query->guest->email,

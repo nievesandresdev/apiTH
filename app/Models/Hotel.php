@@ -113,6 +113,15 @@ class Hotel extends Model
         return $this->hasMany(HotelCommunication::class);
     }
 
+    public function hotelCommunicationsWithDefault()
+    {
+        if ($this->hotelCommunications->isEmpty()) {
+            return getDefaultHotelCommunications();
+        }
+
+        return $this->hotelCommunications;
+    }
+
 
     public function facilities()
     {

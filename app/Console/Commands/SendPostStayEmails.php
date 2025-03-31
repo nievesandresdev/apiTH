@@ -249,6 +249,12 @@ class SendPostStayEmails extends Command
             ->join('chains as c', 'c.id', '=', 'h.chain_id')
             ->join('chat_settings as cs', 'cs.hotel_id', '=', 'h.id')
             ->leftJoin('email_notifications as en', 'stays.id', '=', 'en.stay_id')
+            //relacion con hotel_communications
+            ->leftJoin('hotel_communications as hc', function ($join) {
+                $join->on('h.id', '=', 'hc.hotel_id')
+                     ->where('hc.type', '=', 'email');
+            })
+
             //aqui se valida si el hotel no tiene checkin entonces se usa 20:00:00 como checkin
             ->whereRaw("
                 TIMESTAMP(
@@ -260,6 +266,10 @@ class SendPostStayEmails extends Command
             ->where(function ($query) { //si no existe registro o existe pero no se ha enviado
                 $query->whereNull('en.post_checkin') // No existe registro
                       ->orWhere('en.post_checkin', 0);
+            })
+            ->where(function ($query) {
+                $query->whereNull('hc.post_checkin_email')
+                      ->orWhere('hc.post_checkin_email', 1);
             })
             ->get();
 
@@ -282,16 +292,19 @@ class SendPostStayEmails extends Command
             $hotel->city_id = $stay->city_id;
             $hotel->chatSettings = (object) ['show_guest' => $stay->show_guest];
 
+
             foreach ($stay->guests as $guest) {
+
                 Log::info("Enviando correo postCheckin a {$guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
 
                 $this->stayService->guestWelcomeEmail(
-                    'postCheckin',
-                    $stay->chainSubdomain,
-                    $hotel,
-                    $guest,
-                    $stay
-                );
+                        'postCheckin',
+                        $stay->chainSubdomain,
+                        $hotel,
+                        $guest,
+                        $stay
+                    );
+
             }
 
             DB::table('email_notifications')->insert(
@@ -302,6 +315,7 @@ class SendPostStayEmails extends Command
                     'sent_at' => now()
                 ]
             );
+
         }
     }
 
@@ -396,13 +410,21 @@ class SendPostStayEmails extends Command
                     'reservationURl' => $reservationURl
                 ];
 
-                Log::info('handleSendEmailPostCheckout email send', ['guest_email' => $query->guest->email, 'type' => $type]);
+                $communication = $stay->hotel->hotelCommunications->firstWhere('type', 'email');
+                $shouldSend = !$communication || $communication->checkout_email;
+
+
                 //Log::info('handleSendEmailPostCheckout data email', ['dataEmail' => $dataEmail]);
 
                 try {
-                    $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                    //$this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'xxxx');
-                    Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
+                    if($shouldSend){
+                        $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                        $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
+                        Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
+
+                    }else{
+                        Log::info('Correo no enviado handleSendEmailPostCheckout no se envia registro communication', ['guest_email' => $query->guest->email]);
+                    }
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailPostCheckout', [
                         'guest_email' => $query->guest->email,
