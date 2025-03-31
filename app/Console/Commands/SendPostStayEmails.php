@@ -330,7 +330,11 @@ class SendPostStayEmails extends Command
 
         // Obtener estancias cuyo checkout fue exactamente hace 48 horas
         $stays = Stay::select('id', 'hotel_id', 'check_out')
-            ->whereHas('hotel') // Validar que la estancia esté asociada a un hotel
+            //->whereHas('hotel') // Validar que la estancia esté asociada a un hotel antes
+            ->leftJoin('hotel_communications as hc', function ($join) { //con hotel communications
+                $join->on('hc.hotel_id', '=', 'h.id')
+                    ->where('hc.type', '=', 'email');
+            })
             ->whereDate('check_out', $currentTime->subHours($hoursBack)->format('Y-m-d')) // Filtrar por la fecha de checkout
             ->with([
                 'queries' => function ($query) {
@@ -410,21 +414,14 @@ class SendPostStayEmails extends Command
                     'reservationURl' => $reservationURl
                 ];
 
-                $communication = $stay->hotel->hotelCommunications->firstWhere('type', 'email');
-                $shouldSend = !$communication || $communication->checkout_email;
-
-
-                //Log::info('handleSendEmailPostCheckout data email', ['dataEmail' => $dataEmail]);
+                Log::info('handleSendEmailPostCheckout data email', ['dataEmail' => $dataEmail]);
 
                 try {
-                    if($shouldSend){
-                        $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                        $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
-                        Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
 
-                    }else{
-                        Log::info('Correo no enviado handleSendEmailPostCheckout no se envia registro communication', ['guest_email' => $query->guest->email]);
-                    }
+                    $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                    $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
+                    Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
+
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailPostCheckout', [
                         'guest_email' => $query->guest->email,
