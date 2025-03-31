@@ -138,7 +138,8 @@ class SendPreStayEmail extends Command
                 $webappEditStay = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'editar-estancia/'.$stay->id);
 
                 $checkData = [
-                    'title' => "Datos de tu estancia en {$stay->hotel->name}",
+                    //'title' => "Datos de tu estancia en {$stay->hotel->name}",
+                    'title' => __('mail.stayCheckDate.title', ['hotel' => $stay->hotel->name]),
                     'formatCheckin' => $formatCheckin ?? null,
                     'formatCheckout' => $formatCheckout,
                     'editStayUrl' => $webappEditStay,
