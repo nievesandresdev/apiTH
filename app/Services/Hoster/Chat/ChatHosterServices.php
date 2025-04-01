@@ -194,7 +194,7 @@ class ChatHosterServices {
                 ->where('stay_id', $stayId)->withCount(['messages' => function($query) {
                     $query->where('status', 'Entregado')->where('by','Guest');
                 }]);
-            }])->select('guests.name','guests.id')->get();
+            }])->select('guests.name','guests.lastname','guests.id')->get();
         } catch (\Exception $e) {
             return $e;
         }
