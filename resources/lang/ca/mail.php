@@ -4,6 +4,7 @@
 return [
     'welcome' => [
         'subject' => 'Benvingut a la WebApp de :hotel',
+        'headerTitle' => 'Benvingut!',
         'headerBody' => 'Hola :name,',
         'headerBody2' => 'Estem encantats de donar-te la benvinguda a la WebApp de :hotel.',
         'headerBody3' => 'Esperem que hagis gaudit de la teva estada amb nosaltres i que t’hàgim ofert l’atenció i la qualitat que et mereixes.',

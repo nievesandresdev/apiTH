@@ -3,6 +3,7 @@
 return [
     'welcome' => [
         'subject' => 'Willkommen in der WebApp von :hotel',
+        'headerTitle' => 'Willkommen!',
         'headerBody' => 'Hallo :name,',
         'headerBody2' => 'Wir freuen uns, dich in der WebApp von :hotel begrüßen zu dürfen.',
         'headerBody3' => 'Wir hoffen, dass du deinen Aufenthalt bei uns genossen hast und wir dir die Aufmerksamkeit und Qualität bieten konnten, die du verdienst.',
