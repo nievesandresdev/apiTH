@@ -490,7 +490,7 @@ class StayService {
                 //
 
                 $checkData = [
-                    'title' => "Datos de tu estancia en {$hotel->name}",
+                    'title' => __('mail.stayCheckDate.title', ['hotel' => $hotel->name]),
                     'formatCheckin' => $formatCheckin,
                     'formatCheckout' => $formatCheckout,
                     'editStayUrl' => $webappEditStay

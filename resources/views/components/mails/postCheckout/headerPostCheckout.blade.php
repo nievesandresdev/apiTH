@@ -18,7 +18,7 @@
                            padding-top:22px;">
                     <span style="margin: 0; font-size: 26px; font-style: normal; font-weight: 600; line-height: 110%;">{{ __('mail.postCheckout.header1') }}</span>
                     <p style="margin: 10px 0; font-size: 16px; font-style: normal; font-weight: 400; line-height: 110%; margin-top:12px !important;">
-                        {{ __('mail.postCheckout.header2', ['guest_name' => $guest_name]) }} <br><br> {{ __('mail.postCheckout.header3') }}<br><br> {{ __('mail.postCheckout.header4') }}
+                        {{ __('mail.postCheckout.header2', ['name' => $guest_name]) }} <br><br> {{ __('mail.postCheckout.header3') }}<br><br> {{ __('mail.postCheckout.header4') }}
                     </p>
                 </td>
 

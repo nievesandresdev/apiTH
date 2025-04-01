@@ -109,6 +109,10 @@ class UtilsController extends Controller
             ->join('chains as c', 'c.id', '=', 'h.chain_id')
             ->join('chat_settings as cs', 'cs.hotel_id', '=', 'h.id')
             ->leftJoin('email_notifications as en', 'stays.id', '=', 'en.stay_id')
+            ->leftJoin('hotel_communications as hc', function ($join) {
+                $join->on('h.id', '=', 'hc.hotel_id')
+                     ->where('hc.type', '=', 'email');
+            })
             //aqui se valida si el hotel no tiene checkin entonces se usa 20:00:00 como checkin
             ->whereRaw("
                 TIMESTAMP(
@@ -120,6 +124,10 @@ class UtilsController extends Controller
             ->where(function ($query) {
                 $query->whereNull('en.post_checkin') // No existe registro
                       ->orWhere('en.post_checkin', 0); // O existe pero no se ha enviado
+            })
+            ->where(function ($query) {
+                $query->whereNull('hc.post_checkin_email') // No existe registro
+                      ->orWhere('hc.post_checkin_email', 1); // O existe pero no se ha enviado
             })
             ->get();
 
@@ -194,7 +202,7 @@ class UtilsController extends Controller
 
 
     public function testEmailGeneral(){
-        $type = 'postCheckin';
+        $type = 'welcome';
         $hotel = Hotel::find(292);
         //dd($hotel->subdomain);
         $guest = Guest::find(49);
@@ -287,6 +295,8 @@ class UtilsController extends Controller
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
+            //dd($hotel->hotelCommunications);
+
             $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false,true), 'francisco20990@gmail.com');
 
 
@@ -342,12 +352,12 @@ class UtilsController extends Controller
 
     public function testEmailPostCheckout(){
         $type = 'post-checkout';
-        $hotel = Hotel::find(274);
+        $hotel = Hotel::find(292);
         //$guest = Guest::find(146);
-        $guest = Guest::find(22);
+        $guest = Guest::find(49);
         $chainSubdomain = $hotel->subdomain;
         //$stay = Stay::find(630);
-        $stay = Stay::with('queries')->where('id',82)->first();
+        $stay = Stay::with('queries')->where('id',81)->first();
 
 
 
@@ -375,7 +385,7 @@ class UtilsController extends Controller
                 'currentPeriod' => $currentPeriod,
                 'webappLinkInbox' => $webappLinkInbox,
                 'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-                'answered' => $answered->answered == 1 ? true : false
+                'answered' => true
             ];
 
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
@@ -510,8 +520,14 @@ class UtilsController extends Controller
 
             //dd($dataEmail,$hotel);
 
+            $communication = $hotel->hotelCommunications->firstWhere('type', 'email');
+            $shouldSend = !$communication || $communication->pre_checkin_email;
 
-            $this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            if($shouldSend){
+                $this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            }else{
+                dd('no se envia');
+            }
 
 
             return view('Mails.guest.prepareYourArrival', [

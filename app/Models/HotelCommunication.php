@@ -21,6 +21,16 @@ class HotelCommunication extends Model
         'referent_email',
     ];
 
+    protected $casts = [
+        'welcome_email' => 'boolean',
+        'pre_checkin_email' => 'boolean',
+        'post_checkin_email' => 'boolean',
+        'checkout_email' => 'boolean',
+        'pre_checkout_email' => 'boolean',
+        'new_chat_email' => 'boolean',
+        'referent_email' => 'boolean',
+    ];
+
 
     public function hotel()
     {
