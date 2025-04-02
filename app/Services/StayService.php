@@ -552,7 +552,9 @@ class StayService {
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
+                'stay_language' => $stay->language
             ];
+
 
 
             $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
