@@ -131,6 +131,21 @@ class StayHosterController extends Controller
         }
     }
 
+    public function findById($stayId){
+        try {
+            $model = $this->service->findById($stayId);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findById');
+        }
+    }
+
     //notes 
     
     public function getAllNotesByStay(Request $request){
