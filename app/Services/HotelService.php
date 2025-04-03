@@ -194,6 +194,7 @@ class HotelService {
         $hotelModel->facebook_url = $request->urlFacebook;
         $hotelModel->x_url = $request->urlX;
         $hotelModel->with_wifi = $request->with_wifi;
+        $hotelModel->website_google = $request->website_google;
         $hotelModel->show_profile = $request->show_profile;
         $hotelModel->buttons_home = json_encode($request->buttons);
 
