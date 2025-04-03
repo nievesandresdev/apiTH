@@ -74,10 +74,10 @@ class MsgStay extends Mailable
         $supportedLocales = ['es', 'en', 'it', 'gl', 'ca', 'nl', 'pt', 'fr', 'eu'];
         $locale = in_array($locale, $supportedLocales) ? $locale : 'es'; // 'es' es el valor por defecto
 
-        dd($locale);
+        //dd($locale);
 
         // Establecer el idioma
-        App::setLocale($locale);
+        App::setLocale($this->guest->lang_web ?? 'es');
 
         // Definir el asunto traducido según el tipo
         switch ($this->type) {
