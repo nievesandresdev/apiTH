@@ -205,7 +205,7 @@ class UtilsController extends Controller
         $type = 'welcome';
         $hotel = Hotel::find(292);
         //dd($hotel->subdomain);
-        $guest = Guest::find(49);
+        $guest = Guest::find(27);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(81);
 
@@ -285,7 +285,8 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
-                'hotel' => $hotel
+                'hotel' => $hotel,
+                'stay_language' => $stay->language
             ];
 
             //dd($dataEmail);
@@ -296,7 +297,7 @@ class UtilsController extends Controller
             // Log::info('guest '.json_encode($guest));
 
             //dd($hotel->hotelCommunications);
-
+            //dd($dataEmail);
             $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false,true), 'francisco20990@gmail.com');
 
 
