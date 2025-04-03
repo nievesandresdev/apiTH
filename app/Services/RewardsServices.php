@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use App\Services\MailService;
 use App\Mail\User\RewardsEmail;
 use Illuminate\Support\Facades\Log;
+use App\Models\Hotel;
+
 class RewardsServices {
 
     public $mailService;
@@ -72,7 +74,11 @@ class RewardsServices {
             $rewards[] = $rewardReferent;
         }
 
-        $modelHotel->update([
+        /* $modelHotel->update([
+            'offer_benefits' => !$request->offer_benefits ? 0 : 1,
+        ]); */
+        $hotel = Hotel::where('id', $modelHotel->id)->first();
+        $hotel->update([
             'offer_benefits' => !$request->offer_benefits ? 0 : 1,
         ]);
 
