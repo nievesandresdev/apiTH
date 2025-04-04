@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HotelController;
 use App\Http\Controllers\Subdomain\SubdomainController;
 use App\Http\Controllers\Api\Hoster\ChainCustomizationController;
+use App\Http\Controllers\Api\Hoster\HotelWifiNetworksController;
 use App\Http\Controllers\Api\HotelCommunicationController;
 
 Route::post('/appearence', [ChainCustomizationController::class, 'update']);
@@ -49,6 +50,15 @@ Route::group(['prefix' => 'hotel'], function () {
         Route::post('getHotelCommunication', [HotelCommunicationController::class, 'getHotelCommunication']);
         Route::post('updateOrStoreHotelCommunication', [HotelCommunicationController::class, 'updateOrStoreHotelCommunication']);
     });
+
+    //manage wifi networks hotel
+    Route::group(['prefix' => 'wifiNetworks'], function () {
+        Route::post('store', [HotelWifiNetworksController::class, 'store']);
+        Route::post('updateById', [HotelWifiNetworksController::class, 'updateById']);
+        Route::post('updateVisibilityNetwork', [HotelWifiNetworksController::class, 'updateVisibilityNetwork']);
+        Route::get('getAllByHotel', [HotelWifiNetworksController::class, 'getAllByHotel']);
+    });
+
 });
 
 
