@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HotelController;
 use App\Http\Controllers\Subdomain\SubdomainController;
 use App\Http\Controllers\Api\Hoster\ChainCustomizationController;
+use App\Http\Controllers\Api\Hoster\HotelHosterController;
 use App\Http\Controllers\Api\Hoster\HotelWifiNetworksController;
 use App\Http\Controllers\Api\HotelCommunicationController;
 
@@ -12,7 +13,10 @@ Route::post('/appearence', [ChainCustomizationController::class, 'update']);
 
 Route::group(['prefix' => 'hotel'], function () {
 
-
+    Route::group(['prefix' => 'hoster'], function () {
+        Route::post('/deleteImageByHotel', [HotelHosterController::class, 'deleteImageByHotel']);
+    });
+    
 
     Route::post('/appearence', [ChainCustomizationController::class, 'update']);
     Route::get('/appearence/findOne', [ChainCustomizationController::class, 'findOne']);

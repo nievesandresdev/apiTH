@@ -81,6 +81,20 @@ class LegalPolicyController extends Controller
         }
     }
 
+    public function getCountPoliciesByHotel()
+    {
+        $hotel = request()->attributes->get('hotel');
+
+        try {
+            $data = $this->legalServices->getCountPoliciesByHotel($hotel);
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, $data);
+        } catch (\Exception $e) {
+
+            return bodyResponseRequest(EnumResponse::INTERNAL_SERVER_ERROR, $e->getMessage(), 'Se encontró un error durante la operación', get_class($e));
+        }
+    }
+    
     public function generatePDF()
     {
         // Datos dinámicos que serán reemplazados en la vista del PDF
