@@ -276,6 +276,7 @@ class UtilsController extends Controller
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
              $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+             $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"no-notificacion?g={$guest->id}");
 
 
 
@@ -290,7 +291,8 @@ class UtilsController extends Controller
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
                 'hotel' => $hotel,
-                'stay_language' => $stay->language
+                'stay_language' => $stay->language,
+                'urlFooterEmail' => $urlFooterEmail
             ];
 
             //dd($dataEmail);
