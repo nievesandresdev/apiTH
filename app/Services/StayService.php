@@ -557,10 +557,13 @@ class StayService {
                 'urlFooterEmail' => $urlFooterEmail
             ];
 
+            if(!$guest->off_email){
+                $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
+                $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), 'francisco20990@gmail.com');
+            }else{
+                Log::info('No se envía correo welcomeStayEmailServices email_off a '.$guest->email.' (Estancia ID: '.$stay->id.', Hotel: '.$hotel->name.')');
+            }
 
-
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), 'francisco20990@gmail.com');
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
