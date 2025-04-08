@@ -32,6 +32,7 @@ use App\Services\StayService;
 use App\Services\UtilityService;
 use App\Services\UrlOtasService;
 use App\Services\Apis\ApiReviewServices;
+use App\Services\Hoster\CloneHotelServices;
 use App\Services\Hoster\Stay\StayHosterServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -56,7 +57,7 @@ class UtilsController extends Controller
     public  $api_review_service;
     public  $urlOtasService;
     public  $stayHosterServices;
-
+    public $cloneHotelServices;
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
         UserServices $userServices,
@@ -71,7 +72,8 @@ class UtilsController extends Controller
         RequestSettingService $requestService,
         ApiReviewServices $_api_review_service,
         UrlOtasService $urlOtasService,
-        StayHosterServices $_StayHosterServices
+        StayHosterServices $_StayHosterServices,
+        CloneHotelServices $_CloneHotelServices
     )
     {
         $this->querySettingsServices = $_QuerySettingsServices;
@@ -88,6 +90,7 @@ class UtilsController extends Controller
         $this->api_review_service = $_api_review_service;
         $this->urlOtasService = $urlOtasService;
         $this->stayHosterServices = $_StayHosterServices;
+        $this->cloneHotelServices = $_CloneHotelServices;
     }
 
     public function testPostCheckin()
@@ -320,35 +323,13 @@ class UtilsController extends Controller
 
     public function test()
     {
-        // $hotel = Hotel::find(280);
-        // $stay = Stay::find(43);
-        // $guest = Guest::find(1);
-        // $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
-        // return 'enviado';
-        // return $models = QuerySetting::all();
-
-        // Obtener todos los registros de la tabla RequestSetting
-        // $models = RequestSetting::all();
-        $models = RequestSetting::select('id','in_stay_msg_text')->where('hotel_id', 191)->get();
-
-        // Iterar sobre cada modelo
-        foreach ($models as $model) {
-            // Procesar el campo in_stay_msg_text
-            return $inStayMsgText = $model->in_stay_msg_text;
-            // Verificar que sea un arreglo
-            if (is_array($inStayMsgText)) {
-                foreach ($inStayMsgText as $lang => $text) {
-                    return $lang;
-                    // Reemplazar cualquier texto entre corchetes por "[Link a las OTAs]"
-                    $inStayMsgText[$lang] = preg_replace('/\[.*?\]/', '[Link a las OTAs]', $text);
-                }
-            }
-            // Actualizar el modelo con el nuevo valor
-            $model->in_stay_msg_text = $inStayMsgText;
-
-            // Guardar los cambios en la base de datos
-            // $model->save();
-        }
+        $stringDiff = 'B';
+        $originalHotel = $this->cloneHotelServices->findOriginalHotel();
+        if(!$originalHotel) return 'No existe el Hotel';
+        // $userOwnerOriginal = $originalHotel->user()->where('owner',1)->first();
+        $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
+        $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
+        return $copyHotel;
     }
 
     public function testEmailPostCheckout(){
