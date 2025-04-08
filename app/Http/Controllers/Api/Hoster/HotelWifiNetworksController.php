@@ -57,7 +57,7 @@ class HotelWifiNetworksController extends Controller
     public function updateVisibilityNetwork (Request $request) {
         try {
             // $hotel = $request->attributes->get('hotel');
-            $model = $this->service->updateVisibilityNetwork($request->networkId, $request->visible);
+            $model = $this->service->updateVisibilityNetwork($request->id, $request->visible);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

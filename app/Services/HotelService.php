@@ -196,6 +196,7 @@ class HotelService {
         $hotelModel->with_wifi = $request->with_wifi;
         $hotelModel->website_google = $request->website_google;
         $hotelModel->show_profile = $request->show_profile;
+        $hotelModel->show_rules = $request->show_rules;
         $hotelModel->buttons_home = json_encode($request->buttons);
 
         $hotelModel->save();

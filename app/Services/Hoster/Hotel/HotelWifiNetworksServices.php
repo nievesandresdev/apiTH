@@ -4,6 +4,7 @@ namespace App\Services\Hoster\Hotel;
 
 use App\Models\HotelWifiNetworks;
 use App\Utils\Enums\EnumResponse;
+use Illuminate\Support\Facades\Log;
 
 class HotelWifiNetworksServices
 {
@@ -48,10 +49,12 @@ class HotelWifiNetworksServices
 
     public function updateVisibilityNetwork ($networkId, $value) {
         try {
-            
+            Log::info("networkId ".json_encode($networkId));
+            Log::info("value ".json_encode($value));
             $update = HotelWifiNetworks::find($networkId);
-            $networkId->visible = $value;
-            $save = $networkId->save();
+            if(!$update) return;
+            $update->visible = $value;
+            $save = $update->save();
             return $save;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisibility');
