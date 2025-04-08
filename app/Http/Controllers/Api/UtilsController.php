@@ -34,6 +34,7 @@ use App\Services\UrlOtasService;
 use App\Services\Apis\ApiReviewServices;
 use App\Services\Hoster\CloneHotelServices;
 use App\Services\Hoster\Stay\StayHosterServices;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -323,13 +324,14 @@ class UtilsController extends Controller
 
     public function test()
     {
+        $codeDiff = Carbon::now()->timestamp;
         $stringDiff = 'B';
         $originalHotel = $this->cloneHotelServices->findOriginalHotel();
         if(!$originalHotel) return 'No existe el Hotel';
-        // $userOwnerOriginal = $originalHotel->user()->where('owner',1)->first();
         $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
         $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
-        return $copyHotel;
+        $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
+        return $copyUser;
     }
 
     public function testEmailPostCheckout(){

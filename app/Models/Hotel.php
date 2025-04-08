@@ -68,7 +68,8 @@ class Hotel extends Model
         'show_referrals',
         'offer_benefits',
         //
-        'show_checkin_stay'
+        'show_checkin_stay',
+        'parent_id'
     ];
 
     //bool offer_benefits
