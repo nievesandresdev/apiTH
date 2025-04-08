@@ -540,6 +540,7 @@ class StayService {
             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
             $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
             $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$guest->id}");
+            $urlPrivacy = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}");
 
 
 
@@ -554,7 +555,8 @@ class StayService {
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
                 'stay_language' => $stay->language,
-                'urlFooterEmail' => $urlFooterEmail
+                'urlFooterEmail' => $urlFooterEmail,
+                'urlPrivacy' => $urlPrivacy
             ];
 
             if(!$guest->off_email){
