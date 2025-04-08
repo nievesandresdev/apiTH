@@ -49,7 +49,7 @@ class MsgStay extends Mailable
     public function build()
     {
         // Mapa de nombres de idioma a sus acrónimos
-        $languageMap = [
+        /* $languageMap = [
             'Español' => 'es',
             'Inglés' => 'en',
             'Italiano' => 'it',
@@ -72,7 +72,7 @@ class MsgStay extends Mailable
 
         // Validar que el valor de $locale esté dentro de los idiomas soportados
         $supportedLocales = ['es', 'en', 'it', 'gl', 'ca', 'nl', 'pt', 'fr', 'eu'];
-        $locale = in_array($locale, $supportedLocales) ? $locale : 'es'; // 'es' es el valor por defecto
+        $locale = in_array($locale, $supportedLocales) ? $locale : 'es'; // 'es' es el valor por defecto */
 
         //dd($locale);
 
