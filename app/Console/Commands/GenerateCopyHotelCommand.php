@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Hoster\CloneHotelServices;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -36,15 +37,20 @@ class GenerateCopyHotelCommand extends Command
      */
     public function handle()
     {
+        $codeDiff = Carbon::now()->timestamp;
         $stringDiff = 'B';
         $originalHotel = $this->cloneHotelServices->findOriginalHotel();
         Log::info('originalHotel '.json_encode($originalHotel));
         if(!$originalHotel) return 'No existe el Hotel';
-        // $userOwnerOriginal = $originalHotel->user()->where('owner',1)->first();
         $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
         Log::info('copyChain '.json_encode($copyChain));
         $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
         Log::info('copyHotel '.json_encode($copyHotel));
+        $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
+        Log::info('originalHotel '.json_encode($copyUser));
+
+        $stringDiff = 'B';
+        $originalHotel = $this->cloneHotelServices->findOriginalHotel();
     }
 
 

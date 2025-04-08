@@ -49,6 +49,7 @@ class User extends Authenticatable
 
         //cadena
         'chain_id',
+        'owner'
     ];
 
     protected $dates = [
