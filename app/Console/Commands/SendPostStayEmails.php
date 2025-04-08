@@ -274,6 +274,21 @@ class SendPostStayEmails extends Command
             ->get();
 
         foreach($stays as $stay){
+             // Marcar PRIMERO como enviado (evita condiciones de carrera)
+            $inserted = DB::table('email_notifications')->updateOrInsert(
+                ['stay_id' => $stay->id],
+                [
+                    'hotel_id' => $stay->hotelId,
+                    'post_checkin' => 1,
+                    'sent_at' => now(),
+                ]
+            );
+
+            // Si ya existía un registro previo, no envíes el correo de nuevo
+            if (!$inserted) {
+                continue;
+            }
+
             $hotel = new \stdClass();
             $hotel->checkin = $stay->checkin;
             $hotel->id = $stay->hotelId;
@@ -307,14 +322,14 @@ class SendPostStayEmails extends Command
 
             }
 
-            DB::table('email_notifications')->insert(
+           /*  DB::table('email_notifications')->insert(
                 [
                     'stay_id' => $stay->id,
                     'hotel_id' => $stay->hotelId,
                     'post_checkin' => 1,
                     'sent_at' => now()
                 ]
-            );
+            ); */
 
         }
     }
