@@ -539,7 +539,7 @@ class StayService {
             $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
             $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
-            $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"no-notificacion?g=".encrypt($guest->id));
+            $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$guest->id}");
 
 
 
