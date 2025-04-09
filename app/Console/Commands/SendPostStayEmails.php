@@ -131,7 +131,7 @@ class SendPostStayEmails extends Command
                     //
                     $webappLinkInbox = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox');
                     $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$query->stay_id}&g={$query->guest_id}&fill=VERYGOOD");
-
+                    $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true");
                     $queryData = [
                         'showQuerySection' => $showQuerySection,
                         'currentPeriod' => $currentPeriod,
@@ -146,7 +146,8 @@ class SendPostStayEmails extends Command
                     'facilities' => $crosselling['facilities'],
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
-                    'queryData' => $queryData
+                    'queryData' => $queryData,
+                    'urlPrivacy' => $urlPrivacy
                 ];
 
                 try {
@@ -415,6 +416,7 @@ class SendPostStayEmails extends Command
                 $webappLinkInbox = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox');
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$stay->id}&g={$query->guest->id}&fill=VERYGOOD");
                 $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true");
                 //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
                 $queryData = [
@@ -431,7 +433,8 @@ class SendPostStayEmails extends Command
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
                     'queryData' => $queryData,
-                    'reservationURl' => $reservationURl
+                    'reservationURl' => $reservationURl,
+                    'urlPrivacy' => $urlPrivacy
                 ];
 
                 Log::info('handleSendEmailPostCheckout en esta enviando email a '.$query->guest->email);
