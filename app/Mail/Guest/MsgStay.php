@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 class MsgStay extends Mailable
 {
     use Queueable, SerializesModels;
@@ -19,6 +20,7 @@ class MsgStay extends Mailable
     public $data;
     public $after;
     public $beforeCheckin;
+    public $locale;
     /**
      * Create a new message instance.
      *
@@ -39,6 +41,8 @@ class MsgStay extends Mailable
         $this->data = $data;
         $this->after = $after;
         $this->beforeCheckin = $beforeCheckin;
+        $this->locale = $guest->lang_web ?? 'es';
+
     }
 
     /**
@@ -48,40 +52,12 @@ class MsgStay extends Mailable
      */
     public function build()
     {
-        // Mapa de nombres de idioma a sus acrónimos
-        /* $languageMap = [
-            'Español' => 'es',
-            'Inglés' => 'en',
-            'Italiano' => 'it',
-            'Gallego' => 'gl',
-            'Catalán' => 'ca',
-            'Holandés' => 'nl',
-            'Portugués' => 'pt',
-            'Francés' => 'fr',
-            'Euskera' => 'eu',
-        ];
 
-        // Intentar obtener el idioma desde $this->data['stay_language'] (nombre completo)
-        if (isset($this->data['stay_language']) && array_key_exists($this->data['stay_language'], $languageMap)) {
-            // Si existe un nombre completo válido, obtener el código del idioma
-            $locale = $languageMap[$this->data['stay_language']];
-        } else {
-            // Si no, usar el valor de $this->guest->lang_web que es el código de idioma
-            $locale = $this->guest->lang_web;
-        }
-
-        // Validar que el valor de $locale esté dentro de los idiomas soportados
-        $supportedLocales = ['es', 'en', 'it', 'gl', 'ca', 'nl', 'pt', 'fr', 'eu'];
-        $locale = in_array($locale, $supportedLocales) ? $locale : 'es'; // 'es' es el valor por defecto */
-
-        //dd($locale);
-
-        // Establecer el idioma
-        //App::setLocale($this->guest->lang_web ?? 'es');
-        $locale = $this->guest->lang_web ?? 'es';
+        App::setLocale($this->locale);
+        //Log::info('Locale: ',['locale' => $this->locale,'lang_web guest' => $this->guest->lang_web]);
 
         // Definir el asunto traducido según el tipo
-        /* switch ($this->type) {
+        switch ($this->type) {
             case 'welcome':
             case 'inviteGuestFromSaas':
                 $subject = __('mail.welcome.subject', ['hotel' => $this->hotel->name]);
@@ -92,26 +68,7 @@ class MsgStay extends Mailable
             default:
                 $subject = __('mail.default.subject');
                 break;
-        } */
-
-        return App::withLocale($locale, function () {
-            $subject = match ($this->type) {
-                'welcome', 'inviteGuestFromSaas' => __('mail.welcome.subject', ['hotel' => $this->hotel->name]),
-                'postCheckin' => __('mail.postCheckin.subject'),
-                default => __('mail.default.subject'),
-            };
-
-            $senderName = $this->hotel->sender_for_sending_email;
-            $senderEmail = $this->hotel->sender_mail_mask ?? "no-reply@thehoster.es";
-
-            if ($this->hotel->sender_mail_mask) {
-                $senderEmail = $this->hotel->sender_mail_mask;
-            }
-
-            return $this->from($senderEmail, $this->hotel->name)
-                        ->subject($subject)
-                        ->view('Mails.guest.msgStay');
-        });
+        }
 
         // if($this->type == 'welcome'){
         //     $subject = 'Hola '.$this->guest_name.', prueba la WebApp de '.$this->hotel->name.' ' ;
@@ -122,13 +79,13 @@ class MsgStay extends Mailable
         // $subject = 'Te damos la bienvenida a '.$this->hotel->name.'. Descubre todo lo que podemos ofrecerte';
         // }
 
-       /*  $senderName = $this->hotel->sender_for_sending_email;
+        $senderName = $this->hotel->sender_for_sending_email;
         $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
         if($this->hotel->sender_mail_mask){
             $senderEmail = $this->hotel->sender_mail_mask;
         }
         return $this->from($senderEmail, $this->hotel->name)
-                    ->subject($subject)->view('Mails.guest.msgStay'); */
+                    ->subject($subject)->view('Mails.guest.msgStay');
 
     }
 }
