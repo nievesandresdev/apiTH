@@ -326,6 +326,7 @@ class UtilsController extends Controller
 
     public function test()
     {
+        
         $codeDiff = Carbon::now()->timestamp;
         $stringDiff = 'B';
         $originalHotel = $this->cloneHotelServices->findOriginalHotel();
@@ -333,8 +334,11 @@ class UtilsController extends Controller
         $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
         $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
         $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
+        //trial stays
         $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
-        return $updateTrialStays;
+        //clean real stays in copy hotel
+        $cleanRealStaysInCopyHotel = $this->cloneHotelServices->CleanRealStaysInCopyHotel($copyHotel);
+        return $cleanRealStaysInCopyHotel;
     }
 
     public function testEmailPostCheckout(){

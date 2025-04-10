@@ -184,13 +184,13 @@ class CloneHotelServices
                 $this->syncGuestsForStay($stayParent, $stayChild, $copyChain, $copyHotel);
             }
 
-            // Se obtienen todos los son_ids actualmente asociados a los trial stays del hotel padre.
-            $stayParentSonIds = $originalHotel->stays()->where('trial', 1)->pluck('son_id')->filter()->toArray();
+            // // Se obtienen todos los son_ids actualmente asociados a los trial stays del hotel padre.
+            // $stayParentSonIds = $originalHotel->stays()->where('trial', 1)->pluck('son_id')->filter()->toArray();
 
-            // Elimina en el hotel hijo aquellos stays que no corresponden a ningún son_id del hotel padre.
-            Stay::where('hotel_id', $copyHotel->id)
-                ->whereNotIn('id', $stayParentSonIds)
-                ->delete();
+            // // Elimina en el hotel hijo aquellos stays que no corresponden a ningún son_id del hotel padre.
+            // Stay::where('hotel_id', $copyHotel->id)
+            //     ->whereNotIn('id', $stayParentSonIds)
+            //     ->delete();
 
             DB::commit();
 
@@ -251,12 +251,10 @@ class CloneHotelServices
 
                 $this->syncChatsForGuest($parentGuest, $childGuest, $stayParent, $stayChild, $copyHotel);
             }
-
             // Sincroniza la relación en la estancia hija para que tenga exactamente estos huéspedes
             $stayChild->guests()->sync(array_fill_keys($childGuestIds, ['chain_id' => $copyChain->id]));
             
-            $guestSonIds = $stayParent->guests()->pluck('son_id')->filter()->toArray();
-            $stayParent->guests()->whereNotIn('id', $guestSonIds)->delete();
+            
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.syncGuestsForStay');
         }
@@ -293,7 +291,6 @@ class CloneHotelServices
     private function syncChatsForGuest($parentGuest, $childGuest, $stayParent, $stayChild, $copyHotel)
     {
         try {
-            Log::info('$parentGuest: '.json_encode($parentGuest));
             // Itera cada chat asociado al huésped padre
             $parentChat = $parentGuest->chats()->where('stay_id',$stayParent->id)->first();
             if(!$parentChat)return;
@@ -321,12 +318,14 @@ class CloneHotelServices
                         $childMessage->fill($parentMessage->toArray());
                         $childMessage->chat_id = $childChat->id;
                         $childMessage->messageable_id = $parentMessage->messageable_type === 'App\Models\Guest' ? $childGuest->id : $copyHotel->id;
+                        $childMessage->son_id = null;
                         $childMessage->save();
                     } else {
                         $childMessage = $parentMessage->replicate();
                         $childMessage->id = $parentMessage->son_id;
                         $childMessage->chat_id = $childChat->id;
                         $childMessage->messageable_id = $parentMessage->messageable_type === 'App\Models\Guest' ? $childGuest->id : $copyHotel->id;
+                        $childMessage->son_id = null;
                         $childMessage->exists = false;
                         $childMessage->save();
                     }
@@ -334,6 +333,7 @@ class CloneHotelServices
                     $childMessage = $parentMessage->replicate();
                     $childMessage->chat_id = $childChat->id;
                     $childMessage->messageable_id = $parentMessage->messageable_type === 'App\Models\Guest' ? $childGuest->id : $copyHotel->id;
+                    $childMessage->son_id = null;
                     $childMessage->save();
                     // Se guarda en el mensaje padre el mapeo hacia el mensaje hijo
                     $parentMessage->son_id = $childMessage->id;
@@ -352,4 +352,63 @@ class CloneHotelServices
         }
     }
 
+    public function CleanRealStaysInCopyHotel($copyHotel){
+        try {
+            DB::beginTransaction();
+            $stays = $copyHotel->stays()->where('trial',0)->get();
+            foreach ($stays as $stay) {
+                // delete stays notes
+                $stay->notes()->delete();
+                $guestsOfStay = $stay->guests()->get();
+                //reset guests
+                foreach ($guestsOfStay as $guest) {
+                    // checkin reset
+                    $guest->phone = null;
+                    $guest->birthdate = null;
+                    $guest->sex = null;
+                    $guest->doc_type = null;
+                    $guest->doc_num = null;
+                    $guest->nationality = null;
+                    $guest->address = null;
+                    $guest->second_lastname = null;
+                    $guest->responsible_adult = null;
+                    $guest->kinship_relationship = null;
+                    $guest->doc_support_number = null;
+                    $guest->postal_code = null;
+                    $guest->municipality = null;
+                    $guest->country_address = null;
+                    $guest->complete_checkin_data = 0;
+                    $guest->checkin_email = null;
+                    $guest->save();
+                    
+                    //delete chats
+                    $guest->chats()->where('stay_id',$stay->id)->delete();
+                    //reset queries
+                    $guestQueries = $guest->queries()->where('stay_id',$stay->id)->get();
+                    foreach ($guestQueries as $query) {
+                        $query->answered = 0;
+                        $query->qualification = null;
+                        $query->comment = null;
+                        $query->attended = 0;
+                        $query->visited = 0;
+                        $query->responded_at = null;
+                        $query->response_lang = null;
+                        $query->save();
+                    }
+                    
+                    //delete guest notes
+                    $guest->notes()->where('stay_id',$stay->id)->delete();
+
+
+                }
+
+
+            }
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);
+        }
+    }
 }
