@@ -76,7 +76,7 @@ class SendPostStayEmails extends Command
                         ->where('period', 'post-stay');
                 },
                 'queries.guest' => function ($query) {
-                    $query->select('id', 'name', 'email','off_email');
+                    $query->select('id', 'name', 'email','off_email','lang_web');
                 },
                 'hotel' => function ($query) {
                     $query->select('id', 'name', 'checkout', 'subdomain','show_facilities','show_experiences','show_places','zone');
@@ -131,7 +131,7 @@ class SendPostStayEmails extends Command
                     //
                     $webappLinkInbox = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox');
                     $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$query->stay_id}&g={$query->guest_id}&fill=VERYGOOD");
-                    $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true");
+                    $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
                     $queryData = [
                         'showQuerySection' => $showQuerySection,
                         'currentPeriod' => $currentPeriod,
@@ -363,7 +363,7 @@ class SendPostStayEmails extends Command
                         ->where('period', 'post-stay');
                 },
                 'queries.guest' => function ($query) {
-                    $query->select('id', 'name', 'email','off_email');
+                    $query->select('id', 'name', 'email','off_email','lang_web');
                 },
                 'hotel' => function ($query) {
                     $query->select('id', 'name', 'checkout', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id');
@@ -416,7 +416,7 @@ class SendPostStayEmails extends Command
                 $webappLinkInbox = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox');
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$stay->id}&g={$query->guest->id}&fill=VERYGOOD");
                 $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
-                $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true");
+                $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
                 //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
                 $queryData = [
