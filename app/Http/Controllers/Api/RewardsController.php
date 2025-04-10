@@ -96,7 +96,7 @@ class RewardsController extends Controller
                             return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay encontrado y actualizado code $code , url $cleanUrl codeClean $codeClean");
                         }
                     }else{
-                        return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay no encontrado code $code , url $cleanUrl codeClean $codeClean");
+                        return bodyResponseRequest(EnumResponse::ACCEPTED, "RewardStay no encontrado code $code , url $cleanUrl codeClean $codeClean hotel $hotelId ");
                     }
                 }
 

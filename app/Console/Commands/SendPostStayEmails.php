@@ -76,7 +76,7 @@ class SendPostStayEmails extends Command
                         ->where('period', 'post-stay');
                 },
                 'queries.guest' => function ($query) {
-                    $query->select('id', 'name', 'email');
+                    $query->select('id', 'name', 'email','off_email','lang_web');
                 },
                 'hotel' => function ($query) {
                     $query->select('id', 'name', 'checkout', 'subdomain','show_facilities','show_experiences','show_places','zone');
@@ -131,7 +131,7 @@ class SendPostStayEmails extends Command
                     //
                     $webappLinkInbox = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox');
                     $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$query->stay_id}&g={$query->guest_id}&fill=VERYGOOD");
-
+                    $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
                     $queryData = [
                         'showQuerySection' => $showQuerySection,
                         'currentPeriod' => $currentPeriod,
@@ -146,17 +146,21 @@ class SendPostStayEmails extends Command
                     'facilities' => $crosselling['facilities'],
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
-                    'queryData' => $queryData
+                    'queryData' => $queryData,
+                    'urlPrivacy' => $urlPrivacy
                 ];
 
                 try {
                     $queries_url = url('consultas?e=' . $stay->id . '&lang=' . $query->guest->lang_web . '&g=' . $query->guest->id);
                     $link = includeSubdomainInUrlHuesped($queries_url, $stay->hotel);
 
-
-                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                    $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
-                    Log::info('Correo enviado correctamente handleSendEmailCheckout ', ['guest_email' => $query->guest->email]);
+                    if(!$query->guest->off_email){
+                        $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                        $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
+                        Log::info('Correo enviado correctamente handleSendEmailCheckout ', ['guest_email' => $query->guest->email]);
+                    }else{
+                        Log::info('No se envía correo postCheckout email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})');
+                    }
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailCheckoutSend', [
                         'guest_email' => $query->guest->email,
@@ -274,6 +278,21 @@ class SendPostStayEmails extends Command
             ->get();
 
         foreach($stays as $stay){
+             // Marcar PRIMERO como enviado (evita condiciones de carrera)
+            $inserted = DB::table('email_notifications')->updateOrInsert(
+                ['stay_id' => $stay->id],
+                [
+                    'hotel_id' => $stay->hotelId,
+                    'post_checkin' => 1,
+                    'sent_at' => now(),
+                ]
+            );
+
+            // Si ya existía un registro previo, no envíes el correo de nuevo
+            if (!$inserted) {
+                continue;
+            }
+
             $hotel = new \stdClass();
             $hotel->checkin = $stay->checkin;
             $hotel->id = $stay->hotelId;
@@ -294,27 +313,29 @@ class SendPostStayEmails extends Command
 
 
             foreach ($stay->guests as $guest) {
+                if(!$guest->off_email){
+                    Log::info("Enviando correo postCheckin a {$guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
 
-                Log::info("Enviando correo postCheckin a {$guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
-
-                $this->stayService->guestWelcomeEmail(
-                        'postCheckin',
-                        $stay->chainSubdomain,
-                        $hotel,
-                        $guest,
-                        $stay
-                    );
-
+                    $this->stayService->guestWelcomeEmail(
+                            'postCheckin',
+                            $stay->chainSubdomain,
+                            $hotel,
+                            $guest,
+                            $stay
+                        );
+                }else{
+                    Log::info("No se envía correo postCheckin email_off a {$guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
+                }
             }
 
-            DB::table('email_notifications')->insert(
+           /*  DB::table('email_notifications')->insert(
                 [
                     'stay_id' => $stay->id,
                     'hotel_id' => $stay->hotelId,
                     'post_checkin' => 1,
                     'sent_at' => now()
                 ]
-            );
+            ); */
 
         }
     }
@@ -342,7 +363,7 @@ class SendPostStayEmails extends Command
                         ->where('period', 'post-stay');
                 },
                 'queries.guest' => function ($query) {
-                    $query->select('id', 'name', 'email');
+                    $query->select('id', 'name', 'email','off_email','lang_web');
                 },
                 'hotel' => function ($query) {
                     $query->select('id', 'name', 'checkout', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id');
@@ -395,6 +416,7 @@ class SendPostStayEmails extends Command
                 $webappLinkInbox = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox');
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$stay->id}&g={$query->guest->id}&fill=VERYGOOD");
                 $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
                 //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
                 $queryData = [
@@ -411,16 +433,20 @@ class SendPostStayEmails extends Command
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
                     'queryData' => $queryData,
-                    'reservationURl' => $reservationURl
+                    'reservationURl' => $reservationURl,
+                    'urlPrivacy' => $urlPrivacy
                 ];
 
-                Log::info('handleSendEmailPostCheckout data email', ['dataEmail' => $dataEmail]);
+                Log::info('handleSendEmailPostCheckout en esta enviando email a '.$query->guest->email);
 
                 try {
-
-                    $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                    $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
-                    Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
+                    if(!$query->guest->off_email){
+                        $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                        $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
+                        Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
+                    }else{
+                        Log::info('No se envía correo postCheckout email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})');
+                    }
 
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailPostCheckout', [

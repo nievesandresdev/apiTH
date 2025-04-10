@@ -128,7 +128,8 @@
         </div>
 
         <!-- Footer -->
-        @include('components.mails.footer',['showNotify' => $idUser])
+       {{--  @include('components.mails.footer',['showNotify' => $idUser]) --}}
+        @include('components.mails.footerRed')
     </div>
 </body>
 </html>

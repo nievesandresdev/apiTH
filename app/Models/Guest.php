@@ -26,7 +26,12 @@ class Guest extends Authenticatable
         'password',
         'facebookId',
         'complete_checkin_data',
-        'checkin_email'
+        'checkin_email',
+        'off_email'
+    ];
+
+    protected $casts = [
+        'off_email' => 'boolean',
     ];
 
     // protected static function boot()

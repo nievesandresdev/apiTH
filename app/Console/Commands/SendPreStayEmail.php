@@ -78,7 +78,7 @@ class SendPreStayEmail extends Command
                         ->where('period', 'pre-stay');
                 },
                 'queries.guest' => function ($query) {
-                    $query->select('id', 'name', 'email');
+                    $query->select('id', 'name', 'email','off_email','lang_web');
                 },
                 'hotel' => function ($query) {
                     $query->select('id', 'name', 'checkout', 'checkin', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id');
@@ -156,7 +156,7 @@ class SendPreStayEmail extends Command
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$stay->id}&g={$query->guest->id}&fill=VERYGOOD");
                 $webappChatLink = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'chat');
                 $urlCheckin = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$query->guest->id}");
-
+                $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
                 $queryData = [
                     'currentPeriod' => $query->period,
                     'webappLinkInbox' => $webappLinkInbox,
@@ -181,6 +181,7 @@ class SendPreStayEmail extends Command
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
                     'urlCheckin' => $urlCheckin,
+                    'urlPrivacy' => $urlPrivacy
                 ];
 
                 Log::info('handleSendEmailPreCheckin email send', ['guest_email' => $query->guest->email, 'type' => $type]);
@@ -189,12 +190,16 @@ class SendPreStayEmail extends Command
                 $shouldSend = !$communication || $communication->pre_checkin_email;
 
                 try {
-                    if($shouldSend){
-                        $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                        $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
-                        Log::info('Correo enviado correctamente handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                    if(!$query->guest->off_email){
+                        if($shouldSend){
+                            $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                            $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
+                            Log::info('Correo enviado correctamente handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                        }else{
+                            Log::info('Correo no enviado handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                        }
                     }else{
-                        Log::info('Correo no enviado handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                        Log::info('No se envía correo preCheckin email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})');
                     }
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailPreCheckin', [
