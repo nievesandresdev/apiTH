@@ -350,10 +350,10 @@ class SendPostStayEmails extends Command
         $hoursBack = 48;
 
         // Obtener estancias cuyo checkout fue exactamente hace 48 horas
-        $stays = Stay::select('id', 'hotel_id', 'check_out')
+        $stays = Stay::select('stays.id', 'stays.hotel_id', 'stays.check_out')
             //->whereHas('hotel') // Validar que la estancia esté asociada a un hotel antes
             ->leftJoin('hotel_communications as hc', function ($join) { //con hotel communications
-                $join->on('hc.hotel_id', '=', 'h.id')
+                $join->on('hc.hotel_id', '=', 'stays.hotel_id')
                     ->where('hc.type', '=', 'email');
             })
             ->whereDate('check_out', $currentTime->subHours($hoursBack)->format('Y-m-d')) // Filtrar por la fecha de checkout
