@@ -205,7 +205,7 @@ class SendPreStayEmail extends Command
                             Log::info('Correo no enviado handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
                         }
                     }else{
-                        Log::info('No se envía correo preCheckin email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})');
+                        Log::info("No se envía correo preCheckin email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
                     }
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailPreCheckin', [

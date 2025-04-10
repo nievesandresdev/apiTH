@@ -117,6 +117,23 @@ return [
         'body6' => 'hemen',
         'body7' => 'Posta elektroniko hau bidaltzen den helbidea informazioa bidaltzeko soilik da eta ez dago mezuak jasotzeko gaituta. Mesedez, ez erantzun mezu honi.',
     ],
+    'rewards' => [
+        'header' => [
+            'title' => 'Ongi etorri!',
+            'body1' => 'Kaixo :name',
+            'body2' => 'Zure :hotel WebApp-era ongietorria ematea pozten gaitu.',
+            'body3' => 'Zure egonaldiaz gozatu duzula eta merezi duzun kalitatea eta arreta eskaini dizugula espero dugu.',
+        ],
+        'redeem' => [
+            'discount' => 'de descompte',
+            'code' => 'EL TEU CODI',
+        ],
+        'howReedem' => [
+            'title' => 'Nola canjear?',
+            'button' => 'Canjear zure kodea',
+        ],
+    ],
 ];
+
 
 

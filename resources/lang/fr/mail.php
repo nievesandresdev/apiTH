@@ -117,4 +117,20 @@ return [
         'body6' => 'ici',
         'body7' => 'L’adresse depuis laquelle cet e-mail est envoyé est destinée uniquement à l’envoi d’informations et ne permet pas la réception de messages. Veuillez ne pas répondre à cet e-mail.',
     ],
+    'rewards' => [
+        'header' => [
+            'title' => 'Félicitations!',
+            'body1' => 'Bonjour :name',
+            'body2' => 'Un de vos références a utilisé votre code de réduction...',
+            'body3' => 'Savez-vous ce que cela signifie? C’est un cadeau pour vous!',
+        ],
+        'redeem' => [
+            'discount' => 'de réduction',
+            'code' => 'VOTRE CODE',
+        ],
+        'howReedem' => [
+            'title' => 'Comment l’utiliser',
+            'button' => 'Utiliser mon code',
+        ],
+    ],
 ];

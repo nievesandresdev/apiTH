@@ -117,4 +117,20 @@ return [
         'body6' => 'aquí',
         'body7' => 'La dirección desde la que se envía este mail está destinada al envío de información y no está habilitada para la recepción de mensajes. Por favor no responda a este mail.',
     ],
+    'rewards' => [
+       'header' => [
+            'title' => '¡Enhorabuena!',
+            'body1' => 'Hola :name',
+            'body2' => 'Uno de tus referidos ha utilizado tu código de descuento...',
+            'body3' => '¿Sabes lo que significa eso? ¡Un regalo para ti!',
+       ],
+       'redeem' => [
+           'discount' => 'de descuento',
+           'code' => 'TU CÓDIGO',
+       ],
+       'howReedem' => [
+           'title' => 'Cómo canjearlo',
+           'button' => 'Canjear mi código',
+       ],
+    ],
 ];
