@@ -86,17 +86,6 @@ class SendPreStayEmail extends Command
             ])
             ->get();
 
-            /* Log::info(json_encode([
-                'message' => 'handleSendEmailPreCheckin estancias encontradas',
-                'data' => [
-                    'stays_count' => $stays->count(),
-                    'stays' => $stays,
-                    'current_time' => $currentTime->toDateTimeString(),
-                    'start_of_hour' => $startOfHour->toDateTimeString(),
-                    'end_of_hour' => $endOfHour->toDateTimeString()
-                ]
-            ], JSON_PRETTY_PRINT)); */
-
             Log::info('estancias encontradas en prechekin handleSendEmailPreCheckin: '.$stays->count());
 
         // Procesar cada estancia
@@ -104,14 +93,16 @@ class SendPreStayEmail extends Command
             // Manejar checkin nulo asignando la última hora del día
 
             //asi estaba antes
-            $hotelCheckinTime = $stay->hotel->checkin
+            /* $hotelCheckinTime = $stay->hotel->checkin
                 ? Carbon::parse($stay->hotel->checkin)->addHours($hours)
-                : Carbon::today()->endOfDay()->addHours($hours);
+                : Carbon::today()->endOfDay()->addHours($hours); */
 
-                //asi esta ahora , que si checkin es null se ejecute a las 20:00 (propuesto por ari)
-                /* $hotelCheckinTime = $stay->hotel->checkin
-                    ? Carbon::parse($stay->hotel->checkin)->addHours($hours)
-                    : Carbon::today()->setHour(20)->setMinute(0)->setSecond(0)->addHours($hours); */
+            //asi esta ahora , que si checkin es null se ejecute a las 20:00 (propuesto por ari)
+            $hotelCheckinTime = $stay->check_in
+    ? Carbon::parse($stay->check_in)->subHours($hours)
+    : Carbon::today()->setHour(20)->setMinute(0)->setSecond(0);
+
+
 
 
 
@@ -120,6 +111,10 @@ class SendPreStayEmail extends Command
                 Log::info('Estancias fuera del rango de hora de 48 horas antes del checkin handleSendEmailPreCheckin', [
                     'stay_id' => $stay->id,
                     'stay_checkin' => $stay->check_in,
+                    'hotel_checkin_time' => $hotelCheckinTime->toDateTimeString(),
+                    'hotel_checkin_time_start' => $hotelCheckinTime->copy()->startOfHour()->toDateTimeString(),
+                    'hotel_checkin_time_end' => $hotelCheckinTime->copy()->endOfHour()->toDateTimeString(),
+                    'current_time' => $currentTime->toDateTimeString(),
                 ]);
                 continue;
             }
