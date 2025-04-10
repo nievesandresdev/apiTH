@@ -8,7 +8,7 @@ use App\Services\MailService;
 use App\Mail\User\RewardsEmail;
 use Illuminate\Support\Facades\Log;
 use App\Models\Hotel;
-
+use Illuminate\Support\Facades\App;
 class RewardsServices {
 
     public $mailService;
@@ -115,6 +115,7 @@ class RewardsServices {
 
         if($shouldSend){
             Log::info('sendEmailReferentSErvices', ['data' => $data]);
+            App::setLocale($rewardStay->guest->lang_web);
             $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
             $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), 'francisco20990@gmail.com');
         }else{

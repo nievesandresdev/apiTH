@@ -117,4 +117,21 @@ return [
         'body6' => 'qui',
         'body7' => 'L’indirizzo da cui viene inviata questa email è destinato esclusivamente all’invio di informazioni e non è abilitato alla ricezione di messaggi. Ti preghiamo di non rispondere a questa email.',
     ],
+    'rewards' => [
+        'subject' => 'Congratulazioni! Hai ricevuto un regalo',
+        'header' => [
+            'title' => 'Congratulazioni!',
+            'body1' => 'Ciao :name',
+            'body2' => 'Uno dei tuoi riferimenti ha utilizzato il tuo codice di sconto...',
+            'body3' => 'Sai cosa significa? È un regalo per te!',
+        ],
+        'redeem' => [
+            'discount' => 'di sconto',
+            'code' => 'IL TUO CODICE',
+        ],
+        'howReedem' => [
+            'title' => 'Come si può cangiare?',
+            'button' => 'Canjear il mio codice',
+        ],
+    ],
 ];

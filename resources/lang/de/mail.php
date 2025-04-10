@@ -117,6 +117,23 @@ return [
         'body6' => 'hier',
         'body7' => 'Diese E-Mail-Adresse dient nur zum Versand von Informationen und kann keine Nachrichten empfangen. Bitte antworte nicht auf diese E-Mail.',
     ],
+    'rewards' => [
+        'subject' => 'Glückwunsch! Du hast ein Geschenk erhalten',
+        'header' => [
+            'title' => 'Glückwunsch!',
+            'body1' => 'Hallo :name',
+            'body2' => 'Einer deiner Referenzen hat deinen Rabattcode verwendet...',
+            'body3' => 'Weißt du, was das bedeutet? Es ist ein Geschenk für dich!',
+        ],
+        'redeem' => [
+            'discount' => 'von Rabatt',
+            'code' => 'DEIN CODE',
+        ],
+        'howReedem' => [
+            'title' => 'Wie kann ich es einlösen?',
+            'button' => 'Meinen Code einlösen',
+        ],
+    ],
 ];
 
 

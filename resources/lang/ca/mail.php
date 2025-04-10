@@ -118,4 +118,21 @@ return [
         'body6' => 'aquí',
         'body7' => 'L’adreça des d’on s’envia aquest correu només s’utilitza per a l’enviament d’informació i no està habilitada per rebre missatges. Si us plau, no responguis aquest correu.',
     ],
+    'rewards' => [
+        'subject' => 'Enhorabuena! Has rebut un regal',
+        'header' => [
+            'title' => 'Enhorabuena!',
+            'body1' => 'Hola :name',
+            'body2' => 'Un dels teus referits ha utilitzat el teu codi de descompte...',
+            'body3' => 'Sabes el que vol dir? És un regal per a tu!',
+        ],
+        'redeem' => [
+            'discount' => 'de descompte',
+            'code' => 'EL TEU CODI',
+        ],
+        'howReedem' => [
+            'title' => 'Com es pot canjear?',
+            'button' => 'Canjear el meu codi',
+        ],
+    ],
 ];
