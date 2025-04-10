@@ -12,14 +12,16 @@ use Jenssegers\Agent\Agent;
 
 class StayAccessService {
 
-    public function save($stayId,$guestId)
+    public function save($stayId, $guestId, $device = null)
     {
         try {
             if($stayId && $guestId){
-                $device = 'PC';
-                $agent = new Agent();
-                $agent->isMobile() ? $device = 'Movil' : '';
-                $agent->isTablet() ? $device = 'Tablet' : '';
+                if(!$device){
+                    $device = 'PC';
+                    $agent = new Agent();
+                    $agent->isMobile() ? $device = 'Movil' : '';
+                    $agent->isTablet() ? $device = 'Tablet' : '';
+                }
                 $access = StayAccess::firstOrCreate(
                     ['stay_id' => $stayId, 'device' => $device, 'guest_id' => $guestId]
                 );

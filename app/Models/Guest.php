@@ -27,7 +27,8 @@ class Guest extends Authenticatable
         'facebookId',
         'complete_checkin_data',
         'checkin_email',
-        'off_email'
+        'off_email',
+        'son_id'
     ];
 
     protected $casts = [
