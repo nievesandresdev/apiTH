@@ -2,6 +2,8 @@
 namespace App\Services\Hoster;
 
 use App\Models\Chain;
+use App\Models\Chat;
+use App\Models\ChatMessage;
 use App\Models\Guest;
 use App\Models\Hotel;
 use App\Models\Query;
@@ -104,6 +106,7 @@ class CloneHotelServices
                 // Atributos a actualizar/crear: mezclamos todos los atributos del original y luego sobreescribimos los que requieren cambios.
                 array_merge($copyHotel->toArray(), [
                     'email' => $nuevoEmail,
+                    'parent_id' => null,
                     'password' => $userOwnerOriginal->password
                 ])
             );
@@ -178,11 +181,11 @@ class CloneHotelServices
                 }
 
                 //actualiza los huéspedes de la estancia
-                $this->syncGuestsForStay($stayParent, $stayChild, $copyChain);
+                $this->syncGuestsForStay($stayParent, $stayChild, $copyChain, $copyHotel);
             }
 
             // Se obtienen todos los son_ids actualmente asociados a los trial stays del hotel padre.
-            $stayParentSonIds = $originalHotel->stays()->where('trial', 1)->pluck('son_id');
+            $stayParentSonIds = $originalHotel->stays()->where('trial', 1)->pluck('son_id')->filter()->toArray();
 
             // Elimina en el hotel hijo aquellos stays que no corresponden a ningún son_id del hotel padre.
             Stay::where('hotel_id', $copyHotel->id)
@@ -198,7 +201,7 @@ class CloneHotelServices
         }
     }
 
-    private function syncGuestsForStay($stayParent, $stayChild, $copyChain){
+    private function syncGuestsForStay($stayParent, $stayChild, $copyChain, $copyHotel){
         try {
             // Inicializa un arreglo para recolectar los IDs de los huéspedes copiados
             $childGuestIds = [];
@@ -242,28 +245,29 @@ class CloneHotelServices
                 $childGuestIds[] = $childGuest->id;
                 
                 //copia las consultas del huésped padre al huésped hijo
-                $this->syncQueriesForGuest($parentGuest, $childGuest, $stayChild);
+                $this->syncQueriesForGuest($parentGuest, $childGuest, $stayParent, $stayChild);
                 // // asignando en la tabla pivote el campo device = 'Movil' para cada acceso copiado.
-                // $this->stayAccessService->save($stayChild->id,$childGuest->id,'Movil');
+                $this->stayAccessService->save($stayChild->id,$childGuest->id,'Movil');
+
+                $this->syncChatsForGuest($parentGuest, $childGuest, $stayParent, $stayChild, $copyHotel);
             }
 
             // Sincroniza la relación en la estancia hija para que tenga exactamente estos huéspedes
             $stayChild->guests()->sync(array_fill_keys($childGuestIds, ['chain_id' => $copyChain->id]));
             
-            $guestSonIds = $stayParent->guests()->pluck('son_id');
+            $guestSonIds = $stayParent->guests()->pluck('son_id')->filter()->toArray();
             $stayParent->guests()->whereNotIn('id', $guestSonIds)->delete();
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.syncGuestsForStay');
         }
     }
 
-    private function syncQueriesForGuest($parentGuest, $guestChild, $stayChild)
+    private function syncQueriesForGuest($parentGuest, $guestChild, $stayParent, $stayChild)
     {
         try {
             // Itera cada consulta del huésped padre
-            Log::info('parent: '.json_encode($parentGuest->name));
-            foreach ($parentGuest->queries as $queryParent) {
-                Log::info('queries: '.json_encode($parentGuest->queries));
+            $parentGuests = $parentGuest->queries()->where('stay_id',$stayParent->id)->get();
+            foreach ($parentGuests as $queryParent) {
                 // Si ya se copió previamente, busca la consulta hija
                 $childQuery = Query::where('stay_id',$stayChild->id)->where('guest_id',$guestChild->id)->where('period',$queryParent->period)->first();
                 if ($childQuery) {
@@ -283,6 +287,68 @@ class CloneHotelServices
             return true;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.syncQueriesForGuest');
+        }
+    }
+
+    private function syncChatsForGuest($parentGuest, $childGuest, $stayParent, $stayChild, $copyHotel)
+    {
+        try {
+            Log::info('$parentGuest: '.json_encode($parentGuest));
+            // Itera cada chat asociado al huésped padre
+            $parentChat = $parentGuest->chats()->where('stay_id',$stayParent->id)->first();
+            if(!$parentChat)return;
+            // Procesa el chat: si ya tiene asignado un hijo se actualiza, de lo contrario se crea
+            $childChat = Chat::where('stay_id',$stayChild->id)->where('guest_id',$childGuest->id)->first();
+            if ($childChat) {
+                // Actualiza los datos del chat copiando los del registro padre
+                $childChat->fill($parentChat->toArray());
+                $childChat->guest_id = $childGuest->id;
+                $childChat->stay_id  = $stayChild->id;
+                $childChat->save();
+            } else {
+                // Si el chat hijo no existe (fue eliminado), se recrea usando el mismo ID
+                $childChat = $parentChat->replicate();
+                $childChat->guest_id = $childGuest->id;
+                $childChat->stay_id  = $stayChild->id;
+                $childChat->save();
+            }
+
+            // Sincroniza los mensajes del chat: se hace de forma similar a los pasos anteriores
+            foreach ($parentChat->messages as $parentMessage) {
+                if ($parentMessage->son_id) {
+                    $childMessage = ChatMessage::find($parentMessage->son_id);
+                    if ($childMessage) {
+                        $childMessage->fill($parentMessage->toArray());
+                        $childMessage->chat_id = $childChat->id;
+                        $childMessage->messageable_id = $parentMessage->messageable_type === 'App\Models\Guest' ? $childGuest->id : $copyHotel->id;
+                        $childMessage->save();
+                    } else {
+                        $childMessage = $parentMessage->replicate();
+                        $childMessage->id = $parentMessage->son_id;
+                        $childMessage->chat_id = $childChat->id;
+                        $childMessage->messageable_id = $parentMessage->messageable_type === 'App\Models\Guest' ? $childGuest->id : $copyHotel->id;
+                        $childMessage->exists = false;
+                        $childMessage->save();
+                    }
+                } else {
+                    $childMessage = $parentMessage->replicate();
+                    $childMessage->chat_id = $childChat->id;
+                    $childMessage->messageable_id = $parentMessage->messageable_type === 'App\Models\Guest' ? $childGuest->id : $copyHotel->id;
+                    $childMessage->save();
+                    // Se guarda en el mensaje padre el mapeo hacia el mensaje hijo
+                    $parentMessage->son_id = $childMessage->id;
+                    $parentMessage->save();
+                }
+            }
+            
+            // Elimina los mensajes extra en el chat hijo que ya no existen en el padre
+            $parentMessageIds = $parentChat->messages->pluck('son_id')->filter()->toArray();
+            ChatMessage::where('chat_id', $childChat->id)
+                      ->whereNotIn('id', $parentMessageIds)
+                      ->delete();
+            return true;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);
         }
     }
 

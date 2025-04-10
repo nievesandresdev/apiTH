@@ -16,7 +16,8 @@ class ChatMessage extends Model
         'by',
         'messageable_id',
         'messageable_type',
-        'automatic'
+        'automatic',
+        'son_id'
     ];
 
     protected $dates = [
