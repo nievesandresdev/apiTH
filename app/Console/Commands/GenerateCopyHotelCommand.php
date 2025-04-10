@@ -37,20 +37,20 @@ class GenerateCopyHotelCommand extends Command
      */
     public function handle()
     {
+
         $codeDiff = Carbon::now()->timestamp;
         $stringDiff = 'B';
         $originalHotel = $this->cloneHotelServices->findOriginalHotel();
-        Log::info('originalHotel '.json_encode($originalHotel));
         if(!$originalHotel) return 'No existe el Hotel';
+        Log::info('originalHotel '.json_encode($originalHotel));
         $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
         Log::info('copyChain '.json_encode($copyChain));
         $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
         Log::info('copyHotel '.json_encode($copyHotel));
         $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
-        Log::info('originalHotel '.json_encode($copyUser));
-
-        $stringDiff = 'B';
-        $originalHotel = $this->cloneHotelServices->findOriginalHotel();
+        Log::info('copyUser '.json_encode($copyUser));
+        $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
+        Log::info('updateTrialStays '.json_encode($updateTrialStays));
     }
 
 
