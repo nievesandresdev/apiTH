@@ -32,7 +32,7 @@ class RewardsEmail extends Mailable
      */
     public function build()
     {
-        $subject = '¡Enhorabuena! Has recibido un regalo';
+        $subject = __('mail.rewards.subject');
 
         $senderName = $this->hotel->sender_for_sending_email;
         $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";

@@ -118,6 +118,7 @@ return [
         'body7' => 'Diese E-Mail-Adresse dient nur zum Versand von Informationen und kann keine Nachrichten empfangen. Bitte antworte nicht auf diese E-Mail.',
     ],
     'rewards' => [
+        'subject' => 'Glückwunsch! Du hast ein Geschenk erhalten',
         'header' => [
             'title' => 'Glückwunsch!',
             'body1' => 'Hallo :name',

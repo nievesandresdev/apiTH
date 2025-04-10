@@ -118,6 +118,7 @@ return [
         'body7' => 'O endereço de envio deste e-mail é apenas para envio de informações e não está habilitado para receber mensagens. Por favor, não responda a este e-mail.',
     ],
     'rewards' => [
+        'subject' => 'Parabéns! Você recebeu um presente',
         'header' => [
             'title' => 'Parabéns!',
             'body1' => 'Olá :name',

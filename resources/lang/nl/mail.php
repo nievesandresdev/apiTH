@@ -118,6 +118,7 @@ return [
         'body7' => 'Het adres van waaruit deze e-mail is verzonden is uitsluitend bedoeld voor informatieve doeleinden en kan geen berichten ontvangen. Gelieve niet te antwoorden op deze e-mail.',
     ],
     'rewards' => [
+        'subject' => 'Gefeliciteerd! Je hebt een cadeau ontvangen',
         'header' => [
             'title' => 'Gefeliciteerd!',
             'body1' => 'Hallo :name',

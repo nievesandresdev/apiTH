@@ -118,6 +118,7 @@ return [
         'body7' => 'The address from which this email is sent is intended for information only and is not enabled to receive messages. Please do not reply to this email.',
     ],
     'rewards' => [
+        'subject' => 'Congratulations! You have received a gift',
         'header' => [
             'title' => 'Congratulations!',
             'body1' => 'Hello :name',

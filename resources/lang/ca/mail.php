@@ -119,6 +119,7 @@ return [
         'body7' => 'L’adreça des d’on s’envia aquest correu només s’utilitza per a l’enviament d’informació i no està habilitada per rebre missatges. Si us plau, no responguis aquest correu.',
     ],
     'rewards' => [
+        'subject' => 'Enhorabuena! Has rebut un regal',
         'header' => [
             'title' => 'Enhorabuena!',
             'body1' => 'Hola :name',

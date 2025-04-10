@@ -118,6 +118,7 @@ return [
         'body7' => 'Posta elektroniko hau bidaltzen den helbidea informazioa bidaltzeko soilik da eta ez dago mezuak jasotzeko gaituta. Mesedez, ez erantzun mezu honi.',
     ],
     'rewards' => [
+        'subject' => 'Ongi etorri! Has irabazi duzu!',
         'header' => [
             'title' => 'Ongi etorri!',
             'body1' => 'Kaixo :name',

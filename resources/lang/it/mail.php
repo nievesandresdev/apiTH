@@ -118,6 +118,7 @@ return [
         'body7' => 'L’indirizzo da cui viene inviata questa email è destinato esclusivamente all’invio di informazioni e non è abilitato alla ricezione di messaggi. Ti preghiamo di non rispondere a questa email.',
     ],
     'rewards' => [
+        'subject' => 'Congratulazioni! Hai ricevuto un regalo',
         'header' => [
             'title' => 'Congratulazioni!',
             'body1' => 'Ciao :name',

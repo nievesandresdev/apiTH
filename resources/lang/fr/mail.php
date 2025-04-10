@@ -118,6 +118,7 @@ return [
         'body7' => 'L’adresse depuis laquelle cet e-mail est envoyé est destinée uniquement à l’envoi d’informations et ne permet pas la réception de messages. Veuillez ne pas répondre à cet e-mail.',
     ],
     'rewards' => [
+        'subject' => 'Félicitations! Vous avez reçu un cadeau',
         'header' => [
             'title' => 'Félicitations!',
             'body1' => 'Bonjour :name',
