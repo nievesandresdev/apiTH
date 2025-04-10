@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 class MsgStay extends Mailable
 {
     use Queueable, SerializesModels;
@@ -19,6 +20,7 @@ class MsgStay extends Mailable
     public $data;
     public $after;
     public $beforeCheckin;
+    public $locale;
     /**
      * Create a new message instance.
      *
@@ -39,6 +41,8 @@ class MsgStay extends Mailable
         $this->data = $data;
         $this->after = $after;
         $this->beforeCheckin = $beforeCheckin;
+        $this->locale = $guest->lang_web ?? 'es';
+
     }
 
     /**
@@ -48,36 +52,9 @@ class MsgStay extends Mailable
      */
     public function build()
     {
-        // Mapa de nombres de idioma a sus acrónimos
-        /* $languageMap = [
-            'Español' => 'es',
-            'Inglés' => 'en',
-            'Italiano' => 'it',
-            'Gallego' => 'gl',
-            'Catalán' => 'ca',
-            'Holandés' => 'nl',
-            'Portugués' => 'pt',
-            'Francés' => 'fr',
-            'Euskera' => 'eu',
-        ];
 
-        // Intentar obtener el idioma desde $this->data['stay_language'] (nombre completo)
-        if (isset($this->data['stay_language']) && array_key_exists($this->data['stay_language'], $languageMap)) {
-            // Si existe un nombre completo válido, obtener el código del idioma
-            $locale = $languageMap[$this->data['stay_language']];
-        } else {
-            // Si no, usar el valor de $this->guest->lang_web que es el código de idioma
-            $locale = $this->guest->lang_web;
-        }
-
-        // Validar que el valor de $locale esté dentro de los idiomas soportados
-        $supportedLocales = ['es', 'en', 'it', 'gl', 'ca', 'nl', 'pt', 'fr', 'eu'];
-        $locale = in_array($locale, $supportedLocales) ? $locale : 'es'; // 'es' es el valor por defecto */
-
-        //dd($locale);
-
-        // Establecer el idioma
-        App::setLocale($this->guest->lang_web ?? 'es');
+        App::setLocale($this->locale);
+        //Log::info('Locale: ',['locale' => $this->locale,'lang_web guest' => $this->guest->lang_web]);
 
         // Definir el asunto traducido según el tipo
         switch ($this->type) {
