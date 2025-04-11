@@ -163,6 +163,7 @@ class SendPreStayEmail extends Command
                 $webappChatLink = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'chat');
                 $urlCheckin = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$query->guest->id}");
                 $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
+                $urlFooterEmail = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$query->guest->id}");
                 $queryData = [
                     'currentPeriod' => $query->period,
                     'webappLinkInbox' => $webappLinkInbox,
@@ -187,7 +188,8 @@ class SendPreStayEmail extends Command
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
                     'urlCheckin' => $urlCheckin,
-                    'urlPrivacy' => $urlPrivacy
+                    'urlPrivacy' => $urlPrivacy,
+                    'urlFooterEmail' => $urlFooterEmail
                 ];
 
                 Log::info('handleSendEmailPreCheckin email send', ['guest_email' => $query->guest->email, 'type' => $type]);
