@@ -153,11 +153,15 @@ class Hotel extends Model
         return $this->hasOne(ChatSetting::class);
     }
 
+    public function checkinSettings() {
+        return $this->hasOne(CheckinSetting::class);
+    }
+
     public function chatHours()
     {
         return $this->hasMany(ChatHour::class);
     }
-    
+
     public function generalLegal()
     {
         return $this->hasOne(LegalGeneral::class);
@@ -193,6 +197,13 @@ class Hotel extends Model
         return $this->hasMany(ImageGallery::class, 'image_id');
     }
 
+    public function querySettings() {
+        return $this->hasOne(QuerySetting::class);
+    }
+
+    public function requestSettings() {
+        return $this->hasOne(RequestSetting::class);
+    }
 
     public function scopeActive($query)
     {

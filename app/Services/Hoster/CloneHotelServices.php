@@ -12,6 +12,7 @@ use App\Models\Stay;
 use App\Models\User;
 use App\Services\StayAccessService;
 use App\Utils\Enums\EnumResponse;
+use App\Utils\Enums\EnumsStay\CheckinSettingsDefaultEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -554,6 +555,145 @@ class CloneHotelServices
             }
                     
             DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);
+        }
+    }
+
+    public function UpdateCheckinSettingsInCopyHotel($originalHotel, $copyHotel){
+        try {   
+            //settings checkin
+            //
+            //
+            $default = CheckinSettingsDefaultEnum::defaultFieldsForm();
+            $originalCheckinSettings = $originalHotel->checkinSettings;
+            $copyCheckinSettings = $copyHotel->checkinSettings;
+            if($originalCheckinSettings){
+                //si existe el settings de checkin en el hotel padre, se actualiza el settings de checkin en el hotel hijo
+                if($copyCheckinSettings){
+                    //si existe el settings de checkin en el hotel hijo, se actualiza el settings de checkin en el hotel hijo
+                    $copyCheckinSettings->fill($originalCheckinSettings->toArray());
+                    $copyCheckinSettings->hotel_id = $copyHotel->id;
+                    $copyCheckinSettings->save();
+                }else{
+                    //si no existe el settings de checkin en el hotel hijo, se crea el settings de checkin en el hotel hijo
+                    $copyCheckinSettings = $originalCheckinSettings->replicate();
+                    $copyCheckinSettings->hotel_id = $copyHotel->id;
+                    $copyCheckinSettings->save();
+                }
+            }else{
+                //si no existe el settings de checkin en el hotel padre, pero si existe en el hotel hijo, se resetea al  settings default
+                if($copyCheckinSettings){
+                    $copyCheckinSettings->succes_message = $default->succes_message;
+                    $copyCheckinSettings->first_step = $default->first_step;
+                    $copyCheckinSettings->second_step = $default->second_step;
+                    $copyCheckinSettings->show_prestay_query = $default->show_prestay_query;
+                    $copyCheckinSettings->hotel_id = $copyHotel->id;
+                    $copyCheckinSettings->save();
+
+                }
+            }  
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);
+        }
+    }
+
+    public function UpdateQuerySettingsInCopyHotel($originalHotel, $copyHotel){
+        try {   
+            //settings query
+            //
+            //
+            $default = queriesTextDefault();
+            $originalQuerySettings = $originalHotel->querySettings;
+            $copyQuerySettings = $copyHotel->querySettings;
+            if($originalQuerySettings){
+                //si existe el settings de checkin en el hotel padre, se actualiza el settings de checkin en el hotel hijo
+                if($copyQuerySettings){
+                    //si existe el settings de checkin en el hotel hijo, se actualiza el settings de checkin en el hotel hijo
+                    $copyQuerySettings->fill($originalQuerySettings->toArray());
+                    $copyQuerySettings->hotel_id = $copyHotel->id;
+                    $copyQuerySettings->save();
+                }else{
+                    //si no existe el settings de checkin en el hotel hijo, se crea el settings de checkin en el hotel hijo
+                    $copyQuerySettings = $originalQuerySettings->replicate();
+                    $copyQuerySettings->hotel_id = $copyHotel->id;
+                    $copyQuerySettings->save();
+                }
+            }else{
+                //si no existe el settings de checkin en el hotel padre, pero si existe en el hotel hijo, se resetea al  settings default
+                if($copyQuerySettings){
+                    
+                    $copyQuerySettings->pre_stay_activate = $default->pre_stay_activate;
+                    $copyQuerySettings->pre_stay_thanks = $default->pre_stay_thanks;
+                    $copyQuerySettings->pre_stay_comment = $default->pre_stay_comment;
+                    $copyQuerySettings->in_stay_activate = $default->in_stay_activate;
+                    $copyQuerySettings->in_stay_thanks_good = $default->in_stay_thanks_good;
+                    $copyQuerySettings->in_stay_assessment_good_activate = $default->in_stay_assessment_good_activate;
+                    $copyQuerySettings->in_stay_assessment_good = $default->in_stay_assessment_good;
+                    $copyQuerySettings->in_stay_thanks_normal = $default->in_stay_thanks_normal;
+                    $copyQuerySettings->in_stay_assessment_normal_activate = $default->in_stay_assessment_normal_activate;
+                    $copyQuerySettings->in_stay_assessment_normal = $default->in_stay_assessment_normal;
+                    $copyQuerySettings->in_stay_comment = $default->in_stay_comment;
+                    $copyQuerySettings->post_stay_thanks_good = $default->post_stay_thanks_good;
+                    $copyQuerySettings->post_stay_assessment_good_activate = $default->post_stay_assessment_good_activate;
+                    $copyQuerySettings->post_stay_assessment_good = $default->post_stay_assessment_good;
+                    $copyQuerySettings->post_stay_thanks_normal = $default->post_stay_thanks_normal;
+                    $copyQuerySettings->post_stay_assessment_normal_activate = $default->post_stay_assessment_normal_activate;
+                    $copyQuerySettings->post_stay_assessment_normal = $default->post_stay_assessment_normal;
+                    $copyQuerySettings->post_stay_comment = $default->post_stay_comment;
+                    $copyQuerySettings->notify_to_hoster = $default->notify_to_hoster;
+                    $copyQuerySettings->email_notify_new_feedback_to = $default->email_notify_new_feedback_to;
+                    $copyQuerySettings->email_notify_pending_feedback_to = $default->email_notify_pending_feedback_to;
+                    $copyQuerySettings->hotel_id = $copyHotel->id;
+                    $copyQuerySettings->save();
+
+                }
+            }  
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);
+        }
+    }
+
+    public function UpdateRequestSettingsInCopyHotel($originalHotel, $copyHotel){
+        try {   
+            //settings request
+            //
+            //
+            $default = requestSettingsDefault();
+            $originalRequestSettings = $originalHotel->requestSettings;
+             $copyRequestSettings = $copyHotel->requestSettings;
+            if($originalRequestSettings){
+                //si existe el settings de checkin en el hotel padre, se actualiza el settings de checkin en el hotel hijo
+                if($copyRequestSettings){
+                    //si existe el settings de checkin en el hotel hijo, se actualiza el settings de checkin en el hotel hijo
+                    $copyRequestSettings->fill($originalRequestSettings->toArray());
+                    $copyRequestSettings->hotel_id = $copyHotel->id;
+                    $copyRequestSettings->save();
+                }else{
+                    //si no existe el settings de checkin en el hotel hijo, se crea el settings de checkin en el hotel hijo
+                    $copyRequestSettings = $originalRequestSettings->replicate();
+                    $copyRequestSettings->hotel_id = $copyHotel->id;
+                    $copyRequestSettings->save();
+                }
+            }else{
+                //si no existe el settings de checkin en el hotel padre, pero si existe en el hotel hijo, se resetea al  settings default
+                if($copyRequestSettings){
+                    $copyRequestSettings->msg_title = $default->msg_title;
+                    $copyRequestSettings->msg_text = $default->msg_text;
+                    $copyRequestSettings->otas_enabled = $default->otas_enabled;
+                    $copyRequestSettings->request_to = $default->request_to;
+                    $copyRequestSettings->in_stay_activate = $default->in_stay_activate;
+                    $copyRequestSettings->in_stay_msg_title = $default->in_stay_msg_title;
+                    $copyRequestSettings->in_stay_msg_text = $default->in_stay_msg_text;
+                    $copyRequestSettings->in_stay_otas_enabled = $default->in_stay_otas_enabled;
+                    $copyRequestSettings->hotel_id = $copyHotel->id;
+                    $copyRequestSettings->save();
+
+                }
+            }  
         } catch (\Exception $e) {
             DB::rollBack();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);

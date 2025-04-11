@@ -338,8 +338,11 @@ class UtilsController extends Controller
         // $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
         // //clean real stays in copy hotel
         // $cleanRealStaysInCopyHotel = $this->cloneHotelServices->CleanRealStaysInCopyHotel($copyHotel);
-        $updateSettingsInCopyHotel = $this->cloneHotelServices->UpdateChatSettingsInCopyHotel($originalHotel, $copyHotel);
-        return $updateSettingsInCopyHotel;
+        // $updateSettingsInCopyHotel = $this->cloneHotelServices->UpdateChatSettingsInCopyHotel($originalHotel, $copyHotel);
+        // $updateCheckinSettingsInCopyHotel = $this->cloneHotelServices->UpdateCheckinSettingsInCopyHotel($originalHotel, $copyHotel);
+        // $updateQuerySettingsInCopyHotel = $this->cloneHotelServices->UpdateQuerySettingsInCopyHotel($originalHotel, $copyHotel);
+        $updateRequestSettingsInCopyHotel = $this->cloneHotelServices->UpdateRequestSettingsInCopyHotel($originalHotel, $copyHotel);
+        return $updateRequestSettingsInCopyHotel;
     }
 
     public function testEmailPostCheckout(){
