@@ -20,7 +20,7 @@ use App\Services\GuestService;
 use App\Services\Hoster\UtilsHosterServices;
 use App\Services\MailService;
 use App\Utils\Enums\EnumsLanguages;
-
+use Illuminate\Support\Facades\App;
 class StayService {
     public $mailService;
     public $guestService;
@@ -111,6 +111,11 @@ class StayService {
             DB::beginTransaction();
             $guestId = $request->guestId;
             $guest = Guest::find($guestId);
+            //update lang_web guest
+            $guest->lang_web = $request->language;
+            $guest->save();
+
+            //return $guest;
 
             $stay = Stay::create([
                 'hotel_id' =>$hotel->id,
@@ -136,13 +141,13 @@ class StayService {
             }
 
             //envio de emails
-            if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
-                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
-            } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
-                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,false,true);
-            } else {
-                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
-            }
+            // if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
+            //     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
+            // } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
+            //     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,false,true);
+            // } else {
+            //     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            // }
 
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
@@ -536,9 +541,11 @@ class StayService {
 
 
 
-            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
-            //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
             $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
+            $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$guest->id}");
+            $urlPrivacy = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}");
 
 
 
@@ -552,13 +559,19 @@ class StayService {
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
-                'stay_language' => $stay->language
+                'guest_language' => $guest->lang_web,
+                'urlFooterEmail' => $urlFooterEmail,
+                'urlPrivacy' => $urlPrivacy
             ];
 
+            if(!$guest->off_email){
+                //App::setLocale($guest->lang_web ?? 'es');
+                $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email, $guest->lang_web ?? 'es');
+                $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), 'francisco20990@gmail.com', $guest->lang_web ?? 'es');
+            }else{
+                Log::info('No se envía correo welcomeStayEmailServices email_off a '.$guest->email.' (Estancia ID: '.$stay->id.', Hotel: '.$hotel->name.')');
+            }
 
-
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), 'francisco20990@gmail.com');
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());

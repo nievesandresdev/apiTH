@@ -99,6 +99,7 @@ class HotelResource extends JsonResource
             "chain" => new ChainResource($this->chain),
             "subscribed"=> $this->subscription_active ? $is_subscribed : false,
             "show_referrals" => $this->show_referrals,
+            "show_rules" => $this->show_rules,
             "offer_benefits" => $this->offer_benefits,
             //"rewads" => count($this->rewards) > 0 ? $this->rewards : null,
             /* "referrals" => $this->referrals->first(),

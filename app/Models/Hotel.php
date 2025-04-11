@@ -68,7 +68,8 @@ class Hotel extends Model
         'show_referrals',
         'offer_benefits',
         //
-        'show_checkin_stay'
+        'show_checkin_stay',
+        'parent_id'
     ];
 
     //bool offer_benefits
@@ -152,6 +153,11 @@ class Hotel extends Model
         return $this->hasOne(ChatSetting::class);
     }
 
+    public function chatHours()
+    {
+        return $this->hasMany(ChatHour::class);
+    }
+    
     public function generalLegal()
     {
         return $this->hasOne(LegalGeneral::class);

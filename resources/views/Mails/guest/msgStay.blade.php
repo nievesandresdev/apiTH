@@ -145,6 +145,8 @@
                 @include('components.mails.inviteGuestFromSaas',['urlWebapp' => $data['urlWebapp']])
             @endif
         </div>
+        {{-- <p>IDIOMA ACTUAL: {{ app()->getLocale() }}</p> --}}
+
         <div class="container" style="max-width: 568px; margin: 0 auto;  padding: 0 12px; background-color: #ffffff;">
 
             @if($type == 'welcome' && isset($data['checkData']['title']))

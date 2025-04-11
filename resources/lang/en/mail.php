@@ -117,5 +117,23 @@ return [
         'body6' => 'here',
         'body7' => 'The address from which this email is sent is intended for information only and is not enabled to receive messages. Please do not reply to this email.',
     ],
+    'rewards' => [
+        'subject' => 'Congratulations! You have received a gift',
+        'header' => [
+            'title' => 'Congratulations!',
+            'body1' => 'Hello :name',
+            'body2' => 'One of your referrals has used your discount code...',
+            'body3' => 'Do you know what that means? It’s a gift for you!',
+        ],
+        'redeem' => [
+            'discount' => 'of discount',
+            'code' => 'YOUR CODE',
+        ],
+        'howReedem' => [
+            'title' => 'How to redeem it',
+            'button' => 'Redeem my code',
+        ],
+    ],
 ];
+
 

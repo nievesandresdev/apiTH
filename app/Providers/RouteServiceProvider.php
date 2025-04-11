@@ -36,6 +36,7 @@ class RouteServiceProvider extends ServiceProvider
                  $this->loadModuleRoutes('api_chatgpt.php');
                  $this->loadModuleRoutes('api_hotel.php');
                  $this->loadModuleRoutes('api_hotel_ota.php');
+                 $this->loadModuleRoutes('api_email.php');
                  $this->loadModuleRoutes('api_stay.php');
                  $this->loadModuleRoutes('api_guest.php');
                  $this->loadModuleRoutes('api_stay_survey.php');

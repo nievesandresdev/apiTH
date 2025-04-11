@@ -117,4 +117,21 @@ return [
         'body6' => 'hier',
         'body7' => 'Het adres van waaruit deze e-mail is verzonden is uitsluitend bedoeld voor informatieve doeleinden en kan geen berichten ontvangen. Gelieve niet te antwoorden op deze e-mail.',
     ],
+    'rewards' => [
+        'subject' => 'Gefeliciteerd! Je hebt een cadeau ontvangen',
+        'header' => [
+            'title' => 'Gefeliciteerd!',
+            'body1' => 'Hallo :name',
+            'body2' => 'Een van je referenties heeft je kortingscode gebruikt...',
+            'body3' => 'Weet je wat dat betekent? Het is een cadeau voor je!',
+        ],
+        'redeem' => [
+            'discount' => 'van korting',
+            'code' => 'JE CODE',
+        ],
+        'howReedem' => [
+            'title' => 'Hoe kan ik het gebruiken?',
+            'button' => 'Mijn code gebruiken',
+        ],
+    ],
 ];

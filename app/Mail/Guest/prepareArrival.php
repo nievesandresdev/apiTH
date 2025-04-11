@@ -18,6 +18,7 @@ class prepareArrival extends Mailable
     public $urlQr;
     public $data;
     public $after;
+    public $locale;
     /**
      * Create a new message instance.
      *
@@ -36,7 +37,7 @@ class prepareArrival extends Mailable
         $this->guest = $guest;
         $this->data = $data;
         $this->after = $after;
-
+        $this->locale = $guest->lang_web ?? 'es';
     }
 
     /**
@@ -47,7 +48,7 @@ class prepareArrival extends Mailable
     public function build()
     {
        // Establecer el idioma del huésped
-       App::setLocale($this->guest->lang_web ?? 'es');
+       App::setLocale($this->locale);
 
         $subject = __('mail.prepareArrival.subject', ['guest_name' => $this->guest->name]);
 

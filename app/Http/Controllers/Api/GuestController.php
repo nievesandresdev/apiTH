@@ -106,7 +106,7 @@ class GuestController extends Controller
             $hotelId = $request->hotelId ?? null;
             $guestEmail = $request->guestEmail ?? null;
             $chainId = $request->chainId ?? null;
-            
+
             $models = $this->service->findAndValidLastStay($guestEmail, $chainId, $hotelId);
             $data = [];
             if(isset($models["stay"])){
@@ -227,7 +227,7 @@ class GuestController extends Controller
     }
 
     public function saveCheckinData(Request $request) {
-        
+
         $hotel = $request->attributes->get('hotel');
         $guest = Guest::find($request->id);
 
@@ -243,7 +243,7 @@ class GuestController extends Controller
             if($queryPreStay && $request->comment){
                 $saveQuery = $this->queryService->saveResponse($queryPreStay->id, $request, $hotel);
             }
-            
+
             $model = $this->service->updateDataGuest($guest, $request, true);
 
             if (!$model || !$saveQuery) {
@@ -261,7 +261,7 @@ class GuestController extends Controller
     }
 
     public function deleteCheckinData(Request $request) {
-        
+
         $guest = Guest::find($request->id);
 
         if (!$guest) {

@@ -64,6 +64,7 @@ return [
     'url_base_api_review' => env('URL_BASE_API_REVIEW',null),
     'url_base_helpers' => env('URL_BASE_API_HELPERS',null),
     'key_api_review' => env('KEY_API_REVIEW',null),
+    'hotelId_dossier' => env('DOSSIER_HOTEL_ID',null),
     //OPENAI
     'openia_key' => env('OPENAI_API_KEY', null),
     'azure_openia_key' => env('AZURE_OPENAI_API_KEY', null),

@@ -6,10 +6,10 @@
             </p>
             <p style="color: #FAFAFA;font-family: Arial;font-size: 10px;font-weight: 400;line-height: 140%;margin:0">
                 {{ __('mail.footer.body3') }}
-                <a href="#" style="font-weight: 600;text-decoration:underline;color: #FAFAFA;">{{ __('mail.footer.body4') }}</a>
+                <a href="{{$data['urlPrivacy']}}" style="font-weight: 600;text-decoration:underline;color: #FAFAFA;">{{ __('mail.footer.body4') }}</a>
             </p>
             <p style="color: #FAFAFA;font-family: Arial;font-size: 10px;font-weight: 400;line-height: 140%;margin:0">
-                {{ __('mail.footer.body5') }} <a href="#" style="font-weight: 600;text-decoration:underline;color: #FAFAFA;">{{ __('mail.footer.body6') }}</a>
+                {{ __('mail.footer.body5') }} <a href="{{$data['urlFooterEmail']}}" style="font-weight: 600;text-decoration:underline;color: #FAFAFA;">{{ __('mail.footer.body6') }}</a>
             </p>
             <p style="color: #FAFAFA;font-family: Arial;font-size: 10px;font-weight: 400;line-height: 140%;margin:0">
                 {{ __('mail.footer.body7') }}

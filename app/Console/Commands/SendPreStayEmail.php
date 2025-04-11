@@ -62,7 +62,7 @@ class SendPreStayEmail extends Command
 
     public function handleSendEmailPreCheckin()
     {
-        Log::info('handleSendEmailPreCheckin init');
+        Log::info('handleSendEmailPreCheckin init', ['time' => Carbon::now()->format('Y-m-d H:i:s')]);
         $currentTime = Carbon::now();
         $startOfHour = $currentTime->copy()->startOfHour(); // inicio hor actual
         $endOfHour = $currentTime->copy()->endOfHour();     // fin hora actuyal
@@ -78,24 +78,13 @@ class SendPreStayEmail extends Command
                         ->where('period', 'pre-stay');
                 },
                 'queries.guest' => function ($query) {
-                    $query->select('id', 'name', 'email');
+                    $query->select('id', 'name', 'email','off_email','lang_web');
                 },
                 'hotel' => function ($query) {
                     $query->select('id', 'name', 'checkout', 'checkin', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id');
                 }
             ])
             ->get();
-
-            /* Log::info(json_encode([
-                'message' => 'handleSendEmailPreCheckin estancias encontradas',
-                'data' => [
-                    'stays_count' => $stays->count(),
-                    'stays' => $stays,
-                    'current_time' => $currentTime->toDateTimeString(),
-                    'start_of_hour' => $startOfHour->toDateTimeString(),
-                    'end_of_hour' => $endOfHour->toDateTimeString()
-                ]
-            ], JSON_PRETTY_PRINT)); */
 
             Log::info('estancias encontradas en prechekin handleSendEmailPreCheckin: '.$stays->count());
 
@@ -104,22 +93,39 @@ class SendPreStayEmail extends Command
             // Manejar checkin nulo asignando la última hora del día
 
             //asi estaba antes
-            $hotelCheckinTime = $stay->hotel->checkin
+            /* $hotelCheckinTime = $stay->hotel->checkin
                 ? Carbon::parse($stay->hotel->checkin)->addHours($hours)
-                : Carbon::today()->endOfDay()->addHours($hours);
+                : Carbon::today()->endOfDay()->addHours($hours); */
 
-                //asi esta ahora , que si checkin es null se ejecute a las 20:00 (propuesto por ari)
-                /* $hotelCheckinTime = $stay->hotel->checkin
-                    ? Carbon::parse($stay->hotel->checkin)->addHours($hours)
-                    : Carbon::today()->setHour(20)->setMinute(0)->setSecond(0)->addHours($hours); */
+            //asi esta ahora , que si checkin es null se ejecute a las 20:00 (propuesto por ari)
+            $checkinDatetime = $stay->hotel->checkin
+                ? Carbon::parse($stay->check_in . ' ' . $stay->hotel->checkin)
+                : Carbon::parse($stay->check_in)->setHour(20)->setMinute(0)->setSecond(0); // fallback a las 20:00
 
+            // Calcula la hora exacta 48 horas antes
+            $sendWindowStart = $checkinDatetime->copy()->subHours(48)->startOfHour();
+            $sendWindowEnd = $checkinDatetime->copy()->subHours(48)->endOfHour();
 
+            /* Log::info('datos de la estancia handleSendEmailPreCheckin', [
+                'stay_id' => $stay->id,
+                'stay_checkin' => $stay->check_in,
+                'hotel_checkin_time' => $checkinDatetime->toDateTimeString(),
+                'hotel_checkin_time_start' => $checkinDatetime->copy()->startOfHour()->toDateTimeString(),
+                'hotel_checkin_time_end' => $checkinDatetime->copy()->endOfHour()->toDateTimeString(),
+                'current_time' => $currentTime->toDateTimeString(),
+                'hotelId' => $stay->hotel->id,
+            ]); */
 
-            // Verificar si la hora actual está dentro del rango de 48 horas antes del checkin
-            if (!$currentTime->between($hotelCheckinTime->copy()->startOfHour(), $hotelCheckinTime->copy()->endOfHour())) {
+            // Evalúa si el cron está corriendo dentro de esa hora
+            if (!$currentTime->between($sendWindowStart, $sendWindowEnd)) {
                 Log::info('Estancias fuera del rango de hora de 48 horas antes del checkin handleSendEmailPreCheckin', [
                     'stay_id' => $stay->id,
                     'stay_checkin' => $stay->check_in,
+                    'hotel_checkin_time' => $checkinDatetime->toDateTimeString(),
+                    'hotel_checkin_time_start' => $checkinDatetime->copy()->startOfHour()->toDateTimeString(),
+                    'hotel_checkin_time_end' => $checkinDatetime->copy()->endOfHour()->toDateTimeString(),
+                    'current_time' => $currentTime->toDateTimeString(),
+                    'hotelId' => $stay->hotel->id,
                 ]);
                 continue;
             }
@@ -156,7 +162,8 @@ class SendPreStayEmail extends Command
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$stay->id}&g={$query->guest->id}&fill=VERYGOOD");
                 $webappChatLink = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'chat');
                 $urlCheckin = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$query->guest->id}");
-
+                $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
+                $urlFooterEmail = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$query->guest->id}");
                 $queryData = [
                     'currentPeriod' => $query->period,
                     'webappLinkInbox' => $webappLinkInbox,
@@ -167,8 +174,8 @@ class SendPreStayEmail extends Command
                 //corosseling que trae instalaciones exp y destinos etc
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
 
-                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
-                //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+                //$urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
 
                 $dataEmail = [
@@ -181,6 +188,8 @@ class SendPreStayEmail extends Command
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
                     'urlCheckin' => $urlCheckin,
+                    'urlPrivacy' => $urlPrivacy,
+                    'urlFooterEmail' => $urlFooterEmail
                 ];
 
                 Log::info('handleSendEmailPreCheckin email send', ['guest_email' => $query->guest->email, 'type' => $type]);
@@ -189,12 +198,16 @@ class SendPreStayEmail extends Command
                 $shouldSend = !$communication || $communication->pre_checkin_email;
 
                 try {
-                    if($shouldSend){
-                        $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                        $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
-                        Log::info('Correo enviado correctamente handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                    if(!$query->guest->off_email){
+                        if($shouldSend){
+                            $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                            $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
+                            Log::info('Correo enviado correctamente handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                        }else{
+                            Log::info('Correo no enviado handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                        }
                     }else{
-                        Log::info('Correo no enviado handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
+                        Log::info("No se envía correo preCheckin email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
                     }
                 } catch (\Exception $e) {
                     Log::error('Error al enviar correo handleSendEmailPreCheckin', [
