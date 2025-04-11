@@ -62,7 +62,7 @@ class SendPreStayEmail extends Command
 
     public function handleSendEmailPreCheckin()
     {
-        Log::info('handleSendEmailPreCheckin init');
+        Log::info('handleSendEmailPreCheckin init', ['time' => Carbon::now()->format('Y-m-d H:i:s')]);
         $currentTime = Carbon::now();
         $startOfHour = $currentTime->copy()->startOfHour(); // inicio hor actual
         $endOfHour = $currentTime->copy()->endOfHour();     // fin hora actuyal
@@ -163,6 +163,7 @@ class SendPreStayEmail extends Command
                 $webappChatLink = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'chat');
                 $urlCheckin = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$query->guest->id}");
                 $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
+                $urlFooterEmail = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$query->guest->id}");
                 $queryData = [
                     'currentPeriod' => $query->period,
                     'webappLinkInbox' => $webappLinkInbox,
@@ -173,8 +174,8 @@ class SendPreStayEmail extends Command
                 //corosseling que trae instalaciones exp y destinos etc
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
 
-                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
-                //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+                //$urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
 
                 $dataEmail = [
@@ -187,7 +188,8 @@ class SendPreStayEmail extends Command
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
                     'urlCheckin' => $urlCheckin,
-                    'urlPrivacy' => $urlPrivacy
+                    'urlPrivacy' => $urlPrivacy,
+                    'urlFooterEmail' => $urlFooterEmail
                 ];
 
                 Log::info('handleSendEmailPreCheckin email send', ['guest_email' => $query->guest->email, 'type' => $type]);
