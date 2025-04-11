@@ -7,6 +7,8 @@ use App\Models\ChatMessage;
 use App\Models\ChatSettingLanguage;
 use App\Models\Guest;
 use App\Models\Hotel;
+use App\Models\ImageGallery;
+use App\Models\ImagesHotels;
 use App\Models\Query;
 use App\Models\Stay;
 use App\Models\User;
@@ -694,6 +696,103 @@ class CloneHotelServices
 
                 }
             }  
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);
+        }
+    }
+
+    public function SyncGalleryImagesAndHotelImages($originalHotel, $copyHotel){
+        try {
+            //images gallery
+            //
+            //
+            $originalGalleryImages = $originalHotel->gallery;
+
+            foreach ($originalGalleryImages as $originalGalleryImage) {
+                if ($originalGalleryImage->son_id) {
+                    // Si ya se había creado un stay hijo previamente, se intenta recuperarlo
+                    $galleryImageChild = ImageGallery::find($originalGalleryImage->son_id);
+                    
+                    if ($galleryImageChild) {
+                        // Si se encontró, se actualiza sus atributos copiando las imagenes padre
+                        // (Ajusta los campos según corresponda)
+                        $galleryImageChild->fill($originalGalleryImage->toArray());
+                        $galleryImageChild->image_id = $copyHotel->id;
+                        $galleryImageChild->son_id = null;
+                        $galleryImageChild->save();
+                    } else {
+                        // Si la imagen hijo no existe (fue eliminado en el hotel hijo),
+                        // se recrea usando el mismo id que estaba almacenado en el padre.
+                        $galleryImageChild = $originalGalleryImage->replicate();
+                        // Asigna manualmente el id guardado en el padre
+                        $galleryImageChild->id = $originalGalleryImage->son_id;
+                        $galleryImageChild->image_id = $copyHotel->id;
+                        $galleryImageChild->son_id = null;
+                        // Forzamos la inserción con el id específico.
+                        $galleryImageChild->exists = false;
+                        $galleryImageChild->save();
+                    }
+                } else {
+                    // Si la imagen padre no tiene asignado un hijo, se crea uno nuevo (sin son_id)
+                    $galleryImageChild = $originalGalleryImage->replicate();
+                    $galleryImageChild->image_id = $copyHotel->id;
+                    $galleryImageChild->son_id = null;
+                    $galleryImageChild->save();
+                    // Se actualiza la imagen padre para registrar el id dla imagen hijo creado
+                    $originalGalleryImage->son_id = $galleryImageChild->id;
+                    $originalGalleryImage->save();
+                }
+            }
+
+            //images hotel
+            //
+            //
+            $originalHotelImages = $originalHotel->images;
+            $sonsIds = [];
+            foreach ($originalHotelImages as $originalHotelImage) {
+                if ($originalHotelImage->son_id) {
+                    $sonsIds[] = $originalHotelImage->son_id;
+                    // Si ya se había creado un stay hijo previamente, se intenta recuperarlo
+                    $hotelImageChild = ImagesHotels::find($originalHotelImage->son_id);
+                    
+                    if ($hotelImageChild) {
+                        // Si se encontró, se actualiza sus atributos copiando las imagenes padre
+                        // (Ajusta los campos según corresponda)
+                        $hotelImageChild->fill($originalHotelImage->toArray());
+                        $hotelImageChild->hotel_id = $copyHotel->id;
+                        $hotelImageChild->son_id = null;
+                        $hotelImageChild->save();
+                    } else {
+                        // Si la imagen hijo no existe (fue eliminado en el hotel hijo),
+                        // se recrea usando el mismo id que estaba almacenado en el padre.
+                        $hotelImageChild = $originalHotelImage->replicate();
+                        // Asigna manualmente el id guardado en el padre
+                        $hotelImageChild->id = $originalHotelImage->son_id;
+                        $galleryImageChild->hotel_id = $copyHotel->id;
+                        $hotelImageChild->son_id = null;
+                        // Forzamos la inserción con el id específico.
+                        $hotelImageChild->exists = false;
+                        $hotelImageChild->save();
+                    }
+                } else {
+                    // Si la imagen padre no tiene asignado un hijo, se crea uno nuevo (sin son_id)
+                    $hotelImageChild = $originalHotelImage->replicate();
+                    $hotelImageChild->hotel_id = $copyHotel->id;
+                    $hotelImageChild->son_id = null;
+                    $hotelImageChild->save();
+                    // Se actualiza la imagen padre para registrar el id dla imagen hijo creado
+                    $originalHotelImage->son_id = $hotelImageChild->id;
+                    $originalHotelImage->save();
+                    $sonsIds[] = $hotelImageChild->id;
+                }
+            }
+
+            $extraImagesInChildIds = $copyHotel->images()->pluck('id')->toArray();
+            //obtengo los ids de los lenguajes que no estan en el array $sonsIds(es decir que no son hijos)
+            $idsToDelete = array_diff($extraImagesInChildIds, $sonsIds);
+            ImagesHotels::whereIn('id', $idsToDelete)->delete();
+
         } catch (\Exception $e) {
             DB::rollBack();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);

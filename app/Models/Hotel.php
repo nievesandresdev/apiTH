@@ -51,6 +51,7 @@ class Hotel extends Model
         'show_confort',
         'show_transport',
         'show_places',
+        'show_profile',
         'phone_optional',
         'with_wifi',
         'checkin_until',
