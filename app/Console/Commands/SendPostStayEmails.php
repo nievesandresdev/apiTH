@@ -417,6 +417,7 @@ class SendPostStayEmails extends Command
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$stay->id}&g={$query->guest->id}&fill=VERYGOOD");
                 $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
                 $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
+                $urlFooterEmail = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$query->guest->id}");
                 //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
                 $queryData = [
@@ -434,7 +435,8 @@ class SendPostStayEmails extends Command
                     'urlWebapp' => $urlWebapp,
                     'queryData' => $queryData,
                     'reservationURl' => $reservationURl,
-                    'urlPrivacy' => $urlPrivacy
+                    'urlPrivacy' => $urlPrivacy,
+                    'urlFooterEmail' => $urlFooterEmail
                 ];
 
                 Log::info('handleSendEmailPostCheckout en esta enviando email a '.$query->guest->email);
@@ -445,7 +447,7 @@ class SendPostStayEmails extends Command
                         $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
                         Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
                     }else{
-                        Log::info('No se envía correo postCheckout email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})');
+                        Log::info("No se envía correo postCheckout email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
                     }
 
                 } catch (\Exception $e) {

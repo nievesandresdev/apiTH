@@ -62,7 +62,7 @@ class SendPreStayEmail extends Command
 
     public function handleSendEmailPreCheckin()
     {
-        Log::info('handleSendEmailPreCheckin init');
+        Log::info('handleSendEmailPreCheckin init', ['time' => Carbon::now()->format('Y-m-d H:i:s')]);
         $currentTime = Carbon::now();
         $startOfHour = $currentTime->copy()->startOfHour(); // inicio hor actual
         $endOfHour = $currentTime->copy()->endOfHour();     // fin hora actuyal
@@ -173,8 +173,8 @@ class SendPreStayEmail extends Command
                 //corosseling que trae instalaciones exp y destinos etc
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
 
-                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
-                //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+                //$urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
 
                 $dataEmail = [
