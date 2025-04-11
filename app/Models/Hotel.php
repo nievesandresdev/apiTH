@@ -153,6 +153,11 @@ class Hotel extends Model
         return $this->hasOne(ChatSetting::class);
     }
 
+    public function chatHours()
+    {
+        return $this->hasMany(ChatHour::class);
+    }
+    
     public function generalLegal()
     {
         return $this->hasOne(LegalGeneral::class);
