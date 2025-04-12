@@ -14,8 +14,6 @@ class AsyncHotelDefaultController extends Controller
         $this->cloneFacilityService = $cloneFacilityService;
     }
 
-
-
     public function handle()
     {
         $HOTEL_ID_PARENT = config('app.dossier_hotel_id_parent');
@@ -23,4 +21,5 @@ class AsyncHotelDefaultController extends Controller
         $result = $this->cloneFacilityService->handle($HOTEL_ID_PARENT, $HOTEL_ID_CHILD);
         return $result;
     }
+    
 }
