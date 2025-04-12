@@ -32,7 +32,9 @@ use App\Services\StayService;
 use App\Services\UtilityService;
 use App\Services\UrlOtasService;
 use App\Services\Apis\ApiReviewServices;
+use App\Services\Hoster\CloneHotelServices;
 use App\Services\Hoster\Stay\StayHosterServices;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -56,7 +58,7 @@ class UtilsController extends Controller
     public  $api_review_service;
     public  $urlOtasService;
     public  $stayHosterServices;
-
+    public $cloneHotelServices;
     function __construct(
         QuerySettingsServices $_QuerySettingsServices,
         UserServices $userServices,
@@ -71,7 +73,8 @@ class UtilsController extends Controller
         RequestSettingService $requestService,
         ApiReviewServices $_api_review_service,
         UrlOtasService $urlOtasService,
-        StayHosterServices $_StayHosterServices
+        StayHosterServices $_StayHosterServices,
+        CloneHotelServices $_CloneHotelServices
     )
     {
         $this->querySettingsServices = $_QuerySettingsServices;
@@ -88,6 +91,95 @@ class UtilsController extends Controller
         $this->api_review_service = $_api_review_service;
         $this->urlOtasService = $urlOtasService;
         $this->stayHosterServices = $_StayHosterServices;
+        $this->cloneHotelServices = $_CloneHotelServices;
+    }
+
+    public function testPostCheckin()
+    {
+        $start = now()->startOfHour()->subDay();
+        $end = now()->startOfHour()->subDay()->addHour();
+
+        Log::info('handleSendEmailPostChekin  24h starthour: '.$start.' endhour: '.$end);
+
+        $stays = Stay::with(['guests:id,name,email'])->select(
+                'h.checkin','h.id as hotelId','h.chain_id','h.name as hotelName','h.subdomain as hotelSubdomain','h.zone',
+                'h.show_facilities','h.show_places','h.show_experiences','h.latitude','h.longitude','h.sender_for_sending_email','h.sender_mail_mask',
+                'h.show_checkin_stay','h.city_id',
+                'cs.show_guest',
+                'stays.check_in','stays.id','stays.check_out',
+                'c.subdomain as chainSubdomain'
+            )
+            ->join('hotels as h', 'stays.hotel_id', '=', 'h.id')
+            ->join('chains as c', 'c.id', '=', 'h.chain_id')
+            ->join('chat_settings as cs', 'cs.hotel_id', '=', 'h.id')
+            ->leftJoin('email_notifications as en', 'stays.id', '=', 'en.stay_id')
+            ->leftJoin('hotel_communications as hc', function ($join) {
+                $join->on('h.id', '=', 'hc.hotel_id')
+                     ->where('hc.type', '=', 'email');
+            })
+            //aqui se valida si el hotel no tiene checkin entonces se usa 20:00:00 como checkin
+            ->whereRaw("
+                TIMESTAMP(
+                    stays.check_in,
+                    IFNULL(NULLIF(h.checkin, ''), '20:00:00')
+                ) BETWEEN ? AND ?
+            ", [$start, $end])
+            ->where('stays.check_out', '>', now()) //solo se envian correos a estancias que no han finalizado
+            ->where(function ($query) {
+                $query->whereNull('en.post_checkin') // No existe registro
+                      ->orWhere('en.post_checkin', 0); // O existe pero no se ha enviado
+            })
+            ->where(function ($query) {
+                $query->whereNull('hc.post_checkin_email') // No existe registro
+                      ->orWhere('hc.post_checkin_email', 1); // O existe pero no se ha enviado
+            })
+            ->get();
+
+
+        foreach($stays as $stay){
+            $hotel = new \stdClass();
+            $hotel->checkin = $stay->checkin;
+            $hotel->id = $stay->hotelId;
+            $hotel->chain_id = $stay->chain_id;
+            $hotel->name = $stay->hotelName;
+            $hotel->subdomain = $stay->hotelSubdomain;
+            $hotel->zone = $stay->zone;
+            $hotel->show_facilities = $stay->show_facilities;
+            $hotel->show_places = $stay->show_places;
+            $hotel->show_experiences = $stay->show_experiences;
+            $hotel->latitude = $stay->latitude;
+            $hotel->longitude = $stay->longitude;
+            $hotel->sender_for_sending_email = $stay->sender_for_sending_email;
+            $hotel->sender_mail_mask = $stay->sender_mail_mask;
+            $hotel->show_checkin_stay = $stay->show_checkin_stay;
+            $hotel->city_id = $stay->city_id;
+            $hotel->chatSettings = (object) ['show_guest' => $stay->show_guest];
+
+            foreach ($stay->guests as $guest) {
+                Log::info("Enviando correo postCheckin a {$guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
+
+                $this->stayServices->guestWelcomeEmail(
+                    'postCheckin',
+                    $stay->chainSubdomain,
+                    $hotel,
+                    $guest,
+                    $stay
+                );
+            }
+
+            // Marcar esta estancia como enviada
+            DB::table('email_notifications')->insert(
+                [
+                    'stay_id' => $stay->id,
+                    'hotel_id' => $stay->hotelId,
+                    'post_checkin' => 1,
+                    'sent_at' => now()
+                ]
+            );
+
+        }
+
+        dd('fin',$stays);
     }
 
     public function authPusher(Request $request)
@@ -116,11 +208,10 @@ class UtilsController extends Controller
     public function testEmailGeneral(){
         $type = 'welcome';
         $hotel = Hotel::find(292);
-        $guest = Guest::find(49);
+        //dd($hotel->subdomain);
+        $guest = Guest::find(27);
         $chainSubdomain = $hotel->subdomain;
         $stay = Stay::find(81);
-
-        //dd($stay->hotel->checkin);
 
 
         try {
@@ -136,7 +227,7 @@ class UtilsController extends Controller
                 //
 
                 $checkData = [
-                    'title' => "Datos de tu estancia en {$hotel->name}",
+                    'title' => __('mail.stayCheckDate.title', ['hotel' => $hotel->name]),
                     'formatCheckin' => $formatCheckin,
                     'formatCheckout' => $formatCheckout,
                     'editStayUrl' => $webappEditStay
@@ -185,6 +276,7 @@ class UtilsController extends Controller
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
              $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+             $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"no-notificacion?g={$guest->id}");
 
 
 
@@ -198,7 +290,9 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
-                'hotel' => $hotel
+                'hotel' => $hotel,
+                'stay_language' => $stay->language,
+                'urlFooterEmail' => $urlFooterEmail
             ];
 
             //dd($dataEmail);
@@ -208,6 +302,8 @@ class UtilsController extends Controller
             // Log::info('hotelid '.json_encode($hotel->id));
             // Log::info('guest '.json_encode($guest));
 
+            //dd($hotel->hotelCommunications);
+            //dd($dataEmail);
             $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false,true), 'francisco20990@gmail.com');
 
 
@@ -230,45 +326,34 @@ class UtilsController extends Controller
 
     public function test()
     {
-        // $hotel = Hotel::find(280);
-        // $stay = Stay::find(43);
-        // $guest = Guest::find(1);
-        // $this->stayServices->guestWelcomeEmail('postCheckin', $hotel->chain->subdomain, $hotel, $guest, $stay);
-        // return 'enviado';
-        // return $models = QuerySetting::all();
-
-        // Obtener todos los registros de la tabla RequestSetting
-        // $models = RequestSetting::all();
-        $models = RequestSetting::select('id','in_stay_msg_text')->where('hotel_id', 191)->get();
         
-        // Iterar sobre cada modelo
-        foreach ($models as $model) {
-            // Procesar el campo in_stay_msg_text
-            return $inStayMsgText = $model->in_stay_msg_text;
-            // Verificar que sea un arreglo
-            if (is_array($inStayMsgText)) {
-                foreach ($inStayMsgText as $lang => $text) {
-                    return $lang;
-                    // Reemplazar cualquier texto entre corchetes por "[Link a las OTAs]"
-                    $inStayMsgText[$lang] = preg_replace('/\[.*?\]/', '[Link a las OTAs]', $text);
-                }
-            }
-            // Actualizar el modelo con el nuevo valor
-            $model->in_stay_msg_text = $inStayMsgText;
-
-            // Guardar los cambios en la base de datos
-            // $model->save();
-        }
+        $codeDiff = Carbon::now()->timestamp;
+        $stringDiff = 'B';
+        $originalHotel = $this->cloneHotelServices->findOriginalHotel();
+        if(!$originalHotel) return 'No existe el Hotel';
+        $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
+        $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
+        // $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
+        // //trial stays
+        // $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
+        // //clean real stays in copy hotel
+        // $cleanRealStaysInCopyHotel = $this->cloneHotelServices->CleanRealStaysInCopyHotel($copyHotel);
+        // $updateSettingsInCopyHotel = $this->cloneHotelServices->UpdateChatSettingsInCopyHotel($originalHotel, $copyHotel);
+        // $updateCheckinSettingsInCopyHotel = $this->cloneHotelServices->UpdateCheckinSettingsInCopyHotel($originalHotel, $copyHotel);
+        // $updateQuerySettingsInCopyHotel = $this->cloneHotelServices->UpdateQuerySettingsInCopyHotel($originalHotel, $copyHotel);
+        // $updateRequestSettingsInCopyHotel = $this->cloneHotelServices->UpdateRequestSettingsInCopyHotel($originalHotel, $copyHotel);
+        $syncGalleryImagesAndHotelImages = $this->cloneHotelServices->SyncGalleryImagesAndHotelImages($originalHotel, $copyHotel);
+        return $syncGalleryImagesAndHotelImages;
     }
 
     public function testEmailPostCheckout(){
         $type = 'post-checkout';
-        $hotel = Hotel::find(274);
+        $hotel = Hotel::find(292);
         //$guest = Guest::find(146);
-        $guest = Guest::find(355);
+        $guest = Guest::find(49);
         $chainSubdomain = $hotel->subdomain;
         //$stay = Stay::find(630);
-        $stay = Stay::with('queries')->where('id',628)->first();
+        $stay = Stay::with('queries')->where('id',81)->first();
 
 
 
@@ -296,7 +381,7 @@ class UtilsController extends Controller
                 'currentPeriod' => $currentPeriod,
                 'webappLinkInbox' => $webappLinkInbox,
                 'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-                'answered' => $answered->answered == 1 ? true : false
+                'answered' => true
             ];
 
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
@@ -364,7 +449,7 @@ class UtilsController extends Controller
                 //
 
                 $checkData = [
-                    'title' => "Datos de tu estancia en {$hotel->name}",
+                    'title' => __('mail.stayCheckDate.title2', ['hotel' => $hotel->name]),
                     'formatCheckin' => $formatCheckin,
                     'formatCheckout' => $formatCheckout,
                     'editStayUrl' => $webappEditStay,
@@ -431,8 +516,14 @@ class UtilsController extends Controller
 
             //dd($dataEmail,$hotel);
 
+            $communication = $hotel->hotelCommunications->firstWhere('type', 'email');
+            $shouldSend = !$communication || $communication->pre_checkin_email;
 
-            $this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            if($shouldSend){
+                $this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            }else{
+                dd('no se envia');
+            }
 
 
             return view('Mails.guest.prepareYourArrival', [

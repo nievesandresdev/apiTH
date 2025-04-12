@@ -16,6 +16,7 @@ class ImageGallery extends Model
         'select',
         'name',
         'type',
-        'url_origin'
+        'url_origin',
+        'son_id'
     ];
 }

@@ -22,7 +22,8 @@ class Stay extends Model
         'pending_queries_seen',
         'sessions',
         'trial',
-        'guest_id'
+        'guest_id',
+        'son_id'
     ];
 
     protected $casts = [

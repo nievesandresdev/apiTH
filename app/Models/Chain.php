@@ -9,7 +9,7 @@ class Chain extends Model
 {
     use HasFactory;
 
-    public $fillable = ['subdomain','type'];
+    public $fillable = ['subdomain','type','parent_hotel_id'];
 
     public function customization()
     {

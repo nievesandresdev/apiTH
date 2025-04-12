@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-
+use Illuminate\Support\Facades\App;
 class prepareArrival extends Mailable
 {
     use Queueable, SerializesModels;
@@ -18,6 +18,7 @@ class prepareArrival extends Mailable
     public $urlQr;
     public $data;
     public $after;
+    public $locale;
     /**
      * Create a new message instance.
      *
@@ -36,7 +37,7 @@ class prepareArrival extends Mailable
         $this->guest = $guest;
         $this->data = $data;
         $this->after = $after;
-
+        $this->locale = $guest->lang_web ?? 'es';
     }
 
     /**
@@ -46,7 +47,10 @@ class prepareArrival extends Mailable
      */
     public function build()
     {
-        $subject = '¿Todo listo '.$this->guest->name.'?';
+       // Establecer el idioma del huésped
+       App::setLocale($this->locale);
+
+        $subject = __('mail.prepareArrival.subject', ['guest_name' => $this->guest->name]);
 
         $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
         if($this->hotel->sender_mail_mask){

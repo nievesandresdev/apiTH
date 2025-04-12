@@ -51,6 +51,7 @@ class Hotel extends Model
         'show_confort',
         'show_transport',
         'show_places',
+        'show_profile',
         'phone_optional',
         'with_wifi',
         'checkin_until',
@@ -68,7 +69,8 @@ class Hotel extends Model
         'show_referrals',
         'offer_benefits',
         //
-        'show_checkin_stay'
+        'show_checkin_stay',
+        'parent_id'
     ];
 
     //bool offer_benefits
@@ -108,6 +110,21 @@ class Hotel extends Model
     }
 
 
+    public function hotelCommunications()
+    {
+        return $this->hasMany(HotelCommunication::class);
+    }
+
+    public function hotelCommunicationsWithDefault()
+    {
+        if ($this->hotelCommunications->isEmpty()) {
+            return getDefaultHotelCommunications();
+        }
+
+        return $this->hotelCommunications;
+    }
+
+
     public function facilities()
     {
         return $this->hasMany(FacilityHoster::class);
@@ -135,6 +152,15 @@ class Hotel extends Model
 
     public function chatSettings() {
         return $this->hasOne(ChatSetting::class);
+    }
+
+    public function checkinSettings() {
+        return $this->hasOne(CheckinSetting::class);
+    }
+
+    public function chatHours()
+    {
+        return $this->hasMany(ChatHour::class);
     }
 
     public function generalLegal()
@@ -172,6 +198,13 @@ class Hotel extends Model
         return $this->hasMany(ImageGallery::class, 'image_id');
     }
 
+    public function querySettings() {
+        return $this->hasOne(QuerySetting::class);
+    }
+
+    public function requestSettings() {
+        return $this->hasOne(RequestSetting::class);
+    }
 
     public function scopeActive($query)
     {

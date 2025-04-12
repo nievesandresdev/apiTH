@@ -85,7 +85,7 @@ class GuestService {
                 $guest->googleId = $googleId ?? $guest->googleId;
                 $guest->facebookId = $facebookId ?? $guest->facebookId;
                 $guest->complete_checkin_data = $completeCheckinData;
-                
+
                 if($acronym){
                     $guest->acronym = $acronym;
                 }
@@ -165,7 +165,7 @@ class GuestService {
             if($completeCheckin){
                 $guest->complete_checkin_data = true;
             }
-            //   
+            //
             $guest->save();
             return $guest;
 
@@ -193,7 +193,7 @@ class GuestService {
             $guest->municipality = null;
             $guest->address = null;
             $guest->complete_checkin_data = false;
-            //   
+            //
             $guest->save();
             return $guest;
 
@@ -219,7 +219,7 @@ class GuestService {
         }
     }
 
-    public function findAndValidLastStay($guestEmail, $chainId, $hotelId = null){
+    public function findAndValidLastStay($guestEmail, $chainId, $hotelId = null, $lang = null){
 
         try {
             $limitDate = Carbon::now()->subDays(11)->toDateString(); // Formato 'YYYY-MM-DD'
@@ -308,7 +308,7 @@ class GuestService {
             $currentLang = !$renew ? $guest->lang_web : 'es';
             $currentLastname = !$renew ? $guest->lastname : null;
             $currentAvatar = !$renew ? $guest->avatar : null;
-            
+
 
             $guest->name = $name;
             $guest->email = $data->email ?? $guest->email;
@@ -437,7 +437,7 @@ class GuestService {
         try {
             $hotelData = $hotel;
             $guest = $this->findByEmail($email);
-            
+
             // Generar token de restablecimiento
             $token = Str::random(60);
              // Guardar token en la base de datos
@@ -448,18 +448,18 @@ class GuestService {
                 'model_id' => $guest->id,
                 'created_at' => now()
             ]);
-            
+
             // Enviar correo con el enlace de restablecimiento
             // Mail::to($email)->send(new ResetPasswordGuest($url.$token));
             $lastStay = $this->findAndValidLastStay($guest->email, $chain->id, $hotel ? $hotel->id : null);
             if($lastStay && !$hotel){
                 $hotelData = $lastStay['stay']->hotel;
             }
-            
+
             Log::info('hotel '.json_encode($hotelData));
             Log::info('guest '.json_encode($guest));
             Log::info('chain '.json_encode($chain));
-            
+
             $url = buildUrlWebApp($chain->subdomain, $hotelData->subdomain,'',"email={$email}&acform=reset&token=");
             Log::info('url '.json_encode($url.$token));
             Mail::to($guest->email)->send(new ResetPasswordGuest($hotelData, $url.$token, $guest));
@@ -514,7 +514,7 @@ class GuestService {
                 $stay->save();
             }
             DB::commit();
-            
+
             sendEventPusher('private-update-stay-list-hotel.' . $stay->hotel_id, 'App\Events\UpdateStayListEvent', ['showLoadPage' => false]);
 
             return [
@@ -549,7 +549,7 @@ class GuestService {
                     $stay->number_guests = intval($stay->number_guests) - 1;
                     $stay->save();
                 }
-                
+
                 if($chatExists || $queryAnsweredExists || $guest->complete_checkin_data){
                     Log::info('proceso para huesped con actividad ');
                     // Crear una nueva estancia solo para el huésped

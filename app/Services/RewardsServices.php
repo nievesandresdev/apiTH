@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use App\Services\MailService;
 use App\Mail\User\RewardsEmail;
 use Illuminate\Support\Facades\Log;
+use App\Models\Hotel;
+use Illuminate\Support\Facades\App;
 class RewardsServices {
 
     public $mailService;
@@ -72,7 +74,11 @@ class RewardsServices {
             $rewards[] = $rewardReferent;
         }
 
-        $modelHotel->update([
+        /* $modelHotel->update([
+            'offer_benefits' => !$request->offer_benefits ? 0 : 1,
+        ]); */
+        $hotel = Hotel::where('id', $modelHotel->id)->first();
+        $hotel->update([
             'offer_benefits' => !$request->offer_benefits ? 0 : 1,
         ]);
 
@@ -104,9 +110,17 @@ class RewardsServices {
             'urlQr' => generateQr($rewardStay->hotel->subdomain, $urlWebapp),
         ];
 
-        Log::info('sendEmailReferentSErvices', ['data' => $data]);
-        $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
-        $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), 'francisco20990@gmail.com');
+        $communication = $rewardStay->hotel->hotelCommunications->firstWhere('type', 'email');
+        $shouldSend = !$communication || $communication->referent_email;
+
+        if($shouldSend){
+            Log::info('sendEmailReferentSErvices', ['data' => $data]);
+            App::setLocale($rewardStay->guest->lang_web);
+            $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
+            $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), 'francisco20990@gmail.com');
+        }else{
+            Log::info('sendEmailReferentSErvices no se envia', ['data' => $data]);
+        }
 
     }
 

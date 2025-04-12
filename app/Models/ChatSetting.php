@@ -38,7 +38,7 @@ class ChatSetting extends Model
     //relations 
     public function languages()
     {
-        return $this->belongsToMany(Language::class);
+        return $this->belongsToMany(Language::class)->withPivot('id','son_id');
     }
     //attrs
     public function getShowGuestAttribute($value)

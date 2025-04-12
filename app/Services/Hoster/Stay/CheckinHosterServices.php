@@ -113,7 +113,7 @@ class CheckinHosterServices {
         $results = DB::table('guest_stay')
         ->join('guests', 'guests.id', '=', 'guest_stay.guest_id')
         ->select(
-            'guest_stay.guest_id','guest_stay.stay_id','guests.id','guests.name','guests.complete_checkin_data'
+            'guest_stay.guest_id','guest_stay.stay_id','guests.id','guests.name','guests.lastname','guests.complete_checkin_data'
         )
         ->where('guest_stay.stay_id', $stayId)
         ->where('guests.complete_checkin_data', 1)

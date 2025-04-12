@@ -49,7 +49,7 @@
         </table>
     </div>
     <p class="warning-info" style="color: #A0A0A0;font-family: arial;font-size: 12px;font-weight: 500;line-height: 150%;">
-        Por favor, verifica que los fechas de Check-in y Check-out coincidan con la reserva realizada en el {{ formatTypeLodging($hotel->type) }}. Si los datos no coinciden, puedes
-        <a style="font-weight: 600;text-decoration:underline;color: #A0A0A0;" href="{{$editUrl}}">editarlos desde la WebApp.</a>
+        {{ __('mail.stayCheckDate.warning', ['type' => formatTypeLodging($hotel->type)]) }}
+        <a style="font-weight: 600;text-decoration:underline;color: #A0A0A0;" href="{{$editUrl}}">{{ __('mail.stayCheckDate.editUrl') }}</a>
     </p>
 </div>

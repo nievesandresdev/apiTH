@@ -19,7 +19,6 @@ class EnumsLanguages
         'ja' => 'Japonés',
         'de' => 'Alemán',
         'ko' => 'Coreano',
-        'fr' => 'Francés',
         'tr' => 'Turco',
         'it' => 'Italiano',
         'pl' => 'Polaco',
@@ -37,6 +36,12 @@ class EnumsLanguages
         'hu' => 'Húngaro',
         'no' => 'Noruego',
         'sk' => 'Eslovaco',
+        'gl' => 'Gallego',
+        'ca' => 'Catalán',
+        'eu' => 'Euskera',
+        'fr' => 'Francés',
+
+
         // Añade más idiomas si es necesario
     ];
 }

@@ -29,7 +29,18 @@ class DossierController extends Controller
     //store update or create
     public function storeUpdateOrCreate(Request $request)
     {
-        $dossierData = DossierData::updateOrCreate(['tab_number' => $request->tab_number], $request->all());
+        // Crear o actualizar el registro
+        $dossierData = DossierData::updateOrCreate(
+            ['tab_number' => $request->tab_number],
+            $request->all()
+        );
+
+        // Actualizar todos los registros que tengan el mismo dossier_id
+        DossierData::where('dossier_id', $dossierData->dossier_id)
+            ->update([
+                'pricePerRoomPerMonth' => $request->pricePerRoomPerMonth,
+                'implementationPrice' => $request->implementationPrice,
+            ]);
 
         $dossier = Dossier::find($dossierData->dossier_id);
         return response()->json($dossier->load('dossierData'));

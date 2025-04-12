@@ -8,13 +8,13 @@
                 </td>
                 <!-- Columna de Texto -->
                 <td class="text-content" style="color: #333333;text-align: left;vertical-align: middle;padding-right:20px; padding-top: 20px;">
-                    <h1 style="margin: 0;color: #333;font-size: 26px;font-weight: 600;line-height: 110%;">¡Enhorabuena!</h1>
-                    <p style="margin: 0;color: #333;font-size: 16px;font-weight: 400;line-height: 28px;margin-top:14px">
-                        Hola {{ $rewardStay->guest->name }}
+                    <h1 style="margin: 0;color: #333333;font-size: 26px;font-weight: 600;line-height: 110%;">{{ __('mail.rewards.header.title') }}</h1>
+                    <p style="margin: 0;color: #333333;font-size: 16px;font-weight: 400;line-height: 28px;margin-top:14px">
+                        {{ __('mail.rewards.header.body1', ['name' => $rewardStay->guest->name]) }}
                         <br>
-                        uno de tus referidos ha utilizado tu código de descuento...
+                        {{ __('mail.rewards.header.body2') }}
                         <br>
-                        ¿Sabes lo que significa eso? ¡Un regalo para ti!
+                        {{ __('mail.rewards.header.body3') }}
                     </p>
                 </td>
 

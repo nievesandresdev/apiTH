@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 
 class postCheckoutMail extends Mailable
 {
@@ -18,6 +19,7 @@ class postCheckoutMail extends Mailable
     public $urlQr;
     public $data;
     public $after;
+    public $locale;
     /**
      * Create a new message instance.
      *
@@ -36,7 +38,7 @@ class postCheckoutMail extends Mailable
         $this->guest = $guest;
         $this->data = $data;
         $this->after = $after;
-
+        $this->locale = $guest->lang_web ?? 'es';
     }
 
     /**
@@ -46,7 +48,10 @@ class postCheckoutMail extends Mailable
      */
     public function build()
     {
-        $subject = 'Te esperamos de vuelta';
+        // Establecer el idioma del huésped
+        App::setLocale($this->locale);
+
+        $subject = __('mail.postCheckout.subject');
 
         $senderName = $this->hotel->sender_for_sending_email;
         $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
