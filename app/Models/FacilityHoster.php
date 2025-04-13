@@ -23,6 +23,9 @@ class FacilityHoster extends Model
         'always_open',
         'ad_tag',
         'order',
+
+        // para sincronización el registro padre y el registro hijo
+        'son_id',
     ];
 
     public function facilities()

@@ -18,7 +18,7 @@ class AsyncHotelDefaultCommand extends Command
     }
 
     public function handle () {
-        $HOTEL_ID_PARENT = config('app.dossier_hotel_id_parent');
+        $HOTEL_ID_PARENT = config('app.DOSSIER_HOTEL_ID');
         $HOTEL_ID_CHILD = config('app.dossier_hotel_id_child');
         $this->cloneFacilityService->handle($HOTEL_ID_PARENT, $HOTEL_ID_CHILD);
     }

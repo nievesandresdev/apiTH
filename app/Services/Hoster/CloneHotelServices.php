@@ -19,6 +19,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+use App\Models\Customization;
+
 class CloneHotelServices
 {
     public $mailService;
@@ -796,6 +798,50 @@ class CloneHotelServices
         } catch (\Exception $e) {
             DB::rollBack();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);
+        }
+    }
+
+    public function CopyCustomization($HOTEL_ID_PARENT, $HOTEL_ID_CHILD, $CHAIN_ID_CHILD){
+        if (empty($HOTEL_ID_PARENT) || empty($HOTEL_ID_CHILD) || empty($CHAIN_ID_CHILD)) {
+            return;
+        }
+
+        $customizationParent = Customization::whereHas('chain', function($query) use ($HOTEL_ID_PARENT){
+            $query->whereHas('hotel', function($query) use ($HOTEL_ID_PARENT){
+                $query->where('id', $HOTEL_ID_PARENT);
+            });
+        })->first();
+
+        if (!$customizationParent) {
+            return;
+        }
+
+        $customizationChild = Customization::whereHas('chain', function($query) use ($CHAIN_ID_CHILD){
+            $query->where('id', $CHAIN_ID_CHILD);
+        })->first();
+
+        try {
+            DB::beginTransaction();
+
+            if (!$customizationChild) {
+                $customizationChild = $customizationParent->replicate();
+                $customizationChild->chain_id = $CHAIN_ID_CHILD;
+                $customizationChild->save();
+
+                $customizationParent->son_id = $customizationChild->id;
+                $customizationParent->save();
+            } else {
+                $customizationChild->colors = $customizationParent->colors;
+                $customizationChild->logo = $customizationParent->logo;
+                $customizationChild->name = $customizationParent->name;
+                $customizationChild->type_header = $customizationParent->type_header;
+                $customizationChild->tonality_header = $customizationParent->tonality_header;
+                $customizationChild->save();
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
         }
     }
 }
