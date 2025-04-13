@@ -14,7 +14,7 @@ use App\Utils\Enums\EnumResponse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\LegalGeneral;
 class CloneHotelServices
 {
     public $mailService;
@@ -38,16 +38,16 @@ class CloneHotelServices
         if ($originalHotel) {
             // Convierte el objeto stdClass a un arreglo de atributos
             $attributes = (array)$originalHotel;
-            
+
             // Hydrate crea una colección de modelos; obtenemos el primero
             $originalHotel = Hotel::hydrate([$attributes])->first();
-            
+
             // Asegurarse de marcarlo como existente
             $originalHotel->exists = true;
         }
         return $originalHotel;
     }
-    
+
     public function CreateChainToCopyHotel($originalHotel, $stringDiff){
         try {
             $originalChain = $originalHotel->chain;
@@ -114,21 +114,21 @@ class CloneHotelServices
             $profileData = [
                 'firstname' => $copyHotel->name,
             ];
-            
+
             // Si el usuario ya cuenta con un perfil, se actualiza; de lo contrario, se crea uno nuevo
             if ($copiedUser->profile) {
                 $copiedUser->profile()->update($profileData);
             } else {
                 $copiedUser->profile()->create($profileData);
             }
-            
+
             // Asigna el rol "Associate" al usuario
             $copiedUser->assignRole('Associate');
-            
+
             $copiedUser->hotel()->syncWithoutDetaching([
                 $copyHotel->id => [
                     'manager'      => 1,
-                    'is_default'   => 1 
+                    'is_default'   => 1
                 ]
             ]);
             return $copiedUser;
@@ -149,7 +149,7 @@ class CloneHotelServices
                 if ($stayParent->son_id) {
                     // Si ya se había creado un stay hijo previamente, se intenta recuperarlo
                     $stayChild = Stay::find($stayParent->son_id);
-                    
+
                     if ($stayChild) {
                         // Si se encontró, se actualiza sus atributos copiando los del stay padre
                         // (Ajusta los campos según corresponda)
@@ -205,7 +205,7 @@ class CloneHotelServices
         try {
             // Inicializa un arreglo para recolectar los IDs de los huéspedes copiados
             $childGuestIds = [];
-            
+
             // Itera cada huésped de la estancia padre
             foreach ($stayParent->guests as $parentGuest) {
                 $partesEmail = explode('@', $parentGuest->email);
@@ -243,7 +243,7 @@ class CloneHotelServices
                     $parentGuest->save();
                 }
                 $childGuestIds[] = $childGuest->id;
-                
+
                 //copia las consultas del huésped padre al huésped hijo
                 $this->syncQueriesForGuest($parentGuest, $childGuest, $stayParent, $stayChild);
                 // // asignando en la tabla pivote el campo device = 'Movil' para cada acceso copiado.
@@ -253,8 +253,8 @@ class CloneHotelServices
             }
             // Sincroniza la relación en la estancia hija para que tenga exactamente estos huéspedes
             $stayChild->guests()->sync(array_fill_keys($childGuestIds, ['chain_id' => $copyChain->id]));
-            
-            
+
+
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.syncGuestsForStay');
         }
@@ -340,7 +340,7 @@ class CloneHotelServices
                     $parentMessage->save();
                 }
             }
-            
+
             // Elimina los mensajes extra en el chat hijo que ya no existen en el padre
             $parentMessageIds = $parentChat->messages->pluck('son_id')->filter()->toArray();
             ChatMessage::where('chat_id', $childChat->id)
@@ -380,7 +380,7 @@ class CloneHotelServices
                     $guest->complete_checkin_data = 0;
                     $guest->checkin_email = null;
                     $guest->save();
-                    
+
                     //delete chats
                     $guest->chats()->where('stay_id',$stay->id)->delete();
                     //reset queries
@@ -395,7 +395,7 @@ class CloneHotelServices
                         $query->response_lang = null;
                         $query->save();
                     }
-                    
+
                     //delete guest notes
                     $guest->notes()->where('stay_id',$stay->id)->delete();
 
@@ -411,4 +411,7 @@ class CloneHotelServices
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);
         }
     }
+
+
+
 }
