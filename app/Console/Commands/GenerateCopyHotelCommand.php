@@ -43,28 +43,25 @@ class GenerateCopyHotelCommand extends Command
 
         $codeDiff = Carbon::now()->timestamp;
         $stringDiff = 'B';
+
         $originalHotel = $this->cloneHotelServices->findOriginalHotel();
+        Log::info('originalHotel '.json_encode($originalHotel, JSON_PRETTY_PRINT));
+
         $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
         Log::info('copyChain '.json_encode($copyChain, JSON_PRETTY_PRINT));
+
         $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
         Log::info('copyHotel '.json_encode($copyHotel, JSON_PRETTY_PRINT));
+
         $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
         Log::info('copyUser '.json_encode($copyUser, JSON_PRETTY_PRINT));
-        /* pretty json log */
-        Log::info('originalHotel '.json_encode($originalHotel, JSON_PRETTY_PRINT));
-        $cloneLegalGeneral = $this->cloneGeneralHotel->cloneLegalGeneral($originalHotel->id, $copyHotel->id);
-        Log::info('cloneLegalGeneral '.json_encode($cloneLegalGeneral, JSON_PRETTY_PRINT));
-       /*  if(!$originalHotel) return 'No existe el Hotel';
-        Log::info('originalHotel '.json_encode($originalHotel));
-        $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
-        Log::info('copyChain '.json_encode($copyChain));
-        $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
-        Log::info('copyHotel '.json_encode($copyHotel));
-        $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
-        Log::info('copyUser '.json_encode($copyUser));
+
+
         $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
         Log::info('updateTrialStays '.json_encode($updateTrialStays));
-        $this->cloneGeneralHotel->cloneLegalGeneral($originalHotel->id, $copyHotel->id); */
+
+        $cloneLegalGeneral = $this->cloneGeneralHotel->cloneLegalGeneral($originalHotel->id, $copyHotel->id);
+        Log::info('cloneLegalGeneral '.json_encode($cloneLegalGeneral, JSON_PRETTY_PRINT));
     }
 
 

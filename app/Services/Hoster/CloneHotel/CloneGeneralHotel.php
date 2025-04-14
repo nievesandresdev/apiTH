@@ -15,7 +15,7 @@ class CloneGeneralHotel
                 // Clonar
                 $childItem = $parentItem->replicate();
                 $childItem->hotel_id = $HOTEL_ID_CHILD;
-                $childItem->parent_id = $parentItem->id;
+                //$childItem->parent_id = $parentItem->id;
                 $childItem->save();
 
                 // Actualizar el padre con el ID del hijo
@@ -34,9 +34,9 @@ class CloneGeneralHotel
                 } else {
                     // Si no existe el hijo, crearlo con el mismo ID (opcional)
                     $childItem = new LegalGeneral();
-                    $childItem->id = $parentItem->son_id; // ⚠️ Solo si estás seguro de manejar IDs manualmente
+                    $childItem->id = $parentItem->son_id;
                     $childItem->hotel_id = $HOTEL_ID_CHILD;
-                    $childItem->parent_id = $parentItem->id;
+                    //$childItem->parent_id = $parentItem->id;
                     $childItem->fill($parentItem->only([
                         'name', 'address', 'nif', 'email', 'protection', 'email_protection'
                     ]));
