@@ -342,8 +342,9 @@ class UtilsController extends Controller
         // $updateCheckinSettingsInCopyHotel = $this->cloneHotelServices->UpdateCheckinSettingsInCopyHotel($originalHotel, $copyHotel);
         // $updateQuerySettingsInCopyHotel = $this->cloneHotelServices->UpdateQuerySettingsInCopyHotel($originalHotel, $copyHotel);
         // $updateRequestSettingsInCopyHotel = $this->cloneHotelServices->UpdateRequestSettingsInCopyHotel($originalHotel, $copyHotel);
-        $syncGalleryImagesAndHotelImages = $this->cloneHotelServices->SyncGalleryImagesAndHotelImages($originalHotel, $copyHotel);
-        return $syncGalleryImagesAndHotelImages;
+        // $syncGalleryImagesAndHotelImages = $this->cloneHotelServices->SyncGalleryImagesAndHotelImages($originalHotel, $copyHotel);
+        $syncWifiNetworks = $this->cloneHotelServices->SyncWifiNetworks($originalHotel, $copyHotel);
+        return $syncWifiNetworks;
     }
 
     public function testEmailPostCheckout(){

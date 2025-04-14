@@ -206,6 +206,11 @@ class Hotel extends Model
         return $this->hasOne(RequestSetting::class);
     }
 
+    public function wifiNetworks()
+    {
+        return $this->hasMany(HotelWifiNetworks::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('del', 0);
