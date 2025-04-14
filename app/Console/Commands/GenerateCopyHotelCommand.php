@@ -4,11 +4,8 @@ namespace App\Console\Commands;
 
 use App\Services\Hoster\CloneHotelServices;
 use App\Services\CloneFacilityService;
-use App\Services\Hoster\CloneHotel\CloneLegalHotel;
-use App\Services\Hoster\CloneHotel\CloneTriggersCommunicationsHotel;
-use App\Services\Hoster\CloneHotel\CloneConfigGeneral;
-use App\Services\Hoster\CloneHotel\CloneRewardsHotel;
-use App\Services\Hoster\CloneHotel\User\ProfileUserClone;
+use App\Services\Hoster\CloneHotel\{CloneLegalHotel, CloneTriggersCommunicationsHotel, CloneConfigGeneral, CloneRewardsHotel};
+use App\Services\Hoster\CloneHotel\User\{ProfileUserClone, WorkPositionClone};
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -35,6 +32,8 @@ class GenerateCopyHotelCommand extends Command
     public $cloneConfigGeneral;
     public $cloneRewardsHotel;
     public $cloneProfileUser;
+    public $cloneWorkPosition;
+
     public function __construct(
         CloneHotelServices $_CloneHotelServices,
         CloneFacilityService $_CloneFacilityService,
@@ -42,7 +41,8 @@ class GenerateCopyHotelCommand extends Command
         CloneTriggersCommunicationsHotel $_CloneTriggersCommunicationsHotel,
         CloneConfigGeneral $_CloneConfigGeneral,
         CloneRewardsHotel $_CloneRewardsHotel,
-        ProfileUserClone $_CloneProfileUser
+        ProfileUserClone $_CloneProfileUser,
+        WorkPositionClone $_CloneWorkPosition
     )
     {
         parent::__construct();
@@ -53,6 +53,7 @@ class GenerateCopyHotelCommand extends Command
         $this->cloneConfigGeneral = $_CloneConfigGeneral;
         $this->cloneRewardsHotel = $_CloneRewardsHotel;
         $this->cloneProfileUser = $_CloneProfileUser;
+        $this->cloneWorkPosition = $_CloneWorkPosition;
     }
 
     /**
@@ -107,6 +108,10 @@ class GenerateCopyHotelCommand extends Command
         // rewards (referentes y referidos) del hotel
         $this->cloneRewardsHotel->handle($originalHotel->id, $copyHotel->id,$copyUser->id);
         Log::info('cloneRewardsHotel Rewards del hotel clonado');
+
+        // posiciones de trabajo del hotel
+        $this->cloneWorkPosition->handle($originalHotel->id, $copyHotel->id);
+        Log::info('cloneWorkPosition Posiciones de trabajo del hotel clonado');
 
         // perfil del usuario del hotel
         $this->cloneProfileUser->handle($originalHotel->id, $copyHotel->id, $copyUser->id, $stringDiff);
