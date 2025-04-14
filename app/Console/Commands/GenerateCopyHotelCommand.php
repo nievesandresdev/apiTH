@@ -8,7 +8,7 @@ use App\Services\Hoster\CloneHotel\CloneLegalHotel;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-
+use App\Services\Hoster\CloneHotel\CloneTriggersCommunicationsHotel;
 class GenerateCopyHotelCommand extends Command
 {
     /**
@@ -27,16 +27,19 @@ class GenerateCopyHotelCommand extends Command
     public $cloneHotelServices;
     public $cloneFacilityService;
     public $cloneLegalHotel;
+    public $cloneTriggersCommunicationsHotel;
     public function __construct(
         CloneHotelServices $_CloneHotelServices,
         CloneFacilityService $_CloneFacilityService,
-        CloneLegalHotel $_CloneLegalHotel
+        CloneLegalHotel $_CloneLegalHotel,
+        CloneTriggersCommunicationsHotel $_CloneTriggersCommunicationsHotel
     )
     {
         parent::__construct();
         $this->cloneHotelServices = $_CloneHotelServices;
         $this->cloneFacilityService = $_CloneFacilityService;
         $this->cloneLegalHotel = $_CloneLegalHotel;
+        $this->cloneTriggersCommunicationsHotel = $_CloneTriggersCommunicationsHotel;
     }
 
     /**
@@ -71,8 +74,13 @@ class GenerateCopyHotelCommand extends Command
 
         //$this->cloneFacilityService->handle($originalHotel->id, $copyHotel->id);
 
-        $cloneLegalGeneral = $this->cloneLegalHotel->handle($originalHotel->id, $copyHotel->id);
-        Log::info('cloneLegalGeneral '.json_encode($cloneLegalGeneral, JSON_PRETTY_PRINT));
+        // politicas y normas generales del hotel
+        $this->cloneLegalHotel->handle($originalHotel->id, $copyHotel->id);
+        Log::info('cloneLegalGeneral Legal general y normas del hotel clonado');
+
+        // triggers de comunicaciones del hotel
+        $this->cloneTriggersCommunicationsHotel->cloneHotelCommunications($originalHotel->id, $copyHotel->id);
+        Log::info('cloneTriggersCommunicationsHotel Triggers de comunicaciones del hotel clonado');
     }
 
 
