@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('policie_legals', function (Blueprint $table) {
             if(!Schema::hasColumn('policie_legals', 'son_id')){
-                $table->foreignId('son_id')->nullable()->constrained('policie_legals')->onDelete('cascade');
+                $table->unsignedBigInteger('son_id')->nullable();
             }
         });
     }
@@ -25,7 +25,6 @@ return new class extends Migration
     {
         Schema::table('policie_legals', function (Blueprint $table) {
             if(Schema::hasColumn('policie_legals', 'son_id')){
-                $table->dropForeign(['son_id']);
                 $table->dropColumn('son_id');
             }
         });
