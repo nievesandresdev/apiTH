@@ -117,12 +117,4 @@ Route::group(['prefix' => 'review/notification'], function () {
 });
 
 Route::post('/async-hotel-default', [AsyncHotelDefaultController::class, 'handle']);
-Route::get('/hotel/ids-cloned', function(){
-    return response()->json([
-        'ids' => [
-            1,
-            2,
-            3
-        ]
-    ]);
-});
+Route::get('/hotel/ids-cloned', [AsyncHotelDefaultController::class, 'getIdsCloned']);
