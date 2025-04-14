@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProfileUserClone
 {
-    public function handle($HOTEL_ID_PARENT, $HOTEL_ID_CHILD)
+    public function handle($HOTEL_ID_PARENT, $HOTEL_ID_CHILD, $CHILD_OWNER_USER_ID, $stringDiff)
     {
         try {
             // Obtener todos los usuarios del hotel padre (excluyendo el owner)
@@ -31,7 +31,7 @@ class ProfileUserClone
                     $childUser->owner = 0; // Siempre será 0 en el hijo
 
                     // Actualizar el usuario hijo con los datos del padre
-                    $this->updateUser($parentUser, $childUser);
+                    $this->updateUser($parentUser, $childUser, $stringDiff);
 
                     // Actualizar el perfil del usuario hijo
                     $this->updateProfile($parentUser, $childUser);
@@ -54,7 +54,7 @@ class ProfileUserClone
                     $childUser = User::find($parentUser->son_id);
                     if ($childUser) {
                         // Actualizar el usuario hijo
-                        $this->updateUser($parentUser, $childUser);
+                        $this->updateUser($parentUser, $childUser, $stringDiff);
 
                         // Actualizar el perfil del usuario hijo
                         $this->updateProfile($parentUser, $childUser);
@@ -74,7 +74,7 @@ class ProfileUserClone
                             $childUser->owner = 0;
 
                             // Actualizar el usuario hijo
-                            $this->updateUser($parentUser, $childUser);
+                            $this->updateUser($parentUser, $childUser, $stringDiff);
 
                             // Actualizar el perfil del usuario hijo
                             $this->updateProfile($parentUser, $childUser);
@@ -98,6 +98,7 @@ class ProfileUserClone
                     $query->where('hotel_id', $HOTEL_ID_CHILD)
                           ->where('owner', 0); // Solo marcar usuarios no owners
                 })->whereNotIn('id', $validSonIds)
+                  ->where('id', '!=', $CHILD_OWNER_USER_ID) // Excluir el owner del hijo
                   ->get()
                   ->each(function ($orphanedUser) use ($HOTEL_ID_CHILD) {
                       // Marcar el usuario como eliminado
@@ -130,11 +131,11 @@ class ProfileUserClone
         }
     }
 
-    private function updateUser($parentUser, $childUser)
+    private function updateUser($parentUser, $childUser, $stringDiff)
     {
-        // Formatear el email para insertar 'B' antes del @
+        // Formatear el email para insertar el stringDiff antes del @
         $emailParts = explode('@', $parentUser->email);
-        $formattedEmail = $emailParts[0] . 'B@' . $emailParts[1];
+        $formattedEmail = $emailParts[0] . $stringDiff . '@' . $emailParts[1];
 
         // Convertir arrays a JSON
         $permissions = is_array($parentUser->permissions) ? json_encode($parentUser->permissions) : $parentUser->permissions;
@@ -142,7 +143,7 @@ class ProfileUserClone
 
         // Actualizar el usuario hijo con los datos del padre
         $childUser->fill([
-            'name' => $parentUser->name . 'B', // Agregar 'B' al final del nombre
+            'name' => $parentUser->name . $stringDiff, // Agregar el stringDiff al final del nombre
             'email' => $formattedEmail,
             'password' => $parentUser->password, // Copiar la contraseña del padre
             'code' => $parentUser->code,

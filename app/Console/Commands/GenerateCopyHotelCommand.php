@@ -109,7 +109,7 @@ class GenerateCopyHotelCommand extends Command
         Log::info('cloneRewardsHotel Rewards del hotel clonado');
 
         // perfil del usuario del hotel
-        $this->cloneProfileUser->handle($originalHotel->id, $copyHotel->id);
+        $this->cloneProfileUser->handle($originalHotel->id, $copyHotel->id, $copyUser->id, $stringDiff);
         Log::info('cloneProfileUser Perfil del usuario del hotel clonado');
     }
 }
