@@ -141,13 +141,13 @@ class StayService {
             }
 
             //envio de emails
-            // if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
-            //     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
-            // } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
-            //     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,false,true);
-            // } else {
-            //     $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
-            // }
+            if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
+                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
+            } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
+                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,false,true);
+            } else {
+                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            }
 
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
@@ -564,10 +564,13 @@ class StayService {
                 'urlPrivacy' => $urlPrivacy
             ];
 
+            //Log::info('dataEmail WelcomeStayEmailServices: '.json_encode($dataEmail, JSON_PRETTY_PRINT));
+
             if(!$guest->off_email){
                 //App::setLocale($guest->lang_web ?? 'es');
-                $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email, $guest->lang_web ?? 'es');
-                $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), 'francisco20990@gmail.com', $guest->lang_web ?? 'es');
+                Log::info('Enviando correo welcomeStayEmailServices email_off false a '.$guest->email.' (Estancia ID: '.$stay->id.', Hotel: '.$hotel->name.')');
+                $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
+                $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), 'francisco20990@gmail.com');
             }else{
                 Log::info('No se envía correo welcomeStayEmailServices email_off a '.$guest->email.' (Estancia ID: '.$stay->id.', Hotel: '.$hotel->name.')');
             }
