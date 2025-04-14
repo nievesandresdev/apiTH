@@ -67,9 +67,10 @@ class CloneLegalHotel
 
         foreach ($parentPolicies as $parentPolicy) {
             if ($parentPolicy->son_id == null) {
-                // Primera clonación
+                // Primera clonación - Nueva norma en el padre
                 $childPolicy = $parentPolicy->replicate();
                 $childPolicy->hotel_id = $HOTEL_ID_CHILD;
+                $childPolicy->son_id = null; // El hijo no debe tener son_id
                 $childPolicy->save();
 
                 // Actualizar el padre con el ID del hijo
@@ -88,6 +89,7 @@ class CloneLegalHotel
                         'penalization',
                         'penalization_details'
                     ]));
+                    $childPolicy->son_id = null; // El hijo no debe tener son_id
                     $childPolicy->save();
                     $validSonIds[] = $childPolicy->id;
                 } else {
@@ -95,6 +97,7 @@ class CloneLegalHotel
                     $childPolicy = $parentPolicy->replicate();
                     $childPolicy->id = $parentPolicy->son_id; // Mantener el mismo ID
                     $childPolicy->hotel_id = $HOTEL_ID_CHILD;
+                    $childPolicy->son_id = null; // El hijo no debe tener son_id
                     $childPolicy->exists = false; // Forzar la inserción con el ID específico
                     $childPolicy->save();
                     $validSonIds[] = $childPolicy->id;
@@ -102,10 +105,14 @@ class CloneLegalHotel
             }
         }
 
-        // IMPORTANTE: Solo eliminar las políticas del hotel HIJO que no están enlazadas
-        // No tocar las políticas del hotel padre
+        // Eliminar las políticas del hijo que no están enlazadas con el padre
         PolicyLegals::where('hotel_id', $HOTEL_ID_CHILD)
             ->whereNotIn('id', $validSonIds)
+            ->delete();
+
+        // Eliminar las políticas del padre que no tienen son_id (si se eliminaron en el padre)
+        PolicyLegals::where('hotel_id', $HOTEL_ID_PARENT)
+            ->whereNull('son_id')
             ->delete();
     }
 }
