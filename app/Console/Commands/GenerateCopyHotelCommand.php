@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\Hoster\CloneHotelServices;
 use App\Services\CloneFacilityService;
+use App\Services\Hoster\CloneHotel\CloneLegalHotel;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -24,15 +25,18 @@ class GenerateCopyHotelCommand extends Command
      */
     protected $description = 'Command description';
     public $cloneHotelServices;
-
+    public $cloneFacilityService;
+    public $cloneLegalHotel;
     public function __construct(
         CloneHotelServices $_CloneHotelServices,
-        CloneFacilityService $_CloneFacilityService
+        CloneFacilityService $_CloneFacilityService,
+        CloneLegalHotel $_CloneLegalHotel
     )
     {
         parent::__construct();
         $this->cloneHotelServices = $_CloneHotelServices;
         $this->cloneFacilityService = $_CloneFacilityService;
+        $this->cloneLegalHotel = $_CloneLegalHotel;
     }
 
     /**
@@ -43,21 +47,32 @@ class GenerateCopyHotelCommand extends Command
 
         $codeDiff = Carbon::now()->timestamp;
         $stringDiff = 'B';
+
         $originalHotel = $this->cloneHotelServices->findOriginalHotel();
-        if(!$originalHotel) return 'No existe el Hotel';
-        Log::info('originalHotel '.json_encode($originalHotel));
+        Log::info('originalHotel '.json_encode($originalHotel, JSON_PRETTY_PRINT));
+
         $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
-        Log::info('copyChain '.json_encode($copyChain));
+        Log::info('copyChain '.json_encode($copyChain, JSON_PRETTY_PRINT));
+
         $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
-        Log::info('copyHotel '.json_encode($copyHotel));
+        Log::info('copyHotel '.json_encode($copyHotel, JSON_PRETTY_PRINT));
+
         $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
-        Log::info('copyUser '.json_encode($copyUser));
-        $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
-        Log::info('updateTrialStays '.json_encode($updateTrialStays));
-        $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
-        $copyCustomization = $this->cloneHotelServices->CopyCustomization($originalHotel->id, $copyHotel->id, $copyChain->id);
-        Log::info('copyCustomization '.json_encode($copyCustomization));
-        $this->cloneFacilityService->handle($originalHotel->id, $copyHotel->id);
+        Log::info('copyUser '.json_encode($copyUser, JSON_PRETTY_PRINT));
+
+
+        /* $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
+        Log::info('updateTrialStays '.json_encode($updateTrialStays)); */
+
+        //$updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
+
+       /*  $copyCustomization = $this->cloneHotelServices->CopyCustomization($originalHotel->id, $copyHotel->id, $copyChain->id);
+        Log::info('copyCustomization '.json_encode($copyCustomization)); */
+
+        //$this->cloneFacilityService->handle($originalHotel->id, $copyHotel->id);
+
+        $cloneLegalGeneral = $this->cloneLegalHotel->handle($originalHotel->id, $copyHotel->id);
+        Log::info('cloneLegalGeneral '.json_encode($cloneLegalGeneral, JSON_PRETTY_PRINT));
     }
 
 
