@@ -50,10 +50,12 @@ class GenerateCopyHotelCommand extends Command
 
         $codeDiff = Carbon::now()->timestamp;
         $stringDiff = 'B';
-
+        $codeDiff = Carbon::now()->timestamp;
+        $stringDiff = 'B';
         $originalHotel = $this->cloneHotelServices->findOriginalHotel();
         Log::info('originalHotel '.json_encode($originalHotel, JSON_PRETTY_PRINT));
-
+        if(!$originalHotel) return 'No existe el Hotel';
+        
         $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
         Log::info('copyChain '.json_encode($copyChain, JSON_PRETTY_PRINT));
 
@@ -62,15 +64,20 @@ class GenerateCopyHotelCommand extends Command
 
         $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
         Log::info('copyUser '.json_encode($copyUser, JSON_PRETTY_PRINT));
+        
+        $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
+        Log::info('updateTrialStays '.json_encode($updateTrialStays, JSON_PRETTY_PRINT));
+        
+        $this->cloneHotelServices->CleanRealStaysInCopyHotel($copyHotel);
+        $this->cloneHotelServices->UpdateChatSettingsInCopyHotel($originalHotel, $copyHotel);
+        $this->cloneHotelServices->UpdateCheckinSettingsInCopyHotel($originalHotel, $copyHotel);
+        $this->cloneHotelServices->UpdateQuerySettingsInCopyHotel($originalHotel, $copyHotel);
+        $this->cloneHotelServices->UpdateRequestSettingsInCopyHotel($originalHotel, $copyHotel);
+        $this->cloneHotelServices->SyncGalleryImagesAndHotelImages($originalHotel, $copyHotel);
+        $this->cloneHotelServices->SyncWifiNetworks($originalHotel, $copyHotel);
 
-
-        /* $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
-        Log::info('updateTrialStays '.json_encode($updateTrialStays)); */
-
-        //$updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
-
-       /*  $copyCustomization = $this->cloneHotelServices->CopyCustomization($originalHotel->id, $copyHotel->id, $copyChain->id);
-        Log::info('copyCustomization '.json_encode($copyCustomization)); */
+        $copyCustomization = $this->cloneHotelServices->CopyCustomization($originalHotel->id, $copyHotel->id, $copyChain->id);
+        Log::info('copyCustomization '.json_encode($copyCustomization)); 
 
         //$this->cloneFacilityService->handle($originalHotel->id, $copyHotel->id);
 

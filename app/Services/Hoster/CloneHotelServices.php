@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 use App\Models\Customization;
+use App\Models\HotelWifiNetworks;
 
 class CloneHotelServices
 {
@@ -844,6 +845,61 @@ class CloneHotelServices
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+        }
+    }
+
+    public function SyncWifiNetworks($originalHotel, $copyHotel){
+        try {
+            //wifi networks
+
+            $originalWifiNetworks = $originalHotel->wifiNetworks;
+            $sonsIds = [];
+            foreach ($originalWifiNetworks as $originalWifiNetwork) {
+                if ($originalWifiNetwork->son_id) {
+                    $sonsIds[] = $originalWifiNetwork->son_id;
+                    // Si ya se había creado un stay hijo previamente, se intenta recuperarlo
+                    $wifiNetworkChild = HotelWifiNetworks::find($originalWifiNetwork->son_id);
+
+                    if ($wifiNetworkChild) {
+                        // Si se encontró, se actualiza sus atributos copiando las imagenes padre
+                        // (Ajusta los campos según corresponda)
+                        $wifiNetworkChild->fill($originalWifiNetwork->toArray());
+                        $wifiNetworkChild->hotel_id = $copyHotel->id;
+                        $wifiNetworkChild->son_id = null;
+                        $wifiNetworkChild->save();
+                    } else {
+                        // Si la imagen hijo no existe (fue eliminado en el hotel hijo),
+                        // se recrea usando el mismo id que estaba almacenado en el padre.
+                        $wifiNetworkChild = $originalWifiNetwork->replicate();
+                        // Asigna manualmente el id guardado en el padre
+                        $wifiNetworkChild->id = $originalWifiNetwork->son_id;
+                        $wifiNetworkChild->hotel_id = $copyHotel->id;
+                        $wifiNetworkChild->son_id = null;
+                        // Forzamos la inserción con el id específico.
+                        $wifiNetworkChild->exists = false;
+                        $wifiNetworkChild->save();
+                    }
+                } else {
+                    // Si la imagen padre no tiene asignado un hijo, se crea uno nuevo (sin son_id)
+                    $wifiNetworkChild = $originalWifiNetwork->replicate();
+                    $wifiNetworkChild->hotel_id = $copyHotel->id;
+                    $wifiNetworkChild->son_id = null;
+                    $wifiNetworkChild->save();
+                    // Se actualiza la imagen padre para registrar el id dla imagen hijo creado
+                    $originalWifiNetwork->son_id = $wifiNetworkChild->id;
+                    $originalWifiNetwork->save();
+                    $sonsIds[] = $wifiNetworkChild->id;
+                }
+            }
+
+            $extraWifiNetworksInChildId = $copyHotel->wifiNetworks()->pluck('id')->toArray();
+            //obtengo los ids de los lenguajes que no estan en el array $sonsIds(es decir que no son hijos)
+            $idsToDelete = array_diff($extraWifiNetworksInChildId, $sonsIds);
+            HotelWifiNetworks::whereIn('id', $idsToDelete)->delete();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], __FUNCTION__);
         }
     }
 }
