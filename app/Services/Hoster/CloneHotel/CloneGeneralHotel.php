@@ -15,7 +15,6 @@ class CloneGeneralHotel
                 // Clonar
                 $childItem = $parentItem->replicate();
                 $childItem->hotel_id = $HOTEL_ID_CHILD;
-                //$childItem->parent_id = $parentItem->id;
                 $childItem->save();
 
                 // Actualizar el padre con el ID del hijo
@@ -36,7 +35,6 @@ class CloneGeneralHotel
                     $childItem = new LegalGeneral();
                     $childItem->id = $parentItem->son_id;
                     $childItem->hotel_id = $HOTEL_ID_CHILD;
-                    //$childItem->parent_id = $parentItem->id;
                     $childItem->fill($parentItem->only([
                         'name', 'address', 'nif', 'email', 'protection', 'email_protection'
                     ]));
@@ -45,7 +43,7 @@ class CloneGeneralHotel
             }
         }
 
-        // Limpieza final: elimina hijos que no estén enlazados con el padre
+        // elimina datos que no estén enlazados con el padre
         $validSonIds = LegalGeneral::where('hotel_id', $HOTEL_ID_PARENT)->pluck('son_id');
         LegalGeneral::where('hotel_id', $HOTEL_ID_CHILD)
             ->whereNotIn('id', $validSonIds)

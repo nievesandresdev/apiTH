@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Hoster\CloneHotelServices;
+use App\Services\CloneFacilityService;
 use App\Services\Hoster\CloneHotel\CloneGeneralHotel;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -25,13 +26,16 @@ class GenerateCopyHotelCommand extends Command
     protected $description = 'Command description';
     public $cloneHotelServices;
     public $cloneGeneralHotel;
+    public $cloneFacilityService;
     public function __construct(
         CloneHotelServices $_CloneHotelServices,
+        CloneFacilityService $_CloneFacilityService,
         CloneGeneralHotel $_CloneGeneralHotel
     )
     {
         parent::__construct();
         $this->cloneHotelServices = $_CloneHotelServices;
+        $this->cloneFacilityService = $_CloneFacilityService;
         $this->cloneGeneralHotel = $_CloneGeneralHotel;
     }
 
@@ -59,6 +63,13 @@ class GenerateCopyHotelCommand extends Command
 
         $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
         Log::info('updateTrialStays '.json_encode($updateTrialStays));
+
+        $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
+
+        $copyCustomization = $this->cloneHotelServices->CopyCustomization($originalHotel->id, $copyHotel->id, $copyChain->id);
+        Log::info('copyCustomization '.json_encode($copyCustomization));
+
+        $this->cloneFacilityService->handle($originalHotel->id, $copyHotel->id);
 
         $cloneLegalGeneral = $this->cloneGeneralHotel->cloneLegalGeneral($originalHotel->id, $copyHotel->id);
         Log::info('cloneLegalGeneral '.json_encode($cloneLegalGeneral, JSON_PRETTY_PRINT));
