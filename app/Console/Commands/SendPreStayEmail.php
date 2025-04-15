@@ -74,7 +74,7 @@ class SendPreStayEmail extends Command
             ->whereDate('check_in', $targetDate)
             ->with([
                 'queries' => function ($query) {
-                    $query->select('id', 'stay_id', 'guest_id', 'answered', 'qualification','period')
+                    $query->select('id', 'stay_id', 'guest_id', 'answered', 'qualification','period','disabled')
                         ->where('period', 'pre-stay');
                 },
                 'queries.guest' => function ($query) {
@@ -165,12 +165,15 @@ class SendPreStayEmail extends Command
                 $urlCheckin = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$query->guest->id}");
                 $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
                 $urlFooterEmail = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$query->guest->id}");
+
                 $queryData = [
                     'currentPeriod' => $query->period,
                     'webappLinkInbox' => $webappLinkInbox,
                     'webappLinkInboxGoodFeel' => $webappLinkInboxGoodFeel,
-                    'answered' => $query->answered == 1 ? true : false
+                    'answered' =>  $query->disabled && $query->period == 'pre-stay' // para que se habilite la seccion de "cuentanos como recibirte"
                 ];
+
+
 
                 //corosseling que trae instalaciones exp y destinos etc
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
