@@ -245,20 +245,18 @@ class ChatService {
 
 
 
-             // Verificar si hay usuarios
-                if ($emailUserChatNew) {
-                    $communication = $stay->hotel->hotelCommunications->firstWhere('type', 'email');
-                    $shouldSend = !$communication || $communication->new_chat_email;
+            // Verificar si hay usuarios
+            if ($emailUserChatNew) {
+                $communication = $stay->hotel->hotelCommunications->firstWhere('type', 'email');
+                $shouldSend = !$communication || $communication->new_chat_email;
 
 
 
-                    if($shouldSend){ //validacion de trigger de email
+                if($shouldSend){ //validacion de trigger de email
                         // Enviar correo usuarios con newchat true
                         $emailUserChatNew->each(function ($user) use ($unansweredLastMessageData, $urlChat,$stay,$guest) {
                             $email = $user->email;
                             App::setLocale('es');
-                        //Log::info('emailUserChatNewYYYY'. $stay->hotel->name);
-
                         $data = [
                             'urlPrivacy' => buildUrlWebApp($stay->hotel->subdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang=es"),
                             'urlFooterEmail' => buildUrlWebApp($stay->hotel->subdomain, $stay->hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$guest->id}")

@@ -328,15 +328,6 @@ class SendPostStayEmails extends Command
                 }
             }
 
-           /*  DB::table('email_notifications')->insert(
-                [
-                    'stay_id' => $stay->id,
-                    'hotel_id' => $stay->hotelId,
-                    'post_checkin' => 1,
-                    'sent_at' => now()
-                ]
-            ); */
-
         }
     }
 
@@ -440,14 +431,16 @@ class SendPostStayEmails extends Command
                 ];
 
                 Log::info('handleSendEmailPostCheckout en esta enviando email a '.$query->guest->email);
+                $communication = $stay->hotel->hotelCommunications->firstWhere('type', 'email');
+                $shouldSend = !$communication || $communication->post_checkin_email;
 
                 try {
-                    if(!$query->guest->off_email){
-                        $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                        $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
-                        Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
+                    if(!$query->guest->off_email && $shouldSend){ //validacion de trigger de email y si el huésped no tiene off_email
+                            $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
+                            $this->mailService->sendEmail(new postCheckoutMail($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
+                            Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
                     }else{
-                        Log::info("No se envía correo postCheckout email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
+                        Log::info("No se envía correo postCheckout email_off o trigger off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotel->name})");
                     }
 
                 } catch (\Exception $e) {

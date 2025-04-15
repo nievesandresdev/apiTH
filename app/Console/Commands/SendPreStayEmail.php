@@ -161,7 +161,7 @@ class SendPreStayEmail extends Command
                 $urlWebapp = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain);
                 $webappLinkInbox = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox');
                 $webappLinkInboxGoodFeel = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'inbox',"e={$stay->id}&g={$query->guest->id}&fill=VERYGOOD");
-                $webappChatLink = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'chat');
+                $webappChatLink = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'chat',"e={$stay->id}&g={$query->guest->id}");
                 $urlCheckin = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$query->guest->id}");
                 $urlPrivacy = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$query->guest->id}&email=true&lang={$query->guest->lang_web}");
                 $urlFooterEmail = buildUrlWebApp($chainSubdomain, $stay->hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$query->guest->id}");
