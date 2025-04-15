@@ -76,7 +76,7 @@ class ChatService {
                 ], [
                     'pending' => true,
             ]);
-            
+
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
                 'text' => $request->text,
@@ -89,9 +89,9 @@ class ChatService {
              *
              */
             // Log::info('sendMsgToHoster $chatMessage'. json_encode($chatMessage));
-            
+
             $msg = $guest->chatMessages()->save($chatMessage);
-            
+
             //$this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
             $msg->load('messageable');
             if($msg){
@@ -249,6 +249,7 @@ class ChatService {
                 // Enviar correo usuarios con newchat true
                 $emailUserChatNew->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
                     $email = $user->email;
+                    Log::info('emailUserChatNew'. $email);
                     $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,$user->id, 'new'), $email);
                 });
             }
@@ -532,7 +533,7 @@ class ChatService {
         }
         $default = defaultChatSettings();
         return $default->languages;
-         
+
         } catch (\Exception $e) {
             return $e;
         }
