@@ -13,7 +13,7 @@ use App\Services\QuerySettingsServices;
 use App\Mail\Guest\{prepareArrival};
 use App\Services\UtilityService;
 use App\Services\Hoster\UtilsHosterServices;
-
+use Illuminate\Support\Facades\App;
 class SendPreStayEmail extends Command
 {
     /**
@@ -131,6 +131,7 @@ class SendPreStayEmail extends Command
             }
 
             foreach ($stay->queries as $query) {
+                App::setLocale($query->guest->lang_web ?? 'es');
                 if (!$query->guest || !$query->guest->email) {
                     Log::warning('Consulta sin huésped válido', ['query_id' => $query->id]);
                     continue;
@@ -174,8 +175,8 @@ class SendPreStayEmail extends Command
                 //corosseling que trae instalaciones exp y destinos etc
                 $crosselling = $this->utilityService->getCrossellingHotelForMail($stay->hotel, $chainSubdomain);
 
-                //$urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
-                $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+                $urlQr = generateQr($stay->hotel->subdomain, $urlWebapp);
+                //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
 
 
                 $dataEmail = [
@@ -200,6 +201,7 @@ class SendPreStayEmail extends Command
                 try {
                     if(!$query->guest->off_email){
                         if($shouldSend){
+
                             $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
                             $this->mailService->sendEmail(new prepareArrival($type, $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
                             Log::info('Correo enviado correctamente handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
