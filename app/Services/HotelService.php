@@ -175,6 +175,12 @@ class HotelService {
     }
 
     public function updateProfile ($request, $hotelModel) {
+        Log::info('delete_imgs '.json_encode($request->delete_imgs));
+        if(is_array($request->delete_imgs) && count($request->delete_imgs)){
+            foreach ($request->delete_imgs as $img_id) {
+                ImagesHotels::where("hotel_id", $hotelModel->id)->where("id", $img_id)->delete();
+            }
+        }
         $hotelModel->name = $request->name;
         $hotelModel->type = $request->type;
         $hotelModel->category = $request->category;
