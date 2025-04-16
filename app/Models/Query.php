@@ -22,9 +22,10 @@ class Query extends Model
         'responded_at',
         'disabled'
     ];
-    
+
     protected $casts = [
         'comment' => 'array',
+        'disabled' => 'boolean'
     ];
 
     //attrs
@@ -32,7 +33,7 @@ class Query extends Model
     {
         return boolval($value);
     }
-    
+
     public function getSeenAttribute($value)
     {
         return boolval($value);
