@@ -24,7 +24,7 @@ use App\Mail\Chats\ChatEmail;
 use App\Services\MailService;
 use App\Jobs\Chat\NofityPendingChat;
 use App\Models\ChatHour;
-
+use Illuminate\Support\Facades\App;
 class ChatService {
 
     public $settings;
@@ -61,6 +61,7 @@ class ChatService {
             // Usuarios con notificaciones push
             $pushUsers = $usersByChannel['push'];
             $emailUserChatNew = $usersByChannel['email'];
+            //Log::info('emailUserChatNew'. $emailUserChatNew);
 
 
             DB::beginTransaction();
@@ -76,7 +77,7 @@ class ChatService {
                 ], [
                     'pending' => true,
             ]);
-            
+
             $chatMessage = new ChatMessage([
                 'chat_id' => $chat->id,
                 'text' => $request->text,
@@ -89,9 +90,9 @@ class ChatService {
              *
              */
             // Log::info('sendMsgToHoster $chatMessage'. json_encode($chatMessage));
-            
+
             $msg = $guest->chatMessages()->save($chatMessage);
-            
+
             //$this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg);
             $msg->load('messageable');
             if($msg){
@@ -192,6 +193,7 @@ class ChatService {
                     $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'test'), 'francisco20990@gmail.com');
                 });
             } */
+
              $this->notificationsToHosterWhenSendMsg($chat, $hotel, $settings, $stay, $guest, $msg,$emailUserChatNew);
             }
 
@@ -243,14 +245,27 @@ class ChatService {
 
 
 
-             // Verificar si hay usuarios
-             if ($emailUserChatNew) {
+            // Verificar si hay usuarios
+            if ($emailUserChatNew) {
+                $communication = $stay->hotel->hotelCommunications->firstWhere('type', 'email');
+                $shouldSend = !$communication || $communication->new_chat_email;
 
-                // Enviar correo usuarios con newchat true
-                $emailUserChatNew->each(function ($user) use ($unansweredLastMessageData, $urlChat) {
-                    $email = $user->email;
-                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,$user->id, 'new'), $email);
-                });
+
+
+                if($shouldSend){ //validacion de trigger de email
+                        // Enviar correo usuarios con newchat true
+                        $emailUserChatNew->each(function ($user) use ($unansweredLastMessageData, $urlChat,$stay,$guest) {
+                            $email = $user->email;
+                            App::setLocale('es');
+                        $data = [
+                            'urlPrivacy' => buildUrlWebApp($stay->hotel->subdomain, $stay->hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang=es"),
+                            'urlFooterEmail' => buildUrlWebApp($stay->hotel->subdomain, $stay->hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$guest->id}")
+                        ];
+
+                        $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,null,$user->id, 'new',$stay->hotel,$data), $email);
+                        Log::info('newChatService'. $data);
+                    });
+                }
             }
 
             // Extraer los roles de usuario a notificar para un nuevo mensaje
@@ -532,7 +547,7 @@ class ChatService {
         }
         $default = defaultChatSettings();
         return $default->languages;
-         
+
         } catch (\Exception $e) {
             return $e;
         }
