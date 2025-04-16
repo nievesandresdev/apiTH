@@ -333,18 +333,8 @@ class UtilsController extends Controller
         if(!$originalHotel) return 'No existe el Hotel';
         $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
         $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
-        $copyUser = $this->cloneHotelServices->CreateCopyOwnerUser($originalHotel, $codeDiff, $copyChain, $copyHotel);
-        //trial stays
-        $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
-        //clean real stays in copy hotel
-        $cleanRealStaysInCopyHotel = $this->cloneHotelServices->CleanRealStaysInCopyHotel($copyHotel);
-        $updateSettingsInCopyHotel = $this->cloneHotelServices->UpdateChatSettingsInCopyHotel($originalHotel, $copyHotel);
-        $updateCheckinSettingsInCopyHotel = $this->cloneHotelServices->UpdateCheckinSettingsInCopyHotel($originalHotel, $copyHotel);
-        $updateQuerySettingsInCopyHotel = $this->cloneHotelServices->UpdateQuerySettingsInCopyHotel($originalHotel, $copyHotel);
-        $updateRequestSettingsInCopyHotel = $this->cloneHotelServices->UpdateRequestSettingsInCopyHotel($originalHotel, $copyHotel);
-        $syncGalleryImagesAndHotelImages = $this->cloneHotelServices->SyncGalleryImagesAndHotelImages($originalHotel, $copyHotel);
-        $syncWifiNetworks = $this->cloneHotelServices->SyncWifiNetworks($originalHotel, $copyHotel);
-        return $syncWifiNetworks;
+        $syncTranslateCopyHotel = $this->cloneHotelServices->SyncTranslateCopyHotel($originalHotel, $copyHotel);
+        return $syncTranslateCopyHotel;
     }
 
     public function testEmailPostCheckout(){

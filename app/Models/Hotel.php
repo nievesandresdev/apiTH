@@ -211,6 +211,11 @@ class Hotel extends Model
         return $this->hasMany(HotelWifiNetworks::class);
     }
 
+    public function languageNames()
+    {
+        return $this->hasMany(HotelTranslate::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('del', 0);
