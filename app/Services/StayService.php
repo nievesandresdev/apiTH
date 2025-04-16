@@ -534,7 +534,7 @@ class StayService {
 
             $urlWebapp = buildUrlWebApp($chainSubdomain, $hotel->subdomain);
 
-            $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat');
+            $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat',"e={$stay->id}&g={$guest->id}");
 
 
             $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
