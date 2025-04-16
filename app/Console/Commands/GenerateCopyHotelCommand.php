@@ -82,6 +82,7 @@ class GenerateCopyHotelCommand extends Command
         $updateTrialStays = $this->cloneHotelServices->UpdateTrialStays($originalHotel, $copyHotel, $copyChain);
         Log::info('updateTrialStays '.json_encode($updateTrialStays, JSON_PRETTY_PRINT));
 
+        $this->cloneHotelServices->SyncTranslateCopyHotel($originalHotel, $copyHotel);
         $this->cloneHotelServices->CleanRealStaysInCopyHotel($copyHotel);
         $this->cloneHotelServices->UpdateChatSettingsInCopyHotel($originalHotel, $copyHotel);
         $this->cloneHotelServices->UpdateCheckinSettingsInCopyHotel($originalHotel, $copyHotel);

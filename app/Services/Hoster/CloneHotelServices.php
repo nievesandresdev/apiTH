@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 use App\Models\Customization;
+use App\Models\HotelTranslate;
 use App\Models\HotelWifiNetworks;
 
 class CloneHotelServices
@@ -93,6 +94,41 @@ class CloneHotelServices
             return $copiedHotel;
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.CreateCopyHotel');
+        }
+    }
+
+    public function SyncTranslateCopyHotel($originalHotel, $copyHotel)
+    {
+        try {
+            $originalTranslates = $originalHotel->languageNames;
+            foreach ($originalTranslates as $originalTranslate) {
+                if ($originalTranslate->son_id) {
+                    // Si ya se había creado un translate hijo previamente, se intenta recuperarlo
+                    $translateChild = HotelTranslate::find($originalTranslate->son_id);
+
+                    if ($translateChild) {
+                        // Si se encontró, se actualiza sus atributos copiando las traducciones padre
+                        $translateChild->fill($originalTranslate->toArray());
+                        $translateChild->hotel_id = $copyHotel->id;
+                        $translateChild->son_id = null;
+                        $translateChild->save();
+                    } 
+                } else {
+                    // Si la traduccion padre no tiene asignado un hijo, se crea uno nuevo (sin son_id)
+                    $translateChild = $originalTranslate->replicate();
+                    $translateChild->hotel_id = $copyHotel->id;
+                    $translateChild->son_id = null;
+                    $translateChild->save();
+                    // Se actualiza la traduccion padre para registrar el id dla traduccion hijo creado
+                    $originalTranslate->son_id = $translateChild->id;
+                    $originalTranslate->save();
+                }
+            }
+            return true;
+
+            
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.SyncTranslateCopyHotel');
         }
     }
 
