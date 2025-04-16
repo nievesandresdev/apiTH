@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\Hoster\CloneHotelServices;
 use App\Services\CloneFacilityService;
-use App\Services\Hoster\CloneHotel\{CloneLegalHotel, CloneTriggersCommunicationsHotel, CloneConfigGeneral, CloneRewardsHotel};
+use App\Services\Hoster\CloneHotel\{CloneLegalHotel, CloneTriggersCommunicationsHotel, CloneConfigGeneral, CloneRewardsHotel, CreateInifiteStay};
 use App\Services\Hoster\CloneHotel\User\{ProfileUserClone, WorkPositionClone};
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -33,6 +33,7 @@ class GenerateCopyHotelCommand extends Command
     public $cloneRewardsHotel;
     public $cloneProfileUser;
     public $cloneWorkPosition;
+    public $createInfiniteStay;
 
     public function __construct(
         CloneHotelServices $_CloneHotelServices,
@@ -42,7 +43,8 @@ class GenerateCopyHotelCommand extends Command
         CloneConfigGeneral $_CloneConfigGeneral,
         CloneRewardsHotel $_CloneRewardsHotel,
         ProfileUserClone $_CloneProfileUser,
-        WorkPositionClone $_CloneWorkPosition
+        WorkPositionClone $_CloneWorkPosition,
+        CreateInifiteStay $_CreateInifiteStay
     )
     {
         parent::__construct();
@@ -54,6 +56,7 @@ class GenerateCopyHotelCommand extends Command
         $this->cloneRewardsHotel = $_CloneRewardsHotel;
         $this->cloneProfileUser = $_CloneProfileUser;
         $this->cloneWorkPosition = $_CloneWorkPosition;
+        $this->createInfiniteStay = $_CreateInifiteStay;
     }
 
     /**
@@ -61,7 +64,7 @@ class GenerateCopyHotelCommand extends Command
      */
     public function handle()
     {
-        $codeDiff = Carbon::now()->timestamp;
+        $codeDiff = '974'; //email
         $stringDiff = 'B';
         $originalHotel = $this->cloneHotelServices->findOriginalHotel();
         Log::info('originalHotel '.json_encode($originalHotel, JSON_PRETTY_PRINT));
@@ -117,5 +120,9 @@ class GenerateCopyHotelCommand extends Command
         // perfil del usuario del hotel
         $this->cloneProfileUser->handle($originalHotel->id, $copyHotel->id, $copyUser->id, $stringDiff);
         Log::info('cloneProfileUser Perfil del usuario del hotel clonado');
+
+        // Crear estancia infinita para el hotel clonado
+        $this->createInfiniteStay->handle($copyHotel->id);
+        Log::info('Infinite stay created for cloned hotel');
     }
 }
