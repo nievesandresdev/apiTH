@@ -19,20 +19,20 @@ class ChatEmail extends Mailable
     public $time;
     public $user;
     public $idUser;
-    //public $hotel;
-
+    public $hotel;
+    public $data;
     /**
      * Create a new message instance.
      */
-    public function __construct($unansweredMessagesData,$url,$time = null,$idUser = null,$type)
+    public function __construct($unansweredMessagesData,$url,$time = null,$idUser = null,$type='new',$hotel = null,$data = [])
     {
         $this->unansweredMessagesData = $unansweredMessagesData ?? [];
         $this->type = $type;
         $this->url = $url;
         $this->time = $time;
         $this->idUser = $idUser;
-
-        //$this->hotel = $hotel;
+        $this->hotel = $hotel;
+        $this->data = $data;
     }
 
     public function build()

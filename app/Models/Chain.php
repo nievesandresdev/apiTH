@@ -9,11 +9,11 @@ class Chain extends Model
 {
     use HasFactory;
 
-    public $fillable = ['subdomain','type'];
+    public $fillable = ['subdomain','type','parent_hotel_id'];
 
-    public function customization()
+    public function hotel()
     {
-        return $this->hasOne(Customization::class);
+        return $this->hasOne(Hotel::class);
     }
 
     public function hotels()
@@ -23,6 +23,11 @@ class Chain extends Model
     public function subdomainActive()
     {
         return $this->hasOne(ChainSubdomain::class)->where('active', 1);
+    }
+
+    public function customization()
+    {
+        return $this->hasOne(Customization::class);
     }
 
 }

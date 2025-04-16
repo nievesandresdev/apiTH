@@ -16,6 +16,10 @@ class LegalServices {
         return $hotel->policies()->paginate($perPage, ['*'], 'page', $page);
     }
 
+    public function getCountPoliciesByHotel($hotel) {
+        return $hotel->policies()->count();
+    }
+
     public function storeOrUpdateLegalGeneral($hotel, $data)
     {
         $legalGeneral = LegalGeneral::updateOrCreate(

@@ -38,7 +38,7 @@ class QueryHosterServices {
 
     public function getFeedbackSummaryByGuest ($stayId, $guestId, $hotel) {
         try {
-            $guestData = Guest::select('id','name','acronym','lang_web','color')
+            $guestData = Guest::select('id','name','lastname','acronym','lang_web','color')
                         ->with([
                             'notes' => function($q) use($stayId){
                             $q->where('stay_id', $stayId);

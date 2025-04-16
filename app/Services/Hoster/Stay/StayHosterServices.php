@@ -222,7 +222,7 @@ class StayHosterServices {
             $formatCheckin = $this->utilsServices->formatDateToDayMonthAndYear($stay->check_in);
             $formatCheckout = $this->utilsServices->formatDateToDayMonthAndYear($stay->check_out);
 
-            $guests = $stay->guests()->select('guests.id','guests.name','guests.lang_web','guests.acronym','guests.color')->get();
+            $guests = $stay->guests()->select('guests.id','guests.name','guests.lastname','guests.lang_web','guests.acronym','guests.color')->get();
 
             $url_stay_icon = 'https://ui-avatars.com/api/?name=ES&color=fff&background=34A98F';
             $optionsListNote = [
@@ -230,7 +230,7 @@ class StayHosterServices {
             ];
             foreach ($guests as $key => $g) {
                 $url_g_icon = "https://ui-avatars.com/api/?name=$g->acronym&color=fff&background=$g->color";
-                array_push($optionsListNote, ['img' => $url_g_icon, 'label' => $g->name, 'value' => $g->id]);
+                array_push($optionsListNote, ['img' => $url_g_icon, 'label' => $g->name.' '.$g->lastname, 'value' => $g->id]);
             }
 
             $notes = $this->getAllNotesByStay($stay->id);
@@ -341,16 +341,36 @@ class StayHosterServices {
 
     public function deleteTestStays($hotelId) {
         try {
-            $delete = Stay::where('hotel_id',$hotelId)
-                    ->where('trial',1)
-                    ->delete();
+            // $delete = Stay::where('hotel_id',$hotelId)
+            //         ->where('trial',1)
+            //         ->delete();
+            
+
+            $delete = Stay::where('hotel_id', $hotelId)
+            ->where('trial', 1)
+            ->get()
+            ->each(function ($stay) {
+                // Eliminamos registros relacionados en cada tabla
+                DB::table('stay_accesses')->where('stay_id', $stay->id)->delete();
+                DB::table('queries')->where('stay_id', $stay->id)->delete();
+                DB::table('chats')->where('stay_id', $stay->id)->delete();
+                DB::table('guest_stay')->where('stay_id', $stay->id)->delete();
+                DB::table('note_guests')->where('stay_id', $stay->id)->delete();
+                DB::table('note_stays')->where('stay_id', $stay->id)->delete();
+                
+                // Finalmente, se elimina la estancia
+                $stay->delete();
+            });
             sendEventPusher('private-update-stay-list-hotel.' . $hotelId, 'App\Events\UpdateStayListEvent', []);
             return $delete;
         } catch (\Exception $e) {
             return $e;
         }
     }
-    
+
+    public function findById($stayId) {
+        return Stay::find($stayId);
+    }
     //notes 
 
     public function getAllNotesByStay($stayId){

@@ -16,6 +16,13 @@ class FacilityHosterLanguage extends Model
         'language',
         'schedule',
         'ad_tag',
+        // para sincronización el registro padre y el registro hijo
+        'son_id',
     ];
+
+    public function facilityHoster()
+    {
+        return $this->belongsTo(FacilityHoster::class);
+    }
 
 }

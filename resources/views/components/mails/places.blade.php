@@ -2,12 +2,12 @@
     <!-- Título -->
     @if($type == 'welcome' || $type == 'postCheckin' || $type == 'prepare-arrival' || $type == 'inviteGuestFromSaas')
         <h2 style="margin:0; color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
-            Te esperan estos Destinos y muchos más
+            {{ __('mail.places.titleWelcome') }}
         </h2>
     @endif
     @if($type == 'checkout')
         <h2 style="margin:0; color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
-            Estos destinos te estarán esperando
+            {{ __('mail.places.titleCheckout') }}
         </h2>
     @endif
 
@@ -48,7 +48,7 @@
                                     href="{{ $item['url_webapp'] }}"
                                     style="color:#333;font-family: Arial;font-size: 10.5px;font-weight: 700;line-height: 114.286%;text-decoration: underline;"
                                 >
-                                    Ver en la WebApp
+                                    {{ __('mail.places.button') }}
                                 </a>
                             </div>
                         </div>

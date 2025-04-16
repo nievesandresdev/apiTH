@@ -10,7 +10,7 @@
             <!-- Text -->
             <td style="width: 60%; text-align: left; vertical-align: middle; padding-left: 10px;">
               <span style="color: #333; font-family: Arial; font-size: 14px; font-style: normal; font-weight: 400; line-height: normal;">
-                Escanea el QR y accede a la WebApp
+                {{ __('mail.qrHotel.body') }}
               </span>
             </td>
           </tr>

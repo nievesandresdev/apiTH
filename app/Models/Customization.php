@@ -15,12 +15,19 @@ class Customization extends Model
         'name',
         'type_header',
         'tonality_header',
-        'chain_id'
+        'chain_id',
+        //
+        'son_id'
     ];
 
     protected $casts = [
         'colors' => 'array',
     ];
+
+    public function chain()
+    {
+        return $this->belongsTo(Chain::class);
+    }
 
 
     public function valueDefault () {

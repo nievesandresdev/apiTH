@@ -6,7 +6,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 class MsgStay extends Mailable
 {
     use Queueable, SerializesModels;
@@ -19,6 +20,7 @@ class MsgStay extends Mailable
     public $data;
     public $after;
     public $beforeCheckin;
+    public $locale;
     /**
      * Create a new message instance.
      *
@@ -39,6 +41,8 @@ class MsgStay extends Mailable
         $this->data = $data;
         $this->after = $after;
         $this->beforeCheckin = $beforeCheckin;
+        $this->locale = $guest->lang_web ?? 'es';
+
     }
 
     /**
@@ -49,12 +53,21 @@ class MsgStay extends Mailable
     public function build()
     {
 
-        $subject = 'Gracias por elegirnos.';
-        if($this->type == 'welcome' || $this->type == 'inviteGuestFromSaas'){
-            $subject = 'Te damos la bienvenida a la WebApp de '.$this->hotel->name;
-        }
-        if($this->type == 'postCheckin'){
-            $subject = '¿Qué tal va todo?';
+        App::setLocale($this->locale);
+        //Log::info('Locale: ',['locale' => $this->locale,'lang_web guest' => $this->guest->lang_web]);
+
+        // Definir el asunto traducido según el tipo
+        switch ($this->type) {
+            case 'welcome':
+            case 'inviteGuestFromSaas':
+                $subject = __('mail.welcome.subject', ['hotel' => $this->hotel->name]);
+                break;
+            case 'postCheckin':
+                $subject = __('mail.postCheckin.subject');
+                break;
+            default:
+                $subject = __('mail.default.subject');
+                break;
         }
 
         // if($this->type == 'welcome'){

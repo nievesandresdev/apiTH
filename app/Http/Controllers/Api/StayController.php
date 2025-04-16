@@ -10,7 +10,7 @@ use App\Models\Stay;
 use App\Services\GuestService;
 use App\Services\StayAccessService;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 use App\Utils\Enums\EnumResponse;
 use App\Services\StayService;
 class StayController extends Controller
@@ -82,7 +82,8 @@ class StayController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.createAndInviteGuest');
+            Log::error('Error creating and inviting guest: ' . $e->getMessage());
+            return bodyResponseRequest(EnumResponse::ERROR, $e->getMessage(), [], self::class . '.createAndInviteGuest');
         }
     }
 

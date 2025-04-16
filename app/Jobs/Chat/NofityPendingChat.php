@@ -81,14 +81,23 @@ class NofityPendingChat implements ShouldQueue
             // );
 
             $unansweredMessagesData = $this->chatService->unansweredMessagesData($chat->id,'ToHoster');
-            Log::info("NofityPendingChat". json_encode($unansweredMessagesData));
+            //Log::info("NofityPendingChat". json_encode($unansweredMessagesData));
             Log::info("NofityPendingChat". json_encode($this->userToNotify));
             Log::info("NofityPendingChattime". json_encode($this->time));
 
-            foreach ($this->userToNotify as $user) {
-                $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,$this->url,$this->time,$user['id'],'pending'), $user['email']);
-                //$this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,$this->url,null,2337, 'test'), 'francisco20990@gmail.com');
-                //$this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat,$this->time,$user->id, 'new'), $email);
+            $data = [
+                'urlPrivacy' => buildUrlWebApp($this->stay->hotel->subdomain, $this->stay->hotel->subdomain,'privacidad',"e={$this->stay->id}&g={$this->guestId}&email=true&lang=es"),
+                'urlFooterEmail' => buildUrlWebApp($this->stay->hotel->subdomain, $this->stay->hotel->subdomain,'no-notificacion',"e={$this->stay->id}&g={$this->guestId}")
+            ];
+
+            $communication = $this->stay->hotel->hotelCommunications->firstWhere('type', 'email');
+            $shouldSend = !$communication || $communication->new_chat_email;
+
+            if($shouldSend){
+
+                foreach ($this->userToNotify as $user) {
+                    $this->mailService->sendEmail(new ChatEmail($unansweredMessagesData,$this->url,$this->time,$user['id'],'pending',$this->stay->hotel,$data), $user['email']);
+                }
             }
         }
     }

@@ -32,7 +32,7 @@ class ChainCustomizationController extends Controller
         $hotelModel = $request->attributes->get('hotel');
         
         $chainModel = $hotelModel->chain;
-
+        \Log::info($chainModel);
         $customizationModel = $chainModel->customization;
         if(!$customizationModel){
             $data = [

@@ -22,6 +22,8 @@ use App\Http\Controllers\Api\Users\{
 };
 use App\Http\Controllers\Api\RewardsController;
 
+use App\Http\Controllers\Api\AsyncHotelDefaultController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -114,9 +116,5 @@ Route::group(['prefix' => 'review/notification'], function () {
     Route::post('/', [revieNotificationController::class, 'send']);
 });
 
-
-
-
-
-
-
+Route::post('/async-hotel-default', [AsyncHotelDefaultController::class, 'handle']);
+Route::get('/hotel/ids-cloned', [AsyncHotelDefaultController::class, 'getIdsCloned']);

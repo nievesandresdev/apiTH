@@ -24,7 +24,13 @@ class WorkPosition extends Model
         parent::boot();
 
         static::creating(function ($work_position) {
-            $work_position->hotel_id = request()->attributes->get('hotel')->id;
+            // Solo asignar hotel_id si no está ya establecido
+            if (!isset($work_position->hotel_id)) {
+                // Intentar obtener el hotel_id del request si está disponible
+                if (request() && request()->attributes && request()->attributes->get('hotel')) {
+                    $work_position->hotel_id = request()->attributes->get('hotel')->id;
+                }
+            }
         });
     }
 
