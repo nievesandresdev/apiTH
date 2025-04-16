@@ -61,7 +61,7 @@ class GenerateCopyHotelCommand extends Command
      */
     public function handle()
     {
-        $codeDiff = Carbon::now()->timestamp;
+        $codeDiff = '974'; //email
         $stringDiff = 'B';
         $originalHotel = $this->cloneHotelServices->findOriginalHotel();
         Log::info('originalHotel '.json_encode($originalHotel, JSON_PRETTY_PRINT));

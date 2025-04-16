@@ -31,9 +31,10 @@ class AsyncHotelDefaultController extends Controller
     }
 
     public function getIdsCloned() {
-        $HOTEL_ID_PARENT = config('app.DOSSIER_HOTEL_ID');
+        // $HOTEL_ID_PARENT = config('app.DOSSIER_HOTEL_ID');
         $hotel = Hotel::whereNotNull('parent_id')->first();
-        $HOTEL_ID_CHILD = $hotel ? $hotel->parent_id : null;
+        $HOTEL_ID_PARENT = $hotel ? $hotel->parent_id : null;
+        $HOTEL_ID_CHILD = $hotel ? $hotel->id : null;
         return response()->json([
             'hotel_id_parent' => $HOTEL_ID_PARENT,
             'hotel_id_child' => $HOTEL_ID_CHILD,

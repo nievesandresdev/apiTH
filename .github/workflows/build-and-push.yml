@@ -120,6 +120,8 @@ jobs:
             echo "AZURE_OPENAI_DEPLOYMENT=\"${{ vars.AZURE_OPENAI_DEPLOYMENT_MAIN }}\"" >> .env
             echo "AZURE_OPENAI_VERSION=\"${{ vars.AZURE_OPENAI_VERSION_MAIN }}\"" >> .env
 
+            echo "DOSSIER_HOTEL_ID=\"${{ vars.DOSSIER_HOTEL_ID_MAIN }}\"" >> .env
+
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
           else
             echo "ASSET_URL=${{ secrets.APP_URL_TEST }}" >> .env
@@ -186,6 +188,8 @@ jobs:
             echo "AZURE_OPENAI_API_KEY=\"${{ secrets.AZURE_OPENAI_API_KEY_TEST }}\"" >> .env
             echo "AZURE_OPENAI_DEPLOYMENT=\"${{ vars.AZURE_OPENAI_DEPLOYMENT_TEST }}\"" >> .env
             echo "AZURE_OPENAI_VERSION=\"${{ vars.AZURE_OPENAI_VERSION_TEST }}\"" >> .env
+
+            echo "DOSSIER_HOTEL_ID=\"${{ vars.DOSSIER_HOTEL_ID_TEST }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
           fi
