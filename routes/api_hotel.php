@@ -19,7 +19,7 @@ Route::group(['prefix' => 'hotel'], function () {
         Route::post('/toggleCheckinService', [HotelHosterController::class, 'toggleCheckinService']);
         Route::post('/toggleReviewsService', [HotelHosterController::class, 'toggleReviewsService']);
     });
-    
+
 
     Route::post('/appearence', [ChainCustomizationController::class, 'update']);
     Route::get('/appearence/findOne', [ChainCustomizationController::class, 'findOne']);
@@ -64,6 +64,7 @@ Route::group(['prefix' => 'hotel'], function () {
         Route::post('updateById', [HotelWifiNetworksController::class, 'updateById']);
         Route::post('updateVisibilityNetwork', [HotelWifiNetworksController::class, 'updateVisibilityNetwork']);
         Route::get('getAllByHotel', [HotelWifiNetworksController::class, 'getAllByHotel']);
+        Route::get('getAllByHotelAndVisible', [HotelWifiNetworksController::class, 'getAllByHotelAndVisible']);
     });
 
 });
