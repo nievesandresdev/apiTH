@@ -128,7 +128,10 @@ class StayHosterServices {
             }, []);
 
     
-            $stays->each(function ($stay) {
+            $stays->each(function ($stay) use ($hotel) {
+                if(!$hotel->chat_service_enabled){
+                    $stay->has_pending_chats = 0;
+                }
                 // Verificamos si al menos uno de sus huéspedes tiene complete_checkin_data = 1
                 $atLeastOneCheckin = $stay->guests->contains(fn($guest) => $guest->complete_checkin_data == 1);
                 // Agregamos la propiedad al modelo (no se guarda en DB, sino en la instancia)

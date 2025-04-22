@@ -15,6 +15,9 @@ Route::group(['prefix' => 'hotel'], function () {
 
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/deleteImageByHotel', [HotelHosterController::class, 'deleteImageByHotel']);
+        Route::post('/toggleChatService', [HotelHosterController::class, 'toggleChatService']);
+        Route::post('/toggleCheckinService', [HotelHosterController::class, 'toggleCheckinService']);
+        Route::post('/toggleReviewsService', [HotelHosterController::class, 'toggleReviewsService']);
     });
     
 
