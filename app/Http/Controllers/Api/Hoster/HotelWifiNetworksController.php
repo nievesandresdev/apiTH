@@ -88,7 +88,24 @@ class HotelWifiNetworksController extends Controller
         }
     }
 
-    
-    
-    
+    public function getAllByHotelAndVisible (Request $request) {
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->getAllByHotelAndVisible($hotel->id);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAllByHotelAndVisible');
+        }
+    }
+
+
+
+
 }
