@@ -56,8 +56,8 @@ class SendPostStayEmails extends Command
     public function handle()
     {
         $this->handleSendEmailPostChekin();
-        //$this->handleSendEmailPostCheckout();
-        //$this->handleSendEmailCheckout();
+        $this->handleSendEmailPostCheckout();
+        $this->handleSendEmailCheckout();
     }
 
     public function handleSendEmailCheckout()
