@@ -541,8 +541,8 @@ class StayService {
 
 
 
-            //$urlQr = generateQr($hotel->subdomain, $urlWebapp);
-            $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlQr = generateQr($hotel->subdomain, $urlWebapp);
+            //$urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
             $urlCheckin = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"mi-estancia/huespedes/completar-checkin/{$guest->id}");
             $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'no-notificacion',"e={$stay->id}&g={$guest->id}");
             $urlPrivacy = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}");
@@ -572,7 +572,7 @@ class StayService {
                 $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
                 $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), 'francisco20990@gmail.com');
             }else{
-                Log::info('No se envía correo welcomeStayEmailServices email_off a '.$guest->email.' (Estancia ID: '.$stay->id.', Hotel: '.$hotel->name.')');
+                Log::info('No se envía correo welcomeStayEmailServices email_off true a '.$guest->email.' (Estancia ID: '.$stay->id.', Hotel: '.$hotel->name.')');
             }
 
 
