@@ -50,7 +50,9 @@ class HotelMainDataWebappResource extends JsonResource
             "checkin"=> $this->checkin,
             "checkout"=> $this->checkout,
             "image"=> $this->image,
-            "code"=> $this->code
+            "code"=> $this->code,
+            "chat_service_enabled"=> $this->chat_service_enabled,
+            "checkin_service_enabled"=> $this->checkin_service_enabled
         ];
     }
 }

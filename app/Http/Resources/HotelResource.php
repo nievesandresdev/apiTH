@@ -105,6 +105,9 @@ class HotelResource extends JsonResource
             /* "referrals" => $this->referrals->first(),
             "referent" => $this->referent->first(), */
             "show_checkin_stay" => $this->show_checkin_stay,
+            "reviews_service_enabled" => $this->reviews_service_enabled,
+            "checkin_service_enabled" => $this->checkin_service_enabled,
+            "chat_service_enabled" => $this->chat_service_enabled,
         ];
     }
 }

@@ -70,7 +70,11 @@ class Hotel extends Model
         'offer_benefits',
         //
         'show_checkin_stay',
-        'parent_id'
+        'parent_id',
+        //
+        'chat_service_enabled',
+        'checkin_service_enabled',
+        'reviews_service_enabled',
     ];
 
     //bool offer_benefits
@@ -284,6 +288,27 @@ class Hotel extends Model
     {
         return boolval($value);
     }
+
+    public function getChatServiceEnabledAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    public function getCheckinServiceEnabledAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    public function getReviewsServiceEnabledAttribute($value)
+    {
+        return boolval($value);
+    }
+    
+    
+    
+    
+
+
 
 
 }
