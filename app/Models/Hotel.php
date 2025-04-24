@@ -268,7 +268,11 @@ class Hotel extends Model
             'show_all' => false,
         ];
 
-        return $value ? json_decode($value, true) : $defaultButtonsHome;
+        if ($value === null || $value === 'null' || $value === '') {
+            return $defaultButtonsHome;
+        }
+
+        return json_decode($value, true) ?: $defaultButtonsHome;
     }
 
     public function getImageAttribute($value)

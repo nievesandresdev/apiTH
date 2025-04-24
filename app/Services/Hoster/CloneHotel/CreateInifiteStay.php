@@ -47,7 +47,8 @@ class CreateInifiteStay
                 'number_guests' => 1,
                 'check_in' => Carbon::now(),
                 'check_out' => Carbon::create(2030, 12, 31),
-                'language' => 'es'
+                'language' => 'es',
+                //'is_demo' => true
             ]);
 
             // Verificar si ya existe el registro en guest_stay
