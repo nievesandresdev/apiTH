@@ -15,6 +15,7 @@ use App\Models\CategoriPlaces;
 use App\Models\TypePlaces;
 
 use App\Http\Resources\HotelBasicDataResource;
+use App\Http\Resources\HotelResource;
 use App\Models\ChatHour;
 
 use App\Services\Chatgpt\TranslateService;
@@ -103,12 +104,8 @@ class HotelService {
         try {
             $subdomain = $request->subdomain ?? null;
             $id = $request->id ?? null;
+            $stayDemo = $request->stayDemo ?? false;
 
-            // $query = Hotel::where(function($query) use($subdomain){
-            //     if ($subdomain) {
-            //         $query->where('subdomain', $subdomain);
-            //     }
-            // });
             if ($subdomain) {
                 $query = Hotel::where('subdomain', $subdomain);
             }
@@ -117,20 +114,24 @@ class HotelService {
                 $query = Hotel::where('id', $id);
             }
 
-
-            // $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
-            //     if ($subdomain) {
-            //         $query->where('name', $subdomain);
-            //     }
-            // });
-
-            /* if (!$subdomain) {
-                return null;
-            }
- */
             $model = $query->first();
 
-            // $data = new HotelResource($model);
+            if ($stayDemo && $model) { //si es demo, se devuelve el hotel y el stay demo
+                $demoStay = $model->stays()
+                    ->where('is_demo', true)
+                    ->with(['guests:id'])
+                    ->first();
+
+                if ($demoStay) {
+                    return [
+                        'hotel' => new HotelResource($model),
+                        'demo_stay' => [
+                            'stay_id' => $demoStay->id,
+                            'guest_id' => $demoStay->guests->first()?->id
+                        ]
+                    ];
+                }
+            }
 
             return $model;
 
