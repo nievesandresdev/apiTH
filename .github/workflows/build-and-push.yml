@@ -272,4 +272,4 @@ jobs:
               --resource-group th-test-resources \
               --image ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
           fi
-          
+        
