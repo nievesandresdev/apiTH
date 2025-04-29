@@ -67,5 +67,78 @@ class HotelHosterController extends Controller
         }
         return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
     }
+
+    public function updateContactPhones (Request $request) {
+        $hotel = $request->attributes->get('hotel');
+        $model = $this->services->updateProfileData($hotel, $request, ['phone', 'phone_optional']);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')        
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+    }
+
+    public function updateContactEmail (Request $request) {
+        $hotel = $request->attributes->get('hotel');
+        $model = $this->services->updateProfileData($hotel, $request, ['contact_email']);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')        
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+    }
+
+    public function updateContactWhatsapp    (Request $request) {
+        $hotel = $request->attributes->get('hotel');
+        $model = $this->services->updateProfileData($hotel, $request, ['contact_whatsapp_number']);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')        
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+    }
+
+    public function getProfilePhones (Request $request) {
+        $hotel = $request->attributes->get('hotel');
+        $model = $this->services->getProfileData($hotel->id, ['phone', 'phone_optional']);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')        
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        return bodyResponseRequest(EnumResponse::SUCCESS, $model);
+    }
+
+    public function getProfileEmail (Request $request) {
+        $hotel = $request->attributes->get('hotel');
+        $model = $this->services->getProfileData($hotel->id, ['contact_email']);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')        
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        return bodyResponseRequest(EnumResponse::SUCCESS, $model);
+    }
+
+    public function getProfileWhatsapp (Request $request) {
+        $hotel = $request->attributes->get('hotel');
+        $model = $this->services->getProfileData($hotel->id, ['contact_whatsapp_number']);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')        
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        return bodyResponseRequest(EnumResponse::SUCCESS, $model);
+    }
+    
     
 }
