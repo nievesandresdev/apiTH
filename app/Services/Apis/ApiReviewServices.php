@@ -193,6 +193,29 @@ class ApiReviewServices {
         return $this->convert_keys_to_snake_case($data);
     }
 
+    public function syncReviews($hotel) {
+        $body = [
+            'googleMapCid' => $hotel->code
+        ];
 
+        $http_client_service = new HttpClientService();
+        $headers = ['x-api-key' => $this->X_KEY_API];
+        $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/reviews/syncBulk", $body, $headers, 60);
+
+        $data = null;
+        if (!isset($response_request['ok']) || !$response_request['ok']) {
+            \Log::error($response_request['message']??$response_request);
+            return;
+        } else {
+            \Log::info($response_request);
+            $data = $response_request ?? null;
+        }
+        return $data;
+    }
+
+    public function updateReviews($hotel) {
+        return;
+        $reviews = $this->syncReviews($hotel);
+    }
 
 }
