@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-use App\Services\ApiReviewService;
+use App\Services\Apis\ApiReviewServices;
 use App\Models\Hotel;
 
 class UpdateReviewsCommand extends Command
@@ -13,7 +13,7 @@ class UpdateReviewsCommand extends Command
 
     protected $description = 'Command description';
 
-    public function __construct(ApiReviewService $apiReviewService)
+    public function __construct(ApiReviewServices $apiReviewService)
     {
         parent::__construct();
         $this->apiReviewService = $apiReviewService;
@@ -26,8 +26,8 @@ class UpdateReviewsCommand extends Command
         foreach ($codeHotels as $codeHotel) {
             $hotel = Hotel::where('code', $codeHotel)->first();
             if ($hotel) {
-                
-                $this->apiReviewService->updateReviews($hotel);
+
+                $this->apiReviewService->syncReviews($hotel);
             }
         }
     }
