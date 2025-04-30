@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 use App\Models\Customization;
+use App\Models\HotelTranslate;
 use App\Models\HotelWifiNetworks;
 
 class CloneHotelServices
@@ -96,6 +97,41 @@ class CloneHotelServices
         }
     }
 
+    public function SyncTranslateCopyHotel($originalHotel, $copyHotel)
+    {
+        try {
+            $originalTranslates = $originalHotel->languageNames;
+            foreach ($originalTranslates as $originalTranslate) {
+                if ($originalTranslate->son_id) {
+                    // Si ya se había creado un translate hijo previamente, se intenta recuperarlo
+                    $translateChild = HotelTranslate::find($originalTranslate->son_id);
+
+                    if ($translateChild) {
+                        // Si se encontró, se actualiza sus atributos copiando las traducciones padre
+                        $translateChild->fill($originalTranslate->toArray());
+                        $translateChild->hotel_id = $copyHotel->id;
+                        $translateChild->son_id = null;
+                        $translateChild->save();
+                    } 
+                } else {
+                    // Si la traduccion padre no tiene asignado un hijo, se crea uno nuevo (sin son_id)
+                    $translateChild = $originalTranslate->replicate();
+                    $translateChild->hotel_id = $copyHotel->id;
+                    $translateChild->son_id = null;
+                    $translateChild->save();
+                    // Se actualiza la traduccion padre para registrar el id dla traduccion hijo creado
+                    $originalTranslate->son_id = $translateChild->id;
+                    $originalTranslate->save();
+                }
+            }
+            return true;
+
+            
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.SyncTranslateCopyHotel');
+        }
+    }
+
     public function CreateCopyOwnerUser($originalHotel, $code, $copyChain, $copyHotel)
     {
         try {
@@ -146,23 +182,49 @@ class CloneHotelServices
 
     public function UpdateTrialStays($originalHotel, $copyHotel, $copyChain)
     {
+        Log::info('UpdateTrialStays');
         try {
+            // $subDays5 = Carbon::now()->subDays(5)->toDateString();
+            // $subDay = Carbon::now()->subDay()->toDateString();
+            // $subDays2 = Carbon::now()->subDays(2)->toDateString();
+            // $addDays2 = Carbon::now()->addDays(2)->toDateString();
+            // $addDays6 = Carbon::now()->addDays(6)->toDateString();
+            // $dataDates = [
+            //     'amador.rivas@email.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
+            //     'maite.figueroa.lopez@gmail.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
+            //     'antonio_recio@email.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
+            //     'enriquePastor@email.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
+            //     'BertaEscobar@email.com' => ['check_in'=>$subDays2,'check_out'=>$addDays2],
+            //     'vicente.maroto.sanchez@email.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
+            //     'fermin.trujillo@gmail.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
+            //     'calatrava.coque.25@gmail.com' => ['check_in'=>$addDays2,'check_out'=>$addDays6],
+            //     'judith,becker@email.com' => ['check_in'=>$subDays2,'check_out'=>$addDays2]
+            // ];
+
             // Obtiene las estancias 'trial' del hotel padre y las del hotel hijo
             $trialStays = $originalHotel->stays()->where('trial', 1)->get();
-
+            // Log::info('trialStays '.json_encode($trialStays, JSON_PRETTY_PRINT));
             DB::beginTransaction();
 
             foreach ($trialStays as $stayParent) {
+                $addDayCheckIn = Carbon::parse($stayParent->check_in)->addDay()->toDateString();
+                $addDayCheckOut = Carbon::parse($stayParent->check_out)->addDay()->toDateString();
+                // Log::info('check_in '.$stayParent->check_in);
+                // Log::info('addDayCheckIn '.$addDayCheckIn);
+                // Log::info('check_out '.$stayParent->check_out);
+                // Log::info('addDayCheckOut '.$addDayCheckOut);
+
                 if ($stayParent->son_id) {
                     // Si ya se había creado un stay hijo previamente, se intenta recuperarlo
                     $stayChild = Stay::find($stayParent->son_id);
-
                     if ($stayChild) {
                         // Si se encontró, se actualiza sus atributos copiando los del stay padre
                         // (Ajusta los campos según corresponda)
                         $stayChild->fill($stayParent->toArray());
                         $stayChild->hotel_id = $copyHotel->id;
                         $stayChild->son_id = null;
+                        $stayChild->check_in = $addDayCheckIn;
+                        $stayChild->check_out = $addDayCheckOut;
                         $stayChild->save();
                     } else {
                         // Si el stay hijo no existe (fue eliminado en el hotel hijo),
@@ -172,6 +234,8 @@ class CloneHotelServices
                         $stayChild->id = $stayParent->son_id;
                         $stayChild->hotel_id = $copyHotel->id;
                         $stayChild->son_id = null;
+                        $stayChild->check_in = $addDayCheckIn;
+                        $stayChild->check_out = $addDayCheckOut;
                         // Forzamos la inserción con el id específico.
                         $stayChild->exists = false;
                         $stayChild->save();
@@ -181,6 +245,8 @@ class CloneHotelServices
                     $stayChild = $stayParent->replicate();
                     $stayChild->hotel_id = $copyHotel->id;
                     $stayChild->son_id = null;
+                    $stayChild->check_in = $addDayCheckIn;
+                    $stayChild->check_out = $addDayCheckOut;
                     $stayChild->save();
                     // Se actualiza el stay padre para registrar el id del stay hijo creado
                     $stayParent->son_id = $stayChild->id;

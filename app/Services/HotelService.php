@@ -15,6 +15,7 @@ use App\Models\CategoriPlaces;
 use App\Models\TypePlaces;
 
 use App\Http\Resources\HotelBasicDataResource;
+use App\Http\Resources\HotelResource;
 use App\Models\ChatHour;
 
 use App\Services\Chatgpt\TranslateService;
@@ -103,12 +104,8 @@ class HotelService {
         try {
             $subdomain = $request->subdomain ?? null;
             $id = $request->id ?? null;
+            $stayDemo = $request->stayDemo ?? false;
 
-            // $query = Hotel::where(function($query) use($subdomain){
-            //     if ($subdomain) {
-            //         $query->where('subdomain', $subdomain);
-            //     }
-            // });
             if ($subdomain) {
                 $query = Hotel::where('subdomain', $subdomain);
             }
@@ -117,20 +114,24 @@ class HotelService {
                 $query = Hotel::where('id', $id);
             }
 
-
-            // $query = Hotel::whereHas('subdomains', function($query) use($subdomain){
-            //     if ($subdomain) {
-            //         $query->where('name', $subdomain);
-            //     }
-            // });
-
-            /* if (!$subdomain) {
-                return null;
-            }
- */
             $model = $query->first();
 
-            // $data = new HotelResource($model);
+            if ($stayDemo && $model) { //si es demo, se devuelve el hotel y el stay demo
+                $demoStay = $model->stays()
+                    ->where('is_demo', true)
+                    ->with(['guests:id'])
+                    ->first();
+
+                if ($demoStay) {
+                    return [
+                        'hotel' => new HotelResource($model),
+                        'demo_stay' => [
+                            'stay_id' => $demoStay->id,
+                            'guest_id' => $demoStay->guests->first()?->id
+                        ]
+                    ];
+                }
+            }
 
             return $model;
 
@@ -265,9 +266,9 @@ class HotelService {
         $query->chunk(50, function($hotelCollection) use($lgsAll){
             foreach ($hotelCollection as $hotelModel) {
                 var_dump("hotel:". $hotelModel->id);
-    
+
                 $translations = collect($hotelModel->translations);
-    
+
                 $lgsWithTranslations = $translations->pluck('language')->toArray();
                 $lgsWithoutTranslations = array_values(array_diff($lgsAll, $lgsWithTranslations));
                 $dirTemplateTranslate = 'translation/webapp/hotel_input/description';
@@ -352,9 +353,9 @@ class HotelService {
             $hotelModel->hiddenCategories()->detach($request->categori_places_id);
 
             $categoriplace = CategoriPlaces::find($request->categori_places_id);
-    
+
             $typeplace = $categoriplace->TypePlaces;
-    
+
             $categoriesActives = $typeplace->categoriPlaces()->where(['show' => 1, 'active' => 1])->pluck('id');
 
             $categoriesHiddenHotel = $hotelModel->hiddenCategories;
@@ -368,7 +369,7 @@ class HotelService {
         }
 
     }
-    
+
     public function updateVisivilityTypePlace ($request, $hotelModel) {
         $categoriplaces = CategoriPlaces::where(['show' => 1, 'active' => 1, 'type_places_id' => $request->type_places_id])->get()->pluck('id');
         $typeplaces = TypePlaces::where(['show' => 1, 'active' => 1])->get()->pluck('id');
@@ -378,16 +379,16 @@ class HotelService {
             // return 'e';
             $hotelModel->hiddenTypePlaces()->detach($request->type_places_id);
             $hotelModel->hiddenCategories()->detach($categoriplaces);
-            
+
             $hotelModel->show_places = true;
             $hotelModel->save();
-            
+
         } else {
             // return 't';
             $hotelModel->hiddenTypePlaces()->attach($request->type_places_id);
             $hotelModel->hiddenCategories()->syncWithoutDetaching($categoriplaces);
             $typeplacesHiddenHotel = $hotelModel->hiddenTypePlaces;
-            
+
             $typeplacesHiddenHotel = $hotelModel->hiddenTypePlaces;
             if (count($typeplaces) == count($typeplacesHiddenHotel)) {
                 $hotelModel->show_places = false;
@@ -535,7 +536,7 @@ class HotelService {
                 'hotels.show_profile','hotels.subdomain','hotels.logo','hotels.favicon','hotels.show_experiences','hotels.instagram_url',
                 'hotels.language_default_webapp','hotels.x_url','hotels.show_facilities','hotels.show_places','hotels.show_transport','hotels.show_confort','hotels.buttons_home',
                 'hotels.show_referrals','hotels.show_checkin_stay','hotels.offer_benefits','hotels.latitude','hotels.longitude',
-                'hotels.city_id','hotels.checkin','hotels.checkout','hotels.image','hotels.code'
+                'hotels.city_id','hotels.checkin','hotels.checkout','hotels.image','hotels.code','hotels.chat_service_enabled','hotels.checkin_service_enabled'
             )
             // chatSettings
             ->where('subdomain', $subdomain)

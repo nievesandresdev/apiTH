@@ -18,42 +18,60 @@ class ProfileUserClone
                 $query->where('hotel_id', $HOTEL_ID_PARENT);
             })->get();
 
-            if ($parentUsers->isEmpty()) {
-                Log::info("No hay usuarios en el hotel padre: {$HOTEL_ID_PARENT}");
-                return true; // No hay usuarios para clonar, pero no es un error
-            }
+            // Obtener todos los usuarios del hotel hijo
+            $childUsers = User::whereHas('hotel', function ($query) use ($HOTEL_ID_CHILD) {
+                $query->where('hotel_id', $HOTEL_ID_CHILD);
+            })->get();
 
-            Log::info("Iniciando clonación de perfiles de usuario", [
+            Log::info("Iniciando sincronización de usuarios", [
                 'parent_hotel_id' => $HOTEL_ID_PARENT,
                 'child_hotel_id' => $HOTEL_ID_CHILD,
-                'total_users' => $parentUsers->count()
+                'parent_users_count' => $parentUsers->count(),
+                'child_users_count' => $childUsers->count()
             ]);
+
+            // Si el padre no tiene usuarios, eliminar todos los del hijo excepto el owner
+            if ($parentUsers->isEmpty()) {
+                foreach ($childUsers as $childUser) {
+                    if ($childUser->id != $CHILD_OWNER_USER_ID) {
+                        try {
+                            // Eliminar la relación con el hotel
+                            $childUser->hotel()->detach($HOTEL_ID_CHILD);
+
+                            // Eliminar el perfil si existe
+                            if ($childUser->profile) {
+                                $childUser->profile->delete();
+                            }
+
+                            // Eliminar el usuario
+                            $childUser->delete();
+
+                            Log::info("Usuario eliminado del hotel hijo", [
+                                'user_id' => $childUser->id,
+                                'hotel_id' => $HOTEL_ID_CHILD
+                            ]);
+                        } catch (\Exception $e) {
+                            Log::error("Error al eliminar usuario del hotel hijo", [
+                                'user_id' => $childUser->id,
+                                'error' => $e->getMessage()
+                            ]);
+                        }
+                    }
+                }
+                return true;
+            }
 
             // Obtener el mapeo de work positions del padre al hijo
             $workPositionMapping = $this->getWorkPositionMapping($HOTEL_ID_PARENT, $HOTEL_ID_CHILD);
 
             foreach ($parentUsers as $parentUser) {
                 try {
-                    // Si el padre no tiene son_id, significa que es un nuevo usuario a clonar
+                    // Si el padre no tiene son_id, crear uno nuevo en el hijo
                     if (!$parentUser->son_id) {
                         // Crear nuevo usuario en el hotel hijo
                         $childUser = new User();
-
-                        // Actualizar el usuario hijo con los datos del padre
                         $this->updateUser($parentUser, $childUser, $stringDiff);
-
-                        if (!$childUser->id) {
-                            Log::error("Error al crear usuario hijo", [
-                                'parent_user_id' => $parentUser->id,
-                                'parent_hotel_id' => $HOTEL_ID_PARENT,
-                                'child_hotel_id' => $HOTEL_ID_CHILD
-                            ]);
-                            continue;
-                        }
-
-                        // Actualizar el son_id en el usuario padre
-                        $parentUser->son_id = $childUser->id;
-                        $parentUser->save();
+                        $childUser->save();
 
                         // Asociar el usuario hijo con el hotel hijo
                         $childUser->hotel()->attach($HOTEL_ID_CHILD, [
@@ -63,18 +81,20 @@ class ProfileUserClone
                         // Clonar el perfil del usuario
                         $this->cloneProfile($parentUser, $childUser, $workPositionMapping, $HOTEL_ID_PARENT, $HOTEL_ID_CHILD);
 
+                        // Actualizar el son_id en el usuario padre
+                        $parentUser->son_id = $childUser->id;
+                        $parentUser->save();
+
                         Log::info("Nuevo usuario clonado del padre al hijo", [
                             'parent_user_id' => $parentUser->id,
-                            'child_user_id' => $childUser->id,
-                            'parent_hotel_id' => $HOTEL_ID_PARENT,
-                            'child_hotel_id' => $HOTEL_ID_CHILD
+                            'child_user_id' => $childUser->id
                         ]);
                     } else {
                         // Si el padre ya tiene son_id, actualizar el usuario hijo existente
                         $childUser = User::find($parentUser->son_id);
                         if ($childUser) {
-                            // Actualizar el usuario hijo
                             $this->updateUser($parentUser, $childUser, $stringDiff);
+                            $childUser->save();
 
                             // Actualizar la relación con el hotel hijo
                             $childUser->hotel()->sync([$HOTEL_ID_CHILD => ['permissions' => json_encode([])]]);
@@ -86,59 +106,52 @@ class ProfileUserClone
                                 'parent_user_id' => $parentUser->id,
                                 'child_user_id' => $childUser->id
                             ]);
-                        } else {
-                            Log::warning("Usuario hijo no encontrado", [
-                                'parent_user_id' => $parentUser->id,
-                                'son_id' => $parentUser->son_id
-                            ]);
                         }
                     }
                 } catch (\Exception $e) {
                     Log::error("Error al procesar usuario", [
-                        'parent_user_id' => $parentUser->id ?? 'unknown',
+                        'parent_user_id' => $parentUser->id,
                         'error' => $e->getMessage()
                     ]);
                     continue;
                 }
             }
 
-            // Marcar como inactivos (status=0) los usuarios huérfanos del hijo
+            // Eliminar usuarios del hijo que no están en el padre (excepto el owner)
             $validSonIds = $parentUsers->pluck('son_id')->filter();
-            if ($validSonIds->isNotEmpty()) {
-                $orphanedUsers = User::whereHas('hotel', function ($query) use ($HOTEL_ID_CHILD) {
-                    $query->where('hotel_id', $HOTEL_ID_CHILD);
-                })->whereNotIn('id', $validSonIds)
-                  ->where('id', '!=', $CHILD_OWNER_USER_ID)
-                  ->get();
+            $orphanedUsers = User::whereHas('hotel', function ($query) use ($HOTEL_ID_CHILD) {
+                $query->where('hotel_id', $HOTEL_ID_CHILD);
+            })->whereNotIn('id', $validSonIds)
+              ->where('id', '!=', $CHILD_OWNER_USER_ID)
+              ->get();
 
-                foreach ($orphanedUsers as $orphanedUser) {
-                    try {
-                        // Marcar el usuario como inactivo
-                        $orphanedUser->status = 0;
-                        $orphanedUser->save();
+            foreach ($orphanedUsers as $orphanedUser) {
+                try {
+                    // Eliminar la relación con el hotel
+                    $orphanedUser->hotel()->detach($HOTEL_ID_CHILD);
 
-                        Log::info("Usuario huérfano marcado como inactivo", [
-                            'user_id' => $orphanedUser->id,
-                            'hotel_id' => $HOTEL_ID_CHILD
-                        ]);
-                    } catch (\Exception $e) {
-                        Log::error("Error al marcar usuario como inactivo", [
-                            'user_id' => $orphanedUser->id ?? 'unknown',
-                            'error' => $e->getMessage()
-                        ]);
+                    // Eliminar el perfil si existe
+                    if ($orphanedUser->profile) {
+                        $orphanedUser->profile->delete();
                     }
+
+                    // Eliminar el usuario
+                    $orphanedUser->delete();
+
+                    Log::info("Usuario huérfano eliminado del hotel hijo", [
+                        'user_id' => $orphanedUser->id
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error("Error al eliminar usuario huérfano", [
+                        'user_id' => $orphanedUser->id,
+                        'error' => $e->getMessage()
+                    ]);
                 }
             }
 
-            Log::info("Perfiles de usuario clonados exitosamente", [
-                'parent_hotel_id' => $HOTEL_ID_PARENT,
-                'child_hotel_id' => $HOTEL_ID_CHILD,
-                'parent_users_count' => $parentUsers->count()
-            ]);
-
             return true;
         } catch (\Exception $e) {
-            Log::error("Error al clonar perfiles de usuario: " . $e->getMessage());
+            Log::error("Error al sincronizar usuarios: " . $e->getMessage());
             return false;
         }
     }

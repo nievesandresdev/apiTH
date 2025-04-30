@@ -14,42 +14,43 @@ class WorkPositionClone
             // Obtener todos los work positions del hotel padre
             $parentWorkPositions = WorkPosition::where('hotel_id', $HOTEL_ID_PARENT)->get();
 
+            // Obtener todos los work positions del hotel hijo
+            $childWorkPositions = WorkPosition::where('hotel_id', $HOTEL_ID_CHILD)->get();
+
+            Log::info("Iniciando sincronización de work positions", [
+                'parent_hotel_id' => $HOTEL_ID_PARENT,
+                'child_hotel_id' => $HOTEL_ID_CHILD,
+                'parent_work_positions_count' => $parentWorkPositions->count(),
+                'child_work_positions_count' => $childWorkPositions->count()
+            ]);
+
+            // Si el padre no tiene work positions, eliminar todos los del hijo
             if ($parentWorkPositions->isEmpty()) {
-                Log::info("No hay work positions en el hotel padre: {$HOTEL_ID_PARENT}");
+                foreach ($childWorkPositions as $childWorkPosition) {
+                    try {
+                        $childWorkPosition->delete();
+                        Log::info("Work position eliminado del hotel hijo", [
+                            'work_position_id' => $childWorkPosition->id,
+                            'hotel_id' => $HOTEL_ID_CHILD
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error("Error al eliminar work position del hotel hijo", [
+                            'work_position_id' => $childWorkPosition->id,
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                }
                 return true;
             }
 
-            Log::info("Iniciando clonación de work positions", [
-                'parent_hotel_id' => $HOTEL_ID_PARENT,
-                'child_hotel_id' => $HOTEL_ID_CHILD,
-                'total_work_positions' => $parentWorkPositions->count()
-            ]);
-
+            // Procesar cada work position del padre
             foreach ($parentWorkPositions as $parentWorkPosition) {
                 try {
-                    // Verificar que el work position padre existe
-                    if (!$parentWorkPosition) {
-                        Log::warning("Work position padre no encontrado", [
-                            'parent_hotel_id' => $HOTEL_ID_PARENT
-                        ]);
-                        continue;
-                    }
-
-                    // Verificar que el work position padre tiene un ID válido
-                    if (!$parentWorkPosition->id) {
-                        Log::warning("Work position padre no tiene ID válido", [
-                            'parent_hotel_id' => $HOTEL_ID_PARENT
-                        ]);
-                        continue;
-                    }
-
                     // Si el padre no tiene son_id, crear uno nuevo en el hijo
                     if (!$parentWorkPosition->son_id) {
                         try {
                             // Crear nuevo work position en el hotel hijo
                             $childWorkPosition = new WorkPosition();
-
-                            // Primero establecer el hotel_id
                             $childWorkPosition->hotel_id = $HOTEL_ID_CHILD;
 
                             // Copiar todos los datos del padre al hijo
@@ -62,56 +63,66 @@ class WorkPositionClone
                                 'status' => $parentWorkPosition->status
                             ]);
 
-                            // Guardar el work position hijo
                             if (!$childWorkPosition->save()) {
                                 Log::error("Error al guardar work position hijo", [
-                                    'parent_work_position_id' => $parentWorkPosition->id,
-                                    'parent_hotel_id' => $HOTEL_ID_PARENT,
-                                    'child_hotel_id' => $HOTEL_ID_CHILD
-                                ]);
-                                continue;
-                            }
-
-                            // Verificar que el hijo se creó correctamente y tiene un ID
-                            if (!$childWorkPosition->id) {
-                                Log::error("Work position hijo no tiene ID después de guardar", [
-                                    'parent_work_position_id' => $parentWorkPosition->id,
-                                    'parent_hotel_id' => $HOTEL_ID_PARENT,
-                                    'child_hotel_id' => $HOTEL_ID_CHILD
+                                    'parent_work_position_id' => $parentWorkPosition->id
                                 ]);
                                 continue;
                             }
 
                             // Actualizar el son_id en el padre
                             $parentWorkPosition->son_id = $childWorkPosition->id;
-                            if (!$parentWorkPosition->save()) {
-                                Log::error("Error al actualizar son_id en work position padre", [
-                                    'parent_work_position_id' => $parentWorkPosition->id,
-                                    'child_work_position_id' => $childWorkPosition->id
-                                ]);
-                                continue;
-                            }
+                            $parentWorkPosition->save();
 
                             Log::info("Nuevo work position clonado del padre al hijo", [
                                 'parent_work_position_id' => $parentWorkPosition->id,
-                                'child_work_position_id' => $childWorkPosition->id,
-                                'parent_hotel_id' => $HOTEL_ID_PARENT,
-                                'child_hotel_id' => $HOTEL_ID_CHILD
+                                'child_work_position_id' => $childWorkPosition->id
                             ]);
                         } catch (\Exception $e) {
                             Log::error("Error al crear work position hijo", [
                                 'parent_work_position_id' => $parentWorkPosition->id,
-                                'error' => $e->getMessage(),
-                                'trace' => $e->getTraceAsString()
+                                'error' => $e->getMessage()
                             ]);
                             continue;
                         }
                     } else {
-                        // Si el padre ya tiene son_id, actualizar el work position hijo existente
+                        // Si el padre ya tiene son_id, verificar si el hijo existe
                         $childWorkPosition = WorkPosition::find($parentWorkPosition->son_id);
-                        if ($childWorkPosition) {
+
+                        if (!$childWorkPosition) {
+                            // Si el hijo fue eliminado, crear uno nuevo con el mismo ID
                             try {
-                                // Actualizar el work position hijo
+                                $childWorkPosition = new WorkPosition();
+                                $childWorkPosition->id = $parentWorkPosition->son_id;
+                                $childWorkPosition->exists = false; // Forzar la creación con ID específico
+                                $childWorkPosition->hotel_id = $HOTEL_ID_CHILD;
+
+                                $childWorkPosition->fill([
+                                    'name' => $parentWorkPosition->name,
+                                    'permissions' => $parentWorkPosition->permissions,
+                                    'notifications' => $parentWorkPosition->notifications,
+                                    'periodicity_chat' => $parentWorkPosition->periodicity_chat,
+                                    'periodicity_stay' => $parentWorkPosition->periodicity_stay,
+                                    'status' => $parentWorkPosition->status
+                                ]);
+
+                                $childWorkPosition->save();
+
+                                Log::info("Work position hijo restaurado", [
+                                    'parent_work_position_id' => $parentWorkPosition->id,
+                                    'child_work_position_id' => $childWorkPosition->id
+                                ]);
+                            } catch (\Exception $e) {
+                                Log::error("Error al restaurar work position hijo", [
+                                    'parent_work_position_id' => $parentWorkPosition->id,
+                                    'son_id' => $parentWorkPosition->son_id,
+                                    'error' => $e->getMessage()
+                                ]);
+                                continue;
+                            }
+                        } else {
+                            // Si el hijo existe, actualizarlo
+                            try {
                                 $childWorkPosition->fill([
                                     'name' => $parentWorkPosition->name,
                                     'permissions' => $parentWorkPosition->permissions,
@@ -124,46 +135,11 @@ class WorkPositionClone
 
                                 Log::info("Work position hijo actualizado", [
                                     'parent_work_position_id' => $parentWorkPosition->id,
-                                    'child_work_position_id' => $childWorkPosition->id,
-                                    'parent_hotel_id' => $HOTEL_ID_PARENT,
-                                    'child_hotel_id' => $HOTEL_ID_CHILD
+                                    'child_work_position_id' => $childWorkPosition->id
                                 ]);
                             } catch (\Exception $e) {
                                 Log::error("Error al actualizar work position hijo", [
                                     'parent_work_position_id' => $parentWorkPosition->id,
-                                    'child_work_position_id' => $childWorkPosition->id,
-                                    'error' => $e->getMessage()
-                                ]);
-                                continue;
-                            }
-                        } else {
-                            try {
-                                // Si el hijo fue eliminado, crear uno nuevo con el mismo son_id
-                                $childWorkPosition = new WorkPosition();
-                                $childWorkPosition->id = $parentWorkPosition->son_id;
-                                $childWorkPosition->hotel_id = $HOTEL_ID_CHILD;
-                                $childWorkPosition->exists = false;
-
-                                $childWorkPosition->fill([
-                                    'name' => $parentWorkPosition->name,
-                                    'permissions' => $parentWorkPosition->permissions,
-                                    'notifications' => $parentWorkPosition->notifications,
-                                    'periodicity_chat' => $parentWorkPosition->periodicity_chat,
-                                    'periodicity_stay' => $parentWorkPosition->periodicity_stay,
-                                    'status' => $parentWorkPosition->status
-                                ]);
-                                $childWorkPosition->save();
-
-                                Log::info("Work position hijo restaurado", [
-                                    'parent_work_position_id' => $parentWorkPosition->id,
-                                    'child_work_position_id' => $childWorkPosition->id,
-                                    'parent_hotel_id' => $HOTEL_ID_PARENT,
-                                    'child_hotel_id' => $HOTEL_ID_CHILD
-                                ]);
-                            } catch (\Exception $e) {
-                                Log::error("Error al restaurar work position hijo", [
-                                    'parent_work_position_id' => $parentWorkPosition->id,
-                                    'son_id' => $parentWorkPosition->son_id,
                                     'error' => $e->getMessage()
                                 ]);
                                 continue;
@@ -172,48 +148,36 @@ class WorkPositionClone
                     }
                 } catch (\Exception $e) {
                     Log::error("Error al procesar work position", [
-                        'parent_work_position_id' => $parentWorkPosition ? $parentWorkPosition->id : 'unknown',
+                        'parent_work_position_id' => $parentWorkPosition->id,
                         'error' => $e->getMessage()
                     ]);
                     continue;
                 }
             }
 
-            // Marcar como inactivos (status=0) los work positions huérfanos del hijo
+            // Eliminar work positions del hijo que no están en el padre
             $validSonIds = $parentWorkPositions->pluck('son_id')->filter();
-            if ($validSonIds->isNotEmpty()) {
-                $orphanedWorkPositions = WorkPosition::where('hotel_id', $HOTEL_ID_CHILD)
-                    ->whereNotIn('id', $validSonIds)
-                    ->get();
+            $orphanedWorkPositions = WorkPosition::where('hotel_id', $HOTEL_ID_CHILD)
+                ->whereNotIn('id', $validSonIds)
+                ->get();
 
-                foreach ($orphanedWorkPositions as $orphanedWorkPosition) {
-                    try {
-                        // Marcar el work position como inactivo
-                        $orphanedWorkPosition->status = 0;
-                        $orphanedWorkPosition->save();
-
-                        Log::info("Work position huérfano marcado como inactivo", [
-                            'work_position_id' => $orphanedWorkPosition->id,
-                            'hotel_id' => $HOTEL_ID_CHILD
-                        ]);
-                    } catch (\Exception $e) {
-                        Log::error("Error al marcar work position como inactivo", [
-                            'work_position_id' => $orphanedWorkPosition->id ?? 'unknown',
-                            'error' => $e->getMessage()
-                        ]);
-                    }
+            foreach ($orphanedWorkPositions as $orphanedWorkPosition) {
+                try {
+                    $orphanedWorkPosition->delete();
+                    Log::info("Work position huérfano eliminado del hotel hijo", [
+                        'work_position_id' => $orphanedWorkPosition->id
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error("Error al eliminar work position huérfano", [
+                        'work_position_id' => $orphanedWorkPosition->id,
+                        'error' => $e->getMessage()
+                    ]);
                 }
             }
 
-            Log::info("Work positions clonados exitosamente", [
-                'parent_hotel_id' => $HOTEL_ID_PARENT,
-                'child_hotel_id' => $HOTEL_ID_CHILD,
-                'parent_work_positions_count' => $parentWorkPositions->count()
-            ]);
-
             return true;
         } catch (\Exception $e) {
-            Log::error("Error al clonar work positions: " . $e->getMessage());
+            Log::error("Error al sincronizar work positions: " . $e->getMessage());
             return false;
         }
     }

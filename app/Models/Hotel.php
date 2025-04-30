@@ -70,7 +70,11 @@ class Hotel extends Model
         'offer_benefits',
         //
         'show_checkin_stay',
-        'parent_id'
+        'parent_id',
+        //
+        'chat_service_enabled',
+        'checkin_service_enabled',
+        'reviews_service_enabled',
     ];
 
     //bool offer_benefits
@@ -211,6 +215,11 @@ class Hotel extends Model
         return $this->hasMany(HotelWifiNetworks::class);
     }
 
+    public function languageNames()
+    {
+        return $this->hasMany(HotelTranslate::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('del', 0);
@@ -263,7 +272,11 @@ class Hotel extends Model
             'show_all' => false,
         ];
 
-        return $value ? json_decode($value, true) : $defaultButtonsHome;
+        if ($value === null || $value === 'null' || $value === '') {
+            return $defaultButtonsHome;
+        }
+
+        return json_decode($value, true) ?: $defaultButtonsHome;
     }
 
     public function getImageAttribute($value)
@@ -275,6 +288,27 @@ class Hotel extends Model
     {
         return boolval($value);
     }
+
+    public function getChatServiceEnabledAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    public function getCheckinServiceEnabledAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    public function getReviewsServiceEnabledAttribute($value)
+    {
+        return boolval($value);
+    }
+    
+    
+    
+    
+
+
 
 
 }

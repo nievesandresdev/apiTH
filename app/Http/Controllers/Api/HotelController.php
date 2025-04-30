@@ -116,6 +116,10 @@ class HotelController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
+            if($request->stayDemo){ //si es demo, se devuelve el hotel y el stay
+                return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+            }
+
             $data = new HotelResource($model);
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
