@@ -105,8 +105,6 @@ class HotelHosterServices
         in_array('type', $updateFields, true) ? $hotel->type = $request->type : '';
         in_array('category', $updateFields, true) ? $hotel->category = $request->category : '';
         in_array('email', $updateFields, true) ? $hotel->email = $request->email : '';
-        in_array('phone', $updateFields, true) ? $hotel->phone = $request->phone : '';
-        in_array('phone_optional', $updateFields, true) ? $hotel->phone_optional = $request->phone_optional : '';
         in_array('address', $updateFields, true) ? $hotel->address = $request->address : '';
         in_array('latitude', $updateFields, true) ? $hotel->latitude = $request->metting_point_latitude : '';
         in_array('longitude', $updateFields, true) ? $hotel->longitude = $request->metting_point_longitude : '';
@@ -124,9 +122,19 @@ class HotelHosterServices
         in_array('show_profile', $updateFields, true) ? $hotel->show_profile = $request->show_profile : '';
         in_array('show_rules', $updateFields, true) ? $hotel->show_rules = $request->show_rules : '';
         in_array('buttons_home', $updateFields, true) ? $hotel->buttons_home = json_encode($request->buttons) : '';
-        // in_array('contact_email', $updateFields, true) ? $hotel->contact_email = $request->contact_email : '';
-        // in_array('contact_whatsapp_number', $updateFields, true) ? $hotel->contact_whatsapp_number = $request->contact_whatsapp_number : '';
+        in_array('contact_email', $updateFields, true) ? $hotel->contact_email = $request->contact_email : '';
+        
 
+        //phones
+        if((in_array('phone', $updateFields, true) || count($updateFields) == 0)){
+            $hotel->phone = strlen($request->phone) > 4 ? $request->phone : null;
+        }
+        if((in_array('phone_optional', $updateFields, true) || count($updateFields) == 0)){
+            $hotel->phone_optional = strlen($request->phone_optional) > 4 ? $request->phone_optional : null;
+        }
+        if((in_array('contact_whatsapp_number', $updateFields, true) || count($updateFields) == 0)){
+            $hotel->contact_whatsapp_number = strlen($request->contact_whatsapp_number) > 4 ? $request->contact_whatsapp_number : null;
+        }
         $hotel->save();
         return $hotel;
     }
@@ -139,7 +147,8 @@ class HotelHosterServices
             'address', 'latitude', 'longitude', 'checkin', 'checkin_until',
             'checkout', 'checkout_until', 'description',
             'instagram_url', 'pinterest_url', 'facebook_url', 'x_url',
-            'with_wifi', 'website_google', 'show_profile', 'show_rules'
+            'with_wifi', 'website_google', 'show_profile', 'show_rules',
+            'contact_email', 'contact_whatsapp_number', 'show_contact'
         ];
 
         // Intersectamos para descartar cualquier campo no permitido
@@ -161,5 +170,29 @@ class HotelHosterServices
                     ->firstOrFail();
     }
 
+    public function toggleShowContact ($hotelId, $enabled) {
+        try {
+            $hotel = Hotel::find($hotelId);
+            if (!$hotel) {
+                return bodyResponseRequest(EnumResponse::ERROR, 'Hotel not found', [], self::class . '.toggleShowContact');
+            }
+            if ($enabled) {
+                $hotel->show_contact = true;
+            } else {
+                $hotel->show_contact = false;
+            }
+            $hotel->save();
+            return $hotel;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.toggleShowContact'); 
+        }
+    }
     
+    public function getShowContact ($hotelId) {
+        $hotel = Hotel::find($hotelId);
+        if (!$hotel) {
+            return bodyResponseRequest(EnumResponse::ERROR, 'Hotel not found', [], self::class . '.getShowContact');
+        }
+        return $hotel->show_contact;
+    }
 }

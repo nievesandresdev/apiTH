@@ -25,6 +25,8 @@ Route::group(['prefix' => 'hotel'], function () {
         Route::get('/getProfilePhones', [HotelHosterController::class, 'getProfilePhones']);
         Route::get('/getProfileEmail', [HotelHosterController::class, 'getProfileEmail']);
         Route::get('/getProfileWhatsapp', [HotelHosterController::class, 'getProfileWhatsapp']);
+        Route::post('/toggleShowContact', [HotelHosterController::class, 'toggleShowContact']);
+        Route::get('/getShowContact', [HotelHosterController::class, 'getShowContact']);
     });
 
 

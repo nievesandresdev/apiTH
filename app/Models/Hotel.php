@@ -75,6 +75,10 @@ class Hotel extends Model
         'chat_service_enabled',
         'checkin_service_enabled',
         'reviews_service_enabled',
+        //
+        'contact_whatsapp_number',
+        'contact_email',
+        'show_contact',
     ];
 
     //bool offer_benefits
@@ -303,7 +307,13 @@ class Hotel extends Model
     {
         return boolval($value);
     }
+
+    public function getShowContactAttribute($value)
+    {
+        return boolval($value);
+    }
     
+
     
     
     

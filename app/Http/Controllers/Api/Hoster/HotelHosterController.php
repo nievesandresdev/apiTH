@@ -139,6 +139,24 @@ class HotelHosterController extends Controller
         }
         return bodyResponseRequest(EnumResponse::SUCCESS, $model);
     }
+
+    public function toggleShowContact (Request $request) {
+        $hotel = $request->attributes->get('hotel');
+        $model = $this->services->toggleShowContact($hotel->id, $request->enabled);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')        
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }   
+        return bodyResponseRequest(EnumResponse::SUCCESS, $model);
+    }
+
+    public function getShowContact (Request $request) {
+        $hotel = $request->attributes->get('hotel');
+        $model = $this->services->getShowContact($hotel->id);
+        return bodyResponseRequest(EnumResponse::SUCCESS, $model);
+    }
     
     
 }
