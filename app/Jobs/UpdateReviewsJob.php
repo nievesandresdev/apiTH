@@ -30,6 +30,8 @@ class UpdateReviewsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->apiReviewService->syncReviews($this->hotel);
+        \Log::info("Start UpdateReviewsJob");
+        $this->apiReviewService->updateReviews($this->hotel);
+        \Log::info("End UpdateReviewsJob");
     }
 }
