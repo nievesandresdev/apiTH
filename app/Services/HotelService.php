@@ -528,7 +528,7 @@ class HotelService {
             $subdomain = $request->subdomain ?? null;
             Log::error('subdomain '.$subdomain);
 
-            return Hotel::with([
+            $hotel = Hotel::with([
                 'chatSettings:id,hotel_id,show_guest'
             ])
             ->select(
@@ -541,6 +541,9 @@ class HotelService {
             // chatSettings
             ->where('subdomain', $subdomain)
             ->first();
+            $image = $hotel->images()->first();
+            $hotel['image'] = $image ? $image->url : null;
+            return $hotel;
         } catch (\Exception $e) {
             return $e;
         }
