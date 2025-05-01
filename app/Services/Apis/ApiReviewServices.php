@@ -208,14 +208,13 @@ class ApiReviewServices {
             \Log::error($response_request['message']??$response_request);
             return;
         } else {
-            \Log::info($response_request);
+            \Log::info("Sync Reviews");
             $data = $response_request ?? null;
         }
         return $data;
     }
 
     public function updateReviews($hotel) {
-        return;
         $reviews = $this->syncReviews($hotel);
     }
 
