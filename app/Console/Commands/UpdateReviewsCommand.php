@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 use App\Services\Apis\ApiReviewServices;
 use App\Models\Hotel;
-
+use App\Jobs\UpdateReviewsJob;
 class UpdateReviewsCommand extends Command
 {
     protected $signature = 'app:update-reviews-command';
@@ -26,8 +26,8 @@ class UpdateReviewsCommand extends Command
         foreach ($codeHotels as $codeHotel) {
             $hotel = Hotel::where('code', $codeHotel)->first();
             if ($hotel) {
-
-                $this->apiReviewService->syncReviews($hotel);
+                UpdateReviewsJob::dispatch($hotel, $this->apiReviewService);
+                // $this->apiReviewService->syncReviews($hotel);
             }
         }
     }
