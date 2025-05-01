@@ -198,6 +198,7 @@ class ApiReviewServices {
             'googleMapCid' => $hotel->code
         ];
 
+        $URL_BASE_API_REVIEW = config('app.url_base_api_review');
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->X_KEY_API];
         $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/reviews/syncBulk", $body, $headers, 60);
