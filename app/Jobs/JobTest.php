@@ -24,7 +24,7 @@ class JobTest implements ShouldQueue
     public function handle(): void
     {
         \Log::info("Start JobTest");
-        sleep(600);
+        sleep(1800);
         \Log::info("End JobTest");
     }
 }
