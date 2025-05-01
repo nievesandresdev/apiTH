@@ -213,9 +213,60 @@ class ApiReviewServices {
         }
         return $data;
     }
+    public function leakedReviewsStoreBulkByOta($hotel,$ota) {
+        $body = [
+            'googleMapCid' => $hotel->code,
+            'ota' => $ota
+        ];
+
+        $URL_BASE_API_REVIEW = config('app.url_base_api_review');
+        $http_client_service = new HttpClientService();
+        $headers = ['x-api-key' => $this->X_KEY_API];
+        $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/leakedReviews/storeBulkByOta", $body, $headers, 60);
+
+        $data = null;
+        if (!isset($response_request['ok']) || !$response_request['ok']) {
+            \Log::error($response_request['message']??$response_request);
+            return;
+        } else {
+            \Log::info("Leaked Reviews Store Bulk By Ota $ota");
+            $data = $response_request ?? null;
+        }
+        return $data;
+    }
+    public function translateReviewsByOta($hotel,$ota) {
+        $body = [
+            'googleMapCid' => $hotel->code,
+            'ota' => $ota,
+            'name' => $hotel->name
+        ];
+
+        $URL_BASE_API_REVIEW = config('app.url_base_api_review');
+        $http_client_service = new HttpClientService();
+        $headers = ['x-api-key' => $this->X_KEY_API];
+        $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/translateAndResponse/storeLastMonthByOta", $body, $headers, 60);
+
+        $data = null;
+        if (!isset($response_request['ok']) || !$response_request['ok']) {
+            \Log::error($response_request['message']??$response_request);
+            return;
+        } else {
+            \Log::info("Translate Reviews $ota");
+            $data = $response_request ?? null;
+        }
+        return $data;
+    }
 
     public function updateReviews($hotel) {
-        $reviews = $this->syncReviews($hotel);
+        $this->syncReviews($hotel);
+        $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
+        foreach ($OTAS as $ota) {
+            $this->translateReviewsByOta($hotel, $ota);
+        }
+        foreach ($OTAS as $ota) {
+            $this->leakedReviewsStoreBulkByOta($hotel, $ota);
+        }
+
     }
 
 }
