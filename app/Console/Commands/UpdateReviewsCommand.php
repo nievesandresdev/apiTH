@@ -28,7 +28,7 @@ class UpdateReviewsCommand extends Command
             $hotel = Hotel::where('code', $codeHotel)->first();
             \Log::info("Hotel: " . $hotel->name);
             if ($hotel) {
-                UpdateReviewsJob::dispatch($hotel, $this->apiReviewService);
+                UpdateReviewsJob::dispatchSync($hotel, $this->apiReviewService);
                 // $this->apiReviewService->syncReviews($hotel);
             }
         }
