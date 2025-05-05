@@ -226,9 +226,11 @@ class ApiReviewServices {
 
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
+            var_dump('todo ok en leakedReviewsStoreBulkByOta');
             \Log::error($response_request['message']??$response_request);
             return;
         } else {
+            var_dump('error en leakedReviewsStoreBulkByOta');
             \Log::info("Leaked Reviews Store Bulk By Ota $ota");
             $data = $response_request ?? null;
         }
@@ -248,9 +250,11 @@ class ApiReviewServices {
 
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
+            var_dump('todo ok en translateReviewsByOta');
             \Log::error($response_request['message']??$response_request);
             return;
         } else {
+            var_dump('error en translateReviewsByOta');
             \Log::info("Translate Reviews $ota");
             $data = $response_request ?? null;
         }
@@ -258,7 +262,7 @@ class ApiReviewServices {
     }
 
     public function updateReviews($hotel) {
-        $this->syncReviews($hotel);
+        // $this->syncReviews($hotel);
         $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
         foreach ($OTAS as $ota) {
             $this->leakedReviewsStoreBulkByOta($hotel, $ota);
