@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 
 /*emails*/
-use App\Mail\Guest\{MsgStay, postCheckoutMail,prepareArrival};
+use App\Mail\Guest\{ContactToHoster, MsgStay, postCheckoutMail,prepareArrival};
 use App\Mail\User\RewardsEmail;
 
 /*models*/
@@ -34,10 +34,12 @@ use App\Services\UrlOtasService;
 use App\Services\Apis\ApiReviewServices;
 use App\Services\Hoster\CloneHotelServices;
 use App\Services\Hoster\Stay\StayHosterServices;
+use App\Utils\Enums\EnumsLanguages;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Pusher\Pusher;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -326,15 +328,21 @@ class UtilsController extends Controller
 
     public function test()
     {
+        $guest = Guest::find(1);
+        $stay = Stay::find(209);
+        $message = "Hola, me llamo Francisco y quiero contactar con el hotel para una estancia el 10 de junio. Gracias";
+        $data = [
+            'guestName' => $guest->name.' '.$guest->lastname,
+            'guestEmail' => $guest->email,
+            'guestLanguageAbbr' => $guest->lang_web,
+            'guestLanguageName' => EnumsLanguages::NAME[$guest->lang_web],
+            'stayCheckin' => Carbon::parse($stay->check_in)->format('d/m/Y'),
+            'stayCheckout' => Carbon::parse($stay->check_out)->format('d/m/Y'),
+            'message' => $message
+        ];
         
-        $codeDiff = Carbon::now()->timestamp;
-        $stringDiff = 'B';
-        $originalHotel = $this->cloneHotelServices->findOriginalHotel();
-        if(!$originalHotel) return 'No existe el Hotel';
-        $copyChain = $this->cloneHotelServices->CreateChainToCopyHotel($originalHotel, $stringDiff);
-        $copyHotel = $this->cloneHotelServices->CreateCopyHotel($originalHotel, $stringDiff, $copyChain);
-        $syncTranslateCopyHotel = $this->cloneHotelServices->SyncTranslateCopyHotel($originalHotel, $copyHotel);
-        return $syncTranslateCopyHotel;
+        Mail::to('andresdreamerf@gmail.com')->send(new ContactToHoster($data));
+        return $data;
     }
 
     public function testEmailPostCheckout(){

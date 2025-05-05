@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Mail\Guest\ContactToHoster;
 use App\Mail\Guest\MsgStay;
 use App\Mail\Guest\ResetPasswordGuest;
 use App\Models\Chat;
+use App\Models\ContactEmail;
 use App\Models\Guest;
 use App\Models\hotel;
 use App\Models\NoteGuest;
@@ -23,6 +25,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 use App\Services\MailService;
+use App\Utils\Enums\EnumsLanguages;
 use App\Utils\Enums\GuestEnum;
 
 class GuestService {
@@ -639,4 +642,28 @@ class GuestService {
         }
     }
 
+    public function sendContactEmail($data, $guest, $stay){
+        try {
+            $contactEmail = ContactEmail::create([
+                'stay_id' => $data->stayId,
+                'guest_id' => $data->guestId,
+                'message' => $data->message
+            ]);
+
+            $data = [
+                'guestName' => $guest->name.' '.$guest->lastname,
+                'guestEmail' => $guest->email,
+                'guestLanguageAbbr' => $guest->lang_web,
+                'guestLanguageName' => EnumsLanguages::NAME[$guest->lang_web],
+                'stayCheckin' => Carbon::parse($stay->check_in)->format('d/m/Y'),
+                'stayCheckout' => Carbon::parse($stay->check_out)->format('d/m/Y'),
+                'message' => $data->message
+            ];
+            
+            // Mail::to('andresdreamerf@gmail.com')->send(new ContactToHoster($data));
+            return $contactEmail;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
 }
