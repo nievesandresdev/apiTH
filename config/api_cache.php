@@ -9,7 +9,7 @@ return [
     | Tiempo por defecto que se almacenarán las respuestas en cache
     |
     */
-    'default_ttl' => 300, // 5 minutos
+    'default_ttl' => 3000, // 5 minutos
 
     /*
     |--------------------------------------------------------------------------
