@@ -199,9 +199,6 @@ jobs:
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
           fi
 
-          
-          
-
       # Configuración de Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -277,4 +274,36 @@ jobs:
               --resource-group th-test-resources \
               --image ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
           fi
+      # 4. Actualizar la Container App con la imagen versionada
+      - name: Update Azure Container App image
+        run: |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            az containerapp update \
+              --name th-main-landings \
+              --resource-group th-test-resources \
+              --image ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          fi
+          if [ "${{ github.ref_name }}" == "test" ]; then
+            az containerapp update \
+              --name th-test-landing \
+              --resource-group th-test-resources \
+              --image ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          fi
+      - name: Purge Cloudflare cache for ALL zones
+        if: github.ref_name == 'main'
+        env:
+              CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}   # guarda tu token aquí
+        run: |
+            echo "🔍 Obteniendo lista de zonas de Cloudflare…"
+            zones=$(curl -s -H "Authorization: Bearer $CF_API_TOKEN" \
+                          -H "Content-Type: application/json" \
+                            "https://api.cloudflare.com/client/v4/zones" | jq -r '.result[].id')
         
+            for zone in $zones; do
+                echo "🧹 Purging cache in zone $zone"
+                curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$zone/purge_cache" \
+                    -H "Authorization: Bearer $CF_API_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    --data '{"purge_everything":true}' | jq -r '. | {zone_result: .success}'
+            done
+            
