@@ -47,5 +47,20 @@ return [
     | Prefijo para las claves de cache
     |
     */
-    'key_prefix' => 'api:response:'
+    'key_prefix' => 'api:response:',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache Post Routes
+    |--------------------------------------------------------------------------
+    |
+    | Prefijo para las claves de cache
+    |
+    */
+    
+    'cacheable_post_routes' => [
+        'api/place/getPointers',
+        'api/place/getAll',
+        'api/place/getCategoriesByType',
+    ],
 ];

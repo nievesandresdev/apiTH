@@ -12,35 +12,35 @@ class CacheResponses
 {
     public function handle(Request $request, Closure $next, $ttl = null)
     {
-        // 1. Solo GET
-        if (!$request->isMethod('GET')) {
+        // 1) Métodos cacheables: GET siempre, POST sólo si la ruta está en config
+        $method = strtoupper($request->getMethod());
+        $config = config('api_cache');
+
+        $isCacheableMethod = $method === 'GET';
+        $isCacheablePost   = $method === 'POST' &&
+                             collect($config['cacheable_post_routes'])
+                               ->contains(fn($route) => $request->is($route));
+
+        if (! $isCacheableMethod && ! $isCacheablePost) {
             return $this->addCacheHeader($next($request), 'BYPASS-METHOD');
         }
 
-        // 2. Configuración
-        $config = config('api_cache', [
-            'default_ttl' => 300,
-            'excluded_routes' => [],
-            'route_specific_ttl' => [],
-            'key_prefix' => 'api:response:'
-        ]);
-
-        // 3. Rutas excluidas
+        // 2) Excluded routes
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
                 return $this->addCacheHeader($next($request), 'BYPASS-ROUTE');
             }
         }
 
-        // 4. Forzar bypass
+        // 3) Force bypass
         if ($request->has('no-cache')) {
             return $this->addCacheHeader($next($request), 'BYPASS-FORCE');
         }
 
-        // 5. Generar clave
+        // 4) Generar clave
         $key = $this->generateCacheKey($request, $config['key_prefix']);
 
-        // 6. Intentar obtener respuesta cacheada (lectura directa)
+        // 5) Lectura temprana
         try {
             if ($cached = Cache::get($key)) {
                 return $this->addCacheHeader($cached, 'HIT');
@@ -49,9 +49,10 @@ class CacheResponses
             Log::warning("Redis read failed: ".$e->getMessage());
         }
 
-        // 7. Ejecutar y cachear si es exitoso
+        // 6) Ejecutar petición real
         $response = $next($request);
 
+        // 7) Sólo cachear si es 2xx
         if ($response->isSuccessful()) {
             try {
                 Cache::put($key, $response, $this->getFinalTtl($request, $ttl, $config));
@@ -66,11 +67,18 @@ class CacheResponses
 
     protected function generateCacheKey(Request $request, string $prefix): string
     {
+        $userId = $request->user()?->id ?: 'guest';
+        $path   = $request->path();
+        // Incluimos tanto query como body para POST
+        $params = $request->isMethod('GET')
+            ? http_build_query($request->query())
+            : sha1(json_encode($request->all()));
+
         return sprintf('%s%s:%s:%s',
             $prefix,
-            $request->user()?->id ?: 'guest',
-            sha1($request->path()),
-            sha1(http_build_query($request->query()))
+            $userId,
+            sha1($path),
+            sha1($params)
         );
     }
 
@@ -79,13 +87,11 @@ class CacheResponses
         if ($ttl !== null) {
             return $ttl;
         }
-
         foreach ($config['route_specific_ttl'] as $route => $routeTtl) {
             if ($request->is($route)) {
                 return $routeTtl;
             }
         }
-
         return $config['default_ttl'];
     }
 
