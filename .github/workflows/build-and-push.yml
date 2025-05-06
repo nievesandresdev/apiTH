@@ -36,6 +36,9 @@ jobs:
           echo "REDIS_HOST=th-api.redis.cache.windows.net" >> .env
           echo "REDIS_PORT=6380" >> .env
           echo "REDIS_SCHEME=tls" >> .env
+          echo "REDIS_DB=0" >> .env
+          echo "REDIS_CACHE_DB=1" >> .env
+
           echo "APP_DEBUG=true" >> .env
           echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
           echo "MAIL_FROM_NAME=TheHoster" >> .env
