@@ -205,7 +205,7 @@ class ApiReviewServices {
 
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
-            \Log::error($response_request['message']??$response_request);
+            // \Log::error($response_request['message']??$response_request);
             return;
         } else {
             \Log::info("Sync Reviews");
@@ -224,11 +224,11 @@ class ApiReviewServices {
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->X_KEY_API];
         $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/leakedReviews/storeBulkByOta", $body, $headers, 60);
-
+        
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
             var_dump('todo ok en leakedReviewsStoreBulkByOta');
-            \Log::error($response_request['message']??$response_request);
+            // \Log::info($response_request);
             return;
         } else {
             var_dump('error en leakedReviewsStoreBulkByOta');
@@ -242,18 +242,17 @@ class ApiReviewServices {
         $body = [
             'googleMapCid' => $hotel->code,
             'ota' => $ota,
-            'name' => $hotel->name
+            'hotelName' => $hotel->name
         ];
 
         $URL_BASE_API_REVIEW = config('app.url_base_api_review');
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->X_KEY_API];
         $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/translateAndResponse/storeLastMonthByOta", $body, $headers, 60);
-
+        // \Log::info($response_request);
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
             var_dump('todo ok en translateReviewsByOta');
-            \Log::error($response_request['message']??$response_request);
             return;
         } else {
             var_dump('error en translateReviewsByOta');
@@ -264,7 +263,7 @@ class ApiReviewServices {
     }
 
     public function updateReviews($hotel) {
-        // $this->syncReviews($hotel);
+        $this->syncReviews($hotel);
         $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
         foreach ($OTAS as $ota) {
             $this->leakedReviewsStoreBulkByOta($hotel, $ota);
