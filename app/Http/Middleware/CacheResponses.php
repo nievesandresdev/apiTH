@@ -39,7 +39,7 @@ class CacheResponses
         }
 
         // 4. Bypass cache si se solicita explícitamente
-        if ($request->has('no-cache') {
+        if ($request->has('no-cache')) {
             return $next($request)->header('X-Cache', 'BYPASS-FORCE');
         }
 
