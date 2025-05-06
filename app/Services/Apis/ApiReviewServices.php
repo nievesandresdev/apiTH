@@ -205,7 +205,7 @@ class ApiReviewServices {
 
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
-            \Log::error($response_request['message']??$response_request);
+            // \Log::error($response_request['message']??$response_request);
             return;
         } else {
             \Log::info("Sync Reviews");
