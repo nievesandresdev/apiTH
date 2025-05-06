@@ -5,90 +5,104 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class CacheResponses
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  int|null  $ttl
-     * @return mixed
-     */
     public function handle(Request $request, Closure $next, $ttl = null)
     {
-        // 1. Verificar si es método GET
+        // 1. Sólo GET
         if (!$request->isMethod('get')) {
             return $next($request)->header('X-Cache', 'BYPASS-METHOD');
         }
 
-        // 2. Obtener configuración
+        // 2. Configuración
         $config = config('api_cache', [
-            'default_ttl' => 300,
-            'excluded_routes' => [],
-            'route_specific_ttl' => []
+            'default_ttl'        => 300,
+            'excluded_routes'    => [],
+            'route_specific_ttl' => [],
+            'key_prefix'         => 'api:response:'
         ]);
 
-        // 3. Verificar rutas excluidas
+        // 3. Rutas excluidas
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
                 return $next($request)->header('X-Cache', 'BYPASS-ROUTE');
             }
         }
 
-        // 4. Bypass cache si se solicita explícitamente
+        // 4. Forzar bypass
         if ($request->has('no-cache')) {
             return $next($request)->header('X-Cache', 'BYPASS-FORCE');
         }
 
-        // 5. Determinar TTL (prioridad: parámetro > ruta específica > default)
-        $finalTtl = $ttl ?? $this->getRouteSpecificTtl($request, $config) ?? $config['default_ttl'];
+        // 5. TTL final
+        $finalTtl = $ttl
+            ?? $this->getRouteSpecificTtl($request, $config)
+            ?? $config['default_ttl'];
 
-        // 6. Generar clave de cache
-        $key = $this->generateCacheKey($request);
+        // 6. Generar clave
+        $key = $this->generateCacheKey($request, $config['key_prefix']);
 
-        // 7. Manejar la respuesta
-        $response = $next($request);
-
-        // 8. Cachear solo si es exitosa (200-299) y GET
-        if ($response->isSuccessful()) {
-            Cache::put($key, $response, $finalTtl);
-            return $response->header('X-Cache', 'MISS');
+        // ——— 7. Intentar lectura temprana ———
+        try {
+            if (Cache::has($key)) {
+                $cached = Cache::get($key);
+                return response($cached['content'], $cached['status'])
+                    ->withHeaders($cached['headers'])
+                    ->header('X-Cache', 'HIT');
+            }
+        } catch (\Throwable $e) {
+            Log::warning("Redis read failed: ".$e->getMessage());
+            // continúa al controlador sin romper la petición
         }
 
-        // 9. Si no es exitosa, devolver sin cachear
+        // ——— 8. Ejecutar lógica real ———
+        $response = $next($request);
+
+        // 9. Cachear sólo si es 2xx
+        if ($response->isSuccessful()) {
+            try {
+                $data = [
+                    'content' => $response->getContent(),
+                    'status'  => $response->getStatusCode(),
+                    'headers' => $response->headers->all(),
+                ];
+                Cache::put($key, $data, $finalTtl);
+            } catch (\Throwable $e) {
+                Log::warning("Redis write failed: ".$e->getMessage());
+            }
+            return response($data['content'], $data['status'])
+                ->withHeaders($data['headers'])
+                ->header('X-Cache', 'MISS');
+        }
+
+        // 10. Bypass si no es 2xx
         return $response->header('X-Cache', 'BYPASS-STATUS');
     }
 
-    /**
-     * Genera una clave de cache única para la solicitud
-     */
-    protected function generateCacheKey(Request $request): string
+    protected function generateCacheKey(Request $request, string $prefix): string
     {
         $userId = $request->user()?->id ?: 'guest';
-        $path = $request->path();
-        $query = http_build_query($request->query());
+        $path   = $request->path();
+        $query  = http_build_query($request->query());
 
-        return sprintf('api:response:%s:%s:%s',
+        return sprintf('%s%s:%s:%s',
+            $prefix,
             $userId,
             sha1($path),
             sha1($query)
         );
     }
 
-    /**
-     * Obtiene el TTL específico para la ruta si está configurado
-     */
     protected function getRouteSpecificTtl(Request $request, array $config): ?int
     {
-        foreach ($config['route_specific_ttl'] ?? [] as $route => $ttl) {
+        foreach ($config['route_specific_ttl'] as $route => $ttl) {
             if ($request->is($route)) {
                 return $ttl;
             }
         }
-
         return null;
     }
 }
