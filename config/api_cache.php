@@ -1,51 +1,30 @@
 <?php
 
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Default Cache TTL (en segundos)
-    |--------------------------------------------------------------------------
-    |
-    | Tiempo por defecto que se almacenarán las respuestas en cache
-    |
-    */
-    'default_ttl' => 300, // 5 minutos
-
-    /*
-    |--------------------------------------------------------------------------
-    | Excluded Routes
-    |--------------------------------------------------------------------------
-    |
-    | Rutas que NO deben ser cacheadas (patrones de ruta aceptados)
-    |
-    */
+    'default_ttl' => 86400, // 1 hora por defecto
+    
     'excluded_routes' => [
         'api/auth/*',
-        'api/user/profile',
-        'api/notifications*'
+        //'api/user/profile',
+        //'api/formularios/*'
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Route Specific TTL
-    |--------------------------------------------------------------------------
-    |
-    | TTL específico para ciertas rutas (sobrescribe el default)
-    |
-    */
+    
     'route_specific_ttl' => [
-        'api/products' => 86400,    // 1 día para productos
-        'api/catalog' => 3600,      // 1 hora para catálogo
-        'api/static/*' => 604800    // 1 semana para contenido estático
+        'api/place/*' => 86400, // 1 día para endpoints de lugares
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cache Key Prefix
-    |--------------------------------------------------------------------------
-    |
-    | Prefijo para las claves de cache
-    |
-    */
-    'key_prefix' => 'api:response:'
+    
+    'key_prefix' => 'api:response:',
+    
+    'cacheable_post_routes' => [
+        'api/place/getPointers',
+        'api/place/getAll',
+        'api/place/getCategoriesByType'
+    ],
+    
+    'sensitive_params' => [
+        'password',
+        'token',
+        '_token',
+        'credit_card'
+    ]
 ];
