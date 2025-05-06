@@ -228,7 +228,7 @@ class ApiReviewServices {
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
             var_dump('todo ok en leakedReviewsStoreBulkByOta');
-            \Log::info($response_request);
+            // \Log::info($response_request);
             return;
         } else {
             var_dump('error en leakedReviewsStoreBulkByOta');
@@ -249,7 +249,7 @@ class ApiReviewServices {
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->X_KEY_API];
         $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/translateAndResponse/storeLastMonthByOta", $body, $headers, 60);
-        \Log::info($response_request);
+        // \Log::info($response_request);
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
             var_dump('todo ok en translateReviewsByOta');
@@ -263,7 +263,7 @@ class ApiReviewServices {
     }
 
     public function updateReviews($hotel) {
-        // $this->syncReviews($hotel);
+        $this->syncReviews($hotel);
         $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
         foreach ($OTAS as $ota) {
             $this->leakedReviewsStoreBulkByOta($hotel, $ota);
