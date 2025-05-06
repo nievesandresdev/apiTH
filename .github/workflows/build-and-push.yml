@@ -34,7 +34,7 @@ jobs:
           echo "SESSION_LIFETIME=120" >> .env
           echo "MEMCACHED_HOST=127.0.0.1" >> .env
           echo "REDIS_HOST=th-api.redis.cache.windows.net" >> .env
-          echo "REDIS_PORT=6379" >> .env
+          echo "REDIS_PORT=6380" >> .env
           echo "REDIS_SCHEME=tls" >> .env
           echo "APP_DEBUG=true" >> .env
           echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
