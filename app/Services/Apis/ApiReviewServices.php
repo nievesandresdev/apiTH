@@ -242,7 +242,7 @@ class ApiReviewServices {
         $body = [
             'googleMapCid' => $hotel->code,
             'ota' => $ota,
-            'name' => $hotel->name
+            'hotelName' => $hotel->name
         ];
 
         $URL_BASE_API_REVIEW = config('app.url_base_api_review');
