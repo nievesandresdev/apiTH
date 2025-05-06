@@ -13,19 +13,22 @@ class CacheResponses
     public function handle(Request $request, Closure $next, $ttl = null)
     {
         $config = config('api_cache');
-        
+
         // 1. Verificar si la ruta es cacheable
-        if (!$this->isCacheableRequest($request, $config)) {
+        if (! $this->isCacheableRequest($request, $config)) {
             return $this->addCacheHeader($next($request), 'BYPASS-ROUTE');
         }
 
-        // 2. Generar clave considerando método
+        // 2. Generar clave
         $key = $this->generateCacheKey($request, $config['key_prefix']);
 
         // 3. Intento de lectura de cache
         try {
-            if ($response = Cache::get($key)) {
-                return $this->addCacheHeader($response, 'HIT');
+            if ($cached = Cache::get($key)) {
+                // Reconstruir la Response exactamente igual
+                return response($cached['content'], $cached['status'])
+                    ->withHeaders($cached['headers'])
+                    ->header('X-Cache', 'HIT');
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
@@ -37,15 +40,19 @@ class CacheResponses
         // 5. Almacenar en cache si es exitoso
         if ($response->isSuccessful()) {
             $this->storeResponse($request, $response, $key, $ttl, $config);
+            // devolvemos fresh (ya con header MD en storeResponse no modifica el objeto)
+            return $this->addCacheHeader($response, 'MISS');
         }
 
-        return $this->addCacheHeader($response, $response->isSuccessful() ? 'MISS' : 'BYPASS-STATUS');
+        return $this->addCacheHeader($response, 'BYPASS-STATUS');
     }
 
     protected function isCacheableRequest(Request $request, array $config): bool
     {
-        // Métodos permitidos
-        if (!in_array($request->getMethod(), ['GET', 'POST'])) {
+        $method = strtoupper($request->getMethod());
+
+        // Solo GET o POST permitidos
+        if (! in_array($method, ['GET', 'POST'])) {
             return false;
         }
 
@@ -57,7 +64,7 @@ class CacheResponses
         }
 
         // POSTs permitidos explícitamente
-        if ($request->isMethod('POST')) {
+        if ($method === 'POST') {
             return collect($config['cacheable_post_routes'])
                 ->contains(fn($route) => $request->is($route));
         }
@@ -69,20 +76,30 @@ class CacheResponses
     protected function generateCacheKey(Request $request, string $prefix): string
     {
         $userId = $request->user()?->id ?: 'guest';
-        $path = $request->path();
-        $input = $request->isMethod('GET') 
+        $path   = $request->path();
+        $params = $request->isMethod('GET')
             ? http_build_query($request->query())
-            : json_encode($request->except(['password', 'token', '_token']));
+            : json_encode($request->except($request->isMethod('POST')
+                ? $request->merge($request->all())->except($request->isMethod('POST') ? config('api_cache.sensitive_params', []) : [])
+                : []));
 
-        return "{$prefix}{$userId}:".sha1("{$path}|{$input}");
+        return "{$prefix}{$userId}:" . sha1("{$path}|{$params}");
     }
 
     protected function storeResponse(Request $request, Response $response, string $key, $ttl, array $config): void
     {
         try {
-            $finalTtl = $ttl ?? $this->getRouteTtl($request, $config) ?? $config['default_ttl'];
-            
-            Cache::put($key, $response, $finalTtl);
+            $finalTtl = $ttl
+                ?? $this->getRouteTtl($request, $config)
+                ?? $config['default_ttl'];
+
+            $payload = [
+                'content' => $response->getContent(),
+                'status'  => $response->getStatusCode(),
+                'headers' => $response->headers->all(),
+            ];
+
+            Cache::put($key, $payload, $finalTtl);
         } catch (\Throwable $e) {
             Log::error("Cache write error: {$e->getMessage()}");
         }
@@ -101,7 +118,10 @@ class CacheResponses
     protected function addCacheHeader(Response $response, string $value): Response
     {
         $response->headers->set('X-Cache', $value);
-        $response->headers->set('Cache-Control', 'max-age=3600, public');
+        // Si ya venía un Cache-Control de tu controlador, lo preservamos:
+        if (! $response->headers->has('Cache-Control')) {
+            $response->headers->set('Cache-Control', 'max-age=3600, public');
+        }
         return $response;
     }
 }
