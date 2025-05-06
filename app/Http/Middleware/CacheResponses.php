@@ -13,7 +13,7 @@ class CacheResponses
     public function handle(Request $request, Closure $next, $ttl = null)
     {
         // 1. Sólo GET
-        if (!$request->isMethod('get')) {
+        if (! $request->isMethod('GET')) {
             return $next($request)->header('X-Cache', 'BYPASS-METHOD');
         }
 
