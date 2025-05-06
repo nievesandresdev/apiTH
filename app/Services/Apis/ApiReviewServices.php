@@ -229,13 +229,13 @@ class ApiReviewServices {
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
             var_dump('todo ok en leakedReviewsStoreBulkByOta');
-            // return;
+            return;
         } else {
             var_dump('error en leakedReviewsStoreBulkByOta');
             \Log::info("Leaked Reviews Store Bulk By Ota $ota");
-            // $data = $response_request ?? null;
+            $data = $response_request ?? null;
         }
-        // return $data;
+        return $data;
     }
 
     public function translateReviewsByOta($hotel,$ota) {
