@@ -213,6 +213,7 @@ class ApiReviewServices {
         }
         return $data;
     }
+
     public function leakedReviewsStoreBulkByOta($hotel,$ota) {
         $body = [
             'googleMapCid' => $hotel->code,
@@ -236,6 +237,7 @@ class ApiReviewServices {
         }
         return $data;
     }
+
     public function translateReviewsByOta($hotel,$ota) {
         $body = [
             'googleMapCid' => $hotel->code,
@@ -262,7 +264,7 @@ class ApiReviewServices {
     }
 
     public function updateReviews($hotel) {
-        $this->syncReviews($hotel);
+        // $this->syncReviews($hotel);
         $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
         foreach ($OTAS as $ota) {
             $this->leakedReviewsStoreBulkByOta($hotel, $ota);
