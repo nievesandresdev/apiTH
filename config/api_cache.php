@@ -9,7 +9,7 @@ return [
     | Tiempo por defecto que se almacenarán las respuestas en cache
     |
     */
-    'default_ttl' => 3000, // 5 minutos
+    'default_ttl' => 3600, // 5 minutos
 
     /*
     |--------------------------------------------------------------------------
@@ -20,9 +20,9 @@ return [
     |
     */
     'excluded_routes' => [
-        'api/auth/*',
-        'api/user/profile',
-        'api/notifications*'
+        //'api/auth/*',
+        //'api/user/profile',
+        //'api/notifications*'
     ],
 
     /*
@@ -34,9 +34,9 @@ return [
     |
     */
     'route_specific_ttl' => [
-        'api/products' => 86400,    // 1 día para productos
-        'api/catalog' => 3600,      // 1 hora para catálogo
-        'api/static/*' => 604800    // 1 semana para contenido estático
+        //'api/products' => 86400,    // 1 día para productos
+        //'api/catalog' => 3600,      // 1 hora para catálogo
+        //'api/static/*' => 604800    // 1 semana para contenido estático
     ],
 
     /*
