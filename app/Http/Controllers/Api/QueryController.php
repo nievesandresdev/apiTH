@@ -89,21 +89,6 @@ class QueryController extends Controller
             }else{
                 $collection = $collection->sortByDesc('updated_at');
                 $collection = $collection->values();
-                $collection = $collection->map(function($item){
-                    
-                    return [
-                        'id' => $item->id,
-                        'answered' => $item->answered,
-                        'attended' => $item->attended,
-                        'guest_id' => $item->guest_id,
-                        'qualification' => $item->qualification,
-                        'comment' => $item->comment,
-                        'period' => $item->period,
-                        'response_lang' => $item->response_lang,
-                        'responded_at' => Carbon::parse($item->responded_at)->format('d/m/Y - H:i'),
-                        
-                    ];
-                });
             }
 
             

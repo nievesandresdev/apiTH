@@ -363,9 +363,10 @@ class GuestController extends Controller
 
     public function sendContactEmail(Request $request){
         try {
+            $hotel = $request->attributes->get('hotel');
             $guest = Guest::find($request->guestId);
             $stay = Stay::find($request->stayId);
-            $model = $this->service->sendContactEmail($request, $guest, $stay);
+            $model = $this->service->sendContactEmail($request, $guest, $stay, $hotel->contact_email);
             if(!$guest || !$stay || !$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -376,6 +377,19 @@ class GuestController extends Controller
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.sendContactEmail');
         }
+    }
+
+    public function getContactEmailsByStayId(Request $request){
+        $stayId = $request->stayId;
+        $guestId = $request->guestId;
+        $model = $this->service->getContactEmailsByStayId($stayId, $guestId);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
     }
 
 

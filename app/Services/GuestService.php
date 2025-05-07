@@ -642,7 +642,7 @@ class GuestService {
         }
     }
 
-    public function sendContactEmail($data, $guest, $stay){
+    public function sendContactEmail($data, $guest, $stay, $contactEmail){
         try {
             $contactEmail = ContactEmail::create([
                 'stay_id' => $data->stayId,
@@ -660,10 +660,14 @@ class GuestService {
                 'message' => $data->message
             ];
             
-            // Mail::to('andresdreamerf@gmail.com')->send(new ContactToHoster($data));
+            Mail::to($contactEmail)->send(new ContactToHoster($data));
             return $contactEmail;
         } catch (\Exception $e) {
             return $e;
         }
+    }
+
+    public function getContactEmailsByStayId($stayId, $guestId){
+        return ContactEmail::where('stay_id', $stayId)->where('guest_id', $guestId)->get();
     }
 }
