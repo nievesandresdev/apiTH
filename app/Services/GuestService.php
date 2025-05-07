@@ -642,7 +642,7 @@ class GuestService {
         }
     }
 
-    public function sendContactEmail($data, $guest, $stay, $contactEmail){
+    public function sendContactEmail($data, $guest, $stay, $hotelContactEmail){
         try {
             $contactEmail = ContactEmail::create([
                 'stay_id' => $data->stayId,
@@ -660,7 +660,7 @@ class GuestService {
                 'message' => $data->message
             ];
             
-            Mail::to($contactEmail)->send(new ContactToHoster($data));
+            Mail::to($hotelContactEmail)->send(new ContactToHoster($data));
             return $contactEmail;
         } catch (\Exception $e) {
             return $e;
