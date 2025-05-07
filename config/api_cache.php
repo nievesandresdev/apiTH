@@ -13,7 +13,7 @@ return [
         'api/place/*' => 86400, // 1 día para endpoints de lugares
     ],
     
-    'key_prefix' => 'api:response:',
+    'key_prefix' => 'hotel_cache:',
     
     'cacheable_post_routes' => [
         'api/place/getPointers',

@@ -14,44 +14,33 @@ class CacheResponses
     {
         $config = config('api_cache');
 
-        // 1) ¿Cacheable? solo GET o POST explicitados, y rutas no excluidas
-        if (! $this->isCacheableRequest($request, $config)) {
-            return $this->addCacheHeader($next($request), 'BYPASS-ROUTE');
+        if (!$this->shouldCacheRequest($request, $config)) {
+            return $this->addCacheHeader($next($request), 'BYPASS');
         }
 
-        // 2) Generar clave: prefix + userId + hotel + path|params
-        $key = $this->generateCacheKey($request, $config['key_prefix']);
-
-        // 3) Intentar leer desde Redis
+        $key = $this->generateCacheKey($request, $config);
+        
         try {
-            if ($cached = Cache::get($key)) {
-                return response($cached['content'], $cached['status'])
-                    ->withHeaders($cached['headers'])
-                    ->header('X-Cache', 'HIT');
+            if ($response = $this->getFromCache($key)) {
+                return $response;
             }
         } catch (\Throwable $e) {
-            Log::error("Cache read error: {$e->getMessage()}");
+            Log::error("Cache read error: ".$e->getMessage());
         }
 
-        // 4) Ejecutar petición real
         $response = $next($request);
 
-        // 5) Si es 2xx, almacenar en Redis
         if ($response->isSuccessful()) {
-            $this->storeResponse($request, $response, $key, $ttl, $config);
-            return $this->addCacheHeader($response, 'MISS');
+            $this->storeInCache($key, $response, $this->getFinalTtl($request, $ttl, $config));
         }
 
-        // 6) Bypass si no es 2xx
-        return $this->addCacheHeader($response, 'BYPASS-STATUS');
+        return $this->addCacheHeader($response, $response->isSuccessful() ? 'MISS' : 'BYPASS');
     }
 
-    protected function isCacheableRequest(Request $request, array $config): bool
+    protected function shouldCacheRequest(Request $request, array $config): bool
     {
-        $method = strtoupper($request->getMethod());
-
-        // Solo GET o POST listados en config
-        if (! in_array($method, ['GET', 'POST'])) {
+        // Solo métodos permitidos
+        if (!in_array($request->method(), ['GET', 'POST'])) {
             return false;
         }
 
@@ -62,76 +51,110 @@ class CacheResponses
             }
         }
 
-        // Si es POST, debe estar en la lista
-        if ($method === 'POST') {
-            return collect($config['cacheable_post_routes'])
-                ->contains(fn($route) => $request->is($route));
+        // POSTs deben estar en la lista blanca
+        if ($request->isMethod('POST') && !in_array($request->path(), $config['cacheable_post_routes'])) {
+            return false;
         }
 
-        // GET siempre es cacheable si llegó hasta aquí
         return true;
     }
 
-    protected function generateCacheKey(Request $request, string $prefix): string
+    protected function generateCacheKey(Request $request, array $config): string
     {
-        $config    = config('api_cache');
-        $userId    = $request->user()?->id ?: 'guest';
-        // Tomamos también el hotel/cadena desde el header
-        $hotel     = $request->header('subdomainhotel', 'guest_hotel');
-        $path      = $request->path();
-        $sensitive = $config['sensitive_params'] ?? [];
-
-        if ($request->isMethod('GET')) {
-            $paramsString = http_build_query($request->query());
-        } else {
-            $body = $request->except($sensitive);
-            $paramsString = json_encode($body);
+        // Componentes esenciales
+        $hotelId = $request->header('subdomainhotel', 'no-hotel');
+        $path = $request->path();
+        
+        // Identificador de usuario (del JWT si está disponible)
+        $userId = 'guest';
+        if ($request->bearerToken()) {
+            try {
+                $payload = json_decode(base64_decode(explode('.', $request->bearerToken())[1]));
+                $userId = $payload->sub ?? 'guest';
+            } catch (\Exception $e) {
+                Log::warning("Failed to decode JWT: ".$e->getMessage());
+            }
         }
 
-        // clave: prefix + user + hotel + hash(path|params)
-        $composite = implode('|', [
-            $path,
-            $paramsString,
-        ]);
+        // Parámetros normalizados
+        $params = $this->normalizeRequestParameters($request);
 
-        return "{$prefix}{$userId}:{$hotel}:" . sha1($composite);
+        return sprintf('%s%s:%s:%s',
+            $config['key_prefix'],
+            $userId,
+            $hotelId,
+            sha1($path.'|'.json_encode($params))
+        );
     }
 
-    protected function storeResponse(Request $request, Response $response, string $key, $ttl, array $config): void
+    protected function normalizeRequestParameters(Request $request): array
+    {
+        $sensitive = config('api_cache.sensitive_params', []);
+        $params = $request->isMethod('GET') 
+            ? $request->query()
+            : $request->except($sensitive);
+
+        // Normalización especial para hoteles
+        if (isset($params['hotel'])) {
+            ksort($params['hotel']);
+            
+            // Conservamos solo los campos relevantes
+            $params['hotel'] = array_intersect_key($params['hotel'], [
+                'id' => true,
+                'zone' => true,
+                'latitude' => true,
+                'longitude' => true
+            ]);
+        }
+
+        // Ordenamos los parámetros principales
+        ksort($params);
+
+        return $params;
+    }
+
+    protected function getFromCache(string $key): ?Response
+    {
+        if ($cached = Cache::get($key)) {
+            return response($cached['content'], $cached['status'])
+                ->withHeaders($cached['headers'])
+                ->header('X-Cache', 'HIT')
+                ->header('X-Cache-Key', $key);
+        }
+        return null;
+    }
+
+    protected function storeInCache(string $key, Response $response, int $ttl): void
     {
         try {
-            $finalTtl = $ttl
-                ?? $this->getRouteTtl($request, $config)
-                ?? $config['default_ttl'];
-
-            $payload = [
+            Cache::put($key, [
                 'content' => $response->getContent(),
-                'status'  => $response->getStatusCode(),
-                'headers' => $response->headers->all(),
-            ];
-
-            Cache::put($key, $payload, $finalTtl);
+                'status' => $response->getStatusCode(),
+                'headers' => $response->headers->all()
+            ], $ttl);
         } catch (\Throwable $e) {
-            Log::error("Cache write error: {$e->getMessage()}");
+            Log::error("Cache write error: ".$e->getMessage());
         }
     }
 
-    protected function getRouteTtl(Request $request, array $config): ?int
+    protected function getFinalTtl(Request $request, $ttl, array $config): int
     {
+        if ($ttl !== null) {
+            return $ttl;
+        }
+        
         foreach ($config['route_specific_ttl'] as $route => $routeTtl) {
             if ($request->is($route)) {
                 return $routeTtl;
             }
         }
-        return null;
+        
+        return $config['default_ttl'];
     }
 
-    protected function addCacheHeader(Response $response, string $value): Response
+    protected function addCacheHeader(Response $response, string $status): Response
     {
-        $response->headers->set('X-Cache', $value);
-        if (! $response->headers->has('Cache-Control')) {
-            $response->headers->set('Cache-Control', 'max-age=3600, public');
-        }
-        return $response;
+        return $response->header('X-Cache', $status)
+            ->header('Cache-Control', 'private, max-age=3600');
     }
 }
