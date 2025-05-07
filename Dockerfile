@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y \
     libmagickwand-dev \
     supervisor \
     cron \
+    redis-tools \
     --no-install-recommends && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
