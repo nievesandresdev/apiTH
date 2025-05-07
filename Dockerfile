@@ -1,11 +1,19 @@
 # Use PHP 8.2 Apache como imagen base
 FROM php:8.2-apache
 
+# ——————————————————————————————————————————————————————
+# 1) Zona horaria
+# ——————————————————————————————————————————————————————
+# Evitar prompts de tzdata
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Madrid 
+
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
+    tzdata \
     libonig-dev \
     libzip-dev \
     libpng-dev \
@@ -21,12 +29,16 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     cron \
     --no-install-recommends && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instalar extensiones de PHP
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
-    install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap imagick
+    install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap imagick redis
+
+RUN echo "date.timezone = Europe/Madrid" > /usr/local/etc/php/conf.d/timezone.ini
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer

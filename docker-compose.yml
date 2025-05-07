@@ -16,6 +16,8 @@ services:
       - bd-data_hoster_network
     env_file: 
       - .env
+    environment:
+      - TZ=Europe/Madrid
     # Supervisord gestionará todos los procesos en este contenedor
     command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
