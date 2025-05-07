@@ -14,18 +14,17 @@ class CacheResponses
     {
         $config = config('api_cache');
 
-        // 1. Verificar si la ruta es cacheable
+        // 1) ¿Cacheable? solo GET o POST explicitados, y rutas no excluidas
         if (! $this->isCacheableRequest($request, $config)) {
             return $this->addCacheHeader($next($request), 'BYPASS-ROUTE');
         }
 
-        // 2. Generar clave
+        // 2) Generar clave: prefix + userId + hotel + path|params
         $key = $this->generateCacheKey($request, $config['key_prefix']);
 
-        // 3. Intento de lectura de cache
+        // 3) Intentar leer desde Redis
         try {
             if ($cached = Cache::get($key)) {
-                // Reconstruir la Response exactamente igual
                 return response($cached['content'], $cached['status'])
                     ->withHeaders($cached['headers'])
                     ->header('X-Cache', 'HIT');
@@ -34,16 +33,16 @@ class CacheResponses
             Log::error("Cache read error: {$e->getMessage()}");
         }
 
-        // 4. Procesar solicitud
+        // 4) Ejecutar petición real
         $response = $next($request);
 
-        // 5. Almacenar en cache si es exitoso
+        // 5) Si es 2xx, almacenar en Redis
         if ($response->isSuccessful()) {
             $this->storeResponse($request, $response, $key, $ttl, $config);
-            // devolvemos fresh (ya con header MD en storeResponse no modifica el objeto)
             return $this->addCacheHeader($response, 'MISS');
         }
 
+        // 6) Bypass si no es 2xx
         return $this->addCacheHeader($response, 'BYPASS-STATUS');
     }
 
@@ -51,7 +50,7 @@ class CacheResponses
     {
         $method = strtoupper($request->getMethod());
 
-        // Solo GET o POST permitidos
+        // Solo GET o POST listados en config
         if (! in_array($method, ['GET', 'POST'])) {
             return false;
         }
@@ -63,27 +62,39 @@ class CacheResponses
             }
         }
 
-        // POSTs permitidos explícitamente
+        // Si es POST, debe estar en la lista
         if ($method === 'POST') {
             return collect($config['cacheable_post_routes'])
                 ->contains(fn($route) => $request->is($route));
         }
 
-        // GETs permitidos por defecto
+        // GET siempre es cacheable si llegó hasta aquí
         return true;
     }
 
     protected function generateCacheKey(Request $request, string $prefix): string
     {
-        $userId = $request->user()?->id ?: 'guest';
-        $path   = $request->path();
-        $params = $request->isMethod('GET')
-            ? http_build_query($request->query())
-            : json_encode($request->except($request->isMethod('POST')
-                ? $request->merge($request->all())->except($request->isMethod('POST') ? config('api_cache.sensitive_params', []) : [])
-                : []));
+        $config    = config('api_cache');
+        $userId    = $request->user()?->id ?: 'guest';
+        // Tomamos también el hotel/cadena desde el header
+        $hotel     = $request->header('subdomainhotel', 'guest_hotel');
+        $path      = $request->path();
+        $sensitive = $config['sensitive_params'] ?? [];
 
-        return "{$prefix}{$userId}:" . sha1("{$path}|{$params}");
+        if ($request->isMethod('GET')) {
+            $paramsString = http_build_query($request->query());
+        } else {
+            $body = $request->except($sensitive);
+            $paramsString = json_encode($body);
+        }
+
+        // clave: prefix + user + hotel + hash(path|params)
+        $composite = implode('|', [
+            $path,
+            $paramsString,
+        ]);
+
+        return "{$prefix}{$userId}:{$hotel}:" . sha1($composite);
     }
 
     protected function storeResponse(Request $request, Response $response, string $key, $ttl, array $config): void
@@ -107,9 +118,9 @@ class CacheResponses
 
     protected function getRouteTtl(Request $request, array $config): ?int
     {
-        foreach ($config['route_specific_ttl'] as $route => $ttl) {
+        foreach ($config['route_specific_ttl'] as $route => $routeTtl) {
             if ($request->is($route)) {
-                return $ttl;
+                return $routeTtl;
             }
         }
         return null;
@@ -118,7 +129,6 @@ class CacheResponses
     protected function addCacheHeader(Response $response, string $value): Response
     {
         $response->headers->set('X-Cache', $value);
-        // Si ya venía un Cache-Control de tu controlador, lo preservamos:
         if (! $response->headers->has('Cache-Control')) {
             $response->headers->set('Cache-Control', 'max-age=3600, public');
         }
