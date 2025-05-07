@@ -18,16 +18,22 @@ class CacheResponses
             return $this->addCacheHeader($next($request), 'BYPASS');
         }
 
-        $key = $this->generateCacheKey($request, $config);
+        // Generación de clave con fallback en caso de error
+        try {
+            $key = $this->generateCacheKey($request, $config);
+        } catch (\Throwable $e) {
+            Log::warning("Error generando cache key: {$e->getMessage()}");
+            return $this->addCacheHeader($next($request), 'BYPASS');
+        }
 
         try {
             if ($cached = Cache::get($key)) {
                 return response($cached['content'], $cached['status'])
                     ->withHeaders($cached['headers'])
-                    ->header('X-Cache','HIT');
+                    ->header('X-Cache', 'HIT');
             }
         } catch (\Throwable $e) {
-            Log::error("Cache read error: ".$e->getMessage());
+            Log::error("Cache read error: {$e->getMessage()}");
         }
 
         $response = $next($request);
@@ -43,22 +49,25 @@ class CacheResponses
     protected function shouldCacheRequest(Request $request, array $config): bool
     {
         $method = strtoupper($request->getMethod());
-        if (! in_array($method, ['GET','POST'])) {
+        if (! in_array($method, ['GET', 'POST'])) {
             return false;
         }
+
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
                 return false;
             }
         }
+
         if ($method === 'POST') {
-            foreach ($config['cacheable_post_routes'] as $route) {
-                if ($request->is($route)) {
+            foreach ($config['cacheable_post_routes'] as $pattern) {
+                if ($request->is($pattern)) {
                     return true;
                 }
             }
             return false;
         }
+
         return true;
     }
 
@@ -69,7 +78,8 @@ class CacheResponses
         $path    = $request->path();
         $params  = $this->normalizeParameters($request);
 
-        $composite = $path.'|'.json_encode($params);
+        $composite = $path . '|' . json_encode($params);
+
         return sprintf(
             '%suser:%s:hotel:%s:%s',
             $config['key_prefix'],
@@ -87,8 +97,10 @@ class CacheResponses
                    : $request->except($sensitive);
 
         if (isset($params['hotel']) && is_array($params['hotel'])) {
-            $keep = ['id','zone','latitude','longitude'];
-            $params['hotel'] = array_intersect_key($params['hotel'], array_flip($keep));
+            $keep = ['id', 'zone', 'latitude', 'longitude'];
+            $params['hotel'] = array_intersect_key(
+                $params['hotel'], array_flip($keep)
+            );
             ksort($params['hotel']);
         }
 
@@ -102,6 +114,7 @@ class CacheResponses
             Log::warning('Token ausente, usando guest');
             return 'guest';
         }
+
         try {
             $payload = json_decode(
                 base64_decode(explode('.', $token)[1]),
@@ -109,7 +122,7 @@ class CacheResponses
             );
             return (string) ($payload['sub'] ?? 'guest');
         } catch (\Throwable $e) {
-            Log::warning("Token inválido, usando guest: ".$e->getMessage());
+            Log::warning("Token inválido, usando guest: {$e->getMessage()}");
             return 'guest';
         }
     }
@@ -133,7 +146,7 @@ class CacheResponses
                 'headers' => $response->headers->all(),
             ], $ttl);
         } catch (\Throwable $e) {
-            Log::error("Cache write error: ".$e->getMessage());
+            Log::error("Cache write error: {$e->getMessage()}");
         }
     }
 
@@ -142,11 +155,13 @@ class CacheResponses
         if ($ttl !== null) {
             return $ttl;
         }
+
         foreach ($config['route_specific_ttl'] as $route => $routeTtl) {
             if ($request->is($route)) {
                 return $routeTtl;
             }
         }
+
         return $config['default_ttl'];
     }
 
