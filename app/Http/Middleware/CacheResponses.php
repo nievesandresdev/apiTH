@@ -61,30 +61,65 @@ class CacheResponses
 
     protected function generateCacheKey(Request $request, array $config): string
     {
-        // Componentes esenciales
-        $hotelId = $request->header('subdomainhotel', 'no-hotel');
-        $path = $request->path();
+        // 1. Identificador de usuario (obligatorio)
+        $userId = $this->getUserIdFromRequest($request);
         
-        // Identificador de usuario (del JWT si está disponible)
-        $userId = 'guest';
-        if ($request->bearerToken()) {
-            try {
-                $payload = json_decode(base64_decode(explode('.', $request->bearerToken())[1]));
-                $userId = $payload->sub ?? 'guest';
-            } catch (\Exception $e) {
-                Log::warning("Failed to decode JWT: ".$e->getMessage());
-            }
-        }
-
-        // Parámetros normalizados
-        $params = $this->normalizeRequestParameters($request);
-
-        return sprintf('%s%s:%s:%s',
+        // 2. Identificador de hotel (obligatorio)
+        $hotelId = $this->getHotelIdFromRequest($request);
+        
+        // 3. Ruta y parámetros normalizados
+        $path = $request->path();
+        $params = $this->normalizeParameters($request);
+        
+        // Estructura clara: [prefijo][user][hotel][hash]
+        return sprintf('%suser:%d:hotel:%s:%s',
             $config['key_prefix'],
             $userId,
             $hotelId,
             sha1($path.'|'.json_encode($params))
         );
+    }
+
+    protected function normalizeParameters(Request $request): array
+    {
+        $params = $request->isMethod('GET') 
+            ? $request->query()
+            : $request->except(config('api_cache.sensitive_params', []));
+
+        // Normalización especial para hoteles
+        if (isset($params['hotel'])) {
+            $params['hotel'] = array_intersect_key($params['hotel'], [
+                'id' => true, 
+                'zone' => true
+            ]);
+            ksort($params['hotel']);
+        }
+    
+        ksort($params);
+        return $params;
+    }
+
+    protected function getUserIdFromRequest(Request $request): int
+    {   
+        if (!$request->bearerToken()) {
+            throw new \RuntimeException('Se requiere autenticación para cachear');
+        }
+    
+        try {
+            $payload = json_decode(base64_decode(explode('.', $request->bearerToken())[1]));
+            return $payload->sub ?? throw new \RuntimeException('Token no contiene sub');
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Error leyendo token: '.$e->getMessage());
+        }
+    }
+
+    protected function getHotelIdFromRequest(Request $request): string
+    {
+        $hotelId = $request->header('subdomainhotel');
+        if (empty($hotelId) || $hotelId === 'no-hotel') {
+            throw new \RuntimeException('Header subdomainhotel es requerido');
+        }
+        return $hotelId;
     }
 
     protected function normalizeRequestParameters(Request $request): array
