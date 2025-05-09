@@ -71,7 +71,7 @@ return [
     'azure_openia_base_uri' => env('AZURE_OPENAI_BASE_URI', null),
     'azure_openia_deployment' => env('AZURE_OPENAI_DEPLOYMENT', null),
     'azure_openia_version' => env('AZURE_OPENAI_VERSION', null),
-
+    'discord_webhook_url' => env('DISCORD_WEBHOOK_URL', null),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

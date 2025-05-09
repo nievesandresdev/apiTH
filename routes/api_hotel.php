@@ -18,6 +18,15 @@ Route::group(['prefix' => 'hotel'], function () {
         Route::post('/toggleChatService', [HotelHosterController::class, 'toggleChatService']);
         Route::post('/toggleCheckinService', [HotelHosterController::class, 'toggleCheckinService']);
         Route::post('/toggleReviewsService', [HotelHosterController::class, 'toggleReviewsService']);
+
+        Route::post('/updateContactPhones', [HotelHosterController::class, 'updateContactPhones']);
+        Route::post('/updateContactEmail', [HotelHosterController::class, 'updateContactEmail']);
+        Route::post('/updateContactWhatsapp', [HotelHosterController::class, 'updateContactWhatsapp']);
+        Route::get('/getProfilePhones', [HotelHosterController::class, 'getProfilePhones']);
+        Route::get('/getProfileEmail', [HotelHosterController::class, 'getProfileEmail']);
+        Route::get('/getProfileWhatsapp', [HotelHosterController::class, 'getProfileWhatsapp']);
+        Route::post('/toggleShowContact', [HotelHosterController::class, 'toggleShowContact']);
+        Route::get('/getShowContact', [HotelHosterController::class, 'getShowContact']);
     });
 
 

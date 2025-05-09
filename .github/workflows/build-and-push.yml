@@ -26,22 +26,28 @@ jobs:
           echo "PRODUCTION=true" >> .env
           echo "DB_CONNECTION=mysql" >> .env
           echo "BROADCAST_DRIVER=pusher" >> .env
-          echo "CACHE_DRIVER=file" >> .env
+          echo "CACHE_DRIVER=redis" >> .env
+          echo "REDIS_CLIENT=phpredis" >> .env
           echo "FILESYSTEM_DRIVER=s3" >> .env
           echo "QUEUE_CONNECTION=database" >> .env
           echo "SESSION_DRIVER=file" >> .env
           echo "SESSION_LIFETIME=120" >> .env
           echo "MEMCACHED_HOST=127.0.0.1" >> .env
-          echo "REDIS_HOST=127.0.0.1" >> .env
-          echo "REDIS_PASSWORD=null" >> .env
-          echo "REDIS_PORT=6379" >> .env
-          
+          echo "REDIS_HOST=th-api.redis.cache.windows.net" >> .env
+          echo "REDIS_PORT=6380" >> .env
+          echo "REDIS_SCHEME=tls" >> .env
+          echo "REDIS_DB=0" >> .env
+          echo "REDIS_CACHE_DB=1" >> .env
+
+          echo "APP_DEBUG=true" >> .env
           echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
           echo "MAIL_FROM_NAME=TheHoster" >> .env
           echo "MAIL_ADMIN=info@thehoster.es" >> .env
           echo "AWS_DEFAULT_REGION=eu-south-2" >> .env
           echo "AWS_BUCKET=thehosterappbucket" >> .env
           echo "API_SMS_ACTIVE=true" >> .env
+
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
 
           echo "PUSHER_APP_ID=${{ secrets.PUSHER_APP_ID }}" >> .env
           echo "PUSHER_APP_KEY=${{ secrets.PUSHER_APP_KEY }}" >> .env
@@ -56,7 +62,7 @@ jobs:
 
           if [ "${{ github.ref_name }}" == "main" ]; then
             echo "ASSET_URL=${{ secrets.APP_URL_MAIN }}" >> .env
-            echo "APP_DEBUG=${{ secrets.APP_DEBUG_MAIN }}" >> .env
+            
             echo "APP_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             echo "APP_ENV=${{secrets.APP_ENV_MAIN}}" >> .env
 
@@ -125,7 +131,6 @@ jobs:
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
           else
             echo "ASSET_URL=${{ secrets.APP_URL_TEST }}" >> .env
-            echo "APP_DEBUG=${{ secrets.APP_DEBUG_TEST }}" >> .env
             echo "APP_URL=${{ secrets.APP_URL_TEST }}" >> .env
             echo "APP_ENV=${{secrets.APP_ENV_TEST}}" >> .env
 
@@ -193,9 +198,6 @@ jobs:
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
           fi
-
-          
-          
 
       # Configuración de Docker Buildx
       - name: Set up Docker Buildx
@@ -272,4 +274,36 @@ jobs:
               --resource-group th-test-resources \
               --image ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
           fi
+      # 4. Actualizar la Container App con la imagen versionada
+      - name: Update Azure Container App image
+        run: |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            az containerapp update \
+              --name th-main-api \
+              --resource-group th-test-resources \
+              --image ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          fi
+          if [ "${{ github.ref_name }}" == "test" ]; then
+            az containerapp update \
+              --name th-test-api \
+              --resource-group th-test-resources \
+              --image ghcr.io/th-the-hoster/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          fi
+      - name: Purge Cloudflare cache for ALL zones
+        if: github.ref_name == 'main'
+        env:
+              CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}   # guarda tu token aquí
+        run: |
+            echo "🔍 Obteniendo lista de zonas de Cloudflare…"
+            zones=$(curl -s -H "Authorization: Bearer $CF_API_TOKEN" \
+                          -H "Content-Type: application/json" \
+                            "https://api.cloudflare.com/client/v4/zones" | jq -r '.result[].id')
         
+            for zone in $zones; do
+                echo "🧹 Purging cache in zone $zone"
+                curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$zone/purge_cache" \
+                    -H "Authorization: Bearer $CF_API_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    --data '{"purge_everything":true}' | jq -r '. | {zone_result: .success}'
+            done
+            

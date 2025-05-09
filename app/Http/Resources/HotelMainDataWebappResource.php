@@ -52,7 +52,12 @@ class HotelMainDataWebappResource extends JsonResource
             "image"=> $this->image,
             "code"=> $this->code,
             "chat_service_enabled"=> $this->chat_service_enabled,
-            "checkin_service_enabled"=> $this->checkin_service_enabled
+            "checkin_service_enabled"=> $this->checkin_service_enabled,
+            "show_contact"=> $this->show_contact,
+            "contact_email"=> $this->contact_email,
+            "contact_whatsapp_number"=> $this->contact_whatsapp_number,
+            "phone"=> $this->phone,
+            "phone_optional"=> $this->phone_optional,
         ];
     }
 }

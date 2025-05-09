@@ -22,6 +22,8 @@ Route::group(['prefix' => 'guest'], function () {
     Route::post('/updatePasswordGuest', [GuestController::class, 'updatePasswordGuest']);
     //updateDataGuest
     Route::post('/updateDataGuest', [GuestController::class, 'updateDataGuest']);
+    Route::post('/sendContactEmail', [GuestController::class, 'sendContactEmail']);
+    Route::get('/getContactEmailsByStayId', [GuestController::class, 'getContactEmailsByStayId']);
 
     Route::group(['prefix' => 'hoster'], function () {
         Route::post('/inviteToHotel', [GuestHosterController::class, 'inviteToHotel']);

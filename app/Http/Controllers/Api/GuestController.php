@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\GuestResource;
 use App\Http\Resources\StayResource;
 use App\Models\Guest;
+use App\Models\Stay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -360,7 +361,36 @@ class GuestController extends Controller
         }
     }
 
+    public function sendContactEmail(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $guest = Guest::find($request->guestId);
+            $stay = Stay::find($request->stayId);
+            $model = $this->service->sendContactEmail($request, $guest, $stay, $hotel->contact_email);
+            if(!$guest || !$stay || !$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.sendContactEmail');
+        }
+    }
 
+    public function getContactEmailsByStayId(Request $request){
+        $stayId = $request->stayId;
+        $guestId = $request->guestId;
+        $model = $this->service->getContactEmailsByStayId($stayId, $guestId);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+    }
 
 
 }

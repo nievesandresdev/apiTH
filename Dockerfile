@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y \
     libmagickwand-dev \
     supervisor \
     cron \
+    redis-tools \
     --no-install-recommends && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
@@ -36,7 +37,7 @@ RUN apt-get update && apt-get install -y \
 # Instalar extensiones de PHP
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
-    install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap imagick
+    install-php-extensions bcmath gd exif pcntl pdo_mysql mbstring zip soap imagick redis
 
 RUN echo "date.timezone = Europe/Madrid" > /usr/local/etc/php/conf.d/timezone.ini
 

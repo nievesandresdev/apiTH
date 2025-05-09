@@ -17,6 +17,8 @@ use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
 
+use App\Services\Notification\DiscordService;
+
 if (!function_exists('bodyResponseRequest')) {
     /**
      * This function a implement custom response request JSON in Playbox.
@@ -1108,4 +1110,9 @@ if (! function_exists('formatTypeLodging')) {
 }
 
 
-
+if (!function_exists('sendMessageDiscord')) {
+    function sendMessageDiscord($data) {
+        $discordService = new DiscordService();
+        $discordService->sendMessage($data['title'] ?? 'No title', $data['message'] ?? 'No message');
+    }
+}
