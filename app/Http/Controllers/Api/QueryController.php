@@ -9,6 +9,7 @@ use App\Services\QuerySettingsServices;
 use Illuminate\Http\Request;
 
 use App\Utils\Enums\EnumResponse;
+use Carbon\Carbon;
 
 class QueryController extends Controller
 {
@@ -89,6 +90,8 @@ class QueryController extends Controller
                 $collection = $collection->sortByDesc('updated_at');
                 $collection = $collection->values();
             }
+
+            
             
             return bodyResponseRequest(EnumResponse::ACCEPTED, $collection);
 

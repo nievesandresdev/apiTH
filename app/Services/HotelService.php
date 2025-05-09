@@ -536,7 +536,8 @@ class HotelService {
                 'hotels.show_profile','hotels.subdomain','hotels.logo','hotels.favicon','hotels.show_experiences','hotels.instagram_url',
                 'hotels.language_default_webapp','hotels.x_url','hotels.show_facilities','hotels.show_places','hotels.show_transport','hotels.show_confort','hotels.buttons_home',
                 'hotels.show_referrals','hotels.show_checkin_stay','hotels.offer_benefits','hotels.latitude','hotels.longitude',
-                'hotels.city_id','hotels.checkin','hotels.checkout','hotels.image','hotels.code','hotels.chat_service_enabled','hotels.checkin_service_enabled'
+                'hotels.city_id','hotels.checkin','hotels.checkout','hotels.image','hotels.code','hotels.chat_service_enabled','hotels.checkin_service_enabled',
+                'hotels.show_contact','hotels.contact_email','hotels.contact_whatsapp_number','hotels.phone','hotels.phone_optional'
             )
             // chatSettings
             ->where('subdomain', $subdomain)
