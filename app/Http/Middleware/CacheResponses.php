@@ -116,24 +116,19 @@ class CacheResponses
      */
     protected function generateCacheKey(Request $request, array $config): string
     {
-        // Leer headers
         $userHash        = $request->header('has-user');
         $hotelHash       = $request->header('has-hotel');
         $originComponent = $request->header('origin-component');
+        $path            = $request->path();
+        $params          = $request->isMethod('GET') ? $request->query() : $request->all();
 
-        // Ruta y parámetros para hash
-        $path   = $request->path();
-        $params = $request->isMethod('GET')
-            ? $request->query()
-            : $request->all();
-
-        // Incluir origin en la clave
         return sprintf(
-            '%suser:%s:hotel:%s:origin:%s:%s',
-            $config['key_prefix'],   // prefijo desde config/api_cache
+            '%suser:%s:hotel:%s:origin:%s:path:%s:%s',
+            $config['key_prefix'], // prefijo desde config/api_cache
             $userHash,
             $hotelHash,
             $originComponent,
+            $path,
             sha1($path . '|' . json_encode($params))
         );
     }
