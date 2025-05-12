@@ -51,9 +51,18 @@ class CacheResponses
                 $originHeader  = $origin;
 
                 if ($userHash && $hotelHash) {
+                    // Ruta completa y método para identificar endpoint
+                    $path   = $request->path();
+                    $method = $request->method();
+                    $params = $request->isMethod('GET')
+                        ? $request->query()
+                        : $request->all();
+
                     // Guardar en Redis
                     Cache::put($key, [
                         'timestamp' => now()->toDateTimeString(),
+                        'route'     => $method . ' ' . $path,
+                        'params'    => $params,
                         'status'    => $response->getStatusCode(),
                         'headers'   => $response->headers->all(),
                         'body'      => $response->getContent(),
@@ -66,7 +75,7 @@ class CacheResponses
         }
 
         // Devolver respuesta original con header
-        return $response;
+        return $this->addCacheHeader($response, 'MISS');
     }
 
     /**
@@ -108,11 +117,11 @@ class CacheResponses
     protected function generateCacheKey(Request $request, array $config): string
     {
         // Leer headers
-        $userHash       = $request->header('has-user');
-        $hotelHash      = $request->header('has-hotel');
-        $originComponent= $request->header('origin-component');
+        $userHash        = $request->header('has-user');
+        $hotelHash       = $request->header('has-hotel');
+        $originComponent = $request->header('origin-component');
 
-        // Ruta y parámetros
+        // Ruta y parámetros para hash
         $path   = $request->path();
         $params = $request->isMethod('GET')
             ? $request->query()
