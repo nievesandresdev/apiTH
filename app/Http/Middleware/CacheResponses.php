@@ -36,45 +36,55 @@ class CacheResponses
             return $this->addCacheHeader($next($request), 'BYPASS');
         }
 
-        // Identificar si la llamada viene del microservicio Hoster
-        $origin = $request->header('origin-component');
+        // Intentar recuperar del cache
+        try {
+            if ($cached = Cache::get($key)) {
+                return response($cached['body'], $cached['status'])
+                    ->withHeaders($cached['headers'])
+                    ->header('X-Cache', 'HIT');
+            }
+        } catch (\Throwable $e) {
+            Log::error("Cache read error: {$e->getMessage()}");
+        }
 
-        // Procesar petición
+        // Procesar petición real
         $response = $next($request);
 
-        // Si viene de Hoster, guardar en cache (solo almacenar)
-        if (strtolower($origin) === 'hoster') {
+        // Obtener origen del request
+        $origin = $request->header('origin-component');
+
+        // Si viene de Hoster o Huesped, guardar en cache
+        if (in_array(strtolower($origin), ['hoster', 'huesped'])) {
             try {
                 // Leer identificadores de usuario y hotel
-                $userHash      = $request->header('has-user');
-                $hotelHash     = $request->header('has-hotel');
-                $originHeader  = $origin;
+                $userHash  = $request->header('has-user');
+                $hotelHash = $request->header('has-hotel');
 
                 if ($userHash && $hotelHash) {
-                    // Ruta completa y método para identificar endpoint
-                    $path   = $request->path();
+                    // Ruta y método para identificar endpoint
                     $method = $request->method();
+                    $path   = $request->path();
                     $params = $request->isMethod('GET')
                         ? $request->query()
                         : $request->all();
 
-                    // Guardar en Redis
+                    // Guardar payload en Redis
                     Cache::put($key, [
                         'timestamp' => now()->toDateTimeString(),
-                        'route'     => $method . ' ' . $path,
+                        'route'     => "$method $path",
                         'params'    => $params,
                         'status'    => $response->getStatusCode(),
                         'headers'   => $response->headers->all(),
                         'body'      => $response->getContent(),
-                        'origin'    => $originHeader,
+                        'origin'    => $origin,
                     ], $ttl ?? $config['default_ttl']);
                 }
             } catch (\Throwable $e) {
-                Log::error("Cache save error (hoster): {$e->getMessage()}");
+                Log::error("Cache save error ({$origin}): {$e->getMessage()}");
             }
         }
 
-        // Devolver respuesta original con header
+        // Devolver respuesta original con código de cache
         return $this->addCacheHeader($response, 'MISS');
     }
 
