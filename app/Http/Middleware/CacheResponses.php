@@ -128,9 +128,14 @@ class CacheResponses
     {
         $userHash        = $request->header('has-user');
         $hotelHash       = $request->header('has-hotel');
-        $originComponent = $request->header('origin-component');
+        $originComponent = strtolower($request->header('origin-component'));
         $path            = $request->path();
         $params          = $request->isMethod('GET') ? $request->query() : $request->all();
+
+        // Asegurar orden consistente de parámetros
+        if (is_array($params)) {
+            ksort($params);
+        }
 
         return sprintf(
             '%suser:%s:hotel:%s:origin:%s:path:%s:%s',
