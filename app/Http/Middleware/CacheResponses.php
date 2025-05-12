@@ -84,7 +84,9 @@ class CacheResponses
         return $response
             ->header('X-Cache', $status)
             ->header('X-Response-Time', "{$elapsed}ms")
-            ->header('Cache-Control', 'private, max-age=3600');
+            //->header('Cache-Control', 'private, max-age=3600')
+            ->header('Cache-Control', 'no-store, must-revalidate')
+            ->header('Vary', 'hash-user, hash-hotel, origin-component');
     }
 
     /**
