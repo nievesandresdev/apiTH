@@ -28,11 +28,7 @@ class CacheResponses
 
         // Verificar si debe cachear
         if (! $this->shouldCacheRequest($request, $config)) {
-            $response = $next($request);
-            // Medir tiempo interno
-            $elapsed = round((microtime(true) - $start) * 1000);
-            $response->headers->set('X-Response-Time', "{$elapsed}ms");
-            return $this->addCacheHeader($response, 'BYPASS');
+            return $this->addCacheHeader($next($request), 'BYPASS', $start);
         }
 
         // Generar clave con fallback
@@ -40,22 +36,14 @@ class CacheResponses
             $key = $this->generateCacheKey($request, $config);
         } catch (\Throwable $e) {
             Log::warning("Error generando cache key: {$e->getMessage()}");
-            $response = $next($request);
-            $elapsed = round((microtime(true) - $start) * 1000);
-            $response->headers->set('X-Response-Time', "{$elapsed}ms");
-            return $this->addCacheHeader($response, 'BYPASS');
+            return $this->addCacheHeader($next($request), 'BYPASS', $start);
         }
 
         // Intentar recuperar del cache
         try {
             if ($cached = Cache::get($key)) {
-                $response = response($cached['body'], $cached['status'])
-                    ->withHeaders($cached['headers'])
-                    ->header('X-Cache', 'HIT');
-                // Medir tiempo interno
-                $elapsed = round((microtime(true) - $start) * 1000);
-                $response->headers->set('X-Response-Time', "{$elapsed}ms");
-                return $response;
+                $response = $this->buildCachedResponse($cached);
+                return $this->prepareResponse($response, $start, 'HIT');
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
@@ -93,12 +81,8 @@ class CacheResponses
             }
         }
 
-        // Medir tiempo interno antes de retornar
-        $elapsed = round((microtime(true) - $start) * 1000);
-        $response->headers->set('X-Response-Time', "{$elapsed}ms");
-
         // Devolver respuesta original con código de cache
-        return $this->addCacheHeader($response, 'MISS');
+        return $this->addCacheHeader($response, 'MISS', $start);
     }
 
     /**
@@ -112,6 +96,12 @@ class CacheResponses
         }
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
+                return false;
+            }
+        }
+        $requiredHeaders = ['has-user', 'has-hotel', 'origin-component'];
+        foreach ($requiredHeaders as $header) {
+            if (!$request->hasHeader($header)) {
                 return false;
             }
         }
@@ -134,12 +124,13 @@ class CacheResponses
         $userHash        = $request->header('has-user');
         $hotelHash       = $request->header('has-hotel');
         $originComponent = strtolower($request->header('origin-component'));
-        $path            = $request->path();
-        $params          = $request->isMethod('GET') ? $request->query() : $request->all();
 
-        if (is_array($params)) {
-            ksort($params);
+        if (empty($userHash) || empty($hotelHash) || empty($origin)) {
+            throw new \RuntimeException('Missing required headers for cache key');
         }
+
+        $path            = $request->path();
+        $params          = $this->normalizeParameters($request);
 
         return sprintf(
             '%suser:%s:hotel:%s:origin:%s:path:%s:%s',
@@ -153,11 +144,40 @@ class CacheResponses
     }
 
     /**
+     * Normaliza los parámetros de la petición.
+     */
+    protected function normalizeParameters(Request $request): array
+    {
+        $params = $request->isMethod('GET') 
+            ? $request->query()
+            : $request->except(config('api_cache.sensitive_params', []));
+
+        ksort($params);
+        return $params;
+    }
+
+    protected function buildCachedResponse(array $cached): Response
+    {
+        $response = response($cached['body'], $cached['status']);
+
+        foreach ($cached['headers'] as $name => $values) {
+            if ($name !== 'cache-control') {
+                $response->header($name, $values[0]);
+            }
+        }
+
+        return $response;
+    }
+
+    /**
      * Agrega cabecera X-Cache
      */
-    protected function addCacheHeader(Response $response, string $status): Response
+    protected function addCacheHeader(Response $response, string $status, float $startTime): Response
     {
-        $response->headers->set('X-Cache', $status);
-        return $response;
+        $elapsed = round((microtime(true) - $startTime) * 1000);
+        return $response
+            ->header('X-Cache', $cacheStatus)
+            ->header('X-Response-Time', "{$elapsed}ms")
+            ->header('Cache-Control', 'private, max-age=3600');
     }
 }
