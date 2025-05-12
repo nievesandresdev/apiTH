@@ -59,7 +59,9 @@ class CacheResponses
                 Cache::put($key, [
                     'timestamp' => now()->toDateTimeString(),
                     'route'     => $request->method() . ' ' . $request->path(),
-                    'params'    => $this->normalize($request->isMethod('GET') ? $request->query() : $request->all()),
+                    'params'    => $this->normalize(
+                        $request->isMethod('GET') ? $request->query() : $request->all()
+                    ),
                     'status'    => $response->getStatusCode(),
                     'headers'   => $response->headers->all(),
                     'body'      => $response->getContent(),
@@ -99,9 +101,9 @@ class CacheResponses
                 return false;
             }
         }
-        // Requiere headers para caché: has-user, has-hotel y origin-component
-        if (! $request->hasHeader('has-user')
-            || ! $request->hasHeader('has-hotel')
+        // Requiere headers para caché: hash-user, hash-hotel y origin-component
+        if (! $request->hasHeader('hash-user')
+            || ! $request->hasHeader('hash-hotel')
             || ! $request->hasHeader('origin-component')) {
             return false;
         }
@@ -114,34 +116,25 @@ class CacheResponses
             return false;
         }
         return true;
-                }
-            }
-            return false;
-        }
-        return true;
     }
 
     /**
-     * Construye la clave de cache usando headers o fallbacks.
+     * Construye la clave de cache usando headers de usuario, hotel y origin.
      */
     protected function generateCacheKey(Request $request, array $config): string
     {
-        // Usuario desde header o JWT
-        $userHash = $request->header('has-user')
-            ?: optional($request->user())->id
-            ?: $this->getUserFromToken($request);
+        $userHash  = $request->header('hash-user');
+        $hotelHash = $request->header('hash-hotel');
+        $origin    = strtolower($request->header('origin-component', ''));
 
-        // Hotel desde header o subdomainhotel
-        $hotelHash = $request->header('has-hotel')
-            ?: $request->header('subdomainhotel', 'no-hotel');
-
-        $origin = strtolower($request->header('origin-component', ''));
         if (empty($userHash) || empty($hotelHash) || empty($origin)) {
             throw new \RuntimeException('Missing identifiers for cache key');
         }
 
         $path   = $request->path();
-        $params = $this->normalize($request->isMethod('GET') ? $request->query() : $request->all());
+        $params = $this->normalize(
+            $request->isMethod('GET') ? $request->query() : $request->all()
+        );
 
         return sprintf(
             '%suser:%s:hotel:%s:origin:%s:path:%s:%s',
@@ -149,22 +142,6 @@ class CacheResponses
             $origin, $path,
             sha1($path . '|' . json_encode($params))
         );
-    }
-
-    /**
-     * Extrae usuario de token JWT.
-     */
-    protected function getUserFromToken(Request $request)
-    {
-        if (! $token = $request->bearerToken()) {
-            return 'guest';
-        }
-        try {
-            $payload = json_decode(base64_decode(explode('.', $token)[1]), true);
-            return (string) ($payload['sub'] ?? 'guest');
-        } catch (\Exception $e) {
-            return 'guest';
-        }
     }
 
     /**
