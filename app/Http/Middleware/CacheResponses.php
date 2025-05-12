@@ -20,12 +20,19 @@ class CacheResponses
      */
     public function handle(Request $request, Closure $next, $ttl = null)
     {
+        // Iniciar cronómetro
+        $start = microtime(true);
+
         // Cargar configuración
         $config = config('api_cache');
 
         // Verificar si debe cachear
         if (! $this->shouldCacheRequest($request, $config)) {
-            return $this->addCacheHeader($next($request), 'BYPASS');
+            $response = $next($request);
+            // Medir tiempo interno
+            $elapsed = round((microtime(true) - $start) * 1000);
+            $response->headers->set('X-Response-Time', "{$elapsed}ms");
+            return $this->addCacheHeader($response, 'BYPASS');
         }
 
         // Generar clave con fallback
@@ -33,15 +40,22 @@ class CacheResponses
             $key = $this->generateCacheKey($request, $config);
         } catch (\Throwable $e) {
             Log::warning("Error generando cache key: {$e->getMessage()}");
-            return $this->addCacheHeader($next($request), 'BYPASS');
+            $response = $next($request);
+            $elapsed = round((microtime(true) - $start) * 1000);
+            $response->headers->set('X-Response-Time', "{$elapsed}ms");
+            return $this->addCacheHeader($response, 'BYPASS');
         }
 
         // Intentar recuperar del cache
         try {
             if ($cached = Cache::get($key)) {
-                return response($cached['body'], $cached['status'])
+                $response = response($cached['body'], $cached['status'])
                     ->withHeaders($cached['headers'])
                     ->header('X-Cache', 'HIT');
+                // Medir tiempo interno
+                $elapsed = round((microtime(true) - $start) * 1000);
+                $response->headers->set('X-Response-Time', "{$elapsed}ms");
+                return $response;
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
@@ -56,19 +70,14 @@ class CacheResponses
         // Si viene de Hoster o Huesped, guardar en cache
         if (in_array(strtolower($origin), ['hoster', 'huesped'])) {
             try {
-                // Leer identificadores de usuario y hotel
                 $userHash  = $request->header('has-user');
                 $hotelHash = $request->header('has-hotel');
 
                 if ($userHash && $hotelHash) {
-                    // Ruta y método para identificar endpoint
                     $method = $request->method();
                     $path   = $request->path();
-                    $params = $request->isMethod('GET')
-                        ? $request->query()
-                        : $request->all();
+                    $params = $request->isMethod('GET') ? $request->query() : $request->all();
 
-                    // Guardar payload en Redis
                     Cache::put($key, [
                         'timestamp' => now()->toDateTimeString(),
                         'route'     => "$method $path",
@@ -84,6 +93,10 @@ class CacheResponses
             }
         }
 
+        // Medir tiempo interno antes de retornar
+        $elapsed = round((microtime(true) - $start) * 1000);
+        $response->headers->set('X-Response-Time', "{$elapsed}ms");
+
         // Devolver respuesta original con código de cache
         return $this->addCacheHeader($response, 'MISS');
     }
@@ -94,20 +107,14 @@ class CacheResponses
     protected function shouldCacheRequest(Request $request, array $config): bool
     {
         $method = strtoupper($request->getMethod());
-
-        // Solo GET y POST permitidos
         if (! in_array($method, ['GET', 'POST'])) {
             return false;
         }
-
-        // Rutas excluidas
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
                 return false;
             }
         }
-
-        // Para POST, solo patrones permitidos
         if ($method === 'POST') {
             foreach ($config['cacheable_post_routes'] as $pattern) {
                 if ($request->is($pattern)) {
@@ -116,8 +123,6 @@ class CacheResponses
             }
             return false;
         }
-
-        // Para GET siempre
         return true;
     }
 
@@ -132,7 +137,6 @@ class CacheResponses
         $path            = $request->path();
         $params          = $request->isMethod('GET') ? $request->query() : $request->all();
 
-        // Asegurar orden consistente de parámetros
         if (is_array($params)) {
             ksort($params);
         }
