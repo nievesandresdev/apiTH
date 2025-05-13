@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 
 /*emails*/
 use App\Mail\Guest\{ContactToHoster, MsgStay, postCheckoutMail,prepareArrival};
+use App\Mail\Queries\DissatisfiedGuest;
+use App\Mail\Queries\ReportHoster;
 use App\Mail\User\RewardsEmail;
 
 /*models*/
@@ -326,24 +328,116 @@ class UtilsController extends Controller
     }
 
 
-    public function test()
+    public function test(Request $r)
     {
-        $guest = Guest::find(1);
-        $stay = Stay::find(209);
-        $message = "Hola, me llamo Francisco y quiero contactar con el hotel para una estancia el 10 de junio. Gracias";
-        $data = [
-            'guestName' => $guest->name.' '.$guest->lastname,
-            'guestEmail' => $guest->email,
-            'guestLanguageAbbr' => $guest->lang_web,
-            'guestLanguageName' => EnumsLanguages::NAME[$guest->lang_web],
-            'stayCheckin' => Carbon::parse($stay->check_in)->format('d/m/Y'),
-            'stayCheckout' => Carbon::parse($stay->check_out)->format('d/m/Y'),
-            'message' => $message
-        ];
+        $userHotelCode = 'mMGbiJUdt5aS';
+        $hotelId = 291;
+        $hotel = Hotel::find($hotelId);
+        $showNotify = true;
+        $query = Query::find(579);
+        $stay = Stay::find($query->stay_id);
+        $guest = Guest::find($query->guest_id);
+        $respondedAt   = Carbon::createFromFormat('Y-m-d H:i:s', $query->responded_at, 'Europe/Madrid');
+        $referenceDate = $query->period === 'post-stay'
+            ? Carbon::parse($stay->check_out, 'Europe/Madrid')
+            : Carbon::parse($stay->check_in,  'Europe/Madrid');
+    
+        // 1) Días de diferencia (redondeado y no negativo)
+        $daysDifference = max(0, $respondedAt->diffInDays($referenceDate));
+    
+        // 2) Label día/días
+        $dayLabel = $daysDifference === 1 ? 'día' : 'días';
+    
+        // 3) Antes o después
+        $beforeOrAfter = $respondedAt->lt($referenceDate) ? 'antes' : 'después';
+    
+        // 4) Label de periodo
+        $periodLabel = $query->period === 'post-stay' ? 'check-out' : 'check-in';
         
-        Mail::to('andresdreamerf@gmail.com')->send(new ContactToHoster($data));
-        return $data;
+        $textDate = "{$daysDifference} {$dayLabel} {$beforeOrAfter} del {$periodLabel}";
+
+        $saasUrl = config('app.hoster_url');
+        $urlToStay = "{$saasUrl}/estancias/{$stay->id}/feedback?g={$guest->id}&redirect=view&code={$userHotelCode}";
+        $questionInStay = "¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?";
+        $questionPostStay = "¿Cómo ha sido tu experiencia con nosotros?";
+        $data = [
+            "guestName" => "{$guest->name} {$guest->lastname}",
+            "checkin" => "2025-05-01",
+            "textDate" => $textDate,
+            "respondedAtFormatted" => $respondedAt->format('d/m/Y'),
+            "respondedHour" => $respondedAt->format('H:i'),
+            "responseLang" => $query->response_lang,
+            "question" => $query->period === 'post-stay' ? $questionPostStay : $questionInStay,
+            "comment" => $query->comment[$query->response_lang],
+            "langAbbr" => $query->response_lang,
+            "languageResponse" => EnumsLanguages::NAME[$query->response_lang],
+            "urlToStay" => $urlToStay,
+            "guestEmail" => $guest->email,
+        ];
+
+        return view('mails.queries.dissatisfiedGuest', compact('hotel','showNotify','data'));
+
+        
+        // http://localhost:82/estancias?redirect=view&code=mMGbiJUdt5aS
+        
+        // $this->mailService->sendEmail(new DissatisfiedGuest($hotel, $showNotify), 'andresdreamerf@gmail.com');
+        
+        $from    = '2025-01-01';
+        $to      = '2025-05-09';
+
+        $qs = Query::join('stays','queries.stay_id','stays.id')
+            ->where('stays.hotel_id', $hotelId)
+            ->where('queries.answered', 1)
+            ->whereIn('queries.period',['in-stay','post-stay'])
+            // filtro por intervalo de fechas (solo fecha)
+            ->whereDate('queries.responded_at','>=',$from)
+            ->whereDate('queries.responded_at','<=',$to)
+            ->select(
+                    'queries.period','queries.guest_id','queries.answered','queries.qualification','queries.comment','queries.responded_at','queries.response_lang',
+                    'stays.hotel_id','stays.check_in','stays.check_out','stays.id as stayId'
+                )
+            ->get();
+        // return $qs;
+        $quals = ['VERYGOOD','GOOD','NORMAL','WRONG','VERYWRONG'];
+        // Función auxiliar para procesar un sub-conjunto
+        $makeStats = function($collection) use($quals){
+            $total = $collection->count() ?: 1; // evitar división por cero
+            return collect($quals)->map(function($q) use($collection,$total){
+                $cnt = $collection->where('qualification',$q)->count();
+                return [
+                    'qualification' => $q,
+                    'count'         => $cnt,
+                    'percent'       => round($cnt / $total * 100, 1),
+                ];
+            });
+        };
+
+        // 4) Construyes los tres módulos
+        $stats = [
+            'from' => Carbon::parse($from)->format('d/m/Y'),
+            'to' => Carbon::parse($to)->format('d/m/Y'),
+            'all' => [
+                'total'   => $qs->count(),
+                'comments_count'=> $qs->whereNotNull('comment')->count(),
+                'breakdown'=> $makeStats($qs),
+            ],
+            'in_stay' => tap([
+                'total'   => $qs->where('period','in-stay')->count(),
+                'comments_count'=> $qs->where('period','in-stay')->whereNotNull('comment')->count(),
+            ], function(&$m) use($qs,$makeStats){
+                $m['breakdown'] = $makeStats($qs->where('period','in-stay'));
+            }),
+            'post_stay' => tap([
+                'total'   => $qs->where('period','post-stay')->count(),
+                'comments_count'=> $qs->where('period','post-stay')->whereNotNull('comment')->count(),
+            ], function(&$m) use($qs,$makeStats){
+                $m['breakdown'] = $makeStats($qs->where('period','post-stay'));
+            }),
+        ];
+        // return $stats;
+        return view('mails.queries.reportHoster', compact('hotel','showNotify','stats'));
     }
+
 
     public function testEmailPostCheckout(){
         $type = 'post-checkout';
