@@ -230,9 +230,6 @@ class UserServices
 
     function getUsersHotelBasicData($hotelId, $notificationFilters = [], $specificChannels = [])
     {
-        //Log::info('getUsersHotelBasicData $hotelId'. $hotelId);
-        //Log::info('getUsersHotelBasicData $notificationFilters'. json_encode($notificationFilters));
-        //Log::info('getUsersHotelBasicData $specificChannels'. json_encode($specificChannels));
         // Validar que $specificChannels sea un array
         if (!is_array($specificChannels)) {
             $specificChannels = [];
@@ -297,6 +294,77 @@ class UserServices
         });
 
         //Log::info('getUsersHotelBasicData $groupedUsers '. json_encode($groupedUsers));
+
+        return collect($groupedUsers);
+    }
+
+    /**
+     * Get users with specific notification settings for authenticated user's hotels
+     */
+    function getUsersWithNotifications($notificationFilters = [], $specificChannels = [], $periodicity = null)
+    {
+        // Validar que $specificChannels sea un array
+        if (!is_array($specificChannels)) {
+            $specificChannels = [];
+        }
+
+        $queryUsers = User::select('id', 'email', 'name', 'notifications')
+            ->with(['hotel:id,name'])
+            ->whereNotNull('notifications')
+            ->where('del', 0)
+            ->where('status', 1)
+            ->whereHas('hotel');
+
+        // Validar si se pasaron filtros de notificación
+        if (!empty($notificationFilters)) {
+            foreach ($notificationFilters as $key => $value) {
+                $queryUsers->where(function ($query) use ($key, $value, $specificChannels) {
+                    foreach ($specificChannels as $channel) {
+                        $query->orWhere("notifications->{$channel}->$key", $value);
+                    }
+                });
+            }
+        }
+
+        // Filtrar por periodicity si se especifica
+        if ($periodicity !== null) {
+            $queryUsers->whereRaw("JSON_EXTRACT(notifications, '$.informGeneral.periodicity') = ?", [$periodicity]);
+        }
+
+        $queryUsers = $queryUsers->orderBy('created_at', 'desc')->get();
+
+        Log::info('Número de usuarios encontrados: ' . $queryUsers->count());
+
+        if ($queryUsers->isEmpty()) {
+            Log::info('No se encontraron usuarios');
+            return collect(array_fill_keys($specificChannels, collect()));
+        }
+
+        // Separar los resultados en grupos dinámicos según $specificChannels
+        $groupedUsers = [];
+        foreach ($specificChannels as $channel) {
+            $groupedUsers[$channel] = collect();
+        }
+
+        // Debug de los usuarios encontrados
+        foreach ($queryUsers as $user) {
+
+            // Intentar decodificar las notificaciones
+            $notifications = is_string($user->notifications) ? json_decode($user->notifications, true) : $user->notifications;
+
+            // Verificar la estructura de las notificaciones
+            foreach ($notificationFilters as $key => $value) {
+                foreach ($specificChannels as $channel) {
+
+
+                    if (($notifications[$channel][$key] ?? false) === $value) {
+                        $groupedUsers[$channel]->push($user);
+                        //Log::info("Usuario {$user->email} agregado al canal {$channel}");
+                    }
+                }
+            }
+        }
+
 
         return collect($groupedUsers);
     }

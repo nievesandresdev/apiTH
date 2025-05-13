@@ -23,7 +23,7 @@ jobs:
           echo "APP_KEY=" >> .env
           echo "LOG_CHANNEL=stack" >> .env
           echo "LOG_LEVEL=debug" >> .env
-          echo "PRODUCTION=true" >> .env
+          
           echo "DB_CONNECTION=mysql" >> .env
           echo "BROADCAST_DRIVER=pusher" >> .env
           echo "CACHE_DRIVER=redis" >> .env
@@ -38,6 +38,7 @@ jobs:
           echo "REDIS_SCHEME=tls" >> .env
           echo "REDIS_DB=0" >> .env
           echo "REDIS_CACHE_DB=1" >> .env
+          echo "CACHE_ENABLED=true" >> .env
 
           echo "APP_DEBUG=true" >> .env
           echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
@@ -129,6 +130,7 @@ jobs:
             echo "DOSSIER_HOTEL_ID=\"${{ vars.DOSSIER_HOTEL_ID_MAIN }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
+            echo "PRODUCTION=\"${{ vars.PRODUCTION_MAIN }}\"" >> .env
           else
             echo "ASSET_URL=${{ secrets.APP_URL_TEST }}" >> .env
             echo "APP_URL=${{ secrets.APP_URL_TEST }}" >> .env
@@ -197,6 +199,8 @@ jobs:
             echo "DOSSIER_HOTEL_ID=\"${{ vars.DOSSIER_HOTEL_ID_TEST }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
+            
+            echo "PRODUCTION=\"${{ vars.PRODUCTION_TEST }}\"" >> .env
           fi
 
       # Configuración de Docker Buildx
