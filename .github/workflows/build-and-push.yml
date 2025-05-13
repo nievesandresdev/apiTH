@@ -38,6 +38,7 @@ jobs:
           echo "REDIS_SCHEME=tls" >> .env
           echo "REDIS_DB=0" >> .env
           echo "REDIS_CACHE_DB=1" >> .env
+          echo "CACHE_ENABLED=true" >> .env
 
           echo "APP_DEBUG=true" >> .env
           echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
