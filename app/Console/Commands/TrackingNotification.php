@@ -54,6 +54,8 @@ class TrackingNotification extends Command
     {
         Log::info('inicia cron mes');
 
+
+        //filtros de notificaciones
         $notificationFilters = [
             'informGeneral' => true,
             'informDiscontent' => true
@@ -79,6 +81,7 @@ class TrackingNotification extends Command
     {
         Log::info('inicia cron semana');
 
+        //filtros de notificaciones
         $notificationFilters = [
             'informGeneral' => true,
             'informDiscontent' => true
