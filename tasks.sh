@@ -47,11 +47,7 @@ echo "Todas las tareas programadas se han ejecutado."
 #corregir errores de traduccion en el seeder UpdateTranslateRequestsSettingSeeder
 #php artisan db:seed --class=FixLinkStringRequestSettingsSeeder
 
-<<<<<<< HEAD
 #seeders de sprint 7
 
 #php artisan db:seed --class=AddCodeToUsersSeeder
-=======
-#seeder sprint 7
 #php artisan db:seed --class=NotificationsUpdateSeeder
->>>>>>> b85d7b8b2efbb1a10d56ba4e51d17c158c05e695

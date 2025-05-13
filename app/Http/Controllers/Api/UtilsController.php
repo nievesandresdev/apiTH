@@ -331,7 +331,7 @@ class UtilsController extends Controller
     public function test(Request $r)
     {
         $userHotelCode = 'mMGbiJUdt5aS';
-        $hotelId = 291;
+        $hotelId = 191;
         $hotel = Hotel::find($hotelId);
         $showNotify = true;
         $query = Query::find(579);
@@ -375,6 +375,27 @@ class UtilsController extends Controller
             "guestEmail" => $guest->email,
         ];
 
+        $notificationFiltersNewFeedback = [
+            'newFeedback' => true,
+            'informDiscontent' => true,
+        ];
+
+        $specificChannels = ['push','email'];
+
+        $users = $this->userServices->getUsersHotelBasicData($hotel->id, $notificationFiltersNewFeedback, $specificChannels);
+        // $users = $this->userServices->getUsersHotelBasicData($hotelId, ['informDiscontent' => true], ['email']);
+        $users = $users['email'] ?? [];
+        $usersWithInformDiscontent = collect($users)
+            ->filter(function ($user) {
+                // Decodificar el JSON de notifications
+                $notifications = json_decode($user['notifications'], true);
+                
+                // Verificar si email.informDiscontent es true
+                return isset($notifications['email']['informDiscontent']) 
+                    && $notifications['email']['informDiscontent'] === true;
+            })
+        ->values() // Reindexar el array
+        ->all(); // Convertir de nuevo a array si es necesario
         return view('mails.queries.dissatisfiedGuest', compact('hotel','showNotify','data'));
 
         

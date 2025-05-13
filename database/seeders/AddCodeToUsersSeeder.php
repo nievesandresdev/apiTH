@@ -10,9 +10,9 @@ class AddCodeToUsersSeeder extends Seeder
 {
     public function run()
     {
-        User::whereNull('code')->chunkById(100, function ($users) {
+        User::whereNull('login_code')->chunkById(100, function ($users) {
             foreach ($users as $user) {
-                $user->code = Str::random(12);
+                $user->login_code = Str::random(12);
                 $user->saveQuietly();
             }
         });

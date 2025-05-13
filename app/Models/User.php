@@ -11,6 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 use App\Services\StripeServices;
 use Laravel\Cashier\Billable;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -271,7 +272,7 @@ class User extends Authenticatable
         static::creating(function ($user) {
             if (! $user->login_code) {
                 // 12 chars alfanum cripto-seguro
-                $user->code = Str::random(12);
+                $user->login_code = Str::random(12);
             }
         });
     }
