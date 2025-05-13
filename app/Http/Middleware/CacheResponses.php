@@ -57,7 +57,7 @@ class CacheResponses
         if (in_array($origin, ['hoster', 'huesped'])) {
 
             $filteredHeaders = $this->filterResponseHeaders($response->headers->all());
-            
+
             try {
                 Cache::put($key, [
                     'timestamp' => now()->toDateTimeString(),
@@ -84,12 +84,16 @@ class CacheResponses
     protected function finishResponse(Response $response, string $status, float $start): Response
     {
         $elapsed = round((microtime(true) - $start) * 1000);
+
+        $ttl = property_exists($this, 'ttl')
+        ? $this->ttl
+        : config('api_cache.default_ttl');
+
         return $response
-            ->header('X-Cache', $status)
-            ->header('X-Response-Time', "{$elapsed}ms")
-            //->header('Cache-Control', 'private, max-age=3600')
-            ->header('Cache-Control', 'no-store, must-revalidate')
-            ->header('Vary', 'hash-user, hash-hotel, origin-component');
+                ->header('X-Cache', $status)
+                ->header('X-Response-Time', "{$elapsed}ms")
+                ->header('Cache-Control', 'public, max-age=' . $ttl)
+                ->header('Vary', 'hash-user', 'hash-hotel', 'origin-component');
     }
 
     /**
