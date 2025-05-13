@@ -49,3 +49,4 @@ echo "Todas las tareas programadas se han ejecutado."
 
 #seeder sprint 7
 #php artisan db:seed --class=NotificationsUpdateSeeder
+#php artisan db:seed --class=PasswordOtaSeeder
