@@ -55,6 +55,9 @@ class CacheResponses
         $origin   = strtolower($request->header('origin-component', ''));
 
         if (in_array($origin, ['hoster', 'huesped'])) {
+
+            $filteredHeaders = $this->filterResponseHeaders($response->headers->all());
+            
             try {
                 Cache::put($key, [
                     'timestamp' => now()->toDateTimeString(),
@@ -63,7 +66,7 @@ class CacheResponses
                         $request->isMethod('GET') ? $request->query() : $request->all()
                     ),
                     'status'    => $response->getStatusCode(),
-                    'headers'   => $response->headers->all(),
+                    'headers'   => $filteredHeaders,   // <-- aquí
                     'body'      => $response->getContent(),
                     'origin'    => $origin,
                 ], $ttl ?? $config['default_ttl']);
@@ -161,11 +164,34 @@ class CacheResponses
     protected function buildCachedResponse(array $c): Response
     {
         $response = response($c['body'], $c['status']);
-        foreach ($c['headers'] as $name => $vals) {
+
+        // 2) APLICAMOS sólo los headers permitidos al reconstruir la respuesta
+        foreach ($this->filterResponseHeaders($c['headers']) as $name => $vals) {
             foreach ((array) $vals as $v) {
                 $response->header($name, $v);
             }
         }
+
         return $response;
+    }
+
+    protected function filterResponseHeaders(array $headers): array
+    {
+        $exclude = [
+            'subdomainhotel',
+            'chainsubdomain',
+            'hash-hotel',
+            'hash-user',
+            'origin-component',
+            ':path',
+        ];
+
+        return array_filter(
+            $headers,
+            function (string $name) use ($exclude) {
+                return ! in_array(strtolower($name), $exclude, true);
+            },
+            ARRAY_FILTER_USE_KEY
+        );
     }
 }
