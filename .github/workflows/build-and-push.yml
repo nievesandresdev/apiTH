@@ -38,6 +38,7 @@ jobs:
           echo "REDIS_SCHEME=tls" >> .env
           echo "REDIS_DB=0" >> .env
           echo "REDIS_CACHE_DB=1" >> .env
+          
 
           echo "APP_DEBUG=true" >> .env
           echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
@@ -200,6 +201,7 @@ jobs:
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
             
             echo "PRODUCTION=\"${{ vars.PRODUCTION_TEST }}\"" >> .env
+            echo "CACHE_ENABLED=true" >> .env
           fi
 
       # Configuración de Docker Buildx

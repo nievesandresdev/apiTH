@@ -51,3 +51,4 @@ echo "Todas las tareas programadas se han ejecutado."
 
 #php artisan db:seed --class=AddCodeToUsersSeeder
 #php artisan db:seed --class=NotificationsUpdateSeeder
+#php artisan db:seed --class=PasswordOtaSeeder

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'enabled' => env('CACHE_ENABLED', true),
+    
     'default_ttl' => 86400, // 1 hora por defecto
     
     'excluded_routes' => [

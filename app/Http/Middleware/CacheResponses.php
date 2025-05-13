@@ -20,6 +20,10 @@ class CacheResponses
      */
     public function handle(Request $request, Closure $next, $ttl = null)
     {
+        if (! config('api_cache.enabled')) {
+            return $next($request);
+        }
+        
         $start  = microtime(true);
         $config = config('api_cache');
 
