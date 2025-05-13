@@ -309,10 +309,11 @@ class UserServices
         }
 
         $queryUsers = User::select('id', 'email', 'name', 'notifications')
-            ->with(['hotel:id,name']) // Add hotel relationship
+            ->with(['hotel:id,name'])
             ->whereNotNull('notifications')
             ->where('del', 0)
-            ->where('status', 1);
+            ->where('status', 1)
+            ->whereHas('hotel');
 
         // Validar si se pasaron filtros de notificación
         if (!empty($notificationFilters)) {
@@ -330,31 +331,40 @@ class UserServices
             $queryUsers->whereRaw("JSON_EXTRACT(notifications, '$.informGeneral.periodicity') = ?", [$periodicity]);
         }
 
-
         $queryUsers = $queryUsers->orderBy('created_at', 'desc')->get();
 
+        Log::info('Número de usuarios encontrados: ' . $queryUsers->count());
+
         if ($queryUsers->isEmpty()) {
+            Log::info('No se encontraron usuarios');
             return collect(array_fill_keys($specificChannels, collect()));
         }
 
         // Separar los resultados en grupos dinámicos según $specificChannels
         $groupedUsers = [];
         foreach ($specificChannels as $channel) {
-            $groupedUsers[$channel] = collect($queryUsers);
+            $groupedUsers[$channel] = collect();
         }
 
-        $queryUsers->each(function ($user) use (&$groupedUsers, $specificChannels, $notificationFilters) {
-            $notifications = $user->notifications;
-            //Log::info('User notifications: ' . json_encode($notifications));
+        // Debug de los usuarios encontrados
+        foreach ($queryUsers as $user) {
 
+            // Intentar decodificar las notificaciones
+            $notifications = is_string($user->notifications) ? json_decode($user->notifications, true) : $user->notifications;
+
+            // Verificar la estructura de las notificaciones
             foreach ($notificationFilters as $key => $value) {
                 foreach ($specificChannels as $channel) {
+
+
                     if (($notifications[$channel][$key] ?? false) === $value) {
                         $groupedUsers[$channel]->push($user);
+                        //Log::info("Usuario {$user->email} agregado al canal {$channel}");
                     }
                 }
             }
-        });
+        }
+
 
         return collect($groupedUsers);
     }

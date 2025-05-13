@@ -9,11 +9,23 @@ use App\Services\Hoster\Users\UserServices;
 class TrackingNotification extends Command
 {
     protected $userServices;
-
+    protected $notificationFiltersInformGeneral;
+    protected $notificationFiltersInformDiscontent;
+    protected $specificChannels;
     public function __construct(UserServices $userServices)
     {
         parent::__construct();
         $this->userServices = $userServices;
+
+        $this->notificationFiltersInformGeneral = [
+            'informGeneral' => true,
+        ];
+
+        $this->notificationFiltersInformDiscontent = [
+            'informDiscontent' => true
+        ];
+
+        $this->specificChannels = ['email'];
     }
 
     /**
@@ -56,22 +68,12 @@ class TrackingNotification extends Command
 
 
         //filtros de notificaciones
-        $notificationFilters = [
-            'informGeneral' => true,
-            'informDiscontent' => true
-        ];
-
-        $specificChannels = ['email'];
 
         // el 1 significa que buscara los usuarios con informe general mensual
-        $usersByChannel = $this->userServices->getUsersWithNotifications($notificationFilters, $specificChannels, 1);
+         $this->getUsersInformGeneral($this->notificationFiltersInformGeneral, $this->specificChannels, 1); // el 1 significa mensual
+         $this->getUsersInformDiscontent($this->notificationFiltersInformDiscontent, $this->specificChannels);
 
-        foreach ($usersByChannel as $channel => $users) {
-            foreach ($users as $user) {
-                $hotelIds = $user->hotel->pluck('id')->implode(', '); // hoteles del usuario, puede usar su id o nombre
-                Log::info('Usuario mensual: ' . $user->email . ' - Hoteles: ' . $hotelIds);
-            }
-        }
+
     }
 
     /**
@@ -81,22 +83,49 @@ class TrackingNotification extends Command
     {
         Log::info('inicia cron semana');
 
-        //filtros de notificaciones
-        $notificationFilters = [
-            'informGeneral' => true,
-            'informDiscontent' => true
-        ];
 
-        $specificChannels = ['email'];
+        $this->getUsersInformGeneral($this->notificationFiltersInformGeneral, $this->specificChannels, 2); // el 2 significa semanal
+        $this->getUsersInformDiscontent($this->notificationFiltersInformDiscontent, $this->specificChannels);
+    }
 
-        // el 2 significa que buscara los usuarios con informe general semanal
-        $usersByChannel = $this->userServices->getUsersWithNotifications($notificationFilters, $specificChannels, 2);
 
-        foreach ($usersByChannel as $channel => $users) {
-            foreach ($users as $user) {
-                $hotelIds = $user->hotel->pluck('id')->implode(', '); // hoteles del usuario, puede usar su id o nombre
-                Log::info('Usuario semanal: ' . $user->email . ' - Hoteles: ' . $hotelIds);
+
+    protected function getUsersInformGeneral($notificationFilters, $specificChannels, $periodicity) //para mandar el email
+    {
+        try {
+            Log::info('Iniciando getUsersInformGeneral con periodicity: ' . $periodicity);
+            $usersByChannel = $this->userServices->getUsersWithNotifications($notificationFilters, $specificChannels, $periodicity);
+
+
+            foreach ($usersByChannel as $channel => $users) {
+
+                foreach ($users as $user) {
+                    $hotelIds = $user->hotel->pluck('id')->implode(', ');
+                    Log::info('Usuario encontrado - Email: ' . $user->email . ' - Hoteles: ' . $hotelIds);
+                }
             }
+        } catch (\Exception $e) {
+            Log::error('Error en getUsersInformGeneral: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+        }
+    }
+
+    protected function getUsersInformDiscontent($notificationFilters, $specificChannels) //para mandar el email
+    {
+        try {
+            Log::info('Iniciando getUsersInformDiscontent');
+            $usersByChannel = $this->userServices->getUsersWithNotifications($notificationFilters, $specificChannels);
+
+            foreach ($usersByChannel as $channel => $users) {
+
+                foreach ($users as $user) {
+                    $hotelIds = $user->hotel->pluck('id')->implode(', ');
+                    Log::info('Usuario encontrado - Email: ' . $user->email . ' - Hoteles: ' . $hotelIds);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Error en getUsersInformDiscontent: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
         }
     }
 }
