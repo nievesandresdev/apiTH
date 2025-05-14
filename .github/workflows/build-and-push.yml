@@ -312,3 +312,37 @@ jobs:
                     --data '{"purge_everything":true}' | jq -r '. | {zone_result: .success}'
             done
             
+      - name: Install redis-cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-tools
+
+      - name: Purge Redis cache keys
+        env:
+          REDIS_HOST: th-api.redis.cache.windows.net
+          REDIS_PORT: 6380
+          REDIS_PASSWORD: ${{ vars.REDIS_PASSWORD }}
+        run: |
+          # 1) Instalar redis-cli ya hecho arriba.
+
+          # 2) Elegir sólo el prefijo, sin comodines
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            PREFIX="thehoster_database_thehoster_cache_:hotel_prod_main"
+          else
+            PREFIX="thehoster_database_thehoster_cache_:hotel_prod_test"
+          fi
+
+          echo "🔑 Deleting Redis keys matching ${PREFIX}* …"
+
+          # Opción DEBUG: ver qué password se está usando
+          # echo "Using REDIS_PASSWORD='$REDIS_PASSWORD'" >&2
+
+          # 3) Scan en la DB 1 y borrado por lotes con xargs
+          redis-cli --tls \
+            -h "$REDIS_HOST" -p "$REDIS_PORT" -a "$REDIS_PASSWORD" -n 1 \
+            --scan --pattern "${PREFIX}*" \
+          | xargs -r redis-cli --tls \
+            -h "$REDIS_HOST" -p "$REDIS_PORT" -a "$REDIS_PASSWORD" -n 1 DEL
+
+          echo "✅ Done purging Redis."
+
