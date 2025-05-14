@@ -16,25 +16,199 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      
-      - name: Purge Cloudflare cache for ALL zones
-        if: github.ref_name == 'main'
-        env:
-              CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}   # guarda tu token aquí
+      # Crear el archivo .env (si es necesario)
+      - name: Create .env file
         run: |
-            echo "🔍 Obteniendo lista de zonas de Cloudflare…"
-            zones=$(curl -s -H "Authorization: Bearer $CF_API_TOKEN" \
-                          -H "Content-Type: application/json" \
-                            "https://api.cloudflare.com/client/v4/zones" | jq -r '.result[].id')
-        
-            for zone in $zones; do
-                echo "🧹 Purging cache in zone $zone"
-                curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$zone/purge_cache" \
-                    -H "Authorization: Bearer $CF_API_TOKEN" \
-                    -H "Content-Type: application/json" \
-                    --data '{"purge_everything":true}' | jq -r '. | {zone_result: .success}'
-            done
+          echo "APP_NAME=TheHoster" >> .env
+          echo "APP_KEY=" >> .env
+          echo "LOG_CHANNEL=stack" >> .env
+          echo "LOG_LEVEL=debug" >> .env
+          
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "BROADCAST_DRIVER=pusher" >> .env
+          echo "CACHE_DRIVER=redis" >> .env
+          echo "REDIS_CLIENT=phpredis" >> .env
+          echo "FILESYSTEM_DRIVER=s3" >> .env
+          echo "QUEUE_CONNECTION=database" >> .env
+          echo "SESSION_DRIVER=file" >> .env
+          echo "SESSION_LIFETIME=120" >> .env
+          echo "MEMCACHED_HOST=127.0.0.1" >> .env
+          echo "REDIS_HOST=th-api.redis.cache.windows.net" >> .env
+          echo "REDIS_PORT=6380" >> .env
+          echo "REDIS_SCHEME=tls" >> .env
+          echo "REDIS_DB=0" >> .env
+          echo "REDIS_CACHE_DB=1" >> .env
+          
+
+          echo "APP_DEBUG=true" >> .env
+          echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
+          echo "MAIL_FROM_NAME=TheHoster" >> .env
+          echo "MAIL_ADMIN=info@thehoster.es" >> .env
+          echo "AWS_DEFAULT_REGION=eu-south-2" >> .env
+          echo "AWS_BUCKET=thehosterappbucket" >> .env
+          echo "API_SMS_ACTIVE=true" >> .env
+
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+
+          echo "PUSHER_APP_ID=${{ secrets.PUSHER_APP_ID }}" >> .env
+          echo "PUSHER_APP_KEY=${{ secrets.PUSHER_APP_KEY }}" >> .env
+          echo "PUSHER_APP_SECRET=${{ secrets.PUSHER_APP_SECRET }}" >> .env
+          echo "PUSHER_APP_CLUSTER=us2" >> .env
+          echo "MIX_PUSHER_APP_KEY=${{ secrets.PUSHER_APP_KEY }}" >> .env
+          echo "MIX_PUSHER_APP_CLUSTER=us2" >> .APP_ENV
+
+          echo "AZURE_FORM_RECOGNIZER_ENDPOINT=${{ secrets.AZURE_FORM_RECOGNIZER_ENDPOINT }}" >> .env
+          echo "AZURE_FORM_RECOGNIZER_API_KEY=${{ secrets.AZURE_FORM_RECOGNIZER_API_KEY }}" >> .env
+          echo "AZURE_FORM_RECOGNIZER_MODEL_ID=${{ secrets.AZURE_FORM_RECOGNIZER_MODEL_ID }}" >> .env
+
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "ASSET_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             
+            echo "APP_URL=${{ secrets.APP_URL_MAIN }}" >> .env
+            echo "APP_ENV=${{secrets.APP_ENV_MAIN}}" >> .env
+
+            echo "DB_HOST=${{ secrets.DB_HOST_MAIN }}" >> .env
+            echo "DB_PORT=${{ secrets.DB_PORT_MAIN }}" >> .env
+            echo "DB_DATABASE=${{ secrets.DB_DATABASE_MAIN }}" >> .env
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME_MAIN }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD_MAIN }}" >> .env
+
+            echo "MAIL_DRIVER=${{ secrets.MAIL_DRIVER_MAIN }}" >> .env
+            echo "MAIL_HOST=${{ secrets.MAIL_HOST_MAIN }}" >> .env
+            echo "MAIL_PORT=${{ secrets.MAIL_PORT_MAIN }}" >> .env
+            echo "MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION_MAIN }}" >> .env
+            echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME_MAIN }}" >> .env
+            echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD_MAIN }}" >> .env
+
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_MAIN }}" >> .env
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_MAIN }}" >> .env
+
+            echo "AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_MAIN }}" >> .env
+            echo "MIX_AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_MAIN }}" >> .env
+
+            echo "STRIPE_KEY=${{ secrets.STRIPE_KEY_MAIN }}" >> .env
+            echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_MAIN }}" >> .env
+
+            echo "KEY_VIATOR=${{ secrets.KEY_VIATOR_MAIN }}" >> .env
+            echo "API_VIATOR=${{ secrets.API_VIATOR_MAIN }}" >> .env
+
+            echo "EMAIL_CLOUDFLARE=${{ secrets.EMAIL_CLOUDFLARE_MAIN }}" >> .env
+            echo "API_KEY_CLOUDFLARE=${{ secrets.API_KEY_CLOUDFLARE_MAIN }}" >> .env
+            echo "ZONE_ID_CLOUDFLARE=${{ secrets.ZONE_ID_CLOUDFLARE_MAIN }}" >> .env
+            echo "IP_ADDRESS=${{ secrets.IP_ADDRESS_MAIN }}" >> .env
+
+            echo "HOSTER_URL=${{ secrets.HOSTER_URL_MAIN }}" >> .env
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_MAIN }}" >> .env
+            echo "SMS_API_TOKEN=${{ secrets.SMS_API_TOKEN_MAIN }}" >> .env
+
+            echo "X_KEY_API=${{ secrets.X_KEY_API_MAIN }}" >> .env
+
+            echo "URL_BASE_API_REVIEW=${{ secrets.URL_BASE_API_REVIEW_MAIN }}" >> .env
+            echo "URL_BASE_API_HELPERS=${{ secrets.URL_BASE_API_HELPERS_MAIN }}" >> .env
+            echo "KEY_API_REVIEW=${{ secrets.KEY_API_REVIEW_MAIN }}" >> .env
+
+
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_MAIN }}" >> .env
+            echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI_MAIN }}" >> .env
+            echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET_MAIN }}" >> .env
+
+            echo "FB_CLIENT_ID=${{ secrets.FB_CLIENT_ID_MAIN }}" >> .env
+            echo "FB_CLIENT_SECRET=${{ secrets.FB_CLIENT_SECRET_MAIN }}" >> .env
+            echo "WHATSAPP_PERMANENT_TOKEN=${{ secrets.WHATSAPP_PERMANENT_TOKEN_MAIN }}" >> .env
+
+            echo "FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID_MAIN }}" >> .env
+            echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET_MAIN }}" >> .env
+            echo "FACEBOOK_REDIRECT=${{ secrets.FACEBOOK_REDIRECT_MAIN }}" >> .env
+
+            echo "PASSPORT_PRIVATE_KEY=\"${{ secrets.PASSPORT_PRIVATE_KEY_MAIN }}\"" >> .env
+            echo "PASSPORT_PUBLIC_KEY=\"${{ secrets.PASSPORT_PUBLIC_KEY_MAIN }}\"" >> .env
+
+            echo "AZURE_OPENAI_API_KEY=\"${{ secrets.AZURE_OPENAI_API_KEY_MAIN }}\"" >> .env
+            echo "AZURE_OPENAI_DEPLOYMENT=\"${{ vars.AZURE_OPENAI_DEPLOYMENT_MAIN }}\"" >> .env
+            echo "AZURE_OPENAI_VERSION=\"${{ vars.AZURE_OPENAI_VERSION_MAIN }}\"" >> .env
+
+            echo "DOSSIER_HOTEL_ID=\"${{ vars.DOSSIER_HOTEL_ID_MAIN }}\"" >> .env
+
+            echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
+            echo "PRODUCTION=\"${{ vars.PRODUCTION_MAIN }}\"" >> .env
+          else
+            echo "ASSET_URL=${{ secrets.APP_URL_TEST }}" >> .env
+            echo "APP_URL=${{ secrets.APP_URL_TEST }}" >> .env
+            echo "APP_ENV=${{secrets.APP_ENV_TEST}}" >> .env
+
+            echo "DB_HOST=${{ secrets.DB_HOST_TEST }}" >> .env
+            echo "DB_PORT=${{ secrets.DB_PORT_TEST }}" >> .env
+            echo "DB_DATABASE=${{ secrets.DB_DATABASE_TEST }}" >> .env
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME_TEST }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD_TEST }}" >> .env
+
+            echo "MAIL_DRIVER=${{ secrets.MAIL_DRIVER_TEST }}" >> .env
+            echo "MAIL_HOST=${{ secrets.MAIL_HOST_TEST }}" >> .env
+            echo "MAIL_PORT=${{ secrets.MAIL_PORT_TEST }}" >> .env
+            echo "MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION_TEST }}" >> .env
+            echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME_TEST }}" >> .env
+            echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD_TEST }}" >> .env
+
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_TEST }}" >> .env
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_TEST }}" >> .env
+
+            echo "AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_TEST }}" >> .env
+            echo "MIX_AWS_STORAGE_PATH=${{ secrets.AWS_STORAGE_PATH_TEST }}" >> .env
+
+            echo "STRIPE_KEY=${{ secrets.STRIPE_KEY_TEST }}" >> .env
+            echo "STRIPE_SECRET=${{ secrets.STRIPE_SECRET_TEST }}" >> .env
+
+            echo "KEY_VIATOR=${{ secrets.KEY_VIATOR_TEST }}" >> .env
+            echo "API_VIATOR=${{ secrets.API_VIATOR_TEST }}" >> .env
+
+            echo "EMAIL_CLOUDFLARE=${{ secrets.EMAIL_CLOUDFLARE_TEST }}" >> .env
+            echo "API_KEY_CLOUDFLARE=${{ secrets.API_KEY_CLOUDFLARE_TEST }}" >> .env
+            echo "ZONE_ID_CLOUDFLARE=${{ secrets.ZONE_ID_CLOUDFLARE_TEST }}" >> .env
+            echo "IP_ADDRESS=${{ secrets.IP_ADDRESS_TEST }}" >> .env
+
+            echo "HOSTER_URL=${{ secrets.HOSTER_URL_TEST }}" >> .env
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_TEST }}" >> .env
+            echo "SMS_API_TOKEN=${{ secrets.SMS_API_TOKEN_TEST }}" >> .env
+
+            echo "X_KEY_API=${{ secrets.X_KEY_API_TEST }}" >> .env
+
+            echo "URL_BASE_API_REVIEW=${{ secrets.URL_BASE_API_REVIEW_TEST }}" >> .env
+            echo "URL_BASE_API_HELPERS=${{ secrets.URL_BASE_API_HELPERS_TEST }}" >> .env
+            echo "KEY_API_REVIEW=${{ secrets.KEY_API_REVIEW_TEST }}" >> .env
+
+
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_TEST }}" >> .env
+            echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI_TEST }}" >> .env
+            echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET_TEST }}" >> .env
+
+            echo "FB_CLIENT_ID=${{ secrets.FB_CLIENT_ID_TEST }}" >> .env
+            echo "FB_CLIENT_SECRET=${{ secrets.FB_CLIENT_SECRET_TEST }}" >> .env
+            echo "WHATSAPP_PERMANENT_TOKEN=${{ secrets.WHATSAPP_PERMANENT_TOKEN_TEST }}" >> .env
+
+            echo "FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID_TEST }}" >> .env
+            echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET_TEST }}" >> .env
+            echo "FACEBOOK_REDIRECT=${{ secrets.FACEBOOK_REDIRECT_TEST }}" >> .env
+
+            echo "PASSPORT_PRIVATE_KEY=\"${{ secrets.PASSPORT_PRIVATE_KEY_TEST }}\"" >> .env
+            echo "PASSPORT_PUBLIC_KEY=\"${{ secrets.PASSPORT_PUBLIC_KEY_TEST }}\"" >> .env
+
+            echo "AZURE_OPENAI_API_KEY=\"${{ secrets.AZURE_OPENAI_API_KEY_TEST }}\"" >> .env
+            echo "AZURE_OPENAI_DEPLOYMENT=\"${{ vars.AZURE_OPENAI_DEPLOYMENT_TEST }}\"" >> .env
+            echo "AZURE_OPENAI_VERSION=\"${{ vars.AZURE_OPENAI_VERSION_TEST }}\"" >> .env
+
+            echo "DOSSIER_HOTEL_ID=\"${{ vars.DOSSIER_HOTEL_ID_TEST }}\"" >> .env
+
+            echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
+            
+            echo "PRODUCTION=\"${{ vars.PRODUCTION_TEST }}\"" >> .env
+            echo "CACHE_ENABLED=true" >> .env
+          fi
+
+      # Configuración de Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      
       - name: Install redis-cli
         run: |
           sudo apt-get update
@@ -47,9 +221,9 @@ jobs:
           REDIS_PASSWORD: ${{ vars.REDIS_PASSWORD }}
         run: |
             if [ "${{ github.ref_name }}" = "main" ]; then
-              PREFIX="thehoster_database_thehoster_cache_:hotel_prod_main"
+              PREFIX="thehoster_database_thehoster_cache_:hotel_prod_main*"
             else
-              PREFIX="thehoster_database_thehoster_cache_:hotel_prod_test"
+              PREFIX="thehoster_database_thehoster_cache_:hotel_prod_test*"
             fi
             echo "🔑 Deleting Redis keys matching ${PREFIX}* …"
 
