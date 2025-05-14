@@ -17,12 +17,7 @@ jobs:
         uses: actions/checkout@v3
 
       # Crear el archivo .env (si es necesario)
-      #echo "REDIS_HOST=th-api.redis.cache.windows.net" >> .env
-      #echo "REDIS_PORT=6380" >> .env
-      #echo "REDIS_SCHEME=tls" >> .env
-      #echo "REDIS_DB=0" >> .env
-      #echo "REDIS_CACHE_DB=1" >> .env
-      #echo "REDIS_CLIENT=phpredis" >> .env
+      
       - name: Create .env file
         run: |
           echo "APP_NAME=TheHoster" >> .env
@@ -38,7 +33,12 @@ jobs:
           echo "SESSION_DRIVER=file" >> .env
           echo "SESSION_LIFETIME=120" >> .env
           echo "MEMCACHED_HOST=127.0.0.1" >> .env
-          
+          echo "REDIS_HOST=th-api.redis.cache.windows.net" >> .env
+          echo "REDIS_PORT=6380" >> .env
+          echo "REDIS_SCHEME=tls" >> .env
+          echo "REDIS_DB=0" >> .env
+          echo "REDIS_CACHE_DB=1" >> .env
+          echo "REDIS_CLIENT=phpredis" >> .env
 
           echo "APP_DEBUG=true" >> .env
           echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
