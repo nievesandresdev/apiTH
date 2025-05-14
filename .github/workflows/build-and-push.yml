@@ -27,7 +27,7 @@ jobs:
           
           echo "DB_CONNECTION=mysql" >> .env
           echo "BROADCAST_DRIVER=pusher" >> .env
-          echo "CACHE_DRIVER=array" >> .env
+          echo "CACHE_DRIVER=redis" >> .env
           echo "FILESYSTEM_DRIVER=s3" >> .env
           echo "QUEUE_CONNECTION=database" >> .env
           echo "SESSION_DRIVER=file" >> .env
