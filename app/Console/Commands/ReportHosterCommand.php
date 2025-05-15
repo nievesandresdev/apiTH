@@ -10,7 +10,7 @@ use App\Services\Hoster\Users\UserServices;
 use App\Services\MailService;
 use Carbon\Carbon;
 
-class TrackingNotification extends Command
+class ReportHosterCommand extends Command
 {
     protected $userServices;
     protected $notificationFiltersInformGeneral;
@@ -33,7 +33,7 @@ class TrackingNotification extends Command
      *
      * @var string
      */
-    protected $signature = 'tracking:notification {--month : Run monthly tracking} {--week : Run weekly tracking}';
+    protected $signature = 'reportHoster {--month : Run monthly tracking} {--week : Run weekly tracking}';
 
     /**
      * The console command description.
