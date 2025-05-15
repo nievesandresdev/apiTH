@@ -31,6 +31,7 @@ class User extends Authenticatable
         'del',
         'google_url',
         'parent_id',
+        'login_code',
 
         //settings
         'permissions', //json

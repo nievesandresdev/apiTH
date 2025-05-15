@@ -27,6 +27,7 @@
             padding: 20px;
         }
         .go-report-button {
+            text-decoration: none;
             border-radius: 6px;
             background: #FFD453;
             width: 264px;
@@ -140,6 +141,7 @@
             @include('components.mails.queries.reportCard', ['period' => 'POST-STAY', 'stats' => $stats['post_stay']])
 
             {{-- warning section --}}
+            @if($stats['in_stay']['total'] == 0 || $stats['post_stay']['total'] == 0)
             <div style="border-radius: 16px;border: 1px solid #333;background: #FFF2CC;padding: 16px;margin-top: 32px;">
                 <table>
                     <tr>
@@ -156,7 +158,7 @@
                         <p style="margin: 0; font-size: 12px; font-weight: 500; line-height: 100%; font-family: Arial, sans-serif;">
                             ¿Estás enviando el enlace de la WebApp a tus huéspedes con los mensajes de confirmación de reserva? 
                         </p>
-                        <a href="http://" target="_blank" style="display: block;margin-top: 4px;font-size: 12px;font-weight: 500;line-height: 140%;font-family: Arial, sans-serif;text-decoration: underline;color: #333333;">
+                        <a href="{{$links['urlComunications']}}" target="_blank" style="display: block;margin-top: 4px;font-size: 12px;font-weight: 500;line-height: 140%;font-family: Arial, sans-serif;text-decoration: underline;color: #333333;">
                             Mira como hacerlo aquí
                         </a>
                     </li>
@@ -164,7 +166,7 @@
                         <p style="margin: 0; font-size: 12px; font-weight: 500; line-height: 100%; font-family: Arial, sans-serif;">
                             ¿Estás utilizando las diferentes formas de promocionar la WebApp que te recomendamos?
                         </p>
-                        <a href="http://" target="_blank" style="display: block;margin-top: 4px;font-size: 12px;font-weight: 500;line-height: 140%;font-family: Arial, sans-serif;text-decoration: underline;color: #333333;">
+                        <a href="{{$links['urlPromotions']}}" target="_blank" style="display: block;margin-top: 4px;font-size: 12px;font-weight: 500;line-height: 140%;font-family: Arial, sans-serif;text-decoration: underline;color: #333333;">
                             Mira nuestras recomendaciones aquí
                         </a>
                     </li>
@@ -175,10 +177,11 @@
                     </li>
                 </ul>
             </div>
+            @endif
             <div style="margin-top: 32px;text-align: center;">
-                <button class="go-report-button">
+                <a href="{{$links['urlToReport']}}" target="_blank" class="go-report-button">
                     Ver informe completo
-                </button>
+                </a>
             </div>
         </div>
         <!-- Footer -->

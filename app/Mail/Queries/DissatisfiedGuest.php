@@ -11,6 +11,14 @@ class DissatisfiedGuest extends Mailable
 
     public $hotel;
     public $showNotify;
+    public $data;
+
+    public function __construct($hotel, $showNotify, $data)
+    {
+        $this->hotel = $hotel;
+        $this->showNotify = $showNotify;
+        $this->data = $data;
+    }
 
     public function build()
     {
@@ -18,6 +26,7 @@ class DissatisfiedGuest extends Mailable
             ->with([
                 'hotel' => $this->hotel,
                 'showNotify' => $this->showNotify,
+                'data' => $this->data,
             ]);
         
     }

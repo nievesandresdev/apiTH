@@ -259,7 +259,7 @@ class QueryServices {
 
     public function sendNotificationsToHoster ($stay, $hotel, $periodUrl, $query, $guest) {
         try{
-            Log::info('query: ' . json_encode($query, JSON_PRETTY_PRINT));
+            // Log::info('query: ' . json_encode($query, JSON_PRETTY_PRINT));
             $settings = $this->settings->notifications($hotel->id);
 
             /**
@@ -316,14 +316,14 @@ class QueryServices {
                     "respondedHour" => $respondedAt->format('H:i'),
                     "responseLang" => $query->response_lang,
                     "question" => $query->period === 'post-stay' ? $questionPostStay : $questionInStay,
-                    "comment" => $query->comment[$query->response_lang],
+                    "comment" =>  $query->comment ? translateQualification($query->qualification, $query->period).'.'.$query->comment[$query->response_lang] : translateQualification($query->qualification, $query->period),
                     "langAbbr" => $query->response_lang,
                     "languageResponse" => EnumsLanguages::NAME[$query->response_lang],
                     "urlToStay" => null,
                     "guestEmail" => $guest->email,
                 ];
                 foreach ($usersWithInformDiscontent as $user) {
-                    Log::info('user: ' . json_encode($user, JSON_PRETTY_PRINT));
+                    // Log::info('user: ' . json_encode($user, JSON_PRETTY_PRINT));
                     $email = $user->email;
                     $urlToStay = "{$saasUrl}/estancias/{$stay->id}/feedback?g={$guest->id}&redirect=view&code={$user->login_code}";
                     $data['urlToStay'] = $urlToStay;

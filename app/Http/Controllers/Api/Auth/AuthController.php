@@ -50,7 +50,7 @@ class AuthController extends Controller
     public function loginByCode(string $code)
     {
         // 1. Buscar usuario por código
-        $user = User::where('code', $code)->first();
+        $user = User::where('login_code', $code)->first();
         if (! $user) {
             return bodyResponseRequest(EnumResponse::UNAUTHORIZED, [
                 'message' => 'Código inválido'
