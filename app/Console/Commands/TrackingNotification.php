@@ -118,9 +118,9 @@ class TrackingNotification extends Command
                         $saasUrl = config('app.hoster_url');
                         $periodReport = $periodicity === 1 ? 'monthly' : 'weekly';
                         $links = [
-                            'urlToReport' => "{$saasUrl}/seguimiento/general-report?periodType={$periodReport}&from={$from}&to={$to}&redirect=view&code={$user->login_code}",
-                            'urlComunications' => "{$saasUrl}/comunicaciones?redirect=view&code={$user->login_code}",
-                            'urlPromotions' => "{$saasUrl}/promociona-webapp?redirect=view&code={$user->login_code}",
+                            'urlToReport' => "{$saasUrl}seguimiento/general-report?periodType={$periodReport}&from={$from}&to={$to}&redirect=view&code={$user->login_code}",
+                            'urlComunications' => "{$saasUrl}comunicaciones?redirect=view&code={$user->login_code}",
+                            'urlPromotions' => "{$saasUrl}promociona-webapp?redirect=view&code={$user->login_code}",
                         ];
                         Log::info("Enviando reporte del hotel $hotelId al usuario: " . $user->email);
                         if ($this->hasAccents($user->email)) {

@@ -325,7 +325,7 @@ class QueryServices {
                 foreach ($usersWithInformDiscontent as $user) {
                     // Log::info('user: ' . json_encode($user, JSON_PRETTY_PRINT));
                     $email = $user->email;
-                    $urlToStay = "{$saasUrl}/estancias/{$stay->id}/feedback?g={$guest->id}&redirect=view&code={$user->login_code}";
+                    $urlToStay = "{$saasUrl}estancias/{$stay->id}/feedback?g={$guest->id}&redirect=view&code={$user->login_code}";
                     $data['urlToStay'] = $urlToStay;
                     $this->mailService->sendEmail(new DissatisfiedGuest($hotel, $showNotify, $data), $email);
                 }
