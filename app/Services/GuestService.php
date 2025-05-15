@@ -333,7 +333,7 @@ class GuestService {
 
             // Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
-                $guest->password = bcrypt($data->password);
+                // $guest->password = bcrypt($data->password);
                 // Log::info('update pass'. $guest->password);
             }
 
