@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             DemoStaysSeeder::class,
+            DefaultHotelButtonsSeeder::class,
         ]);
     }
 }
