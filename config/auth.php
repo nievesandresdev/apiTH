@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'session-guest' => [
+            'driver' => 'session',
+            'provider' => 'guests',
+        ],
         'api' => [
             'driver' => 'passport',
             'provider' => 'users',
@@ -110,6 +114,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'guests' => [
+            'provider' => 'guests',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

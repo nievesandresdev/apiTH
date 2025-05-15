@@ -56,6 +56,9 @@ return [
     |
     */
 
+    'passport_guest_client_id' => env('PASSPORT_CLIENT_ID_GUEST', null),
+    'passport_guest_client_secret' => env('PASSPORT_CLIENT_SECRET_GUEST', null),
+
     'url' => env('APP_URL', 'http://localhost'),
     'guest_path' => env('LOCAL_GUEST_URL', 'http://localhost'),
     'url_bucket' => env('URL_BUCKET', 'https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test'),

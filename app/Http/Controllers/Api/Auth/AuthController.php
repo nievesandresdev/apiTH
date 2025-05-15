@@ -13,21 +13,26 @@ use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
+use App\Services\AuthService;
 
 class AuthController extends Controller
 {
+    public $authService;
+
+    public function __construct(
+        AuthService $_AuthService
+    ) {
+        $this->authService = $_AuthService;
+    }
+
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
-        // Log::info('login', json_encode($credentials,JSON_PRETTY_PRINT));
-        if (!Auth::guard('web')->attempt($credentials)) {
+        $checkCredentials = $this->authService->checkCredentials($request, 'web');
+        if(!$checkCredentials) {
             return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Introduzca credenciales válidas']);
         }
 
-        $user = Auth::guard('web')->user();
+        $user = $this->authService->getModel($request, 'web');
 
         // Verificar si el usuario tiene status = 1
         if ($user->status == 0) {
@@ -39,8 +44,8 @@ class AuthController extends Controller
             return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Su cuenta ha sido eliminada. Solicita acceso a tu responsable o superior para poder entrar.']);
         }
 
-        $token = $user->createToken('appToken')->accessToken;
-
+        $token = $this->authService->createToken($user);
+        
         return bodyResponseRequest(EnumResponse::SUCCESS, [
             'token' => $token,
             'user' => new UserResource($user),
