@@ -77,10 +77,16 @@ class GuestAuthController extends Controller
         try {
             $model = $this->service->confirmPassword($request);
             if($model){
+                $token = $model->createToken('appToken')->accessToken;
                 $model = new GuestResource($model);
+                return bodyResponseRequest(EnumResponse::SUCCESS, [
+                    'token' => $token,
+                    'guest' => $model,
+                ]);
             }
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+            return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Introduzca credenciales válidas']);
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
         }
     }
