@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Hoster\QueryHosterController;
 use App\Http\Controllers\Api\Hoster\StayQueryHosterController;
 use App\Http\Controllers\Api\Hoster\QuerySettingsHosterController;
 use App\Http\Controllers\Api\QueryController;
@@ -33,5 +34,6 @@ Route::group(['prefix' => 'query'], function () {
         Route::post('/togglePendingState', [StayQueryHosterController::class, 'togglePendingState']);        
         Route::get('/countPendingByHotel', [StayQueryHosterController::class, 'countPendingByHotel']);        
         Route::get('/pendingCountByStay/{stayId}', [StayQueryHosterController::class, 'pendingCountByStay']);        
+        Route::get('/getGeneralReport', [QueryHosterController::class, 'getGeneralReport']);
     });
 });

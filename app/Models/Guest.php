@@ -31,18 +31,16 @@ class Guest extends Authenticatable
         'son_id'
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $guard_name = 'api-guest';
+
     protected $casts = [
         'off_email' => 'boolean',
     ];
-
-    // protected static function boot()
-    // {
-    //     parent::boot();
-    //     static::creating(function ($guest) {
-    //         $availableColors = ['5E7A96','5E5E96','967E5E','966B5E','5E968F','5E966A','965E71','965E96'];
-    //         $guest->color = $availableColors[array_rand($availableColors)];
-    //     });
-    // }
 
     public function stays()
     {

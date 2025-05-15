@@ -15,10 +15,12 @@ use App\Services\Hoster\Users\{UserServices};
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\Queries\FeedbackMsg;
+use App\Mail\Queries\DissatisfiedGuest;
 use Carbon\Carbon;
 use App\Services\ChatGPTService;
 use Illuminate\Support\Facades\Log;
 use App\Services\MailService;
+use App\Utils\Enums\EnumsLanguages;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -170,6 +172,7 @@ class QueryServices {
     }
 
     public function saveResponse ($id, $request, $hotel) {
+        Log::info('saveResponse: ' . json_encode($request, JSON_PRETTY_PRINT));
         try{
             /**
              * guardar nuevo feedback
@@ -256,7 +259,7 @@ class QueryServices {
 
     public function sendNotificationsToHoster ($stay, $hotel, $periodUrl, $query, $guest) {
         try{
-
+            // Log::info('query: ' . json_encode($query, JSON_PRETTY_PRINT));
             $settings = $this->settings->notifications($hotel->id);
 
             /**
@@ -265,6 +268,7 @@ class QueryServices {
 
             $notificationFiltersNewFeedback = [
                 'newFeedback' => true,
+                'informDiscontent' => true,
             ];
 
             $specificChannels = ['push','email'];
@@ -274,6 +278,58 @@ class QueryServices {
             $pushUsersFeedback = $usersByChannel['push'];
             $emailUserNewFeedback = $usersByChannel['email'];
 
+            //email de descontento para el usuario
+            if($query->qualification == 'WRONG' || $query->qualification == 'VERYWRONG'){
+                $users = $usersByChannel['email'] ?? [];
+                $usersWithInformDiscontent = collect($users)
+                    ->filter(function ($user) {
+                        // Decodificar el JSON de notifications
+                        $notifications = json_decode($user['notifications'], true);
+                        
+                        // Verificar si email.informDiscontent es true
+                        return isset($notifications['email']['informDiscontent']) 
+                            && $notifications['email']['informDiscontent'] === true;
+                    })
+                ->values() // Reindexar el array
+                ->all(); // Convertir de nuevo a array si es necesario
+
+                $showNotify = true;
+                //
+                $respondedAt   = Carbon::createFromFormat('Y-m-d H:i:s', $query->responded_at, 'Europe/Madrid');
+                $referenceDate = $query->period === 'post-stay'
+                    ? Carbon::parse($stay->check_out, 'Europe/Madrid')
+                    : Carbon::parse($stay->check_in,  'Europe/Madrid');   
+                $daysDifference = max(0, $respondedAt->diffInDays($referenceDate));
+                $dayLabel = $daysDifference === 1 ? 'día' : 'días';
+                $beforeOrAfter = $respondedAt->lt($referenceDate) ? 'antes' : 'después';
+                $periodLabel = $query->period === 'post-stay' ? 'check-out' : 'check-in';
+                $textDate = "{$daysDifference} {$dayLabel} {$beforeOrAfter} del {$periodLabel}";
+                //
+                $saasUrl = config('app.hoster_url');
+                $questionInStay = "¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?";
+                $questionPostStay = "¿Cómo ha sido tu experiencia con nosotros?";
+                $data = [
+                    "guestName" => "{$guest->name} {$guest->lastname}",
+                    "checkin" => "2025-05-01",
+                    "textDate" => $textDate,
+                    "respondedAtFormatted" => $respondedAt->format('d/m/Y'),
+                    "respondedHour" => $respondedAt->format('H:i'),
+                    "responseLang" => $query->response_lang,
+                    "question" => $query->period === 'post-stay' ? $questionPostStay : $questionInStay,
+                    "comment" =>  $query->comment ? translateQualification($query->qualification, $query->period).'.'.$query->comment[$query->response_lang] : translateQualification($query->qualification, $query->period),
+                    "langAbbr" => $query->response_lang,
+                    "languageResponse" => EnumsLanguages::NAME[$query->response_lang],
+                    "urlToStay" => null,
+                    "guestEmail" => $guest->email,
+                ];
+                foreach ($usersWithInformDiscontent as $user) {
+                    // Log::info('user: ' . json_encode($user, JSON_PRETTY_PRINT));
+                    $email = $user->email;
+                    $urlToStay = "{$saasUrl}estancias/{$stay->id}/feedback?g={$guest->id}&redirect=view&code={$user->login_code}";
+                    $data['urlToStay'] = $urlToStay;
+                    $this->mailService->sendEmail(new DissatisfiedGuest($hotel, $showNotify, $data), $email);
+                }
+            }
             return [
                 'pushUsersFeedback' => $pushUsersFeedback,
                 'emailUserNewFeedback' => $emailUserNewFeedback,

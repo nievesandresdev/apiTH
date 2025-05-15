@@ -435,6 +435,158 @@ class QueryHosterServices {
             return $e;
         }
     }
-    
+
+    public function getGeneralReport($hotel, $request)
+    {
+        $periodType = $request->periodType ?? 'monthly';
+        try {
+            $periodOptions = $this->generatePeriodOptions($hotel, $periodType);
+            $periodOptions = array_reverse($periodOptions);
+            //
+            $item  = $periodOptions[0];
+            $value = $item['value']; 
+            $json = str_replace("'", '"', $value);
+            $data = json_decode($json);
+            // 
+            $from = $request->from ?? $data->from;
+            $to   = $request->to ?? $data->to; 
+            
+            $periodsToSearch = $request->periodsToSearch ?? ['in-stay','post-stay'];
+            $sort = $request->sort ?? 'recent';
+            $stats = $this->getStats($from, $to, $hotel, $periodsToSearch, $sort);
+            
+            return [
+                'periodOptions' => $periodOptions,
+                'from' => $from,
+                'to' => $to,
+                'stats' => $stats,
+                'hotelId' => $hotel->id,
+            ];
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    protected function generatePeriodOptions($hotel, string $periodType = 'monthly')
+    {
+        $created = $hotel->created_at->copy()->startOfDay();
+        $now     = Carbon::now()->endOfDay();
+        $options = [];
+
+        if ($periodType === 'weekly') {
+            // 1) Primer periodo: created → fin de semana
+            $firstEnd  = $created->copy()->endOfWeek();
+            $options[] = $this->makeOption($created, min($firstEnd, $now));
+
+            // 2) Semanas completas intermedias
+            $cursor = $firstEnd->copy()->addDay()->startOfDay();
+            $weekStartCurrent = $now->copy()->startOfWeek();
+            while ($cursor->lt($weekStartCurrent)) {
+                $from = $cursor->copy();
+                $to   = $cursor->copy()->endOfWeek();
+                $options[] = $this->makeOption($from, $to);
+                $cursor->addWeek();
+            }
+
+            // 3) Último periodo: inicio semana actual → hoy
+            if ($weekStartCurrent->lte($now)) {
+                $options[] = $this->makeOption($weekStartCurrent, $now);
+            }
+        } else {
+            // 1) Primer periodo: created → fin de mes
+            $firstEnd  = $created->copy()->endOfMonth();
+            $options[] = $this->makeOption($created, min($firstEnd, $now));
+
+            // 2) Meses completos intermedios
+            $cursor = $firstEnd->copy()->addDay()->startOfDay();          // día 1 del mes siguiente
+            $monthStartCurrent = $now->copy()->startOfMonth();
+            while ($cursor->lt($monthStartCurrent)) {
+                $from = $cursor->copy();
+                $to   = $cursor->copy()->endOfMonth();
+                $options[] = $this->makeOption($from, $to);
+                $cursor->addMonth();
+            }
+
+            // 3) Último periodo: 1º día mes actual → hoy
+            if ($monthStartCurrent->lte($now)) {
+                $options[] = $this->makeOption($monthStartCurrent, $now);
+            }
+        }
+
+        return $options;
+    }
+
+    protected function makeOption(Carbon $from, Carbon $to): array
+    {
+        return [
+            'value' => "{'from': '{$from->toDateString()}', 'to': '{$to->toDateString()}'}",
+            'label' => $from->format('d/m/Y') . ' - ' . $to->format('d/m/Y'),
+        ];
+    }
+
+    protected function getStats($from, $to, $hotel, $periodsToSearch, $sort){
+
+        $quals = ['VERYGOOD','GOOD','NORMAL','WRONG','VERYWRONG'];
+
+        $qs = Query::join('stays','queries.stay_id','stays.id')
+                ->join('guests','queries.guest_id','guests.id')
+                ->where('stays.hotel_id', $hotel->id)
+                ->where('queries.answered', 1)
+                ->whereIn('queries.period', $periodsToSearch)
+                // filtro por intervalo de fechas (solo fecha)
+                ->whereDate('queries.responded_at','>=',$from)
+                ->whereDate('queries.responded_at','<=',$to)
+                ->select(
+                    'queries.period','queries.guest_id','queries.answered','queries.qualification','queries.comment','queries.responded_at','queries.response_lang',
+                    'stays.hotel_id','stays.check_in','stays.check_out','stays.id as stayId',
+                    'guests.name','guests.lastname'
+                )
+                // orden dinámico:
+                ->when($sort == 'recent' || $sort == 'old', function($q) use ($sort) {
+                    $dir = $sort === 'recent' ? 'desc' : 'asc';
+                    return $q->orderBy('queries.responded_at', $dir);
+                })
+
+                // orden por QUALITATIVE:
+                ->when($sort == 'good2bad' || $sort == 'bad2good', function($q) use ($sort, $quals) {
+                    $list = $sort === 'good2bad'
+                        ? $quals
+                        : array_reverse($quals);
+                    // convierte a "'VERYGOOD','GOOD',…"
+                    $fieldList = implode(',', array_map(fn($v) => "'{$v}'", $list));
+                    // MySQL / MariaDB: FIELD(col, …) devuelve la posición en la lista
+                    return $q->orderByRaw("FIELD(queries.qualification, {$fieldList})");
+                })
+
+            ->get();
+
+            
+            // Función auxiliar para procesar un sub-conjunto
+            $makeStats = function($collection) use($quals){
+                $total = $collection->count() ?: 1; // evitar división por cero
+                return collect($quals)->map(function($q) use($collection,$total){
+                    $cnt = $collection->where('qualification',$q)->count();
+                    return [
+                        'qualification' => $q,
+                        'count'         => $cnt,
+                        'percent'       => round($cnt / $total * 100, 1),
+                    ];
+                });
+            };
+
+            $qs->each(function($query) {
+                $query->languages =  $query->comment ? $this->extractLanguages($query->comment) : [];
+                $query->guestFullName = $query->name . ' ' . $query->lastname;
+            });
+            // 4) Construyes los tres módulos
+            return  [
+                'total'   => $qs->count(),
+                'comments_count'=> $qs->whereNotNull('comment')->count(),
+                'breakdown'=> $makeStats($qs),
+                'queries' => $qs,
+            ];
+
+    }
+
 
 }

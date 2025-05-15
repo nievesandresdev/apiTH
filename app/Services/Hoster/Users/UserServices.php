@@ -308,7 +308,7 @@ class UserServices
             $specificChannels = [];
         }
 
-        $queryUsers = User::select('id', 'email', 'name', 'notifications')
+        $queryUsers = User::select('id', 'email', 'name', 'notifications','login_code')
             ->with(['hotel:id,name'])
             ->whereNotNull('notifications')
             ->where('del', 0)

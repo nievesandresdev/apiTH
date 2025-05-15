@@ -1116,3 +1116,17 @@ if (!function_exists('sendMessageDiscord')) {
         $discordService->sendMessage($data['title'] ?? 'No title', $data['message'] ?? 'No message');
     }
 }
+
+if (!function_exists('translateQualification')) {
+    function translateQualification($qualification, $period = 'in-stay') {
+        $texts = [
+            'GOOD' => 'Buen' . ($period == 'in-stay' ? 'o' : 'a'),
+            'VERYGOOD' => 'Muy buen' . ($period == 'in-stay' ? 'o' : 'a'),
+            'WRONG' => 'Mal' . ($period == 'in-stay' ? 'o' : 'a'),
+            'VERYWRONG' => 'Muy mal' . ($period == 'in-stay' ? 'o' : 'a'),
+            'NORMAL' => 'Normal' . ($period == 'in-stay' ? 'o' : 'a'),
+        ];
+        return $texts[$qualification] ?? $qualification;
+    }
+}
+

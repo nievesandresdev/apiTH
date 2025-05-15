@@ -52,6 +52,8 @@ Route::post('/language/getforItem', [LanguageController::class, 'getLanguageForI
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/login/code/{code}', [AuthController::class, 'loginByCode']);
+
     //loginAdmin
     Route::post('/loginAdmin', [AuthController::class, 'loginAdmin']);
     Route::post('/logout', [AuthController::class, 'logout']);

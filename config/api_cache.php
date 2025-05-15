@@ -7,6 +7,7 @@ return [
     
     'excluded_routes' => [
         'api/auth/*',
+        'api/guest/findByIdApi/*',
         //'api/user/profile',
         //'api/formularios/*'
     ],
