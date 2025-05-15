@@ -11,6 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 use App\Services\StripeServices;
 use Laravel\Cashier\Billable;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -30,6 +31,7 @@ class User extends Authenticatable
         'del',
         'google_url',
         'parent_id',
+        'login_code',
 
         //settings
         'permissions', //json
@@ -266,6 +268,15 @@ class User extends Authenticatable
         return json_decode($value, true);
     }
 
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            if (! $user->login_code) {
+                // 12 chars alfanum cripto-seguro
+                $user->login_code = Str::random(12);
+            }
+        });
+    }
     /* public function getNotificationsAttribute($value)
     {
         if (is_null($value)) {

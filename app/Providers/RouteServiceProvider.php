@@ -58,6 +58,7 @@ class RouteServiceProvider extends ServiceProvider
                  $this->loadModuleRoutes('api_notifications.php');
                  $this->loadModuleRoutes('api_chain.php');
                  $this->loadModuleRoutes('api_dossier.php');
+                 $this->loadModuleRoutes('api_hotel_buttons.php');
                  // Aquí puedes añadir más archivos de módulos según sea necesario
              });
     }
