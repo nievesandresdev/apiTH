@@ -22,7 +22,7 @@ class DissatisfiedGuest extends Mailable
 
     public function build()
     {
-        return $this->view('mails.queries.DissatisfiedGuest')
+        return $this->view('Mails.queries.DissatisfiedGuest')
             ->with([
                 'hotel' => $this->hotel,
                 'showNotify' => $this->showNotify,

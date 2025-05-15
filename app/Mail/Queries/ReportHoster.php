@@ -24,7 +24,7 @@ class ReportHoster extends Mailable
 
     public function build()
     {
-        return $this->view('mails.queries.ReportHoster')
+        return $this->view('Mails.queries.ReportHoster')
             ->with([
                 'hotel' => $this->hotel,
                 'showNotify' => $this->showNotify,
