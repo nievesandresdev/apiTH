@@ -229,8 +229,10 @@ class Hotel extends Model
         return $query->where('del', 0);
     }
 
-
-
+    public function buttons()
+    {
+        return $this->hasMany(HotelButton::class)->orderBy('order');
+    }
 
     // AUXILIARIES
 
@@ -312,11 +314,21 @@ class Hotel extends Model
     {
         return boolval($value);
     }
-    
 
-    
-    
-    
+    public function getButtonsAttribute()
+    {
+        $allButtons = $this->buttons()->get();
+
+        return [
+            'visible' => $allButtons->where('is_visible', true)->sortBy('order')->values(),
+            'hidden' => $allButtons->where('is_visible', false)->values()
+        ];
+    }
+
+
+
+
+
 
 
 
