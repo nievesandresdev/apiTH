@@ -59,10 +59,27 @@ class GuestAuthController extends Controller
         }
     }
 
+    public function autenticateByGoogle(Request $request){
+        // AUTHENTICATION
+        $guestModel = $this->service->findByGoogleId($request->googleId);
+        if(!$guestModel) {
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, ['message' => 'No se encontró el huesped']);
+        }
+        $this->authService->login($guestModel, 'session-guest');
+        $token = $this->authService->createToken($guestModel, 'session-guest');
+        $guestData = new GuestResource($guestModel);
+        $data = [
+            'token' => $token,
+            'guest' => $guestData
+        ];
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+    }
+
     public function updateById(Request $request){
         try {
 
             $model = $this->service->updateById($request, true);//true para borrar datos antiguos al momento de registrar
+
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -78,6 +95,7 @@ class GuestAuthController extends Controller
 
     public function confirmPassword(Request $request){
         try {
+            // AUTHENTICATION
             $checkCredentials = $this->authService->checkCredentials($request, 'session-guest');
             if(!$checkCredentials) {
                 return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Introduzca credenciales válidas']);
@@ -195,7 +213,8 @@ class GuestAuthController extends Controller
             if(isset($findValidLastStay["stay"])){
                 $stay = $findValidLastStay["stay"];
                 $hotel = $this->hotelServices->findById($stay->hotel_id);
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}&action=toLogin");
+                // agregamos el googleId para que se pueda usar en el login
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}&action=toLogin&gid={$googleId}");
             }else{
                 if(!$hotelId){
                     $subdomainHotel = null;
@@ -203,7 +222,7 @@ class GuestAuthController extends Controller
                 if($stayId){
                     $findValidLastStay = $this->service->createAccessInStay($guest->id, $stayId, $chainId);
                 }
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete&e={$stayId}"); 
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete&e={$stayId}");
                 Log::info('handleGoogleCallback 7');
             }
             return redirect()->to($redirectUrl);    
