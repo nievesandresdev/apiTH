@@ -17,24 +17,30 @@ class HotelButtonsService {
     }
 
     public function updateButtonsOrder($visibleButtons, $hiddenButtons)
-{
-    // Primero, actualizamos todos los botones a no visibles
-    HotelButton::whereIn('id', array_merge(
-        array_column($visibleButtons, 'id'),
-        array_column($hiddenButtons, 'id')
-    ))->update(['is_visible' => false]);
+    {
+        // Primero, actualizamos todos los botones a no visibles
+        HotelButton::whereIn('id', array_merge(
+            array_column($visibleButtons, 'id'),
+            array_column($hiddenButtons, 'id')
+        ))->update(['is_visible' => false]);
 
-    // Luego actualizamos los botones visibles con su nuevo orden
-    foreach ($visibleButtons as $index => $button) {
-        HotelButton::where('id', $button['id'])
-            ->update([
-                'order' => $index,
-                'is_visible' => true
-            ]);
+        // Luego actualizamos los botones visibles con su nuevo orden
+        foreach ($visibleButtons as $index => $button) {
+            HotelButton::where('id', $button['id'])
+                ->update([
+                    'order' => $index,
+                    'is_visible' => true
+                ]);
+        }
+
+        return true;
     }
 
-    return true;
-}
+    public function getActiveHotelButtons($modelHotel) {
+        $buttons = $modelHotel->activeButtons;
+
+        return $buttons;
+    }
 }
 
 
