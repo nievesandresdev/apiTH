@@ -67,8 +67,10 @@ class GuestAuthController extends Controller
         }
         $this->authService->login($guestModel, 'session-guest');
         $token = $this->authService->createToken($guestModel, 'session-guest');
+        $guestData = new GuestResource($guestModel);
         $data = [
-            'token' => $token
+            'token' => $token,
+            'guest' => $guestData
         ];
         return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
     }
