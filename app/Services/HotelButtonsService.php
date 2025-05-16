@@ -17,24 +17,51 @@ class HotelButtonsService {
     }
 
     public function updateButtonsOrder($visibleButtons, $hiddenButtons)
-{
-    // Primero, actualizamos todos los botones a no visibles
-    HotelButton::whereIn('id', array_merge(
-        array_column($visibleButtons, 'id'),
-        array_column($hiddenButtons, 'id')
-    ))->update(['is_visible' => false]);
+    {
+        // Primero, actualizamos todos los botones a no visibles
+        HotelButton::whereIn('id', array_merge(
+            array_column($visibleButtons, 'id'),
+            array_column($hiddenButtons, 'id')
+        ))->update(['is_visible' => false]);
 
-    // Luego actualizamos los botones visibles con su nuevo orden
-    foreach ($visibleButtons as $index => $button) {
-        HotelButton::where('id', $button['id'])
-            ->update([
-                'order' => $index,
-                'is_visible' => true
-            ]);
+        // Luego actualizamos los botones visibles con su nuevo orden
+        foreach ($visibleButtons as $index => $button) {
+            HotelButton::where('id', $button['id'])
+                ->update([
+                    'order' => $index,
+                    'is_visible' => true
+                ]);
+        }
+
+        return true;
     }
 
-    return true;
-}
+    public function updateButtonVisibility($id)
+    {
+        $button = HotelButton::where('id', $id)->first();
+
+        if (!$button) {
+            return false;
+        }
+
+        // Si el botón está oculto y lo vamos a mostrar
+        if (!$button->is_visible) {
+            // Obtenemos el último orden de los botones visibles
+            $lastOrder = HotelButton::where('is_visible', true)
+                ->where('hotel_id', $button->hotel_id)
+                ->max('order') ?? -1;
+
+            // Actualizamos el botón con el nuevo orden (último) y lo hacemos visible
+            $button->order = $lastOrder + 1;
+            $button->is_visible = true;
+        } else {
+            // Si lo estamos ocultando, solo cambiamos la visibilidad
+            $button->is_visible = false;
+        }
+
+        $button->save();
+        return true;
+    }
 }
 
 
