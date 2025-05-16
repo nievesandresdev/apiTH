@@ -12,9 +12,10 @@ use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use App\Services\GuestService;
 use App\Services\HotelService;
+use App\Services\AuthService;
+
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
-
 class GuestAuthController extends Controller
 {
     public $service;
@@ -24,12 +25,14 @@ class GuestAuthController extends Controller
     function __construct(
         GuestService $_GuestService,
         ChainService $_ChainService,
-        HotelService $_HotelService
+        HotelService $_HotelService,
+        AuthService $_AuthService
     )
     {
         $this->service = $_GuestService;
         $this->chainServices = $_ChainService;
         $this->hotelServices = $_HotelService;
+        $this->authService = $_AuthService;
     }
 
     public function registerOrLogin(Request $request){
@@ -75,12 +78,20 @@ class GuestAuthController extends Controller
 
     public function confirmPassword(Request $request){
         try {
-            $model = $this->service->confirmPassword($request);
-            if($model){
-                $model = new GuestResource($model);
+            $checkCredentials = $this->authService->checkCredentials($request, 'session-guest');
+            if(!$checkCredentials) {
+                return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Introduzca credenciales válidas']);
             }
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+            $guest = $this->authService->getModel($request, 'session-guest');
+            $token = $this->authService->createToken($guest);
+            
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'token' => $token,
+                'guest' => $guest,
+            ]);
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
         }
     }

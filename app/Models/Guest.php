@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 class Guest extends Authenticatable
 {
@@ -31,18 +31,16 @@ class Guest extends Authenticatable
         'son_id'
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $guard_name = 'session-guest';
+
     protected $casts = [
         'off_email' => 'boolean',
     ];
-
-    // protected static function boot()
-    // {
-    //     parent::boot();
-    //     static::creating(function ($guest) {
-    //         $availableColors = ['5E7A96','5E5E96','967E5E','966B5E','5E968F','5E966A','965E71','965E96'];
-    //         $guest->color = $availableColors[array_rand($availableColors)];
-    //     });
-    // }
 
     public function stays()
     {

@@ -345,17 +345,15 @@ class GuestService {
     }
 
     public function confirmPassword($data){
-        try{
+        // try{
             $guest = $this->findByEmail($data->email);
-            Log::info('$guest find '.json_encode($guest));
-            Log::info('compare '.Hash::check($data->password, $guest->password));
             if ($guest && Hash::check($data->password, $guest->password)) {
                 return $guest;
             }
             return null;
-        } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
-        }
+        // } catch (\Exception $e) {
+        //     return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
+        // }
     }
 
     public function sendEmail($stayId,$guestId,$guestEmail,$hotelId,$concept = null){

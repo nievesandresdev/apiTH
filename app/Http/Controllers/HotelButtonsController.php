@@ -37,9 +37,12 @@ class HotelButtonsController extends Controller
 
     public function updateOrder(Request $request)
     {
+        $hotelModel = $request->attributes->get('hotel');
+
 
         $this->service->updateButtonsOrder($request->visible, $request->hidden);
+        $buttons = $this->service->getHotelButtons($hotelModel);
 
-        return response()->json(['message' => 'Orden actualizado correctamente']);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $buttons]);
     }
 }

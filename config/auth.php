@@ -40,8 +40,19 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-
+        'session-guest' => [
+            'driver' => 'session',
+            'provider' => 'guests',
+        ],
         'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
+        'guest' => [
+            'driver' => 'passport',
+            'provider' => 'guests',
+        ],
+        'user' => [
             'driver' => 'passport',
             'provider' => 'users',
         ],
@@ -71,7 +82,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
+        'guests' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Guest::class,
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -100,6 +114,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'guests' => [
+            'provider' => 'guests',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
