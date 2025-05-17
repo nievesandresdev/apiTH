@@ -18,37 +18,37 @@ class DefaultHotelButtonsSeeder extends Seeder
             [
                 'name' => 'Llamar',
                 'icon' => '1.TH.PHONE.svg',
-                'is_visible' => true,
+                'is_visible' => false,
                 'order' => 0
             ],
             [
                 'name' => 'Check-In',
                 'icon' => '1.TH Check-in.svg',
-                'is_visible' => true,
+                'is_visible' => false,
                 'order' => 1
             ],
             [
                 'name' => 'Normas del alojamiento',
                 'icon' => 'normas.svg',
-                'is_visible' => true,
+                'is_visible' => false,
                 'order' => 2
             ],
             [
                 'name' => 'Programa de referidos',
                 'icon' => '1.TH.Referidos.svg',
-                'is_visible' => true,
+                'is_visible' => false,
                 'order' => 3
             ],
             [
                 'name' => 'Reserva tu estancia',
                 'icon' => '1.TH.RESERVA.AGENDA.SVG',
-                'is_visible' => true,
+                'is_visible' => false,
                 'order' => 4
             ],
             [
                 'name' => 'Redes WiFi',
                 'icon' => '1.TH.WiFi.svg',
-                'is_visible' => true,
+                'is_visible' => false,
                 'order' => 5
             ]
         ];
