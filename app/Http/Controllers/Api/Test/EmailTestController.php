@@ -5,29 +5,23 @@ namespace App\Http\Controllers\Api\Test;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
-use App\Mail\Guest\MsgStay;
-use App\Mail\Guest\prepareArrival;
+use App\Mail\Guest\{postCheckoutMail,prepareArrival,MsgStay};
 use App\Services\MailService;
-use App\Services\UtilityService;
-use App\Services\Hoster\UtilsHosterServices;
+use App\Services\EmailTestService;
 use Illuminate\Support\Facades\App;
-use Carbon\Carbon;
 
 class EmailTestController extends Controller
 {
     protected $mailService;
-    protected $utilityService;
-    protected $utilsHosterServices;
+    protected $emailTestService;
 
     public function __construct(
         MailService $mailService,
-        UtilityService $utilityService,
-        UtilsHosterServices $utilsHosterServices
+        EmailTestService $emailTestService
     )
     {
         $this->mailService = $mailService;
-        $this->utilityService = $utilityService;
-        $this->utilsHosterServices = $utilsHosterServices;
+        $this->emailTestService = $emailTestService;
     }
 
     public function sendEmails(Request $request){
@@ -66,6 +60,15 @@ class EmailTestController extends Controller
                     case 'prepareArrival':
                         $this->sendPrepareArrivalEmail($hotel, $guest, $request);
                         break;
+                    case 'postCheckin':
+                        $this->sendPostCheckinEmail($hotel, $guest, $request);
+                        break;
+                    case 'checkout':
+                        $this->sendCheckoutEmail($hotel, $guest, $request);
+                        break;
+                    case 'postCheckoutMail':
+                        $this->sendPostCheckoutEmail($hotel, $guest, $request);
+                        break;
                 }
             }
 
@@ -77,50 +80,7 @@ class EmailTestController extends Controller
 
     protected function sendWelcomeEmail($hotel, $guest, $request)
     {
-        // Format dates
-        $checkinDate = Carbon::parse($request->date_guest['start']);
-        $checkoutDate = Carbon::parse($request->date_guest['end']);
-
-        $formatCheckin = [
-            'dayDate' => $checkinDate->format('d'),
-            'weekDay' => $checkinDate->format('d'),
-            'month' => $checkinDate->format('M')
-        ];
-
-        $formatCheckout = [
-            'dayDate' => $checkoutDate->format('d'),
-            'weekDay' => $checkoutDate->format('d'),
-            'month' => $checkoutDate->format('M')
-        ];
-
-        $checkData = [
-            'title' => __('mail.stayCheckDate.title', ['hotel' => $hotel->name]),
-            'formatCheckin' => $formatCheckin,
-            'formatCheckout' => $formatCheckout,
-            'editStayUrl' => '#'
-        ];
-
-        $queryData = [
-            'showQuerySection' => true,
-            'currentPeriod' => 'in-stay',
-            'webappLinkInbox' => '#',
-            'webappLinkInboxGoodFeel' => '#'
-        ];
-
-        $dataEmail = [
-            'checkData' => $checkData,
-            'queryData' => $queryData,
-            'places' => [],
-            'experiences' => [],
-            'facilities' => [],
-            'webappChatLink' => '#',
-            'urlQr' => "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png",
-            'urlWebapp' => '#',
-            'urlCheckin' => '#',
-            'guest_language' => $guest->lang_web,
-            'urlFooterEmail' => '#',
-            'urlPrivacy' => '#'
-        ];
+        $dataEmail = $this->emailTestService->prepareWelcomeEmailData($hotel, $guest, $request);
 
         $this->mailService->sendEmail(
             new MsgStay('welcome', $hotel, $guest, $dataEmail, false, false),
@@ -130,53 +90,40 @@ class EmailTestController extends Controller
 
     protected function sendPrepareArrivalEmail($hotel, $guest, $request)
     {
-        // Format dates
-        $checkinDate = Carbon::parse($request->date_guest['start']);
-        $checkoutDate = Carbon::parse($request->date_guest['end']);
-
-        $formatCheckin = [
-            'dayDate' => $checkinDate->format('d'),
-            'weekDay' => $checkinDate->format('d'),
-            'month' => $checkinDate->format('M')
-        ];
-
-        $formatCheckout = [
-            'dayDate' => $checkoutDate->format('d'),
-            'weekDay' => $checkoutDate->format('d'),
-            'month' => $checkoutDate->format('M')
-        ];
-
-        $checkData = [
-            'title' => __('mail.stayCheckDate.title', ['hotel' => $hotel->name]),
-            'formatCheckin' => $formatCheckin,
-            'formatCheckout' => $formatCheckout,
-            'editStayUrl' => '#'
-        ];
-
-        $queryData = [
-            'currentPeriod' => 'pre-stay',
-            'webappLinkInbox' => '#',
-            'webappLinkInboxGoodFeel' => '#',
-            'answered' => false // Agregamos esta propiedad que faltaba
-        ];
-
-        $dataEmail = [
-            'checkData' => $checkData,
-            'queryData' => $queryData,
-            'places' => [],
-            'experiences' => [],
-            'facilities' => [],
-            'webappChatLink' => '#',
-            'urlQr' => "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png",
-            'urlWebapp' => '#',
-            'urlCheckin' => '#',
-            'guest_language' => $guest->lang_web,
-            'urlFooterEmail' => '#',
-            'urlPrivacy' => '#'
-        ];
+        $dataEmail = $this->emailTestService->preparePrepareArrivalEmailData($hotel, $guest, $request);
 
         $this->mailService->sendEmail(
             new prepareArrival('prepare-arrival', $hotel, $guest, $dataEmail, true),
+            $guest->email
+        );
+    }
+
+    protected function sendPostCheckinEmail($hotel, $guest, $request)
+    {
+        $dataEmail = $this->emailTestService->preparePostCheckinEmailData($hotel, $guest, $request);
+
+        $this->mailService->sendEmail(
+            new MsgStay('postCheckin', $hotel, $guest, $dataEmail, false, false),
+            $guest->email
+        );
+    }
+
+    protected function sendCheckoutEmail($hotel, $guest, $request)
+    {
+        $dataEmail = $this->emailTestService->prepareCheckoutEmailData($hotel, $guest, $request);
+
+        $this->mailService->sendEmail(
+            new MsgStay('checkout', $hotel, $guest, $dataEmail, false, false),
+            $guest->email
+        );
+    }
+
+    protected function sendPostCheckoutEmail($hotel, $guest, $request)
+    {
+        $dataEmail = $this->emailTestService->preparePostCheckoutEmailData($hotel, $guest, $request);
+
+        $this->mailService->sendEmail(
+            new postCheckoutMail('checkout', $hotel, $guest, $dataEmail, true),
             $guest->email
         );
     }
