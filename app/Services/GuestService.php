@@ -109,6 +109,11 @@ class GuestService {
         }
     }
 
+    public function findByGoogleId($googleId){
+        if (!$googleId) return null;
+        return Guest::where('googleId', $googleId)->first();
+    }
+
     public function updatePasswordGuest($data)
     {
         try {

@@ -12,9 +12,10 @@ use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
 use App\Services\GuestService;
 use App\Services\HotelService;
+use App\Services\AuthService;
+
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
-
 class GuestAuthController extends Controller
 {
     public $service;
@@ -24,12 +25,14 @@ class GuestAuthController extends Controller
     function __construct(
         GuestService $_GuestService,
         ChainService $_ChainService,
-        HotelService $_HotelService
+        HotelService $_HotelService,
+        AuthService $_AuthService
     )
     {
         $this->service = $_GuestService;
         $this->chainServices = $_ChainService;
         $this->hotelServices = $_HotelService;
+        $this->authService = $_AuthService;
     }
 
     public function registerOrLogin(Request $request){
@@ -56,17 +59,41 @@ class GuestAuthController extends Controller
         }
     }
 
+    public function autenticateByGoogle(Request $request){
+        // AUTHENTICATION
+        $guestModel = $this->service->findByGoogleId($request->googleId);
+        if(!$guestModel) {
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, ['message' => 'No se encontró el huesped']);
+        }
+        $this->authService->login($guestModel, 'session-guest');
+        $token = $this->authService->createToken($guestModel, 'session-guest');
+        $guestData = new GuestResource($guestModel);
+        $data = [
+            'token' => $token,
+            'guest' => $guestData
+        ];
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+    }
+
     public function updateById(Request $request){
         try {
 
             $model = $this->service->updateById($request, true);//true para borrar datos antiguos al momento de registrar
+
+            $this->authService->login($model, 'session-guest');
+            $token = $this->authService->createToken($model, 'session-guest');
+
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            $data = new GuestResource($model);
+            $guestData = new GuestResource($model);
+            $data = [
+                'token' => $token,
+                'guest' => $guestData
+            ];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateById');
@@ -75,16 +102,19 @@ class GuestAuthController extends Controller
 
     public function confirmPassword(Request $request){
         try {
-            $model = $this->service->confirmPassword($request);
-            if($model){
-                $token = $model->createToken('appToken')->accessToken;
-                $model = new GuestResource($model);
-                return bodyResponseRequest(EnumResponse::SUCCESS, [
-                    'token' => $token,
-                    'guest' => $model,
-                ]);
+            // AUTHENTICATION
+            $checkCredentials = $this->authService->checkCredentials($request, 'session-guest');
+            if(!$checkCredentials) {
+                return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Introduzca credenciales válidas']);
             }
-            return bodyResponseRequest(EnumResponse::UNAUTHORIZED, ['message' => 'Introduzca credenciales válidas']);
+            $guest = $this->authService->getModel($request, 'session-guest');
+            $token = $this->authService->createToken($guest);
+            
+
+            return bodyResponseRequest(EnumResponse::SUCCESS, [
+                'token' => $token,
+                'guest' => $guest,
+            ]);
         } catch (\Exception $e) {
             return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
@@ -190,7 +220,8 @@ class GuestAuthController extends Controller
             if(isset($findValidLastStay["stay"])){
                 $stay = $findValidLastStay["stay"];
                 $hotel = $this->hotelServices->findById($stay->hotel_id);
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}&action=toLogin");
+                // agregamos el googleId para que se pueda usar en el login
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}&action=toLogin&gid={$googleId}");
             }else{
                 if(!$hotelId){
                     $subdomainHotel = null;
@@ -198,7 +229,7 @@ class GuestAuthController extends Controller
                 if($stayId){
                     $findValidLastStay = $this->service->createAccessInStay($guest->id, $stayId, $chainId);
                 }
-                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete&e={$stayId}"); 
+                $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel, null,"g={$guest->id}&m=google&acform=complete&e={$stayId}");
                 Log::info('handleGoogleCallback 7');
             }
             return redirect()->to($redirectUrl);    

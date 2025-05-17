@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 class Guest extends Authenticatable
 {
@@ -36,7 +36,7 @@ class Guest extends Authenticatable
         'remember_token',
     ];
 
-    protected $guard_name = 'api-guest';
+    protected $guard_name = 'session-guest';
 
     protected $casts = [
         'off_email' => 'boolean',
