@@ -233,12 +233,12 @@ class HotelService {
 
     public function updateShowButtons($request,$hotelModel)
     {
-        $buttonsData = $request->buttons;
+        $buttonsData = $request->buttons_home;
         $imageData = $request->image ?? null;
 
-        if ($buttonsData) {
-            $hotelModel->buttons_home = json_encode($buttonsData);
-        }
+
+        $hotelModel->buttons_home = $buttonsData;
+
 
         if ($imageData) {
             $hotelModel->image = $imageData;

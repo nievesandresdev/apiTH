@@ -12,7 +12,10 @@ class HotelButtonsService {
 
         return [
             'visible' => $buttons['visible'],
-            'hidden' => $buttons['hidden']
+            'hidden' => $buttons['hidden'],
+            'totalVisible' => $buttons['visible']->count(),
+            'totalHidden' => $buttons['hidden']->count(),
+            'total' => $buttons['visible']->count() + $buttons['hidden']->count()
         ];
     }
 
@@ -40,6 +43,39 @@ class HotelButtonsService {
         $buttons = $modelHotel->activeButtons;
 
         return $buttons;
+    }
+
+    public function updateButtonVisibility($id)
+    {
+        $button = HotelButton::where('id', $id)->first();
+
+        if (!$button) {
+            return false;
+        }
+
+        // Si el botón está oculto y lo vamos a mostrar
+        if (!$button->is_visible) {
+            // Obtenemos el último orden de los botones visibles
+            $lastOrder = HotelButton::where('is_visible', true)
+                ->where('hotel_id', $button->hotel_id)
+                ->max('order') ?? -1;
+
+            // Actualizamos el botón con el nuevo orden (último) y lo hacemos visible
+            $button->order = $lastOrder + 1;
+            $button->is_visible = true;
+        } else {
+            // Si lo estamos ocultando, obtenemos el último orden de los botones ocultos
+            $lastHiddenOrder = HotelButton::where('is_visible', false)
+                ->where('hotel_id', $button->hotel_id)
+                ->max('order') ?? -1;
+
+            // Actualizamos el botón con el nuevo orden (último) y lo hacemos oculto
+            $button->order = $lastHiddenOrder + 1;
+            $button->is_visible = false;
+        }
+
+        $button->save();
+        return true;
     }
 }
 

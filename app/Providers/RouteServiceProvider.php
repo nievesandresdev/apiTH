@@ -47,6 +47,7 @@ class RouteServiceProvider extends ServiceProvider
                 //  $this->loadModuleRoutes('api_place.php');
                  $this->loadModuleRoutes('api_chat.php');
                  $this->loadModuleRoutes('api_legal.php');
+                 $this->loadModuleRoutes('api_emails.php');
                  $this->loadModuleRoutes('api_utils.php');
                  $this->loadModuleRoutes('api_facility.php');
                  $this->loadModuleRoutes('api_queries.php');

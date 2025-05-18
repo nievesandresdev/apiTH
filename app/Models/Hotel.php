@@ -274,7 +274,7 @@ class Hotel extends Model
         // $plan = $this->stripe->plans->retrieve($request->price_id);
     }
 
-    public function getButtonsHomeAttribute($value)
+ /*    public function getButtonsHomeAttribute($value)
     {
         $defaultButtonsHome = [
             'show_wifi' => false,
@@ -288,7 +288,7 @@ class Hotel extends Model
         }
 
         return json_decode($value, true) ?: $defaultButtonsHome;
-    }
+    } */
 
     public function getImageAttribute($value)
     {

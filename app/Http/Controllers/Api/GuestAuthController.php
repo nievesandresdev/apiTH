@@ -80,13 +80,20 @@ class GuestAuthController extends Controller
 
             $model = $this->service->updateById($request, true);//true para borrar datos antiguos al momento de registrar
 
+            $this->authService->login($model, 'session-guest');
+            $token = $this->authService->createToken($model, 'session-guest');
+
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            $data = new GuestResource($model);
+            $guestData = new GuestResource($model);
+            $data = [
+                'token' => $token,
+                'guest' => $guestData
+            ];
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateById');
