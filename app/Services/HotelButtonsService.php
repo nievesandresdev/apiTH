@@ -39,6 +39,12 @@ class HotelButtonsService {
         return true;
     }
 
+    public function getActiveHotelButtons($modelHotel) {
+        $buttons = $modelHotel->activeButtons;
+
+        return $buttons;
+    }
+
     public function updateButtonVisibility($id)
     {
         $button = HotelButton::where('id', $id)->first();
