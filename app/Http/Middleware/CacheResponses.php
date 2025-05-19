@@ -187,6 +187,7 @@ class CacheResponses
     {
         $exclude = [
             'subdomainhotel',
+            'Reset-Cache',
             'chainsubdomain',
             'hash-hotel',
             'hash-user',
