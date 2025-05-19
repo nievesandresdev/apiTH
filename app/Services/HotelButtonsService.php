@@ -53,6 +53,8 @@ class HotelButtonsService {
     {
         $button = HotelButton::where('id', $id)->first();
 
+       //return $button->is_visible;
+
         if (!$button) {
             return false;
         }
@@ -79,7 +81,7 @@ class HotelButtonsService {
         }
 
         $button->save();
-        return true;
+        return $button;
     }
 }
 
