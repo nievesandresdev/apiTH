@@ -20,6 +20,8 @@ class HotelButtonsController extends Controller
             $hotelModel = $request->attributes->get('hotel');
             $buttons = $this->service->getHotelButtons($hotelModel);
 
+            return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $hotelModel->buttons, 'hotel' => $hotelModel]);
+
             if(!$buttons){
                 $data = [
                     'message' => __('response.bad_request_long')
