@@ -20,8 +20,6 @@ class HotelButtonsController extends Controller
             $hotelModel = $request->attributes->get('hotel');
             $buttons = $this->service->getHotelButtons($hotelModel);
 
-            //return bodyResponseRequest(EnumResponse::ACCEPTED, ['hotel' => $hotelModel, 'buttons' => $hotelModel->buttons()->get()]);
-
             if(!$buttons){
                 $data = [
                     'message' => __('response.bad_request_long')
@@ -29,7 +27,7 @@ class HotelButtonsController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             //
-            return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $buttons, 'hotel' => $hotelModel]);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $buttons);
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], $e->getMessage().' '.self::class . '.getButtons');
