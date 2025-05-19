@@ -57,6 +57,8 @@ Route::group(['prefix' => 'hotel'], function () {
     //findById
     Route::get('findById/{id}', [HotelController::class, 'findById']);
     Route::get('getRewardsByHotel', [HotelController::class, 'getRewardsByHotel']);
+    //webapp buttons
+    Route::get('/getActiveHotelButtons', [HotelController::class, 'getActiveHotelButtons']);
 
     //handleShowReferrals
     Route::post('handleShowReferrals', [HotelController::class, 'handleShowReferrals']);
