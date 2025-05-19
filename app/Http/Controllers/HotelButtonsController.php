@@ -20,7 +20,7 @@ class HotelButtonsController extends Controller
             $hotelModel = $request->attributes->get('hotel');
             $buttons = $this->service->getHotelButtons($hotelModel);
 
-            return bodyResponseRequest(EnumResponse::ACCEPTED, ['hotel' => $hotelModel->with('buttons')->get()]);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, ['hotel' => $hotelModel, 'buttons' => $hotelModel->buttons()->get()]);
 
             if(!$buttons){
                 $data = [
