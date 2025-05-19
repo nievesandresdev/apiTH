@@ -43,7 +43,7 @@ class DefaultHotelButtonsSeeder extends Seeder
             ],
             [
                 'name' => 'Reserva tu estancia',
-                'icon' => '1.TH.RESERVA.AGENDA.SVG',
+                'icon' => '1.TH.RESERVA.AGENDA.svg',
                 'is_visible' => false,
                 'order' => 4
             ],
