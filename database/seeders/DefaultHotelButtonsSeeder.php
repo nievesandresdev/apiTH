@@ -10,10 +10,12 @@ class DefaultHotelButtonsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * Este seeder crea botones por defecto solo para los hoteles que no tienen ningún botón.
+     * Si un hotel ya tiene botones, será omitido.
      */
     public function run(): void
     {
-        //  botones por defecto
+        // Botones por defecto que se crearán para hoteles sin botones
         $defaultButtons = [
             [
                 'name' => 'Llamar',
@@ -53,13 +55,15 @@ class DefaultHotelButtonsSeeder extends Seeder
             ]
         ];
 
+        // Obtener todos los hoteles
         $hotels = Hotel::all();
 
         foreach ($hotels as $hotel) {
-            $existingButtons = HotelButton::where('hotel_id', $hotel->id)->count();
+            // Verificar si el hotel ya tiene botones
+            $hasButtons = HotelButton::where('hotel_id', $hotel->id)->exists();
 
-            if ($existingButtons === 0) {
-                // Crear los botones por defecto para el hotel
+            // Si el hotel no tiene botones, crear los botones por defecto
+            if (!$hasButtons) {
                 foreach ($defaultButtons as $button) {
                     HotelButton::create([
                         'hotel_id' => $hotel->id,
