@@ -324,10 +324,12 @@ class Hotel extends Model
     public function getButtonsAttribute()
     {
         $allButtons = $this->buttons()->get();
+        $visibleButtons = $allButtons->where('is_visible', true)->sortBy('order')->values();
+        $hiddenButtons = $allButtons->where('is_visible', false)->values();
 
         return [
-            'visible' => $allButtons->where('is_visible', true)->sortBy('order')->values(),
-            'hidden' => $allButtons->where('is_visible', false)->values()
+            'visible' => $visibleButtons,
+            'hidden' => $hiddenButtons
         ];
     }
 

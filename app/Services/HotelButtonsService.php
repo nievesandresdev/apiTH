@@ -9,13 +9,15 @@ class HotelButtonsService {
 
     public function getHotelButtons($modelHotel) {
         $buttons = $modelHotel->buttons;
+        $visibleCount = $buttons['visible']->count();
+        $hiddenCount = $buttons['hidden']->count();
 
         return [
             'visible' => $buttons['visible'],
             'hidden' => $buttons['hidden'],
-            'totalVisible' => $buttons['visible']->count(),
-            'totalHidden' => $buttons['hidden']->count(),
-            'total' => $buttons['visible']->count() + $buttons['hidden']->count()
+            'totalVisible' => $visibleCount,
+            'totalHidden' => $hiddenCount,
+            'total' => $visibleCount + $hiddenCount
         ];
     }
 
