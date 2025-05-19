@@ -27,7 +27,7 @@ class HotelButtonsController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             //
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $buttons);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $buttons, 'hotel' => $hotelModel]);
 
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], $e->getMessage().' '.self::class . '.getButtons');
