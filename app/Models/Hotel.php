@@ -321,7 +321,7 @@ class Hotel extends Model
         return boolval($value);
     }
 
-    public function getButtonsAttribute()
+    /* public function getButtonsAttribute()
     {
         $allButtons = $this->buttons()->get();
         $visibleButtons = $allButtons->where('is_visible', true)->sortBy('order')->values();
@@ -331,7 +331,7 @@ class Hotel extends Model
             'visible' => $visibleButtons,
             'hidden' => $hiddenButtons
         ];
-    }
+    } */
 
 
 
