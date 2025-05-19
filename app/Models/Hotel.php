@@ -84,6 +84,7 @@ class Hotel extends Model
     //bool offer_benefits
     protected $casts = [
         'offer_benefits' => 'boolean',
+        'buttons_home' => 'boolean',
     ];
 
     /* public function user()
