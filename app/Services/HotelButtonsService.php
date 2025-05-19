@@ -20,7 +20,7 @@ class HotelButtonsService {
             'total' => $visibleCount + $hiddenCount
         ]; */
 
-        return $modelHotel->buttons;
+        return $modelHotel->buttons()->get();
     }
 
     public function updateButtonsOrder($visibleButtons, $hiddenButtons)
