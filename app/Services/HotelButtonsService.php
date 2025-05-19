@@ -8,15 +8,15 @@ use App\Models\Hotel;
 class HotelButtonsService {
 
     public function getHotelButtons($modelHotel) {
-       /*  $buttons = $modelHotel->buttons()->get();
+        //$buttons = $modelHotel->buttons()->get();
 
 
         return [
-            'visible' => $buttons->where('is_visible', true),
-            'hidden' => $buttons->where('is_visible', false),
-        ]; */
+            'visible' => $modelHotel->activeButtons()->get(),
+            'hidden' => $modelHotel->buttons()->where('is_visible', false)->get(),
+        ];
 
-        return $modelHotel->buttons()->get();
+        //return $modelHotel->buttons()->get();
     }
 
     public function updateButtonsOrder($visibleButtons, $hiddenButtons)
