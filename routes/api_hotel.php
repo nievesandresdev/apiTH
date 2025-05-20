@@ -38,7 +38,7 @@ Route::middleware('auth.either:user,guest')->group(function () {
         Route::get('/getAll', [HotelController::class, 'getAll']);
         Route::get('/getHotelsByUser', [HotelController::class, 'getHotelsByUser']);
         Route::post('/updateDefaultHotel', [HotelController::class, 'updateDefaultHotel']);
-        Route::get('/findByParams', [HotelController::class, 'findByParams']);
+        // Route::get('/findByParams', [HotelController::class, 'findByParams']);
         Route::post('/profile', [HotelController::class, 'updateProfile']);
         // Route::get('/getAllCrossellings', [HotelController::class, 'getAllCrossellings']);
         Route::get('/create/subdomain', [SubdomainController::class, 'createDNSRecord']);
@@ -84,6 +84,7 @@ Route::middleware('auth.either:user,guest')->group(function () {
     });
 });
 Route::group(['prefix' => 'hotel'], function () {
+    Route::get('/findByParams', [HotelController::class, 'findByParams']);
     Route::get('/getAllCrossellings', [HotelController::class, 'getAllCrossellings']);
     Route::get('getMainData', [HotelController::class, 'getMainData']);
     Route::get('getDataLegal', [HotelController::class, 'getDataLegal']);
