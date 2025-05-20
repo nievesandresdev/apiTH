@@ -7,6 +7,7 @@ return [
     
     'excluded_routes' => [
         'api/auth/*',
+        'api/guest/findByIdApi/*',
         //'api/user/profile',
         //'api/formularios/*'
     ],
@@ -25,6 +26,7 @@ return [
     
     'required_headers' => [
         'subdomainhotel',
+        'reset-cache',
         'authorization'
     ],
     

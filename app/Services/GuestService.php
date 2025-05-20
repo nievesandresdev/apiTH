@@ -109,6 +109,11 @@ class GuestService {
         }
     }
 
+    public function findByGoogleId($googleId){
+        if (!$googleId) return null;
+        return Guest::where('googleId', $googleId)->first();
+    }
+
     public function updatePasswordGuest($data)
     {
         try {
@@ -333,7 +338,7 @@ class GuestService {
 
             // Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
-                $guest->password = bcrypt($data->password);
+                // $guest->password = bcrypt($data->password);
                 // Log::info('update pass'. $guest->password);
             }
 
@@ -345,17 +350,15 @@ class GuestService {
     }
 
     public function confirmPassword($data){
-        try{
+        // try{
             $guest = $this->findByEmail($data->email);
-            Log::info('$guest find '.json_encode($guest));
-            Log::info('compare '.Hash::check($data->password, $guest->password));
             if ($guest && Hash::check($data->password, $guest->password)) {
                 return $guest;
             }
             return null;
-        } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
-        }
+        // } catch (\Exception $e) {
+        //     return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
+        // }
     }
 
     public function sendEmail($stayId,$guestId,$guestEmail,$hotelId,$concept = null){

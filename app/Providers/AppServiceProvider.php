@@ -9,6 +9,7 @@ use App\Observers\StayObserver;
 use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 
+
 class AppServiceProvider extends ServiceProvider
 {
     /**

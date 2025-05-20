@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'setlocale' => \App\Http\Middleware\SetLocale::class,
         'loadHotel' => \App\Http\Middleware\LoadHotel::class,
         'authStatic' => \App\Http\Middleware\VerifyApiKey::class,
+        'auth.either' => \App\Http\Middleware\AuthenticateEither::class,
     ];
 }

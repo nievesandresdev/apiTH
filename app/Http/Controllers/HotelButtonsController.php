@@ -27,19 +27,27 @@ class HotelButtonsController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             //
-            //$data = FacilityResource::collection($facilities);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $buttons);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], $e->getMessage().' '.self::class . '.getRewards');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], $e->getMessage().' '.self::class . '.getButtons');
         }
     }
 
     public function updateOrder(Request $request)
     {
+        $hotelModel = $request->attributes->get('hotel');
+
 
         $this->service->updateButtonsOrder($request->visible, $request->hidden);
+        $buttons = $this->service->getHotelButtons($hotelModel);
 
-        return response()->json(['message' => 'Orden actualizado correctamente']);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $buttons]);
+    }
+
+    public function updateButtonVisibility(Request $request)
+    {
+        $button = $this->service->updateButtonVisibility($request->id);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $button]);
     }
 }

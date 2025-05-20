@@ -84,6 +84,7 @@ class Hotel extends Model
     //bool offer_benefits
     protected $casts = [
         'offer_benefits' => 'boolean',
+        'buttons_home' => 'boolean',
     ];
 
     /* public function user()
@@ -234,6 +235,11 @@ class Hotel extends Model
         return $this->hasMany(HotelButton::class)->orderBy('order');
     }
 
+    public function activeButtons()
+    {
+        return $this->hasMany(HotelButton::class)->where('is_visible', true)->orderBy('order');
+    }
+
     // AUXILIARIES
 
     public function toArray()
@@ -269,7 +275,7 @@ class Hotel extends Model
         // $plan = $this->stripe->plans->retrieve($request->price_id);
     }
 
-    public function getButtonsHomeAttribute($value)
+ /*    public function getButtonsHomeAttribute($value)
     {
         $defaultButtonsHome = [
             'show_wifi' => false,
@@ -283,7 +289,7 @@ class Hotel extends Model
         }
 
         return json_decode($value, true) ?: $defaultButtonsHome;
-    }
+    } */
 
     public function getImageAttribute($value)
     {
@@ -315,15 +321,17 @@ class Hotel extends Model
         return boolval($value);
     }
 
-    public function getButtonsAttribute()
+    /* public function getButtonsAttribute()
     {
         $allButtons = $this->buttons()->get();
+        $visibleButtons = $allButtons->where('is_visible', true)->sortBy('order')->values();
+        $hiddenButtons = $allButtons->where('is_visible', false)->values();
 
         return [
-            'visible' => $allButtons->where('is_visible', true)->sortBy('order')->values(),
-            'hidden' => $allButtons->where('is_visible', false)->values()
+            'visible' => $visibleButtons,
+            'hidden' => $hiddenButtons
         ];
-    }
+    } */
 
 
 
