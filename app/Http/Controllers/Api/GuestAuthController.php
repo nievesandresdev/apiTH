@@ -368,5 +368,16 @@ class GuestAuthController extends Controller
         ], 200);
     }
 
+    public function autenticateGuestDefault (Request $request){
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+
+            $hotelWithDemoStay = $this->hotelServices->findByParams((Object) ['id' => $hotelModel->id, 'stayDemo' => true]);
+            return $hotelWithDemoStay;
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelWithDemoStay);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.autenticateGuest');
+        }
+    }
 
 }
