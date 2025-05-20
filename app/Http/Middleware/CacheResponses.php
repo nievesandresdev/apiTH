@@ -97,8 +97,15 @@ class CacheResponses
         return $response
                 ->header('X-Cache', $status)
                 ->header('X-Response-Time', "{$elapsed}ms")
-                ->header('Cache-Control', 'public, max-age=' . $ttl)
                 ->header('Vary', 'hash-user', 'hash-hotel', 'origin-component');
+
+                if ($status === 'BYPASS') {
+                    
+                    $response = $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+                } else {
+                    $response = $response->header('Cache-Control', 'public, max-age=' . $ttl);
+                }
+                
     }
 
     /**
@@ -116,8 +123,7 @@ class CacheResponses
         $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
 
         foreach ($config['excluded_routes'] as $route) {
-            Log::info("Checking excluded route: $route against path: $pathForCheck");
-            if ($request->is($route) || \Illuminate\Support\Str::is($route, $pathForCheck)) {
+            if ($request->is($route)) {
                 return false;
             }
         }
