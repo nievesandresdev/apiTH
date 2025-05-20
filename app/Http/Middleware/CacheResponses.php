@@ -116,11 +116,12 @@ class CacheResponses
         $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
 
         foreach ($config['excluded_routes'] as $route) {
+            Log::info("Checking excluded route: $route against path: $pathForCheck");
             if ($request->is($route) || \Illuminate\Support\Str::is($route, $pathForCheck)) {
                 return false;
             }
         }
-        
+
         // Requiere headers para caché: hash-user, hash-hotel y origin-component
         if (! $request->hasHeader('hash-user')
             || ! $request->hasHeader('hash-hotel')
