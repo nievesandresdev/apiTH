@@ -26,6 +26,7 @@ return [
     
     'required_headers' => [
         'subdomainhotel',
+        'reset-cache',
         'authorization'
     ],
     

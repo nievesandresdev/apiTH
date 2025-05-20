@@ -27,11 +27,10 @@ class HotelButtonsController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
             //
-            //$data = FacilityResource::collection($facilities);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $buttons);
 
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], $e->getMessage().' '.self::class . '.getRewards');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], $e->getMessage().' '.self::class . '.getButtons');
         }
     }
 
@@ -44,5 +43,11 @@ class HotelButtonsController extends Controller
         $buttons = $this->service->getHotelButtons($hotelModel);
 
         return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $buttons]);
+    }
+
+    public function updateButtonVisibility(Request $request)
+    {
+        $button = $this->service->updateButtonVisibility($request->id);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $button]);
     }
 }

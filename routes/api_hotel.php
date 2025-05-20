@@ -63,6 +63,9 @@ Route::middleware('auth.either:user,guest')->group(function () {
         //handleShowReferrals
         Route::post('handleShowReferrals', [HotelController::class, 'handleShowReferrals']);
 
+            //webapp buttons
+        Route::get('/getActiveHotelButtons', [HotelController::class, 'getActiveHotelButtons']);
+
         //manage communication hotel
         Route::group(['prefix' => 'communication'], function () {
             Route::post('getHotelCommunication', [HotelCommunicationController::class, 'getHotelCommunication']);
