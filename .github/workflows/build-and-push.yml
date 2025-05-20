@@ -203,7 +203,7 @@ jobs:
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
             
             echo "PRODUCTION=\"${{ vars.PRODUCTION_TEST }}\"" >> .env
-            echo "CACHE_ENABLED=true" >> .env
+            echo "CACHE_ENABLED=false" >> .env
           fi
 
       # Configuración de Docker Buildx
