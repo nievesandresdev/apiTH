@@ -376,6 +376,7 @@ class GuestAuthController extends Controller
             return $hotelWithDemoStay;
             return bodyResponseRequest(EnumResponse::ACCEPTED, $hotelWithDemoStay);
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.autenticateGuest');
         }
     }
