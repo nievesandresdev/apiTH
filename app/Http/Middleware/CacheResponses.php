@@ -142,6 +142,8 @@ class CacheResponses
         $hotelHash = $request->header('hash-hotel');
         $origin    = strtolower($request->header('origin-component', ''));
 
+        $resetCache = $request->header('reset-cache', '');
+        
         if (empty($userHash) || empty($hotelHash) || empty($origin)) {
             throw new \RuntimeException('Missing identifiers for cache key');
         }
@@ -189,7 +191,7 @@ class CacheResponses
     {
         $exclude = [
             'subdomainhotel',
-            'Reset-Cache',
+            'reset-cache',
             'chainsubdomain',
             'hash-hotel',
             'hash-user',
