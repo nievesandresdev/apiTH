@@ -97,8 +97,15 @@ class CacheResponses
         return $response
                 ->header('X-Cache', $status)
                 ->header('X-Response-Time', "{$elapsed}ms")
-                ->header('Cache-Control', 'public, max-age=' . $ttl)
                 ->header('Vary', 'hash-user', 'hash-hotel', 'origin-component');
+
+                if ($status === 'BYPASS') {
+                    
+                    $response = $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+                } else {
+                    $response = $response->header('Cache-Control', 'public, max-age=' . $ttl);
+                }
+                
     }
 
     /**
