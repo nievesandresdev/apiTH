@@ -120,8 +120,7 @@ class HotelService {
                     ->where('is_demo', true)
                     ->with(['guests:id'])
                     ->first();
-                var_dump($demoStay);
-
+                return $demoStay;
                 if ($demoStay) {
                     return [
                         'hotel' => new HotelResource($model),
