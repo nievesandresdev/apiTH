@@ -8,7 +8,8 @@ return [
     'excluded_routes' => [
         'api/auth/*',
         'api/guest/findByIdApi/*',
-        'api/hotel/findByParams',
+        'api/hotel/findByParams/',
+        'api/chain/findBySubdomain/'
         //'api/user/profile',
         //'api/formularios/*'
     ],
