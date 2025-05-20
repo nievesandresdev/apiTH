@@ -116,8 +116,8 @@ class CacheResponses
         $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
 
         foreach ($config['excluded_routes'] as $route) {
-            Log::info("Checking excluded route: $route against path: $pathForCheck");
-            if ($request->is($route) || \Illuminate\Support\Str::is($route, $pathForCheck)) {
+            Log::info("Checking excluded route: $route against path: $pathForCheck, method: " . $request->method());
+            if ($request->is($route)) {
                 return false;
             }
         }
