@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
 class CacheResponses
 {
@@ -110,7 +111,8 @@ class CacheResponses
             return false;
         }
         foreach ($config['excluded_routes'] as $route) {
-            if ($request->is($route)) {
+            $route = rtrim($route, '*'); // quitar el '*' para comparar prefijo exacto
+            if (Str::startsWith($request->path(), $route)) {
                 return false;
             }
         }
