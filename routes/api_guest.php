@@ -49,5 +49,7 @@ Route::group(['prefix' => 'guest'], function () {
         Route::get('/facebook', [GuestAuthController::class, 'authWithFacebook']);
         Route::post('/facebook/deleteData', [GuestAuthController::class, 'deleteFacebookData']);
         Route::get('/facebook/callback', [GuestAuthController::class, 'handleFacebookCallback']);
+
+        Route::post('/guestDefault', [GuestAuthController::class, 'autenticateGuestDefault']);
     });
 });
