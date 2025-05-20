@@ -105,7 +105,6 @@ class HotelService {
             $subdomain = $request->subdomain ?? null;
             $id = $request->id ?? null;
             $stayDemo = $request->stayDemo ?? false;
-            var_dump($subdomain);
             if ($subdomain) {
                 $query = Hotel::where('subdomain', $subdomain);
             }
@@ -121,6 +120,7 @@ class HotelService {
                     ->where('is_demo', true)
                     ->with(['guests:id'])
                     ->first();
+                var_dump($demoStay);
 
                 if ($demoStay) {
                     return [
