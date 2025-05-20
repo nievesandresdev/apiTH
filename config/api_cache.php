@@ -8,10 +8,9 @@ return [
     'excluded_routes' => [
         'api/auth/*',
         'api/guest/findByIdApi/*',
-        'api/hotel/findByParams/',
-        'api/chain/findBySubdomain/'
+        'api/hotel/findByParams*',
+        'api/chain/verifySubdomainExist',
         //'api/user/profile',
-        //'api/formularios/*'
     ],
     
     'route_specific_ttl' => [

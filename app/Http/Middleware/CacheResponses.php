@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
 class CacheResponses
 {
@@ -109,11 +110,18 @@ class CacheResponses
         if (! in_array($method, ['GET', 'POST'])) {
             return false;
         }
+
+        $pathWithoutQuery = strtok($request->getRequestUri(), '?');
+
+        $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
+
         foreach ($config['excluded_routes'] as $route) {
-            if ($request->is($route)) {
+            Log::info("Checking excluded route: $route against path: $pathForCheck");
+            if ($request->is($route) || \Illuminate\Support\Str::is($route, $pathForCheck)) {
                 return false;
             }
         }
+
         // Requiere headers para caché: hash-user, hash-hotel y origin-component
         if (! $request->hasHeader('hash-user')
             || ! $request->hasHeader('hash-hotel')
@@ -140,6 +148,8 @@ class CacheResponses
         $hotelHash = $request->header('hash-hotel');
         $origin    = strtolower($request->header('origin-component', ''));
 
+        $resetCache = $request->header('reset-cache', '');
+        
         if (empty($userHash) || empty($hotelHash) || empty($origin)) {
             throw new \RuntimeException('Missing identifiers for cache key');
         }
@@ -187,7 +197,7 @@ class CacheResponses
     {
         $exclude = [
             'subdomainhotel',
-            'Reset-Cache',
+            'reset-cache',
             'chainsubdomain',
             'hash-hotel',
             'hash-user',
