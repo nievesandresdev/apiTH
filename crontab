@@ -7,4 +7,4 @@
 0 12 * * * /usr/local/bin/php /var/www/html/artisan backup:hoster >> /var/log/cron.log 2>&1 #diariamente 12 pm backups
 0 * * * * /usr/local/bin/php /var/www/html/artisan send-post-stay-emails >> /var/log/cron.log 2>&1 #Cada hora
 2 * * * * /usr/local/bin/php /var/www/html/artisan send-pre-stay-email >> /var/log/cron.log 2>&1 #Cada hora en el segundo minuto pre-stay
-30 4 * * * /usr/local/bin/php /var/www/html/artisan app:update-reviews-command >> /var/log/cron.log 2>&1 #Diariamente a las 4:30 AM actualización de reviews
+#30 4 * * * /usr/local/bin/php /var/www/html/artisan app:update-reviews-command >> /var/log/cron.log 2>&1 #Diariamente a las 4:30 AM actualización de reviews
