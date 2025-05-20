@@ -110,12 +110,17 @@ class CacheResponses
         if (! in_array($method, ['GET', 'POST'])) {
             return false;
         }
+
+        $pathWithoutQuery = strtok($request->getRequestUri(), '?');
+
+        $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
+
         foreach ($config['excluded_routes'] as $route) {
-            $route = rtrim($route, '*'); // quitar el '*' para comparar prefijo exacto
-            if (Str::startsWith($request->path(), $route)) {
+            if ($request->is($route) || \Illuminate\Support\Str::is($route, $pathForCheck)) {
                 return false;
             }
         }
+        
         // Requiere headers para caché: hash-user, hash-hotel y origin-component
         if (! $request->hasHeader('hash-user')
             || ! $request->hasHeader('hash-hotel')
