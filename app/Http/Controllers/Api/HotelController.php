@@ -128,6 +128,7 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findByParams');
         }
     }

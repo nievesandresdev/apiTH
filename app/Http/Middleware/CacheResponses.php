@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
 class CacheResponses
 {
@@ -45,10 +46,16 @@ class CacheResponses
         // Intentar HIT
         try {
             if ($cached = Cache::get($key)) {
-                $response = $this->buildCachedResponse($cached);
-                // Añadir clave usada para depuración
-                $response->headers->set('X-Cache-Key', $key);
-                return $this->finishResponse($response, 'HIT', $start);
+                $currentReset = $request->header('reset-cache');
+                $storedReset  = $cached['resetValue'] ?? null;
+                if ($storedReset !== $currentReset) {
+                    Cache::forget($key);
+                }else{
+                    $response = $this->buildCachedResponse($cached);
+                    // Añadir clave usada para depuración
+                    $response->headers->set('X-Cache-Key', $key);
+                    return $this->finishResponse($response, 'HIT', $start);
+                }
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
@@ -57,6 +64,7 @@ class CacheResponses
         // MISS: procesar y luego guardar
         $response = $next($request);
         $origin   = strtolower($request->header('origin-component', ''));
+        $resetValue = $request->header('reset-cache', '');
 
         if (in_array($origin, ['hoster', 'huesped'])) {
 
@@ -73,6 +81,7 @@ class CacheResponses
                     'headers'   => $filteredHeaders,   // <-- aquí
                     'body'      => $response->getContent(),
                     'origin'    => $origin,
+                    'resetValue'  => $resetValue, 
                 ], $ttl ?? $config['default_ttl']);
             } catch (\Throwable $e) {
                 Log::error("Cache save error: {$e->getMessage()}");
@@ -93,11 +102,18 @@ class CacheResponses
         ? $this->ttl
         : config('api_cache.default_ttl');
 
-        return $response
-                ->header('X-Cache', $status)
+        $response->header('X-Cache', $status)
                 ->header('X-Response-Time', "{$elapsed}ms")
-                ->header('Cache-Control', 'public, max-age=' . $ttl)
-                ->header('Vary', 'hash-user', 'hash-hotel', 'origin-component');
+                ->header('Vary', 'hash-user, hash-hotel, origin-component');
+
+            // 2) Cache-Control según el estado
+            if ($status === 'BYPASS') {
+                $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+            } else {
+                $response->header('Cache-Control', 'public, max-age=' . $ttl);
+            }
+        return $response;
+                
     }
 
     /**
@@ -109,11 +125,17 @@ class CacheResponses
         if (! in_array($method, ['GET', 'POST'])) {
             return false;
         }
+
+        //$pathWithoutQuery = strtok($request->getRequestUri(), '?');
+
+        //$pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
+
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
                 return false;
             }
         }
+
         // Requiere headers para caché: hash-user, hash-hotel y origin-component
         if (! $request->hasHeader('hash-user')
             || ! $request->hasHeader('hash-hotel')
@@ -138,6 +160,7 @@ class CacheResponses
     {
         $userHash  = $request->header('hash-user');
         $hotelHash = $request->header('hash-hotel');
+        $resetCache = $request->header('reset-cache');
         $origin    = strtolower($request->header('origin-component', ''));
 
         if (empty($userHash) || empty($hotelHash) || empty($origin)) {
@@ -150,9 +173,9 @@ class CacheResponses
         );
 
         return sprintf(
-            '%suser:%s:hotel:%s:origin:%s:path:%s:%s',
+            '%suser:%s:hotel:%s:origin:%s:reset:%s:path:%s:%s',
             $config['key_prefix'], $userHash, $hotelHash,
-            $origin, $path,
+            $origin, $resetCache, $path,
             sha1($path . '|' . json_encode($params))
         );
     }
@@ -187,6 +210,7 @@ class CacheResponses
     {
         $exclude = [
             'subdomainhotel',
+            'reset-cache',
             'chainsubdomain',
             'hash-hotel',
             'hash-user',
