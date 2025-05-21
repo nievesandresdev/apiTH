@@ -46,10 +46,16 @@ class CacheResponses
         // Intentar HIT
         try {
             if ($cached = Cache::get($key)) {
-                $response = $this->buildCachedResponse($cached);
-                // Añadir clave usada para depuración
-                $response->headers->set('X-Cache-Key', $key);
-                return $this->finishResponse($response, 'HIT', $start);
+                $currentReset = $request->header('reset-cache', '');
+                $storedReset  = $cached['resetValue'] ?? null;
+                if ($storedReset !== $currentReset) {
+                    Cache::forget($key);
+                }else{
+                    $response = $this->buildCachedResponse($cached);
+                    // Añadir clave usada para depuración
+                    $response->headers->set('X-Cache-Key', $key);
+                    return $this->finishResponse($response, 'HIT', $start);
+                }
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
@@ -58,6 +64,7 @@ class CacheResponses
         // MISS: procesar y luego guardar
         $response = $next($request);
         $origin   = strtolower($request->header('origin-component', ''));
+        $resetValue = $request->header('reset-cache', '');
 
         if (in_array($origin, ['hoster', 'huesped'])) {
 
@@ -74,6 +81,7 @@ class CacheResponses
                     'headers'   => $filteredHeaders,   // <-- aquí
                     'body'      => $response->getContent(),
                     'origin'    => $origin,
+                    'resetValue'  => $resetValue, 
                 ], $ttl ?? $config['default_ttl']);
             } catch (\Throwable $e) {
                 Log::error("Cache save error: {$e->getMessage()}");
