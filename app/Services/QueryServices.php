@@ -53,27 +53,29 @@ class QueryServices {
             $stayId = $request->stayId ?? null;
             $guestId = $request->guestId ?? null;
             $period = $request->period ?? null;
-            $answered = $request->answered ?? 'null';
-            $visited = $request->visited ?? 'null';
+            $answered = strval($request->answered) == "true" || strval($request->answered) == "false" ? $request->answered : 'null';
+            $visited = strval($request->visited) == "true" || strval($request->visited) == "false" ? $request->visited : 'null';
             $disabled = $request->disabled ?? false;
 
+            Log::info('answered: ' . strval($request->answered));
             $query = Query::where(function($query) use($stayId, $guestId, $period, $visited, $disabled,$answered){
                 if ($stayId) {
+                    Log::info('entro en stayId');
                     $query->where('stay_id', $stayId);
                 }
                 if ($guestId) {
+                    Log::info('entro en guestId');
                     $query->where('guest_id', $guestId);
                 }
                 if ($period) {
-                    $query->where('period', $period);
-                }
-                if ($period) {
+                    Log::info('entro en period');
                     $query->where('period', $period);
                 }
                 if ($visited !== 'null') {
                     $query->where('visited', $visited);
                 }
                 if ($answered !== 'null') {
+                    Log::info('entro en answered'. json_encode($answered));
                     $query->where('answered', $answered);
                 }
                 if ($disabled) {
@@ -86,7 +88,7 @@ class QueryServices {
 
             $data = new QueryResource($model);
 
-            return $model;
+            return $data;
 
         } catch (\Exception $e) {
             return $e;
@@ -364,7 +366,7 @@ class QueryServices {
             //trae los ususarios y sus roles asociados al hotel en cuestion
             //$queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
 
-/*
+            /*
             $notificacionFilterFeedbackPending10 = [
                 'pendingFeedback10' => true,
             ]; */
@@ -431,6 +433,35 @@ class QueryServices {
             //}
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getResponses');
+        }
+    }
+
+
+    public function getCurrentQuery ($request) {
+        
+        try{
+            $query = Query::where('stay_id', $request->stayId)
+            ->where('guest_id', $request->guestId)
+            ->where('period', $request->period)
+            ->first();
+            $query = new QueryResource($query);
+            return $query;
+        } catch (\Exception $e) {
+            //\Log::error('Error Mail Feedback new',$e->getMessage());
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCurrentQuery');
+        }
+    }
+
+    public function existingPendingQuery ($request) {
+        try{
+            $exist = Query::where('stay_id', $request->stayId)
+            ->where('guest_id', $request->guestId)
+            ->where('period', $request->period)
+            ->where('answered', false)
+            ->exists();
+            return $exist;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCurrentQueryByStayId');
         }
     }
 }

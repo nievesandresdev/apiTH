@@ -13,6 +13,7 @@ use App\Mail\User\RewardsEmail;
 use App\Models\Guest;
 use App\Models\Hotel;
 use App\Models\Query;
+use App\Models\QuerySetting;
 use App\Models\Stay;
 use App\Models\RewardStay;
 /*services*/
@@ -325,78 +326,7 @@ class UtilsController extends Controller
 
     public function test(Request $r)
     {
-        $userHotelCode = 'mMGbiJUdt5aS';
-        $hotelId = 291;
-        $hotel = Hotel::find($hotelId);
-        $showNotify = true;
-        $query = Query::find(579);
-        $stay = Stay::find($query->stay_id);
-        $guest = Guest::find($query->guest_id);
-        
-        
-        // http://localhost:82/estancias?redirect=view&code=mMGbiJUdt5aS
-        
-        $from    = '2025-04-01';
-        $to      = '2025-04-30';
-
-        $qs = Query::join('stays','queries.stay_id','stays.id')
-            ->where('stays.hotel_id', $hotelId)
-            ->where('queries.answered', 1)
-            ->whereIn('queries.period',['in-stay','post-stay'])
-            // filtro por intervalo de fechas (solo fecha)
-            ->whereDate('queries.responded_at','>=',$from)
-            ->whereDate('queries.responded_at','<=',$to)
-            ->select(
-                    'queries.period','queries.guest_id','queries.answered','queries.qualification','queries.comment','queries.responded_at','queries.response_lang',
-                    'stays.hotel_id','stays.check_in','stays.check_out','stays.id as stayId'
-                )
-            ->get();
-        // return $qs;
-        $quals = ['VERYGOOD','GOOD','NORMAL','WRONG','VERYWRONG'];
-        // Función auxiliar para procesar un sub-conjunto
-        $makeStats = function($collection) use($quals){
-            $total = $collection->count() ?: 1; // evitar división por cero
-            return collect($quals)->map(function($q) use($collection,$total){
-                $cnt = $collection->where('qualification',$q)->count();
-                return [
-                    'qualification' => $q,
-                    'count'         => $cnt,
-                    'percent'       => round($cnt / $total * 100, 1),
-                ];
-            });
-        };
-
-        // 4) Construyes los tres módulos
-        $stats = [
-            'from' => Carbon::parse($from)->format('d/m/Y'),
-            'to' => Carbon::parse($to)->format('d/m/Y'),
-            'all' => [
-                'total'   => $qs->count(),
-                'comments_count'=> $qs->whereNotNull('comment')->count(),
-                'breakdown'=> $makeStats($qs),
-            ],
-            'in_stay' => tap([
-                'total'   => $qs->where('period','in-stay')->count(),
-                'comments_count'=> $qs->where('period','in-stay')->whereNotNull('comment')->count(),
-            ], function(&$m) use($qs,$makeStats){
-                $m['breakdown'] = $makeStats($qs->where('period','in-stay'));
-            }),
-            'post_stay' => tap([
-                'total'   => $qs->where('period','post-stay')->count(),
-                'comments_count'=> $qs->where('period','post-stay')->whereNotNull('comment')->count(),
-            ], function(&$m) use($qs,$makeStats){
-                $m['breakdown'] = $makeStats($qs->where('period','post-stay'));
-            }),
-        ];
-        // return $stats;
-        // $this->mailService->sendEmail(new ReportHoster($hotel, $showNotify, $stats), 'andresdreamerf@gmail.com');
-        $saasUrl = config('app.hoster_url');
-        $links = [
-            'urlToReport' => "{$saasUrl}/seguimiento/general-report?periodType=monthly&from={$from}&to={$to}&redirect=view&code={$userHotelCode}",
-            'urlComunications' => "{$saasUrl}/comunicaciones?redirect=view&code={$userHotelCode}",
-            'urlPromotions' => "{$saasUrl}/promociona-webapp?redirect=view&code={$userHotelCode}",
-        ];
-        return view('mails.queries.reportHoster', compact('hotel','showNotify','stats','links'));
+       return requestSettingsDefault();
     }
 
 
