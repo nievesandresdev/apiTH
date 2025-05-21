@@ -97,14 +97,15 @@ class CacheResponses
         return $response
                 ->header('X-Cache', $status)
                 ->header('X-Response-Time', "{$elapsed}ms")
-                ->header('Vary', 'hash-user', 'hash-hotel', 'origin-component');
+                ->header('Vary', 'hash-user', 'hash-hotel', 'origin-component')
+                ->header('Cache-Control', 'public, max-age=' . $ttl);
 
-                if ($status === 'BYPASS') {
+                /*if ($status === 'BYPASS') {
                     
                     $response = $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
                 } else {
-                    $response = $response->header('Cache-Control', 'public, max-age=' . $ttl);
-                }
+                    
+                }*/
                 
     }
 
@@ -166,9 +167,9 @@ class CacheResponses
         );
 
         return sprintf(
-            '%suser:%s:hotel:%s:origin:%s:reset:%s:path:%s:%s',
+            '%suser:%s:hotel:%s:origin:%s:path:%s:%s',
             $config['key_prefix'], $userHash, $hotelHash,
-            $origin, $resetCache,
+            $origin,
             $path,
             sha1($path . '|' . json_encode($params))
         );
