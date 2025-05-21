@@ -166,9 +166,10 @@ class CacheResponses
         );
 
         return sprintf(
-            '%suser:%s:hotel:%s:origin:%s:path:%s:%s',
+            '%suser:%s:hotel:%s:origin:%s:reset:%s:path:%s:%s',
             $config['key_prefix'], $userHash, $hotelHash,
-            $origin, $path,
+            $origin, $resetCache,
+            $path,
             sha1($path . '|' . json_encode($params))
         );
     }
