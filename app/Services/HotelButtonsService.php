@@ -8,15 +8,19 @@ use App\Models\Hotel;
 class HotelButtonsService {
 
     public function getHotelButtons($modelHotel) {
-       /*  $buttons = $modelHotel->buttons()->get();
-
+        $buttons = $modelHotel->buttons()->get();
+        $visibleCount = $buttons->where('is_visible', true)->count();
+        $hiddenCount = $buttons->where('is_visible', false)->count();
 
         return [
             'visible' => $buttons->where('is_visible', true),
             'hidden' => $buttons->where('is_visible', false),
-        ]; */
+            'totalVisible' => $visibleCount,
+            'totalHidden' => $hiddenCount,
+            'total' => $visibleCount + $hiddenCount
+        ];
 
-        return $modelHotel->buttons()->get();
+        //return $modelHotel->buttons_home;
     }
 
     public function updateButtonsOrder($visibleButtons, $hiddenButtons)
@@ -49,6 +53,8 @@ class HotelButtonsService {
     {
         $button = HotelButton::where('id', $id)->first();
 
+       //return $button->is_visible;
+
         if (!$button) {
             return false;
         }
@@ -75,7 +81,7 @@ class HotelButtonsService {
         }
 
         $button->save();
-        return true;
+        return $button;
     }
 }
 

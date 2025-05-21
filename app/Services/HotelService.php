@@ -105,7 +105,6 @@ class HotelService {
             $subdomain = $request->subdomain ?? null;
             $id = $request->id ?? null;
             $stayDemo = $request->stayDemo ?? false;
-
             if ($subdomain) {
                 $query = Hotel::where('subdomain', $subdomain);
             }
@@ -121,7 +120,6 @@ class HotelService {
                     ->where('is_demo', true)
                     ->with(['guests:id'])
                     ->first();
-
                 if ($demoStay) {
                     return [
                         'hotel' => new HotelResource($model),
@@ -204,7 +202,7 @@ class HotelService {
         $hotelModel->website_google = $request->website_google;
         $hotelModel->show_profile = $request->show_profile;
         $hotelModel->show_rules = $request->show_rules;
-        $hotelModel->buttons_home = json_encode($request->buttons);
+        //$hotelModel->buttons_home = json_encode($request->buttons);
 
         $hotelModel->save();
         return $hotelModel;
@@ -542,8 +540,9 @@ class HotelService {
             // chatSettings
             ->where('subdomain', $subdomain)
             ->first();
-            $image = $hotel->images()->first();
-            $hotel['image'] = $image ? $image->url : null;
+            //se comenta por que ya en el modelo hotel tiene un attr por default cuando image es null
+            //$image = $hotel->images()->first();
+            //$hotel['image'] = $image ? $image->url : null;
             return $hotel;
         } catch (\Exception $e) {
             return $e;

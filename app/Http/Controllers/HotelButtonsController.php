@@ -47,7 +47,7 @@ class HotelButtonsController extends Controller
 
     public function updateButtonVisibility(Request $request)
     {
-        $this->service->updateButtonVisibility($request->id);
-        return bodyResponseRequest(EnumResponse::ACCEPTED, ['status' => 'success']);
+        $button = $this->service->updateButtonVisibility($request->id);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $button]);
     }
 }
