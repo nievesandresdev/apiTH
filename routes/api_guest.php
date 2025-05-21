@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\Hoster\GuestHosterController;
 
 Route::middleware('auth.either:user,guest')->group(function () {
     Route::group(['prefix' => 'guest'], function () {
-        Route::get('/findByIdApi/{id}', [GuestController::class, 'findById']);
+        // Route::get('/findByIdApi/{id}', [GuestController::class, 'findById']);
         Route::post('/saveOrUpdateApi', [GuestController::class, 'saveOrUpdate']);
         Route::post('/updateLanguageApi', [GuestController::class, 'updateLanguage']);
         Route::get('/findAndValidLastStay', [GuestController::class, 'findAndValidLastStay']);
@@ -34,6 +34,7 @@ Route::middleware('auth.either:user,guest')->group(function () {
     });
 });
 Route::group(['prefix' => 'guest'], function () {
+    Route::get('/findByIdApi/{id}', [GuestController::class, 'findById']);
     Route::get('/saveAndFindValidLastStay', [GuestController::class, 'saveAndFindValidLastStay']);
     Route::group(['prefix' => 'auth'], function () {
         Route::post('/registerOrLogin', [GuestAuthController::class, 'registerOrLogin']);

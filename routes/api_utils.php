@@ -7,9 +7,9 @@ use App\Http\Controllers\Api\StayController;
 use App\Http\Controllers\Api\UtilityController;
 
 Route::middleware('auth.either:user,guest')->group(function () {
-    Route::group(['prefix' => 'utils'], function () {
-        Route::post('/authPusher', [UtilsController::class, 'authPusher']);
-    });
+    // Route::group(['prefix' => 'utils'], function () {
+        // Route::post('/authPusher', [UtilsController::class, 'authPusher']);
+    // });
 
     //test
     Route::group(['prefix' => 'utils'], function () {
@@ -17,5 +17,9 @@ Route::middleware('auth.either:user,guest')->group(function () {
         Route::get('/stayTest', [StayController::class, 'testMail']);
         Route::get('/updateGuestsAcronyms', [UtilityController::class, 'updateGuestsAcronyms']);
     });
+    
+});
 
+Route::group(['prefix' => 'utils'], function () {
+    Route::post('/authPusher', [UtilsController::class, 'authPusher']);
 });
