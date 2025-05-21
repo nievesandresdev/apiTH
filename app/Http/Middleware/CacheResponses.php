@@ -126,9 +126,9 @@ class CacheResponses
             return false;
         }
 
-        $pathWithoutQuery = strtok($request->getRequestUri(), '?');
+        //$pathWithoutQuery = strtok($request->getRequestUri(), '?');
 
-        $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
+        //$pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
 
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
