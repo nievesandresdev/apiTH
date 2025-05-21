@@ -204,7 +204,7 @@ class HotelService {
         $hotelModel->website_google = $request->website_google;
         $hotelModel->show_profile = $request->show_profile;
         $hotelModel->show_rules = $request->show_rules;
-        $hotelModel->buttons_home = json_encode($request->buttons);
+        //$hotelModel->buttons_home = json_encode($request->buttons);
 
         $hotelModel->save();
         return $hotelModel;
