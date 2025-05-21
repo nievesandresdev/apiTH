@@ -95,17 +95,16 @@ class CacheResponses
         : config('api_cache.default_ttl');
 
         return $response
-                ->header('X-Cache', $status)
-                ->header('X-Response-Time', "{$elapsed}ms")
-                ->header('Vary', 'hash-user', 'hash-hotel', 'origin-component')
-                ->header('Cache-Control', 'public, max-age=' . $ttl);
+            ->header('X-Cache', $status)
+            ->header('X-Response-Time', "{$elapsed}ms")
+            ->header('Vary', 'hash-user', 'hash-hotel', 'origin-component');
 
-                /*if ($status === 'BYPASS') {
-                    
-                    $response = $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-                } else {
-                    
-                }*/
+        if ($status === 'BYPASS') {
+            // nunca llega aquí…
+            $response = $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        } else {
+            $response = $response->header('Cache-Control', 'public, max-age=' . $ttl);
+        }
                 
     }
 

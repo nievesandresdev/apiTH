@@ -4,7 +4,8 @@ return [
     'enabled' => env('CACHE_ENABLED', true),
     
     'default_ttl' => 300, // 5 minutos por defecto
-    
+    //'api/hotel/findByParams',
+    //'api/hotel/findByParams/*',
     'excluded_routes' => [
         'api/auth/*',
         'api/guest/findByIdApi/*',
