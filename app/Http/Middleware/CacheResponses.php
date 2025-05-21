@@ -154,8 +154,6 @@ class CacheResponses
         $hotelHash = $request->header('hash-hotel');
         $origin    = strtolower($request->header('origin-component', ''));
 
-        $resetCache = $request->header('reset-cache', '');
-        
         if (empty($userHash) || empty($hotelHash) || empty($origin)) {
             throw new \RuntimeException('Missing identifiers for cache key');
         }
@@ -166,10 +164,9 @@ class CacheResponses
         );
 
         return sprintf(
-            '%suser:%s:hotel:%s:origin:%s:reset:%s:path:%s:%s',
+            '%suser:%s:hotel:%s:origin:%s:path:%s:%s',
             $config['key_prefix'], $userHash, $hotelHash,
-            $origin, $resetCache,
-            $path,
+            $origin, $path,
             sha1($path . '|' . json_encode($params))
         );
     }
