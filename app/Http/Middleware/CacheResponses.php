@@ -46,7 +46,7 @@ class CacheResponses
         // Intentar HIT
         try {
             if ($cached = Cache::get($key)) {
-                $currentReset = $request->header('reset-cache', '');
+                $currentReset = $request->header('reset-cache');
                 $storedReset  = $cached['resetValue'] ?? null;
                 if ($storedReset !== $currentReset) {
                     Cache::forget($key);
