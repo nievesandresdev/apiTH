@@ -542,8 +542,9 @@ class HotelService {
             // chatSettings
             ->where('subdomain', $subdomain)
             ->first();
-            $image = $hotel->images()->first();
-            $hotel['image'] = $image ? $image->url : null;
+            //se comenta por que ya en el modelo hotel tiene un attr por default cuando image es null
+            //$image = $hotel->images()->first();
+            //$hotel['image'] = $image ? $image->url : null;
             return $hotel;
         } catch (\Exception $e) {
             return $e;
