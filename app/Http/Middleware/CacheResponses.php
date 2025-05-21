@@ -31,19 +31,19 @@ class CacheResponses
         // Bypass si no aplican métodos o rutas
         if (! $this->shouldCacheRequest($request, $config)) {
             $response = $next($request);
-            return $this->finishResponse($response, 'BYPASS', $start);
+            return $this->finishResponse($response, 'cached-no-allowed', $start);
         }
 
         // Generar clave de cache
-        try {
+      /*  try {
             $key = $this->generateCacheKey($request, $config);
         } catch (\Throwable $e) {
             Log::warning("Cache key error: {$e->getMessage()}");
             $response = $next($request);
             return $this->finishResponse($response, 'BYPASS', $start);
-        }
+        }*/
 
-        // Intentar HIT
+      /*  // Intentar HIT
         try {
             if ($cached = Cache::get($key)) {
                 $currentReset = $request->header('reset-cache');
@@ -59,10 +59,10 @@ class CacheResponses
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
-        }
+        } */
 
         // MISS: procesar y luego guardar
-        $response = $next($request);
+       /* $response = $next($request);
         $origin   = strtolower($request->header('origin-component', ''));
         $resetValue = $request->header('reset-cache', '');
 
@@ -88,7 +88,9 @@ class CacheResponses
             }
         }
 
-        return $this->finishResponse($response, 'MISS', $start);
+        return $this->finishResponse($response, 'MISS', $start);*/
+
+        return $next($request);
     }
 
     /**
@@ -126,9 +128,9 @@ class CacheResponses
             return false;
         }
 
-        //$pathWithoutQuery = strtok($request->getRequestUri(), '?');
+        $pathWithoutQuery = strtok($request->getRequestUri(), '?');
 
-        //$pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
+        $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
 
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
