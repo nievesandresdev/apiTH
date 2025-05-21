@@ -14,9 +14,9 @@ Route::middleware('auth.either:user,guest')->group(function () {
         Route::delete('/{id}', [FacilityController::class, 'destroy']);
     
         Route::group(['prefix' => 'hoster'], function () {
-    
+            
             Route::get('/getAll', [FacilityHosterController::class, 'getAll']);
-    
+
         });
     });
 });
