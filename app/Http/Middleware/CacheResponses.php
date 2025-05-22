@@ -43,23 +43,16 @@ class CacheResponses
             return $this->finishResponse($response, 'CACHE-NOT-ALLOWED-FOR-KEY', $start);
         }
 
-      /*  // Intentar HIT
+        // Intentar HIT
         try {
             if ($cached = Cache::get($key)) {
-                $currentReset = $request->header('reset-cache');
-                $storedReset  = $cached['resetValue'] ?? null;
-                if ($storedReset !== $currentReset) {
-                    Cache::forget($key);
-                }else{
                     $response = $this->buildCachedResponse($cached);
-                    // Añadir clave usada para depuración
                     $response->headers->set('X-Cache-Key', $key);
-                    return $this->finishResponse($response, 'HIT', $start);
-                }
+                    return $this->finishResponse($response, 'brought-from-cache', $start);
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
-        } */
+        } 
 
         // MISS: procesar y luego guardar
        /* $response = $next($request);
