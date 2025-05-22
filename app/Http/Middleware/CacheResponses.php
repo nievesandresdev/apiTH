@@ -177,6 +177,11 @@ class CacheResponses
      */
     protected function normalize(array $params): array
     {
+        foreach ($params as $key => $value) {
+            if (is_array($value)) {
+                $params[$key] = $this->normalize($value);
+            }
+        }
         ksort($params);
         return $params;
     }
