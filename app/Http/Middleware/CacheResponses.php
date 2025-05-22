@@ -112,6 +112,10 @@ class CacheResponses
      */
     protected function shouldCacheRequest(Request $request, array $config): bool
     {
+        if (! $request->expectsJson()) {
+            return false;
+        }
+        
         $method = strtoupper($request->getMethod());
         if (! in_array($method, ['GET', 'POST'])) {
             return false;
