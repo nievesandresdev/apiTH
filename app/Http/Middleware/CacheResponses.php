@@ -98,7 +98,7 @@ class CacheResponses
                 ->header('Vary', 'hash-user, hash-hotel, origin-component, reset-cache');
 
             // 2) Cache-Control según el estado
-            if ($status === 'BYPASS') {
+            if (! in_array($status, ['BROUGHT-FROM-CACHE', 'CACHED'], true)) {
                 $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
             } else {
                 $response->header('Cache-Control', 'public, max-age=' . $ttl);
@@ -120,7 +120,7 @@ class CacheResponses
         if ($request->query('mockup') === 'true') {
             return false;
         }
-        
+
         $pathWithoutQuery = strtok($request->getRequestUri(), '?');
 
         $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
