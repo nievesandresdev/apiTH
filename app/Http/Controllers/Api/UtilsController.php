@@ -326,7 +326,18 @@ class UtilsController extends Controller
 
     public function test(Request $r)
     {
-       return requestSettingsDefault();
+       return view('Mails.contactEmail',[
+        'data' => [
+            'guestName' => 'Juan Perez',
+            'guestEmail' => 'juan.perez@gmail.com',
+            'stayCheckin' => '20/05/2025',
+            'stayCheckout' => '25/05/2025',
+            'guestLanguageAbbr' => 'es',
+            'guestLanguageName' => 'Español',
+            'message' => 'Generaremos automáticamente el link a WhatsApp a partir del número que ingreses aquí.',
+            
+        ]
+       ]);
     }
 
 
