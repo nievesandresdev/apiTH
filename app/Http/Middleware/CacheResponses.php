@@ -95,7 +95,7 @@ class CacheResponses
 
         $response->header('X-Cache', $status)
                 ->header('X-Response-Time', "{$elapsed}ms")
-                ->header('Vary', 'hash-user, hash-hotel, origin-component');
+                ->header('Vary', 'hash-user, hash-hotel, origin-component, reset-cache');
 
             // 2) Cache-Control según el estado
             if ($status === 'BYPASS') {
@@ -163,7 +163,7 @@ class CacheResponses
         $params = $this->normalize(
             $request->isMethod('GET') ? $request->query() : $request->all()
         );
-        Log::info('Cache reset: ' . $resetCache . ' - Path: ' . $path . ' - Params: ' . json_encode($params));
+        
         return sprintf(
             '%suser:%s:hotel:%s:origin:%s:reset:%s:path:%s:%s',
             $config['key_prefix'], $userHash, $hotelHash,
