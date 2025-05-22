@@ -22,7 +22,7 @@
                             <table style="margin-left: auto;">
                                 <tr>
                                     <td><p style="margin:0; padding:0; font-size: 10px; font-weight: 400; line-height: 100%;display: inline;margin-right: 4px;">Idioma original:</p></td>
-                                    <td><img src="{{ asset('mails/icons/flags/png/'.$data['guestLanguageAbbr'].'.png') }}" alt="User" style="width: 14px;height: 14px;display: inline; margin-right: 4px;"></td>
+                                    <td><img src="{{ asset('mails/icons/flags/png/'.$data['guestLanguageAbbr'].'.png') }}" alt="User" style="width: 14px;height: 14px;display: inline; margin-right: 4px;margin-bottom: -4px;"></td>
                                     <td><p style="margin:0; padding:0; font-size: 10px; font-weight: 400; line-height: 100%;display: inline;">{{$data['guestLanguageName']}}</p></td>
                                 </tr>
                             </table>
