@@ -28,7 +28,7 @@ class CacheResponses
         $start  = microtime(true);
         $config = config('api_cache');
 
-        // revisar si aplica para cache
+        // revisar si aplica para cache CACHE-NOT-ALLOWED
         if (! $this->shouldCacheRequest($request, $config)) {
             $response = $next($request);
             return $this->finishResponse($response, 'CACHE-NOT-ALLOWED', $start);
@@ -43,21 +43,20 @@ class CacheResponses
             return $this->finishResponse($response, 'CACHE-NOT-ALLOWED-FOR-KEY', $start);
         }
 
-        // traer desde el cache
+        // traer desde el cache BROUGHT-FROM-CACHE
         try {
             if ($cached = Cache::get($key)) {
                     $response = $this->buildCachedResponse($cached);
                     $response->headers->set('X-Cache-Key', $key);
-                    return $this->finishResponse($response, 'brought-from-cache', $start);
+                    return $this->finishResponse($response, 'BROUGHT-FROM-CACHE', $start);
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
         } 
 
-        // MISS: procesar y luego guardar
-       /* $response = $next($request);
-        $origin   = strtolower($request->header('origin-component', ''));
-        $resetValue = $request->header('reset-cache', '');
+        // CACHED: procesar y luego guardar
+        $response = $next($request);
+        $origin   = strtolower($request->header('origin-component'));
 
         if (in_array($origin, ['hoster', 'huesped'])) {
 
@@ -80,9 +79,7 @@ class CacheResponses
             }
         }
 
-        return $this->finishResponse($response, 'MISS', $start);*/
-
-        return $next($request);
+        return $this->finishResponse($response, 'CACHED', $start);
     }
 
     /**
