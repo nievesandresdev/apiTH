@@ -117,6 +117,10 @@ class CacheResponses
             return false;
         }
 
+        if ($request->query('mockup') === 'true') {
+            return false;
+        }
+        
         $pathWithoutQuery = strtok($request->getRequestUri(), '?');
 
         $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
