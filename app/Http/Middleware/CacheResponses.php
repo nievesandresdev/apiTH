@@ -130,7 +130,8 @@ class CacheResponses
         // Requiere headers para caché: hash-user, hash-hotel y origin-component
         if (! $request->hasHeader('hash-user')
             || ! $request->hasHeader('hash-hotel')
-            || ! $request->hasHeader('origin-component')) {
+            || ! $request->hasHeader('origin-component')
+            || ! $request->hasHeader('reset-cache')) {
             return false;
         }
         if ($method === 'POST') {
@@ -154,7 +155,7 @@ class CacheResponses
         $resetCache = $request->header('reset-cache');
         $origin    = strtolower($request->header('origin-component'));
 
-        if (empty($userHash) || empty($hotelHash) || empty($origin)) {
+        if (empty($userHash) || empty($hotelHash) || empty($origin) || empty($resetCache)) {
             throw new \RuntimeException('Missing identifiers for cache key');
         }
 
@@ -162,7 +163,7 @@ class CacheResponses
         $params = $this->normalize(
             $request->isMethod('GET') ? $request->query() : $request->all()
         );
-
+        Log::info('Cache reset: ' . $resetCache . ' - Path: ' . $path . ' - Params: ' . json_encode($params));
         return sprintf(
             '%suser:%s:hotel:%s:origin:%s:reset:%s:path:%s:%s',
             $config['key_prefix'], $userHash, $hotelHash,
