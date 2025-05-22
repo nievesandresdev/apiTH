@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\{
     DossierController
 };
 
-Route::middleware('auth.either:user,guest')->group(function () {
+// Route::middleware('auth.either:user,guest')->group(function () {
     //prefix dossier
     Route::group(['prefix' => 'dossier'], function () {
         Route::get('/getDossier/{domain}/{type}', [DossierController::class, 'getDossier']);
@@ -15,4 +15,4 @@ Route::middleware('auth.either:user,guest')->group(function () {
         Route::post('/createNewScenario', [DossierController::class, 'storeDossierData']);
         Route::delete('/deleteDossierData/{id}', [DossierController::class, 'deleteDossierData']);
     });
-});
+// });
