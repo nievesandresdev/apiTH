@@ -31,17 +31,17 @@ class CacheResponses
         // Bypass si no aplican métodos o rutas
         if (! $this->shouldCacheRequest($request, $config)) {
             $response = $next($request);
-            return $this->finishResponse($response, 'cached-no-allowed', $start);
+            return $this->finishResponse($response, 'CACHE-NOT-ALLOWED', $start);
         }
 
         // Generar clave de cache
-      /*  try {
+        try {
             $key = $this->generateCacheKey($request, $config);
         } catch (\Throwable $e) {
             Log::warning("Cache key error: {$e->getMessage()}");
             $response = $next($request);
-            return $this->finishResponse($response, 'BYPASS', $start);
-        }*/
+            return $this->finishResponse($response, 'CACHE-NOT-ALLOWED-FOR-KEY', $start);
+        }
 
       /*  // Intentar HIT
         try {
@@ -163,7 +163,7 @@ class CacheResponses
         $userHash  = $request->header('hash-user');
         $hotelHash = $request->header('hash-hotel');
         $resetCache = $request->header('reset-cache');
-        $origin    = strtolower($request->header('origin-component', ''));
+        $origin    = strtolower($request->header('origin-component'));
 
         if (empty($userHash) || empty($hotelHash) || empty($origin)) {
             throw new \RuntimeException('Missing identifiers for cache key');
