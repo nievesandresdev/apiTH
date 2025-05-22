@@ -51,8 +51,14 @@ class EmailTestController extends Controller
                 'off_email' => false
             ];
 
-            // Send emails based on type
-            foreach ($request->emails as $emailType) {
+            // Define the order of emails
+            //$emailOrder = ['welcome', 'prepareArrival', 'postCheckin', 'checkout', 'postCheckoutMail'];
+            $emailOrder = ['postCheckoutMail','checkout','postCheckin','prepareArrival','welcome'];
+
+            // Filter and sort the requested emails according to the defined order
+            $requestedEmails = array_intersect($emailOrder, $request->emails);
+
+            foreach ($requestedEmails as $emailType) {
                 switch ($emailType) {
                     case 'welcome':
                         $this->sendWelcomeEmail($hotel, $guest, $request);
