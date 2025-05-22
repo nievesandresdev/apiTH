@@ -28,7 +28,7 @@ class CacheResponses
         $start  = microtime(true);
         $config = config('api_cache');
 
-        // Bypass si no aplican métodos o rutas
+        // revisar si aplica para cache
         if (! $this->shouldCacheRequest($request, $config)) {
             $response = $next($request);
             return $this->finishResponse($response, 'CACHE-NOT-ALLOWED', $start);
@@ -43,7 +43,7 @@ class CacheResponses
             return $this->finishResponse($response, 'CACHE-NOT-ALLOWED-FOR-KEY', $start);
         }
 
-        // Intentar HIT
+        // traer desde el cache
         try {
             if ($cached = Cache::get($key)) {
                     $response = $this->buildCachedResponse($cached);
@@ -74,7 +74,6 @@ class CacheResponses
                     'headers'   => $filteredHeaders,   // <-- aquí
                     'body'      => $response->getContent(),
                     'origin'    => $origin,
-                    'resetValue'  => $resetValue, 
                 ], $ttl ?? $config['default_ttl']);
             } catch (\Throwable $e) {
                 Log::error("Cache save error: {$e->getMessage()}");
