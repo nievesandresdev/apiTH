@@ -39,7 +39,7 @@ class HotelButtonsController extends Controller
         $hotelModel = $request->attributes->get('hotel');
 
 
-        $this->service->updateButtonsOrder($request->visible, $request->hidden);
+        $this->service->updateButtonsOrder($request->all());
         $buttons = $this->service->getHotelButtons($hotelModel);
 
         return bodyResponseRequest(EnumResponse::ACCEPTED, ['data' => $buttons]);

@@ -23,16 +23,10 @@ class HotelButtonsService {
         //return $modelHotel->buttons_home;
     }
 
-    public function updateButtonsOrder($visibleButtons, $hiddenButtons)
+    public function updateButtonsOrder($buttons)
     {
-        // Primero, actualizamos todos los botones a no visibles
-        HotelButton::whereIn('id', array_merge(
-            array_column($visibleButtons, 'id'),
-            array_column($hiddenButtons, 'id')
-        ))->update(['is_visible' => false]);
-
-        // Luego actualizamos los botones visibles con su nuevo orden
-        foreach ($visibleButtons as $index => $button) {
+        // Actualizar el orden de cada botón según su posición en el array
+        foreach ($buttons as $index => $button) {
             HotelButton::where('id', $button['id'])
                 ->update([
                     'order' => $index,

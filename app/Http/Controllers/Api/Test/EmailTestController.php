@@ -24,19 +24,7 @@ class EmailTestController extends Controller
         $this->emailTestService = $emailTestService;
     }
 
-    public function sendEmails(Request $request){
-        /* $request->name email etc...
-        {
-                "email": "francisco20990@gmail.com",
-                "name": "Fran",
-                "date": "08/05/2025 - 10/05/2025",
-                "idioma": "ca",
-                "emails": [
-                    "welcome"
-                ],
-                hotel : { .... todo lo del hotel}
-            }
-        */
+     /* public function sendEmails(Request $request){
         App::setLocale($request->idioma);
         try {
             $hotel = (object)$request->hotel;
@@ -51,8 +39,19 @@ class EmailTestController extends Controller
                 'off_email' => false
             ];
 
-            // Send emails based on type
-            foreach ($request->emails as $emailType) {
+            // Define the order of emails
+            $emailOrder = ['postCheckoutMail','checkout','postCheckin','prepareArrival','welcome'];
+
+            // Filter and sort the requested emails according to the defined order
+            $requestedEmails = array_intersect($emailOrder, $request->emails);
+
+            foreach ($requestedEmails as $index => $emailType) {
+                // Add delay between emails (except for the first one)
+                if ($index > 0) {
+                    sleep(2); // 2 seconds delay - adjust as needed
+                    // Alternative: usleep(2000000); // 2 seconds in microseconds
+                }
+
                 switch ($emailType) {
                     case 'welcome':
                         $this->sendWelcomeEmail($hotel, $guest, $request);
@@ -70,6 +69,65 @@ class EmailTestController extends Controller
                         $this->sendPostCheckoutEmail($hotel, $guest, $request);
                         break;
                 }
+
+                // Optional: Log progress
+                \Log::info("Email sent: {$emailType} to {$guest->email}");
+            }
+
+            return bodyResponseRequest(EnumResponse::ACCEPTED, ['request' => $request->all()], 'sendEmails');
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e->getMessage(), ['error' => $e->getMessage()], 'sendEmails');
+        }
+    } */
+
+    public function sendEmails(Request $request){
+        App::setLocale($request->idioma);
+        try {
+            $hotel = (object)$request->hotel;
+            if (isset($hotel->chat_settings)) {
+                $hotel->chatSettings = (object)$hotel->chat_settings;
+            }
+
+            $guest = (object)[
+                'email' => $request->email,
+                'name' => $request->name,
+                'lang_web' => $request->idioma,
+                'off_email' => false
+            ];
+
+            // Define the order of emails
+            $emailOrder = ['postCheckoutMail','checkout','postCheckin','prepareArrival','welcome'];
+
+            // Filter and sort the requested emails according to the defined order
+            $requestedEmails = array_intersect($emailOrder, $request->emails);
+
+            foreach ($requestedEmails as $index => $emailType) {
+                // Add delay between emails (except for the first one)
+                if ($index > 0) {
+                    sleep(3); // 2 seconds delay - adjust as needed
+                    // Alternative: usleep(2000000); // 2 seconds in microseconds
+                }
+
+                switch ($emailType) {
+                    case 'welcome':
+                        $this->sendWelcomeEmail($hotel, $guest, $request);
+                        break;
+                    case 'prepareArrival':
+                        $this->sendPrepareArrivalEmail($hotel, $guest, $request);
+                        break;
+                    case 'postCheckin':
+                        $this->sendPostCheckinEmail($hotel, $guest, $request);
+                        break;
+                    case 'checkout':
+                        $this->sendCheckoutEmail($hotel, $guest, $request);
+                        break;
+                    case 'postCheckoutMail':
+                        $this->sendPostCheckoutEmail($hotel, $guest, $request);
+                        break;
+                }
+
+                // Optional: Log progress
+                \Log::info("Email sent: {$emailType} to {$guest->email}");
             }
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, ['request' => $request->all()], 'sendEmails');

@@ -368,5 +368,26 @@ class GuestAuthController extends Controller
         ], 200);
     }
 
+    public function autenticateGuestDefault (Request $request){
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $hotelWithDemoStay = $this->hotelServices->findByParams((Object) ['id' => $hotelModel->id, 'stayDemo' => true]);
+            $guestModel = Guest::find($hotelWithDemoStay['demo_stay']['guest_id']);
+            if (!$guestModel) {
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, ['message' => 'No se encontró el huesped']);
+            }
+            $this->authService->login($guestModel, 'session-guest');
+            $token = $this->authService->createToken($guestModel, 'session-guest');
+            $guestData = new GuestResource($guestModel);
+            $data = [
+                'token' => $token,
+                'guest' => $guestData
+            ];
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return $e;
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.autenticateGuest');
+        }
+    }
 
 }

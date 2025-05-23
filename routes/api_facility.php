@@ -12,11 +12,9 @@ Route::middleware('auth.either:user,guest')->group(function () {
         Route::post('/visible', [FacilityController::class, 'updateVisible']);
         Route::post('/storeOrUpdate', [FacilityController::class, 'storeOrUpdate']);
         Route::delete('/{id}', [FacilityController::class, 'destroy']);
-    
         Route::group(['prefix' => 'hoster'], function () {
-    
             Route::get('/getAll', [FacilityHosterController::class, 'getAll']);
-    
+
         });
     });
 });

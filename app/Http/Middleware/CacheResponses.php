@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
 class CacheResponses
 {
@@ -27,10 +28,10 @@ class CacheResponses
         $start  = microtime(true);
         $config = config('api_cache');
 
-        // Bypass si no aplican métodos o rutas
+        // revisar si aplica para cache CACHE-NOT-ALLOWED
         if (! $this->shouldCacheRequest($request, $config)) {
             $response = $next($request);
-            return $this->finishResponse($response, 'BYPASS', $start);
+            return $this->finishResponse($response, 'CACHE-NOT-ALLOWED', $start);
         }
 
         // Generar clave de cache
@@ -39,24 +40,23 @@ class CacheResponses
         } catch (\Throwable $e) {
             Log::warning("Cache key error: {$e->getMessage()}");
             $response = $next($request);
-            return $this->finishResponse($response, 'BYPASS', $start);
+            return $this->finishResponse($response, 'CACHE-NOT-ALLOWED-FOR-KEY', $start);
         }
 
-        // Intentar HIT
+        // traer desde el cache BROUGHT-FROM-CACHE
         try {
             if ($cached = Cache::get($key)) {
-                $response = $this->buildCachedResponse($cached);
-                // Añadir clave usada para depuración
-                $response->headers->set('X-Cache-Key', $key);
-                return $this->finishResponse($response, 'HIT', $start);
+                    $response = $this->buildCachedResponse($cached);
+                    $response->headers->set('X-Cache-Key', $key);
+                    return $this->finishResponse($response, 'BROUGHT-FROM-CACHE', $start);
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
-        }
+        } 
 
-        // MISS: procesar y luego guardar
+        // CACHED: procesar y luego guardar
         $response = $next($request);
-        $origin   = strtolower($request->header('origin-component', ''));
+        $origin   = strtolower($request->header('origin-component'));
 
         if (in_array($origin, ['hoster', 'huesped'])) {
 
@@ -79,7 +79,7 @@ class CacheResponses
             }
         }
 
-        return $this->finishResponse($response, 'MISS', $start);
+        return $this->finishResponse($response, 'CACHED', $start);
     }
 
     /**
@@ -93,11 +93,18 @@ class CacheResponses
         ? $this->ttl
         : config('api_cache.default_ttl');
 
-        return $response
-                ->header('X-Cache', $status)
+        $response->header('X-Cache', $status)
                 ->header('X-Response-Time', "{$elapsed}ms")
-                ->header('Cache-Control', 'public, max-age=' . $ttl)
-                ->header('Vary', 'hash-user', 'hash-hotel', 'origin-component');
+                ->header('Vary', 'hash-user, hash-hotel, origin-component, reset-cache');
+
+            // 2) Cache-Control según el estado
+            if (! in_array($status, ['BROUGHT-FROM-CACHE', 'CACHED'], true)) {
+                $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+            } else {
+                $response->header('Cache-Control', 'public, max-age=' . $ttl);
+            }
+        return $response;
+                
     }
 
     /**
@@ -105,19 +112,34 @@ class CacheResponses
      */
     protected function shouldCacheRequest(Request $request, array $config): bool
     {
+        if (! $request->expectsJson()) {
+            return false;
+        }
+        
         $method = strtoupper($request->getMethod());
         if (! in_array($method, ['GET', 'POST'])) {
             return false;
         }
+
+        if ($request->query('mockup') === 'true') {
+            return false;
+        }
+
+        $pathWithoutQuery = strtok($request->getRequestUri(), '?');
+
+        $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
+
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
                 return false;
             }
         }
+
         // Requiere headers para caché: hash-user, hash-hotel y origin-component
         if (! $request->hasHeader('hash-user')
             || ! $request->hasHeader('hash-hotel')
-            || ! $request->hasHeader('origin-component')) {
+            || ! $request->hasHeader('origin-component')
+            || ! $request->hasHeader('reset-cache')) {
             return false;
         }
         if ($method === 'POST') {
@@ -138,9 +160,10 @@ class CacheResponses
     {
         $userHash  = $request->header('hash-user');
         $hotelHash = $request->header('hash-hotel');
-        $origin    = strtolower($request->header('origin-component', ''));
+        $resetCache = $request->header('reset-cache');
+        $origin    = strtolower($request->header('origin-component'));
 
-        if (empty($userHash) || empty($hotelHash) || empty($origin)) {
+        if (empty($userHash) || empty($hotelHash) || empty($origin) || empty($resetCache)) {
             throw new \RuntimeException('Missing identifiers for cache key');
         }
 
@@ -148,11 +171,11 @@ class CacheResponses
         $params = $this->normalize(
             $request->isMethod('GET') ? $request->query() : $request->all()
         );
-
+        
         return sprintf(
-            '%suser:%s:hotel:%s:origin:%s:path:%s:%s',
+            '%suser:%s:hotel:%s:origin:%s:reset:%s:path:%s:%s',
             $config['key_prefix'], $userHash, $hotelHash,
-            $origin, $path,
+            $origin, $resetCache, $path,
             sha1($path . '|' . json_encode($params))
         );
     }
@@ -162,6 +185,11 @@ class CacheResponses
      */
     protected function normalize(array $params): array
     {
+        foreach ($params as $key => $value) {
+            if (is_array($value)) {
+                $params[$key] = $this->normalize($value);
+            }
+        }
         ksort($params);
         return $params;
     }
@@ -187,7 +215,7 @@ class CacheResponses
     {
         $exclude = [
             'subdomainhotel',
-            'Reset-Cache',
+            'reset-cache',
             'chainsubdomain',
             'hash-hotel',
             'hash-user',

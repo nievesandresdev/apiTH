@@ -24,7 +24,7 @@ class HotelResource extends JsonResource
         ? auth()->user()->hotel()->wherePivot('hotel_id', $this->id)->wherePivot('is_default', 1)->exists()
         : false;
 
-        $is_subscribed = Subscription::where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
+        $is_subscribed = $this->subscription_active ? Subscription::where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists() : false;
         //ya hay una key translate para la traduccion
         //dejo el descripcion normal para tener a la mano el original
         //guardado en el perfil del hotel en el sass
@@ -110,6 +110,8 @@ class HotelResource extends JsonResource
             "reviews_service_enabled" => $this->reviews_service_enabled,
             "checkin_service_enabled" => $this->checkin_service_enabled,
             "chat_service_enabled" => $this->chat_service_enabled,
+            "contact_email" => $this->contact_email,
+            "contact_whatsapp_number" => $this->contact_whatsapp_number
         ];
     }
 }

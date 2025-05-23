@@ -3,13 +3,12 @@
 return [
     'enabled' => env('CACHE_ENABLED', true),
     
-    'default_ttl' => 1800, // 1 hora por defecto
+    'default_ttl' => 300, // 5 minutos por defecto
     
     'excluded_routes' => [
         'api/auth/*',
         'api/guest/findByIdApi/*',
         //'api/user/profile',
-        //'api/formularios/*'
     ],
     
     'route_specific_ttl' => [
