@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Hoster;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\HotelResource;
 use App\Services\Hoster\Hotel\HotelHosterServices;
 use Illuminate\Http\Request;
 use App\Utils\Enums\EnumResponse;
@@ -77,7 +78,8 @@ class HotelHosterController extends Controller
             ];
             return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
         }
-        return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        $data = new HotelResource($model);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
     }
 
     public function updateContactEmail (Request $request) {
@@ -89,7 +91,8 @@ class HotelHosterController extends Controller
             ];
             return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
         }
-        return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        $data = new HotelResource($model);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
     }
 
     public function updateContactWhatsapp    (Request $request) {
@@ -101,7 +104,8 @@ class HotelHosterController extends Controller
             ];
             return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
         }
-        return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        $data = new HotelResource($model);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
     }
 
     public function getProfilePhones (Request $request) {

@@ -110,6 +110,8 @@ class HotelResource extends JsonResource
             "reviews_service_enabled" => $this->reviews_service_enabled,
             "checkin_service_enabled" => $this->checkin_service_enabled,
             "chat_service_enabled" => $this->chat_service_enabled,
+            "contact_email" => $this->contact_email,
+            "contact_whatsapp_number" => $this->contact_whatsapp_number
         ];
     }
 }
