@@ -41,6 +41,7 @@ class DemoStaysSeeder extends Seeder
                     ]
                 );
 
+
                 $checkIn = Carbon::now()->startOfDay();
                 $checkOut = Carbon::create(2031, 12, 31, 0, 59, 0);
 
