@@ -108,6 +108,7 @@ class RewardsServices {
         $data = [
             'webappChatLink' => buildUrlWebApp($rewardStay->hotel->subdomain, $rewardStay->hotel->subdomain,'chat'),
             'urlQr' => generateQr($rewardStay->hotel->subdomain, $urlWebapp),
+            'urlPrivacy' => buildUrlWebApp($chainSubdomain, $rewardStay->hotel->subdomain,'privacidad',"e={$rewardStay->stay_id}&g={$rewardStay->guest_id}&email=true&lang={$rewardStay->guest->lang_web}"),
         ];
 
         $communication = $rewardStay->hotel->hotelCommunications->firstWhere('type', 'email');
