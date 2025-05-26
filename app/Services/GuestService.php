@@ -155,7 +155,7 @@ class GuestService {
             in_array('secondLastname', $updateFields, true) || count($updateFields) == 0 ? $guest->second_lastname = $request->secondLastname : '';
             in_array('gender', $updateFields, true) || count($updateFields) == 0 ? $guest->sex = $request->gender : '';
 
-            if($request->birthdate && (in_array('birthdate', $updateFields, true) || count($updateFields) == 0 )){ 
+            if($request->birthdate && (in_array('birthdate', $updateFields, true) || count($updateFields) == 0)){ 
                 $birthdate = Carbon::createFromFormat('d/m/Y', $request->birthdate)
                 ->format('Y-m-d');
                 $guest->birthdate = $birthdate;
