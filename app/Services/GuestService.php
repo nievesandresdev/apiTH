@@ -339,9 +339,8 @@ class GuestService {
             // Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
                 // $guest->password = bcrypt($data->password);
-                // Log::info('update pass'. $guest->password);
+                $guest->password = Hash::make($data->password);
             }
-
             $guest->save();
             return $guest;
         } catch (\Exception $e) {
@@ -486,7 +485,7 @@ class GuestService {
     public function resetPassword($token, $newPassword){
 
         try {
-
+            $newPassword = Hash::make($newPassword);
             $reset = DB::table('password_resets')->where([
                 ['token', $token]
             ])->first();
