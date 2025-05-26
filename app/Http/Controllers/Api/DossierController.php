@@ -11,7 +11,7 @@ class DossierController extends Controller
 {
     public function getDossier($domain, $type)
     {
-        $dossier = Dossier::where('domain', 'like', '%' . $domain . '%')->where('type', $type)->first();
+        $dossier = Dossier::where('domain',$domain)->where('type', $type)->where('status', 1)->first();
 
         if (!$dossier) {
             return response()->json(null, 204);
