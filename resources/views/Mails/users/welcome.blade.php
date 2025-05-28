@@ -12,6 +12,16 @@
             font-family: "Roboto", sans-serif;
         }
 
+        /* Por defecto: mostrar div-normal y ocultar div-responsive (para tablet, PC mediana y grande) */
+        .div-normal {
+            display: block;
+        }
+
+        .div-responsive {
+            display: none;
+        }
+
+        /* En móvil (responsive): ocultar div-normal y mostrar div-responsive */
         @media only screen and (max-width: 600px) {
             body {
                 background-color: #ffffff !important;
@@ -39,7 +49,11 @@
             }
 
             .div-normal {
-                display: none;
+                display: none !important;
+            }
+
+            .div-responsive {
+                display: block !important;
             }
 
         }

@@ -30,7 +30,7 @@ class HotelButtonsService {
             HotelButton::where('id', $button['id'])
                 ->update([
                     'order' => $index,
-                    'is_visible' => true
+                    'is_visible' => $button['is_visible']
                 ]);
         }
 
