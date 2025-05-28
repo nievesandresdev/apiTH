@@ -9,15 +9,24 @@ class HotelButtonsService {
 
     public function getHotelButtons($modelHotel) {
         $buttons = $modelHotel->buttons()->get();
-        $visibleCount = $buttons->where('is_visible', true)->count();
-        $hiddenCount = $buttons->where('is_visible', false)->count();
+
+        // Filtrar botón de Check-In si el servicio no está habilitado
+        if (!$modelHotel->checkin_service_enabled) {
+            $buttons = $buttons->filter(function($button) {
+                return strtolower($button->name) !== 'check-in';
+            });
+        }
+
+        // Separar en una sola iteración
+        $visible = $buttons->filter(fn($button) => $button->is_visible);
+        $hidden = $buttons->filter(fn($button) => !$button->is_visible);
 
         return [
-            'visible' => $buttons->where('is_visible', true),
-            'hidden' => $buttons->where('is_visible', false),
-            'totalVisible' => $visibleCount,
-            'totalHidden' => $hiddenCount,
-            'total' => $visibleCount + $hiddenCount
+            'visible' => $visible,
+            'hidden' => $hidden,
+            'totalVisible' => $visible->count(),
+            'totalHidden' => $hidden->count(),
+            'total' => $buttons->count()
         ];
 
         //return $modelHotel->buttons_home;
