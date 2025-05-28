@@ -264,11 +264,11 @@ class ApiReviewServices {
     }
 
     public function updateReviews($hotel) {
-        $this->syncReviews($hotel);
+        // $this->syncReviews($hotel);
         $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
-        // foreach ($OTAS as $ota) {
-        //     $this->leakedReviewsStoreBulkByOta($hotel, $ota);
-        // }
+        foreach ($OTAS as $ota) {
+            $this->leakedReviewsStoreBulkByOta($hotel, $ota);
+        }
         foreach ($OTAS as $ota) {
             $this->translateReviewsByOta($hotel, $ota);
         }
