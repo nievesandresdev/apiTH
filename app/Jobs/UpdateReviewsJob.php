@@ -36,11 +36,10 @@ class UpdateReviewsJob implements ShouldQueue
 
         foreach ($codeHotels as $codeHotel) {
             $hotel = Hotel::where('code', $codeHotel)->first();
-            \Log::info("Hotel: " . $hotel->name);
             if ($hotel) {
-                \Log::info("Start UpdateReviewsJob");
+                \Log::info("[Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id . "]");
                 $this->apiReviewService->updateReviews($hotel);
-                \Log::info("End UpdateReviewsJob");
+                \Log::info("[End UpdateReviewsJob]");
             }
         }
         \Log::info("End UpdateReviewsCommand");
