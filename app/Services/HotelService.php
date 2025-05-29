@@ -155,7 +155,6 @@ class HotelService {
     public function getChatHours ($hotelId,$all = false) {
         try {
             $defaultChatHours = defaultChatHours();
-
             if ($all) {
                 $query = ChatHour::where('hotel_id',$hotelId);
             }else{

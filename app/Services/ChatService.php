@@ -139,18 +139,23 @@ class ChatService {
                 DB::table('jobs')->where('payload', 'like', '%send-by' . $guest->id . '%')->delete();
                 //se envia el mensaje si el hoster no responde en 1 min
                 if($request->isAvailable && $settings->first_available_show){
+                    Log::info('Automatic MSG 1 $chat_id '.json_encode($chat->id));
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->first_available_msg[$langPage])->delay(now()->addMinutes(1));
                 }
                 //se envia el mensaje si el hoster no responde en 5 min
                 if($request->isAvailable && $settings->second_available_show){
+                    Log::info('Automatic MSG 2 $chat_id '.json_encode($chat->id));
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->second_available_msg[$langPage])->delay(now()->addMinutes(5));//5
                 }
                 //se envia el mensaje si el hoster no responde en 10 min
                 if($request->isAvailable && $settings->three_available_show){
+                    Log::info('Automatic MSG 3 $chat_id '.json_encode($chat->id));
                     AutomaticMsg::dispatch('send-by'.$guest->id,$stay->hotel_id,$stay->id,$msg->id,$chat->id,$settings->three_available_msg[$langPage])->delay(now()->addMinutes(10));//10
 
                 }
                 //se envia el mensaje si no hay agente disponible
+                Log::info('isAvailable '.json_encode($request->isAvailable));
+                Log::info('settings->not_available_show '.json_encode($settings->not_available_show));
                 if(!$request->isAvailable && $settings->not_available_show){
                     $chatMessage = new ChatMessage([
                         'chat_id' => $chat->id,
@@ -562,6 +567,25 @@ class ChatService {
                 $default->load('languages');
             }
             return $default;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function getChatHoursByHotel ($hotelId) {
+        try {
+             // 1. ¿Hay al menos un registro para este hotel?
+            $hasAny = ChatHour::where('hotel_id', $hotelId)->exists();
+
+            if (! $hasAny) {
+                // 2. Nada en la BD ⇒ devolvemos el horario por defecto.
+                return defaultChatHours();
+            }
+
+            // 3. Sí hay registros ⇒ devolvemos sólo los activos.
+            return ChatHour::where('hotel_id', $hotelId)
+                        ->where('active', 1)
+                        ->get();
         } catch (\Exception $e) {
             return $e;
         }
