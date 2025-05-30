@@ -6,10 +6,6 @@ use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\Hoster\ChatSettingsController;
 use App\Http\Controllers\Api\Hoster\StayChatHosterController;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 203ea99352585d714b1433abfe19076be8a6ae2e
 Route::middleware('auth.either:user,guest')->group(function () {
     Route::group(['prefix' => 'chat'], function () {
         //webapp endpoints
@@ -23,23 +19,6 @@ Route::middleware('auth.either:user,guest')->group(function () {
         Route::get('/getChatHoursByHotel', [ChatController::class, 'getChatHoursByHotel']);
         //hoster endpoints
         Route::group(['prefix' => 'hoster'], function () {
-<<<<<<< HEAD
-=======
-Route::group(['prefix' => 'chat'], function () {
-    //webapp endpoints
-    Route::post('/sendMsgToHoster', [ChatController::class, 'sendMsgToHoster']);
-    Route::post('/loadMessages', [ChatController::class, 'loadMessages']);
-    Route::post('/markMsgsAsRead', [ChatController::class, 'markMsgsAsRead']);
-    Route::get('/unreadMsgs', [ChatController::class, 'unreadMsgs']);
-    Route::get('/getAvailavilityByHotel/', [ChatController::class, 'getAvailavilityByHotel']);
-    Route::get('/getAvailableLanguages', [ChatController::class, 'getAvailableLanguages']);
-    Route::get('/getAllSettings', [ChatController::class, 'getAllSettings']);
-    Route::get('/getChatHoursByHotel', [ChatController::class, 'getChatHoursByHotel']);
-    //hoster endpoints
-    Route::group(['prefix' => 'hoster'], function () {
->>>>>>> dossier
-=======
->>>>>>> 203ea99352585d714b1433abfe19076be8a6ae2e
 
             Route::get('/getDataRoom', [StayChatHosterController::class, 'getDataRoom']);
             Route::post('/sendMsg', [StayChatHosterController::class, 'sendMsg']);
