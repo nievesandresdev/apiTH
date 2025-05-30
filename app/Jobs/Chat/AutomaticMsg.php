@@ -46,7 +46,7 @@ class AutomaticMsg implements ShouldQueue
      */
     public function handle(ChatHosterServices $_ChatHosterServices)
     {
-        /* Log::info('Automatic MSG $chat_id '.json_encode($this->chat_id)); */
+        Log::info('Automatic MSG $chat_id '.json_encode($this->chat_id));
         $this->chatHosterServices = $_ChatHosterServices;
         $message = ChatMessage::with('chat')->find($this->msg_id);
 

@@ -154,8 +154,9 @@ class HotelService {
 
     public function getChatHours ($hotelId,$all = false) {
         try {
+            Log::info('getChatHours $hotelId '.json_encode($hotelId));
             $defaultChatHours = defaultChatHours();
-
+            Log::info('getChatHours $defaultChatHours '.json_encode($defaultChatHours));
             if ($all) {
                 $query = ChatHour::where('hotel_id',$hotelId);
             }else{
@@ -163,9 +164,11 @@ class HotelService {
             }
 
             if (!$query->exists()) {
+                Log::info('getChatHours $query->exists() false');
                 return $defaultChatHours;
             }else{
                 $chatHours = $query->get();
+                Log::info('getChatHours $chatHours '.json_encode($chatHours));
                 return $chatHours;
             }
         } catch (\Exception $e) {
