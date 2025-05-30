@@ -66,3 +66,7 @@ Route::middleware('auth.either:user,guest')->group(function () {
     });
 });
 
+//sin auth
+Route::group(['prefix' => 'stay'], function () {
+    Route::get('/findbyId/{stayId}', [StayController::class, 'findbyId']);
+});
