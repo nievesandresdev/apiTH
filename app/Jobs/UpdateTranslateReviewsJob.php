@@ -47,4 +47,5 @@ class UpdateTranslateReviewsJob implements ShouldQueue
         }
         \Log::info("End UpdateTranslateReviewsJob");
     }
+
 }
