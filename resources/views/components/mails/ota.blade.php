@@ -1,4 +1,4 @@
-<div style="margin-left: 16px; margin-right: 16px; margin-top: 32px;">
+<div style="margin-left: 16px; margin-right: 16px; padding-top: 32px; background-color: #ffffff;">
     <h2 style="margin: 0; color: #333; font-family: Arial; font-size: 22px; font-weight: 500; line-height: 145.455%;">
         {{ __('mail.otas.title') }}
     </h2>

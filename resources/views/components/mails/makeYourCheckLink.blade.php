@@ -1,4 +1,4 @@
-<div style="margin-left: 16px; margin-right: 16px;">
+<div style="margin-left: 16px; margin-right: 16px; background-color: #ffffff;">
     <h2 style="margin:0;color: #333; font-family: arial;font-size: 22px;font-weight: 500;line-height: 145.455%">
         {{ __('mail.makeYourCheckLink.title') }}
     </h2>

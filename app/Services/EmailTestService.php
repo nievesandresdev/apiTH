@@ -6,19 +6,27 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use App\Services\UtilityService;
 use App\Services\Hoster\UtilsHosterServices;
+use App\Services\RequestSettingService;
+use App\Services\UrlOtasService;
 
 class EmailTestService
 {
     protected $utilityService;
     protected $utilsHosterServices;
+    protected $requestService;
+    protected $urlOtasService;
 
     public function __construct(
         UtilityService $utilityService,
-        UtilsHosterServices $utilsHosterServices
+        UtilsHosterServices $utilsHosterServices,
+        RequestSettingService $requestService,
+        UrlOtasService $urlOtasService
     )
     {
         $this->utilityService = $utilityService;
         $this->utilsHosterServices = $utilsHosterServices;
+        $this->requestService = $requestService;
+        $this->urlOtasService = $urlOtasService;
     }
 
     public function prepareWelcomeEmailData($hotel, $guest, $request)
@@ -101,6 +109,8 @@ class EmailTestService
     public function prepareCheckoutEmailData($hotel, $guest, $request)
     {
         $dates = $this->formatDates($request->date_guest);
+        $chainSubdomain = $hotel->subdomain;
+        $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
         return [
             'checkData' => $this->prepareCheckData($hotel, $dates),
@@ -110,9 +120,9 @@ class EmailTestService
                 'webappLinkInboxGoodFeel' => '#',
                 'showQuerySection' => true
             ],
-            'places' => [],
-            'experiences' => [],
-            'facilities' => [],
+            'places' => $crosselling['places'],
+            'experiences' => $crosselling['experiences'],
+            'facilities' => $crosselling['facilities'],
             'webappChatLink' => '#',
             'urlQr' => "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png",
             'urlWebapp' => '#',
@@ -126,6 +136,8 @@ class EmailTestService
     public function preparePostCheckoutEmailData($hotel, $guest, $request)
     {
         $dates = $this->formatDates($request->date_guest);
+        $settingEnabled = $this->requestService->getAll($hotel->id);
+        $otasWithUrls = $this->urlOtasService->getOtasWithUrls($hotel, $settingEnabled->otas_enabled);
 
         return [
             'queryData' => [
@@ -134,6 +146,7 @@ class EmailTestService
                 'webappLinkInboxGoodFeel' => '#',
                 'answered' => false
             ],
+            'otas' => [],
             'places' => [],
             'experiences' => [],
             'facilities' => [],

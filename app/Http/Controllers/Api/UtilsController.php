@@ -328,20 +328,6 @@ class UtilsController extends Controller
 
     public function test(Request $r)
     {
-<<<<<<< HEAD
-       return view('Mails.contactEmail',[
-        'data' => [
-            'guestName' => 'Juan Perez',
-            'guestEmail' => 'juan.perez@gmail.com',
-            'stayCheckin' => '20/05/2025',
-            'stayCheckout' => '25/05/2025',
-            'guestLanguageAbbr' => 'es',
-            'guestLanguageName' => 'Español',
-            'message' => 'Generaremos automáticamente el link a WhatsApp a partir del número que ingreses aquí.',
-
-        ]
-       ]);
-=======
         $userHotelCode = 'mMGbiJUdt5aS';
         $hotelId = 291;
         $hotel = Hotel::find($hotelId);
@@ -349,10 +335,10 @@ class UtilsController extends Controller
         $query = Query::find(579);
         $stay = Stay::find($query->stay_id);
         $guest = Guest::find($query->guest_id);
-        
-        
+
+
         // http://localhost:82/estancias?redirect=view&code=mMGbiJUdt5aS
-        
+
         $from    = '2025-04-01';
         $to      = '2025-04-30';
 
@@ -406,7 +392,7 @@ class UtilsController extends Controller
             }),
         ];
         // return $stats;
-        
+
         $saasUrl = config('app.hoster_url');
         $links = [
             'urlToReport' => "{$saasUrl}/seguimiento/general-report?periodType=monthly&from={$from}&to={$to}&redirect=view&code={$userHotelCode}",
@@ -415,7 +401,6 @@ class UtilsController extends Controller
         ];
         $this->mailService->sendEmail(new ReportHoster($hotel, $showNotify, $stats, $links), 'andresdreamerf@gmail.com');
         return view('mails.queries.reportHoster', compact('hotel','showNotify','stats','links'));
->>>>>>> 3a2038a21ec88ed315e3bc10a3a96ba721ac025a
     }
 
 
