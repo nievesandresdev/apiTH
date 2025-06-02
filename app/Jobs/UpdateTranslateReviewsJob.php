@@ -8,9 +8,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class zs implements ShouldQueue
+use App\Models\Hotel;
+
+
+class UpdateTranslateReviewsJob implements ShouldQueue
 {
-    protected $signature = 'app:update-translate-reviews-command';
     
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
