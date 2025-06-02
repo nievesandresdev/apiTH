@@ -292,7 +292,8 @@ class UtilsController extends Controller
                 'urlCheckin' => $urlCheckin,
                 'hotel' => $hotel,
                 'stay_language' => $stay->language,
-                'urlFooterEmail' => $urlFooterEmail
+                'urlFooterEmail' => $urlFooterEmail,
+                'urlPrivacy' => buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}"),
             ];
 
             //dd($dataEmail);
@@ -335,7 +336,7 @@ class UtilsController extends Controller
             'guestLanguageAbbr' => 'es',
             'guestLanguageName' => 'Español',
             'message' => 'Generaremos automáticamente el link a WhatsApp a partir del número que ingreses aquí.',
-            
+
         ]
        ]);
     }
@@ -390,6 +391,7 @@ class UtilsController extends Controller
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"no-notificacion?g={$guest->id}");
 
             $dataEmail = [
                 'queryData' => $queryData,
@@ -398,7 +400,9 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'otas' => $otasWithUrls,
-                'reservationURl' => $reservationURl
+                'reservationURl' => $reservationURl,
+                'urlPrivacy' => buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}"),
+                'urlFooterEmail' => $urlFooterEmail
             ];
 
             //dd($dataEmail);
@@ -423,10 +427,10 @@ class UtilsController extends Controller
         $type = 'prepare-arrival';
         $hotel = Hotel::find(291);
         //$guest = Guest::find(146);
-        $guest = Guest::find(22);
+        $guest = Guest::find(107);
         $chainSubdomain = $hotel->subdomain;
         //$stay = Stay::find(630);
-        $stay = Stay::with('queries')->where('id',82)->first();
+        $stay = Stay::with('queries')->where('id',222)->first();
 
 
 
@@ -493,6 +497,7 @@ class UtilsController extends Controller
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
              $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+             $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"no-notificacion?g={$guest->id}");
 
 
 
@@ -507,6 +512,8 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
+                'urlFooterEmail' => $urlFooterEmail,
+                'urlPrivacy' => buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}"),
             ];
 
             //dd($dataEmail,$hotel);

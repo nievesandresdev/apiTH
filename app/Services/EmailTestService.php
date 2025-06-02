@@ -49,6 +49,8 @@ class EmailTestService
     public function preparePrepareArrivalEmailData($hotel, $guest, $request)
     {
         $dates = $this->formatDates($request->date_guest);
+        $chainSubdomain = $hotel->subdomain;
+        $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
 
         return [
             'checkData' => $this->prepareCheckData($hotel, $dates),
@@ -58,9 +60,9 @@ class EmailTestService
                 'webappLinkInboxGoodFeel' => '#',
                 'answered' => false
             ],
-            'places' => [],
-            'experiences' => [],
-            'facilities' => [],
+            'places' => $crosselling['places'],
+            'experiences' => $crosselling['experiences'],
+            'facilities' => $crosselling['facilities'],
             'webappChatLink' => '#',
             'urlQr' => "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png",
             'urlWebapp' => '#',
