@@ -24,13 +24,14 @@ class ReportHoster extends Mailable
 
     public function build()
     {
-        return $this->view('Mails.queries.ReportHoster')
+        return $this->subject('Informe de Seguimiento')
+            ->view('Mails.queries.ReportHoster')
             ->with([
                 'hotel' => $this->hotel,
                 'showNotify' => $this->showNotify,
                 'stats' => $this->stats,
                 'links' => $this->links,
             ]);
-        
+
     }
 }

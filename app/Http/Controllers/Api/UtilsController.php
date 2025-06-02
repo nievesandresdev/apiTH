@@ -396,10 +396,10 @@ class UtilsController extends Controller
         $saasUrl = config('app.hoster_url');
         $links = [
             'urlToReport' => "{$saasUrl}/seguimiento/general-report?periodType=monthly&from={$from}&to={$to}&redirect=view&code={$userHotelCode}",
-            'urlComunications' => "{$saasUrl}/comunicaciones?redirect=view&code={$userHotelCode}",
+            'urlComunications' => "{$saasUrl}/promociona-webapp?redirect=view&code={$userHotelCode}",
             'urlPromotions' => "{$saasUrl}/promociona-webapp?redirect=view&code={$userHotelCode}",
         ];
-        $this->mailService->sendEmail(new ReportHoster($hotel, $showNotify, $stats, $links), 'andresdreamerf@gmail.com');
+        $this->mailService->sendEmail(new ReportHoster($hotel, $showNotify, $stats, $links), 'futfran.dev@gmail.com');
         return view('mails.queries.reportHoster', compact('hotel','showNotify','stats','links'));
     }
 
