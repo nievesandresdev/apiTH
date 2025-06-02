@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class UpdateTranslateReviewsJob implements ShouldQueue
+class zs implements ShouldQueue
 {
     protected $signature = 'app:update-translate-reviews-command';
     

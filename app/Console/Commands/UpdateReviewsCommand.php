@@ -22,7 +22,7 @@ class UpdateReviewsCommand extends Command
     public function handle()
     {
         Bus::dispatch([
-            new UpdateReviewsJob($this->apiReviewService),
+            // new UpdateReviewsJob($this->apiReviewService),
             new UpdateTranslateReviewsJob($this->apiReviewService)
         ]);
     }
