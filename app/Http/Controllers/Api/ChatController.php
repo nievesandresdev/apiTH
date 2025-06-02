@@ -145,4 +145,13 @@ class ChatController extends Controller
         }
     }
 
+    public function getChatHoursByHotel (Request $request) {
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->service->getChatHoursByHotel($hotel->id);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getChatHoursByHotel');
+        }
+    }
 }
