@@ -102,7 +102,7 @@ return [
     ],
     'chatLink' => [
         'title' => 'Hast du Fragen oder Anliegen?',
-        'body' => 'Denk daran, dass du uns über den Chat in der WebApp erreichen kannst.',
+        'body' => 'Denke daran, dass du uns über den Chat in der WebApp erreichen kannst.',
         'button' => 'Zum Chat',
     ],
     'qrHotel' => [

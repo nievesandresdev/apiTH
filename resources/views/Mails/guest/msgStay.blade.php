@@ -164,7 +164,7 @@
             @endif
 
             {{-- @if(($type == 'welcome' || $type == 'checkout') && $data['queryData'] && $data['queryData']['showQuerySection']) --}}
-            @if((($type == 'welcome' && !$beforeCheckin) || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'])
+            @if((($type == 'welcome' && !$beforeCheckin) || $type == 'checkout' || $type == 'postCheckin') && $data['queryData'] && !$data['test'])
                 @if($data['queryData']['currentPeriod'] !== 'in-stay')
                     <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
                 @endif
@@ -174,6 +174,11 @@
                     'webappLinkInboxGoodFeel' => $data['queryData']['webappLinkInboxGoodFeel'],
                     'after' => $after
                 ])
+            @endif
+
+            @if($data['test'])
+                <div style="max-width: 474px;margin: 32px auto;background-color:#E9E9E9;height: 1px;"></div>
+                @include('components.mails.needArrivalHotel',['webappLinkInbox' => $data['queryData']['webappLinkInbox']])
             @endif
 
 
