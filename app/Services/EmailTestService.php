@@ -97,7 +97,8 @@ class EmailTestService
             'urlCheckin' => '#',
             'guest_language' => $guest->lang_web,
             'urlFooterEmail' => '#',
-            'urlPrivacy' => '#'
+            'urlPrivacy' => '#',
+            'test' => true
         ];
     }
 
@@ -122,7 +123,8 @@ class EmailTestService
             'urlCheckin' => '#',
             'guest_language' => $guest->lang_web,
             'urlFooterEmail' => '#',
-            'urlPrivacy' => '#'
+            'urlPrivacy' => '#',
+            'test' => true
         ];
     }
 
@@ -149,7 +151,8 @@ class EmailTestService
             'urlCheckin' => '#',
             'guest_language' => $guest->lang_web,
             'urlFooterEmail' => '#',
-            'urlPrivacy' => '#'
+            'urlPrivacy' => '#',
+            'test' => true
         ];
     }
 
@@ -174,7 +177,8 @@ class EmailTestService
             'urlWebapp' => '#',
             'reservationURl' => '#',
             'urlPrivacy' => '#',
-            'urlFooterEmail' => '#'
+            'urlFooterEmail' => '#',
+            'test' => true
         ];
     }
 
