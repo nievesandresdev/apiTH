@@ -28,8 +28,9 @@ class RequestSettingService {
 
 
     public function getRequestData($settings, $guestName, $period){
-        // Log::info('msg_text: ' . json_encode($settings->msg_text));
-        // Log::info('in_stay_msg_text: ' . json_encode($settings->in_stay_msg_text));
+        // Log::info('msg_text: ' . json_encode($settings->msg_text,JSON_PRETTY_PRINT));
+        // Log::info('guestName: ' . json_encode($guestName));
+        // Log::info('period: ' . json_encode($period));
         try {
             $localLang = localeCurrent();
             
