@@ -110,6 +110,9 @@ class QueryHosterServices {
             $dataQueries = Query::with(['histories' => function ($query) {
                 $query->orderBy('created_at', 'desc');
             }])
+            ->with(['guest' => function ($query) {
+                $query->select('id','email');
+            }])
             ->where('guest_id', $guestId)
             ->where('stay_id', $stayId)
             ->orderByRaw("FIELD(period, 'pre-stay', 'in-stay', 'post-stay')")
