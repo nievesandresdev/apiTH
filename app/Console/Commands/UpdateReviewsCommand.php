@@ -29,7 +29,7 @@ class UpdateReviewsCommand extends Command
             \Log::info("Hotel: " . $hotel->name);
             if ($hotel) {
                 UpdateReviewsJob::dispatch($hotel, $this->apiReviewService);
-                // $this->apiReviewService->syncReviews($hotel);
+                $this->apiReviewService->syncReviews($hotel);
             }
         }
         \Log::info("End UpdateReviewsCommand");
