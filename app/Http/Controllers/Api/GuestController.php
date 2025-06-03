@@ -259,7 +259,7 @@ class GuestController extends Controller
 
         $hotel = $request->attributes->get('hotel');
         $guest = Guest::find($request->id);
-
+        // Log::info('guest '. json_encode($guest,JSON_PRETTY_PRINT));
         if (!$guest) {
             $data = [
                 'message' => __('response.bad_request_long')
@@ -274,7 +274,8 @@ class GuestController extends Controller
             }
 
             $model = $this->service->updateDataGuest($guest, $request, true);
-
+            // Log::info('model '. json_encode($model,JSON_PRETTY_PRINT));
+            // Log::info('saveQuery '. json_encode($saveQuery,JSON_PRETTY_PRINT));
             if (!$model || !$saveQuery) {
                 $data = [
                     'message' => __('response.bad_request_long')
