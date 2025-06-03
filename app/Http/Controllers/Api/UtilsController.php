@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 /*emails*/
 use App\Mail\Guest\{ContactToHoster, MsgStay, postCheckoutMail,prepareArrival};
+use App\Mail\Queries\ReportHoster;
 use App\Mail\User\RewardsEmail;
 
 /*models*/
@@ -292,7 +293,8 @@ class UtilsController extends Controller
                 'urlCheckin' => $urlCheckin,
                 'hotel' => $hotel,
                 'stay_language' => $stay->language,
-                'urlFooterEmail' => $urlFooterEmail
+                'urlFooterEmail' => $urlFooterEmail,
+                'urlPrivacy' => buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}"),
             ];
 
             //dd($dataEmail);
@@ -326,8 +328,81 @@ class UtilsController extends Controller
 
     public function test(Request $r)
     {
-       return requestSettingsDefault();
+        $userHotelCode = 'mMGbiJUdt5aS';
+        $hotelId = 291;
+        $hotel = Hotel::find($hotelId);
+        $showNotify = true;
+        $query = Query::find(579);
+        $stay = Stay::find($query->stay_id);
+        $guest = Guest::find($query->guest_id);
+
+
+        // http://localhost:82/estancias?redirect=view&code=mMGbiJUdt5aS
+
+        $from    = '2025-04-01';
+        $to      = '2025-04-30';
+
+        $qs = Query::join('stays','queries.stay_id','stays.id')
+            ->where('stays.hotel_id', $hotelId)
+            ->where('queries.answered', 1)
+            ->whereIn('queries.period',['in-stay','post-stay'])
+            // filtro por intervalo de fechas (solo fecha)
+            ->whereDate('queries.responded_at','>=',$from)
+            ->whereDate('queries.responded_at','<=',$to)
+            ->select(
+                    'queries.period','queries.guest_id','queries.answered','queries.qualification','queries.comment','queries.responded_at','queries.response_lang',
+                    'stays.hotel_id','stays.check_in','stays.check_out','stays.id as stayId'
+                )
+            ->get();
+        // return $qs;
+        $quals = ['VERYGOOD','GOOD','NORMAL','WRONG','VERYWRONG'];
+        // Función auxiliar para procesar un sub-conjunto
+        $makeStats = function($collection) use($quals){
+            $total = $collection->count() ?: 1; // evitar división por cero
+            return collect($quals)->map(function($q) use($collection,$total){
+                $cnt = $collection->where('qualification',$q)->count();
+                return [
+                    'qualification' => $q,
+                    'count'         => $cnt,
+                    'percent'       => round($cnt / $total * 100, 1),
+                ];
+            });
+        };
+
+        // 4) Construyes los tres módulos
+        $stats = [
+            'from' => Carbon::parse($from)->format('d/m/Y'),
+            'to' => Carbon::parse($to)->format('d/m/Y'),
+            'all' => [
+                'total'   => $qs->count(),
+                'comments_count'=> $qs->whereNotNull('comment')->count(),
+                'breakdown'=> $makeStats($qs),
+            ],
+            'in_stay' => tap([
+                'total'   => $qs->where('period','in-stay')->count(),
+                'comments_count'=> $qs->where('period','in-stay')->whereNotNull('comment')->count(),
+            ], function(&$m) use($qs,$makeStats){
+                $m['breakdown'] = $makeStats($qs->where('period','in-stay'));
+            }),
+            'post_stay' => tap([
+                'total'   => $qs->where('period','post-stay')->count(),
+                'comments_count'=> $qs->where('period','post-stay')->whereNotNull('comment')->count(),
+            ], function(&$m) use($qs,$makeStats){
+                $m['breakdown'] = $makeStats($qs->where('period','post-stay'));
+            }),
+        ];
+        // return $stats;
+
+        $saasUrl = config('app.hoster_url');
+        $links = [
+            'urlToReport' => "{$saasUrl}/seguimiento/general-report?periodType=monthly&from={$from}&to={$to}&redirect=view&code={$userHotelCode}",
+            'urlComunications' => "{$saasUrl}/promociona-webapp?redirect=view&code={$userHotelCode}",
+            'urlPromotions' => "{$saasUrl}/promociona-webapp?redirect=view&code={$userHotelCode}",
+        ];
+        $this->mailService->sendEmail(new ReportHoster($hotel, $showNotify, $stats, $links), 'futfran.dev@gmail.com');
+        return view('mails.queries.reportHoster', compact('hotel','showNotify','stats','links'));
     }
+
 
 
     public function testEmailPostCheckout(){
@@ -379,6 +454,7 @@ class UtilsController extends Controller
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
             $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+            $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"no-notificacion?g={$guest->id}");
 
             $dataEmail = [
                 'queryData' => $queryData,
@@ -387,7 +463,9 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'otas' => $otasWithUrls,
-                'reservationURl' => $reservationURl
+                'reservationURl' => $reservationURl,
+                'urlPrivacy' => buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}"),
+                'urlFooterEmail' => $urlFooterEmail
             ];
 
             //dd($dataEmail);
@@ -412,10 +490,10 @@ class UtilsController extends Controller
         $type = 'prepare-arrival';
         $hotel = Hotel::find(291);
         //$guest = Guest::find(146);
-        $guest = Guest::find(22);
+        $guest = Guest::find(107);
         $chainSubdomain = $hotel->subdomain;
         //$stay = Stay::find(630);
-        $stay = Stay::with('queries')->where('id',82)->first();
+        $stay = Stay::with('queries')->where('id',222)->first();
 
 
 
@@ -482,6 +560,7 @@ class UtilsController extends Controller
             //
             // $urlQr = generateQr($hotel->subdomain, $urlWebapp);
              $urlQr = "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png";
+             $urlFooterEmail = buildUrlWebApp($chainSubdomain, $hotel->subdomain,"no-notificacion?g={$guest->id}");
 
 
 
@@ -496,6 +575,8 @@ class UtilsController extends Controller
                 'urlQr' => $urlQr,
                 'urlWebapp' => $urlWebapp,
                 'urlCheckin' => $urlCheckin,
+                'urlFooterEmail' => $urlFooterEmail,
+                'urlPrivacy' => buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}"),
             ];
 
             //dd($dataEmail,$hotel);

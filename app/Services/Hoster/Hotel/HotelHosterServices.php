@@ -32,11 +32,11 @@ class HotelHosterServices
 
     public function toggleChatService ($hotelId, $enabled) {
         try {
-            $hotel = Hotel::find($hotelId); 
+            $hotel = Hotel::find($hotelId);
             if (!$hotel) {
                 return bodyResponseRequest(EnumResponse::ERROR, 'Hotel not found', [], self::class . '.toggleChatService');
             }
-            
+
             if ($enabled) {
                 $hotel->chat_service_enabled = true;
             } else {
@@ -51,7 +51,7 @@ class HotelHosterServices
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.toggleChatService');
         }
     }
-   
+
     public function toggleCheckinService ($hotelId, $enabled) {
         try {
             $hotel = Hotel::find($hotelId);
@@ -64,11 +64,16 @@ class HotelHosterServices
             } else {
                 $hotel->checkin_service_enabled = false;
                 $hotel->show_checkin_stay = false;
+
+                // Deshabilitar  el boton "Check-In"
+                $hotel->buttons()
+                    ->where('name', 'Check-In')
+                    ->update(['is_visible' => false]);
             }
             $hotel->save();
             return $hotel;
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.toggleCheckinService'); 
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.toggleCheckinService');
         }
     }
 
@@ -80,7 +85,7 @@ class HotelHosterServices
             }
             if ($enabled) {
                 $hotel->reviews_service_enabled = true;
-                
+
             } else {
                 $hotel->reviews_service_enabled = false;
             }
@@ -92,7 +97,7 @@ class HotelHosterServices
     }
 
     public function updateProfileData ($hotelModel, $request, $updateFields = []) {
-    
+
         // Log::info('delete_imgs '.json_encode($request->delete_imgs));
         // if(is_array($request->delete_imgs) && count($request->delete_imgs)){
         //     foreach ($request->delete_imgs as $img_id) {
@@ -123,7 +128,7 @@ class HotelHosterServices
         in_array('show_rules', $updateFields, true) ? $hotel->show_rules = $request->show_rules : '';
         in_array('buttons_home', $updateFields, true) ? $hotel->buttons_home = json_encode($request->buttons) : '';
         in_array('contact_email', $updateFields, true) ? $hotel->contact_email = $request->contact_email : '';
-        
+
 
         //phones
         if((in_array('phone', $updateFields, true) || count($updateFields) == 0)){
@@ -184,10 +189,10 @@ class HotelHosterServices
             $hotel->save();
             return $hotel;
         } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.toggleShowContact'); 
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.toggleShowContact');
         }
     }
-    
+
     public function getShowContact ($hotelId) {
         $hotel = Hotel::find($hotelId);
         if (!$hotel) {

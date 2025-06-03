@@ -204,4 +204,25 @@ class QueryController extends Controller
         }
     }
 
+    public function getCurrentQuery(Request $request){
+        
+        $request->validate([
+            'stayId' => 'required|integer',
+            'guestId' => 'required|integer',
+            'period' => 'required|string',
+        ]);
+
+        try {
+
+            $query = $this->service->getCurrentQuery($request);
+            if(!$query) return bodyResponseRequest(EnumResponse::ACCEPTED, false);
+            //get settings
+            $hotel = $request->attributes->get('hotel');
+            
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $query);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCurrentQuery');
+        }
+    }
+
 }

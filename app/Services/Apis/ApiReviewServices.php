@@ -226,13 +226,13 @@ class ApiReviewServices {
         $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/leakedReviews/storeBulkByOta", $body, $headers, 60);
         
         $data = null;
-        if (!isset($response_request['ok']) || !$response_request['ok']) {
-            var_dump('todo ok en leakedReviewsStoreBulkByOta');
-            // \Log::info($response_request);
+        if (isset($response_request['ok']) && $response_request['ok']) {
+            var_dump('todo ok en leakedReviewsStoreBulkByOta '.$ota);
+            \Log::info("Success Leaked Reviews Store Bulk By Ota $ota");
             return;
         } else {
             var_dump('error en leakedReviewsStoreBulkByOta');
-            \Log::info("Leaked Reviews Store Bulk By Ota $ota");
+            \Log::error("Error Leaked Reviews Store Bulk By Ota $ota");
             $data = $response_request ?? null;
         }
         return $data;
@@ -251,12 +251,13 @@ class ApiReviewServices {
         $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/translateAndResponse/storeLastMonthByOta", $body, $headers, 60);
         // \Log::info($response_request);
         $data = null;
-        if (!isset($response_request['ok']) || !$response_request['ok']) {
-            var_dump('todo ok en translateReviewsByOta');
+        if (isset($response_request['ok']) && $response_request['ok']) {
+            var_dump('todo ok en translateReviewsByOta '.$ota);
+            \Log::info("Success Translate Reviews $ota");
             return;
         } else {
-            var_dump('error en translateReviewsByOta');
-            \Log::info("Translate Reviews $ota");
+            var_dump('error en translateReviewsByOta '.$ota);
+            \Log::error("Error Translate Reviews $ota");
             $data = $response_request ?? null;
         }
         return $data;

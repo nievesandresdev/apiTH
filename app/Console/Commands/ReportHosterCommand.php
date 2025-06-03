@@ -69,8 +69,8 @@ class ReportHosterCommand extends Command
         $from = now()->startOfMonth()->format('Y-m-d'); // Primer día del mes actual
         $to = now()->subDay()->format('Y-m-d');         // Ayer (último día del mes pasad
          $this->getUsersInformGeneral($this->notificationFiltersInformGeneral, $this->specificChannels, 1, $from, $to);
-        
-        
+
+
     }
 
     /**
@@ -80,7 +80,7 @@ class ReportHosterCommand extends Command
     {
         Log::info('inicia cron semana');
         $from = now()->subWeek()->startOfWeek()->format('Y-m-d'); // Inicio de la semana pasada
-        $to = now()->subWeek()->endOfWeek()->format('Y-m-d');     // Fin de la semana pasada    
+        $to = now()->subWeek()->endOfWeek()->format('Y-m-d');     // Fin de la semana pasada
         $this->getUsersInformGeneral($this->notificationFiltersInformGeneral, $this->specificChannels, 2, $from, $to);
     }
 
@@ -93,10 +93,10 @@ class ReportHosterCommand extends Command
             Log::info('from: ' . $from);
             Log::info('to: ' . $to);
             $usersByChannel = $this->userServices->getUsersWithNotifications($notificationFilters, $specificChannels, $periodicity);
-            
+
             // Primero creamos un mapa de hoteles a usuarios
             $hotelsToUsers = [];
-            
+
             foreach ($usersByChannel as $channel => $users) {
                 foreach ($users as $user) {
                     foreach ($user->hotel as $hotel) {
@@ -110,7 +110,7 @@ class ReportHosterCommand extends Command
             }
             foreach ($hotelsToUsers as $hotelId => $users) {
                 Log::info("Procesando hotel ID: $hotelId");
-                
+
                 // Obtenemos las estadísticas para este hotel (solo una consulta por hotel)
                 $hotelStats = $this->getStats($hotelId, $from, $to);
                 if ($hotelStats) {
@@ -119,7 +119,7 @@ class ReportHosterCommand extends Command
                         $periodReport = $periodicity === 1 ? 'monthly' : 'weekly';
                         $links = [
                             'urlToReport' => "{$saasUrl}seguimiento/general-report?periodType={$periodReport}&from={$from}&to={$to}&redirect=view&code={$user->login_code}",
-                            'urlComunications' => "{$saasUrl}comunicaciones?redirect=view&code={$user->login_code}",
+                            'urlComunications' => "{$saasUrl}promociona-webapp?redirect=view&code={$user->login_code}",
                             'urlPromotions' => "{$saasUrl}promociona-webapp?redirect=view&code={$user->login_code}",
                         ];
                         Log::info("Enviando reporte del hotel $hotelId al usuario: " . $user->email);
@@ -134,7 +134,7 @@ class ReportHosterCommand extends Command
                     Log::info("No hay estadísticas disponibles para el hotel $hotelId");
                 }
             }
-            
+
         } catch (\Exception $e) {
             Log::error('Error en getUsersInformGeneral: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());

@@ -15,14 +15,14 @@
     @include('components.mails.headerPostCheckinStyles')
 </head>
 <body style="margin: 0; padding: 0; background-color: #FAFAFA;">
-    <div style="max-width: 568px; margin: 0 auto">
-        <div style=" padding-top: 16px; text-align: center; padding-bottom:24px">
+    <div class="content-container" style="max-width: 568px; margin: 0 auto; padding: 0 12px; background-color: #ffff;">
+        <div style=" padding-top: 16px; text-align: center; padding-bottom:24px; background-color: #ffffff;">
             <span style="margin: 0; font-size: 28px;font-style: normal;font-weight: 600;line-height: 110%;">{{ $hotel->name }}</span>
         </div>
         @include('components.mails.postCheckout.headerPostCheckout',['guest_name' => $guest->name,'hotel_name' => $hotel->name,'after' => $after])
     </div>
 
-    <div class="container" style="max-width: 488px; margin: 24px auto; background-color: #ffff;">
+    <div class="container" style="max-width: 568px; margin: 0 auto;  padding: 0 12px; background-color: #ffffff;">
         @if($data['queryData'] && !$data['queryData']['answered'] )
             @include('components.mails.feedback',[
                 'currentPeriod' => $data['queryData']['currentPeriod'],

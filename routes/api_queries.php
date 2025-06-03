@@ -28,6 +28,7 @@ Route::middleware('auth.either:user,guest')->group(function () {
         Route::post('/saveResponse', [QueryController::class, 'saveResponse']);
         Route::get('/existingPendingQuery', [QueryController::class, 'existingPendingQuery']);
         Route::post('/visited', [QueryController::class, 'visited']);
+        Route::get('/getCurrentQuery', [QueryController::class, 'getCurrentQuery']);
         Route::get('/getCurrentAndSettingsQuery', [QueryController::class, 'getCurrentAndSettingsQuery']);
         Route::group(['prefix' => 'hoster'], function () {
             Route::get('/getFeedbackSummaryByGuest', [StayQueryHosterController::class, 'getFeedbackSummaryByGuest']);

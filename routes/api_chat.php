@@ -16,6 +16,7 @@ Route::middleware('auth.either:user,guest')->group(function () {
         Route::get('/getAvailavilityByHotel/', [ChatController::class, 'getAvailavilityByHotel']);
         Route::get('/getAvailableLanguages', [ChatController::class, 'getAvailableLanguages']);
         Route::get('/getAllSettings', [ChatController::class, 'getAllSettings']);
+        Route::get('/getChatHoursByHotel', [ChatController::class, 'getChatHoursByHotel']);
         //hoster endpoints
         Route::group(['prefix' => 'hoster'], function () {
 
@@ -37,7 +38,6 @@ Route::middleware('auth.either:user,guest')->group(function () {
                 Route::post('/updateAvailability', [ChatSettingsController::class, 'updateAvailability']);
                 Route::post('/updateResponses', [ChatSettingsController::class, 'updateResponses']);
             });
-
         });
     });
 });
