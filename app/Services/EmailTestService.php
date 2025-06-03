@@ -49,7 +49,7 @@ class EmailTestService
         $guestDemo = $demo['guest'];
         $chainSubdomain = $hotel->subdomain;
         $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
-        $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'chat',"e={$stay->id}&g={$guestDemo->id}&openContactModal=true");
+        $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'',"openContactModal=true");
 
 
         return [
