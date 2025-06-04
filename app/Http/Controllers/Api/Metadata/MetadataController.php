@@ -17,7 +17,7 @@ class MetadataController extends Controller
     public function show($slug)
     {
         // Busca el hotel por su slug
-        $hotel = Hotel::where('slug', $slug)->first();
+        $hotel = Hotel::where('subdomain', $slug)->first();
         
         // Si no se encuentra el hotel, devuelve un 404
         if (!$hotel) {
