@@ -203,8 +203,16 @@
                 </div>
             </div>
 
-            <div style="margin-top: 32px;text-align: center; font-family: 'Roboto', sans-serif !important;">
+           {{--  <div style="margin-top: 32px;text-align: center; font-family: 'Roboto', sans-serif !important;">
                 <a href="mailto:{{$data['guestEmail']}}" class="go-report-button" style="font-family: 'Roboto', sans-serif !important; color:#333333 !important;">
+                    Responder al huésped
+                </a>
+            </div> --}}
+            <div style="max-width:260px;margin:0 auto;margin-top: 32px;">
+                <a
+                    href="mailto:{{$data['guestEmail']}}"
+                    style="margin:0;border-radius: 6px;background-color: #FFD453;padding: 12px 0;text-align:center;color:#333333 !important;font-size: 14px;font-weight: 600;line-height: 110%;font-family:'Roboto', sans-serif;margin-top:16px;display:block;text-decoration: none;width:100%"
+                >
                     Responder al huésped
                 </a>
             </div>
