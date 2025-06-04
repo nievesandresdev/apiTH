@@ -56,8 +56,6 @@ class HotelButtonsService {
     {
         $button = HotelButton::where('id', $id)->first();
 
-       //return $button->is_visible;
-
         if (!$button) {
             return false;
         }
@@ -69,16 +67,16 @@ class HotelButtonsService {
                 ->where('hotel_id', $button->hotel_id)
                 ->max('order') ?? -1;
 
-            // Actualizamos el botón con el nuevo orden (último) y lo hacemos visible
+            // Actualizamos el botón con el nuevo orden (último) y se hacemos visible
             $button->order = $lastOrder + 1;
             $button->is_visible = true;
         } else {
-            // Si lo estamos ocultando, obtenemos el último orden de los botones ocultos
+            // Si lo estamos ocultando, agarramos el último orden de los botones ocultos
             $lastHiddenOrder = HotelButton::where('is_visible', false)
                 ->where('hotel_id', $button->hotel_id)
                 ->max('order') ?? -1;
 
-            // Actualizamos el botón con el nuevo orden (último) y lo hacemos oculto
+            // Actualizamos el botón con el nuevo orden (último) y se hace invisible
             $button->order = $lastHiddenOrder + 1;
             $button->is_visible = false;
         }
