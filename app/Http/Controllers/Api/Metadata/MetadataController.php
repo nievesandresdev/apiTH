@@ -11,13 +11,13 @@ class MetadataController extends Controller
  /**
      * Obtiene los metadatos para un hotel específico
      *
-     * @param string $slug El identificador único del hotel
+     * @param string $subdomain El identificador único del hotel
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show($slug)
+    public function show($subdomain)
     {
-        // Busca el hotel por su slug
-        $hotel = Hotel::where('subdomain', $slug)->first();
+        // Busca el hotel por su subdomain
+        $hotel = Hotel::where('subdomain', $subdomain)->first();
         
         // Si no se encuentra el hotel, devuelve un 404
         if (!$hotel) {
@@ -33,7 +33,7 @@ class MetadataController extends Controller
                 'title' => $hotel->name,
                 'description' => $hotel->description,
                 'image' => config('url_bucket').$hotel->image,
-                'url' => 'https://' . $slug . '.thehoster.app/',
+                'url' => 'https://' . $subdomain . '.thehoster.app/',
                 'hotel_name' => $hotel->name,
             ]
         ]);
