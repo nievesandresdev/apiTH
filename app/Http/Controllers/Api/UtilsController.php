@@ -17,6 +17,7 @@ use App\Models\Query;
 use App\Models\QuerySetting;
 use App\Models\Stay;
 use App\Models\RewardStay;
+use App\Mail\Queries\DissatisfiedGuest;
 /*services*/
 use App\Services\ChatService;
 use App\Services\Hoster\Chat\ChatSettingsServices;
@@ -333,7 +334,7 @@ class UtilsController extends Controller
         $hotelId = 291;
         $hotel = Hotel::find($hotelId);
         $showNotify = true;
-        $query = Query::find(579);
+        $query = Query::find(222);
         $stay = Stay::find($query->stay_id);
         $guest = Guest::find($query->guest_id);
 
@@ -402,6 +403,31 @@ class UtilsController extends Controller
         ];
         $this->mailService->sendEmail(new ReportHoster($hotel, $showNotify, $stats, $links), 'futfran.dev@gmail.com');
         return view('mails.queries.reportHoster', compact('hotel','showNotify','stats','links'));
+    }
+
+    public function testDissatisfiedGuest(){
+        $hotel = Hotel::find(292);
+        $guest = Guest::find(49);
+        $query = Query::find(222);
+        $stay = Stay::find($query->stay_id);
+        $data = [
+            'guestName' => $guest->name,
+            'checkin' => $stay->check_in,
+            'textDate' => $query->responded_at,
+            'respondedAtFormatted' => $query->responded_at,
+            'respondedHour' => $query->responded_at,
+            'responseLang' => $query->response_lang,
+            'question' => $query->period === 'post-stay' ? '¿Cómo ha sido tu experiencia con nosotros?' : '¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?',
+            'comment' => 'No me ha gustado nada, la habitación estaba sucia y el personal no era amable.'	,
+            'langAbbr' => $query->response_lang,
+            'languageResponse' => EnumsLanguages::NAME[$query->response_lang],
+            'urlToStay' => null,
+            'guestEmail' => $guest->email,
+        ];
+        $showNotify = true;
+        //dd($data);
+        $this->mailService->sendEmail(new DissatisfiedGuest($hotel, $showNotify, $data), 'futfran.dev@gmail.com');
+        return view('Mails.queries.DissatisfiedGuest', compact('hotel','guest','data'));
     }
 
 
