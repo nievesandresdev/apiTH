@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UtilityController;
-use App\Http\Controllers\Api\revieNotificationController;
+//use App\Http\Controllers\Api\revieNotificationController;
 use App\Http\Controllers\Subdomain\SubdomainController;
 use App\Http\Controllers\Api\{
     LanguageController,
@@ -108,9 +108,9 @@ Route::group(['prefix' => 'dashboard'], function () {
 });
 
 
-Route::group(['prefix' => 'review/notification'], function () {
+/*Route::group(['prefix' => 'review/notification'], function () {
     Route::post('/', [revieNotificationController::class, 'send']);
-});
+});*/
 
 Route::post('/async-hotel-default', [AsyncHotelDefaultController::class, 'handle']);
 Route::get('/hotel/ids-cloned', [AsyncHotelDefaultController::class, 'getIdsCloned']);
