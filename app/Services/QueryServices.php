@@ -319,7 +319,7 @@ class QueryServices {
                     "respondedHour" => $respondedAt->format('H:i') ?? '-',
                     "responseLang" => $query->response_lang,
                     "question" => $query->period === 'post-stay' ? $questionPostStay : $questionInStay,
-                    "comment" =>  $query->comment ? translateQualification($query->qualification, $query->period).'.'.$query->comment[$query->response_lang] : translateQualification($query->qualification, $query->period),
+                    "comment" =>  $query->comment ? translateQualification($query->qualification, $query->period).'. '.$query->comment[$query->response_lang] : translateQualification($query->qualification, $query->period),
                     "langAbbr" => $query->response_lang,
                     "languageResponse" => EnumsLanguages::NAME[$query->response_lang],
                     "urlToStay" => null,

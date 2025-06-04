@@ -405,7 +405,76 @@ class UtilsController extends Controller
         return view('mails.queries.reportHoster', compact('hotel','showNotify','stats','links'));
     }
 
-    public function test(){
+
+    protected function test()
+    {
+        Log::info('inicia cron semana');
+        $from = now()->startOfWeek()->subDays(1)->format('Y-m-d'); // ultimo dia de la semana pasada
+        $to = now()->endOfWeek()->subDays(1)->format('Y-m-d');     // penultimo dia de esta semana
+        return $this->getUsersInformGeneral(['informGeneral' => true], ['email'], 2, $from, $to);
+    }
+
+
+
+    protected function getUsersInformGeneral($notificationFilters, $specificChannels, $periodicity, $from, $to)
+    {
+        try {
+            
+            $usersByChannel = $this->userServices->getUsersWithNotifications($notificationFilters, $specificChannels, $periodicity);
+
+            // Primero creamos un mapa de hoteles a usuarios
+            $hotelsToUsers = [];
+
+            foreach ($usersByChannel as $channel => $users) {
+                foreach ($users as $user) {
+                    foreach ($user->hotel as $hotel) {
+                        $hotelId = $hotel->id;
+                        if (!isset($hotelsToUsers[$hotelId])) {
+                            $hotelsToUsers[$hotelId] = [];
+                        }
+                        $hotelsToUsers[$hotelId][] = $user;
+                    }
+                }
+            }
+            foreach ($hotelsToUsers as $hotelId => $users) {
+                Log::info("Procesando hotel ID: $hotelId");
+
+                // Obtenemos las estadísticas para este hotel (solo una consulta por hotel)
+                $hotelCurrent = $users[0]->hotel->where('id', $hotelId)->first();
+                $hotelCreatedAt = Carbon::parse($hotelCurrent->created_at)->format('Y-m-d');
+                if ($hotelCreatedAt > $from) {//si el hotel fue creado post $from
+                    $from = $hotelCreatedAt;
+                }
+                $hotelStats = $this->getStats($hotelId, $from, $to);
+                if ($hotelStats) {
+                    foreach ($users as $user) {
+                        $saasUrl = config('app.hoster_url');
+                        $periodReport = $periodicity === 1 ? 'monthly' : 'weekly';
+                        $links = [
+                            'urlToReport' => "{$saasUrl}seguimiento/general-report?periodType={$periodReport}&from={$from}&to={$to}&redirect=view&code={$user->login_code}",
+                            'urlComunications' => "{$saasUrl}promociona-webapp?redirect=view&code={$user->login_code}",
+                            'urlPromotions' => "{$saasUrl}promociona-webapp?redirect=view&code={$user->login_code}",
+                        ];
+                        Log::info("Enviando reporte del hotel $hotelId al usuario: " . $user->email);
+                        if ($this->hasAccents($user->email)) {
+                            Log::info("El email $user->email tiene caracteres no ASCII, se omite");
+                            continue;
+                        }
+
+                        $this->mailService->sendEmail(new ReportHoster($hotel, true, $hotelStats, $links), $user->email);
+                    }
+                } else {
+                    Log::info("No hay estadísticas disponibles para el hotel $hotelId");
+                }
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error en getUsersInformGeneral: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+        }
+    }
+
+    public function testDissatisfiedGuest(){
         $hotel = Hotel::find(292);
         $guest = Guest::find(49);
         $query = Query::find(222);
