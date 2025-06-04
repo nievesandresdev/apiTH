@@ -305,7 +305,8 @@ class QueryServices {
                 $dayLabel = $daysDifference === 1 ? 'día' : 'días';
                 $beforeOrAfter = $respondedAt->lt($referenceDate) ? 'antes' : 'después';
                 $periodLabel = $query->period === 'post-stay' ? 'check-out' : 'check-in';
-                $textDate = "{$daysDifference} {$dayLabel} {$beforeOrAfter} del {$periodLabel}";
+                $respondedAtFormatted = $respondedAt->format('d/m/Y');
+                $textDate = "{$respondedAtFormatted} | {$daysDifference} {$dayLabel} {$beforeOrAfter} del {$periodLabel}";
                 //
                 $saasUrl = config('app.hoster_url');
                 $questionInStay = "¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?";
@@ -314,7 +315,7 @@ class QueryServices {
                     "guestName" => "{$guest->name} {$guest->lastname}",
                     "checkin" => $stay->check_in ?? '-',
                     "textDate" => $textDate,
-                    "respondedAtFormatted" => $respondedAt->format('d/m/Y'),
+                    "respondedAtFormatted" => $respondedAtFormatted,
                     "respondedHour" => $respondedAt->format('H:i') ?? '-',
                     "responseLang" => $query->response_lang,
                     "question" => $query->period === 'post-stay' ? $questionPostStay : $questionInStay,

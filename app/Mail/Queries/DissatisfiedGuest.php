@@ -4,7 +4,7 @@ namespace App\Mail\Queries;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-
+use Illuminate\Support\Str;  
 class DissatisfiedGuest extends Mailable
 {
     use Queueable;
@@ -22,7 +22,15 @@ class DissatisfiedGuest extends Mailable
 
     public function build()
     {
-        return $this->subject('Huésped disconforme')
+        $base    = 'Huésped disconforme';
+        $comment = trim($this->data['comment'] ?? '');
+
+        // Máx. 15 caracteres y sólo si hay comentario
+        $subject = $comment !== ''
+            ? $base.' - '.Str::limit($comment, 40)
+            : $base;
+
+        return $this->subject($subject)
             ->view('Mails.queries.DissatisfiedGuest')
             ->with([
                 'hotel' => $this->hotel,
