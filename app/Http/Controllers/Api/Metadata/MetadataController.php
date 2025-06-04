@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Metadata;
+namespace App\Http\Controllers\Api\Metadata;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
