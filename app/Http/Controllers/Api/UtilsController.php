@@ -505,7 +505,7 @@ class UtilsController extends Controller
         ];
         $showNotify = true;
         //dd($data);
-        // $this->mailService->sendEmail(new DissatisfiedGuest($hotel, $showNotify, $data), 'andresdreamerf@gmail.com');
+        //$this->mailService->sendEmail(new DissatisfiedGuest($hotel, $showNotify, $data), 'xxxx@gmail.com');
         return view('Mails.queries.DissatisfiedGuest', compact('hotel','guest','data'));
     }
 
