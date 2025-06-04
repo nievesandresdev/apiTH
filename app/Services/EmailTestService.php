@@ -44,9 +44,6 @@ class EmailTestService
     public function prepareWelcomeEmailData($hotel, $guest, $request)
     {
         $dates = $this->formatDates($request->date_guest);
-        $demo = $this->getHotelStayDemo($hotel);
-        $stay = $demo['stay'];
-        $guestDemo = $demo['guest'];
         $chainSubdomain = $hotel->subdomain;
         $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
         $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'',"openContactModal=true");
@@ -79,6 +76,9 @@ class EmailTestService
         $dates = $this->formatDates($request->date_guest);
         $chainSubdomain = $hotel->subdomain;
         $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+        $chainSubdomain = $hotel->subdomain;
+        $crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+        $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'',"openContactModal=true");
 
         return [
             'checkData' => $this->prepareCheckData($hotel, $dates),
@@ -91,7 +91,7 @@ class EmailTestService
             'places' => $crosselling['places'],
             'experiences' => $crosselling['experiences'],
             'facilities' => $crosselling['facilities'],
-            'webappChatLink' => '#',
+            'webappChatLink' => $webappChatLink,
             'urlQr' => "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png",
             'urlWebapp' => '#',
             'urlCheckin' => '#',
@@ -105,6 +105,9 @@ class EmailTestService
     public function preparePostCheckinEmailData($hotel, $guest, $request)
     {
         $dates = $this->formatDates($request->date_guest);
+        $chainSubdomain = $hotel->subdomain;
+        //$crosselling = $this->utilityService->getCrossellingHotelForMail($hotel, $chainSubdomain);
+        $webappChatLink = buildUrlWebApp($chainSubdomain, $hotel->subdomain,'',"openContactModal=true");
 
         return [
             'checkData' => $this->prepareCheckData($hotel, $dates),
@@ -117,7 +120,7 @@ class EmailTestService
             'places' => [],
             'experiences' => [],
             'facilities' => [],
-            'webappChatLink' => '#',
+            'webappChatLink' => $webappChatLink,
             'urlQr' => "https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test/qrcodes/qr_nobuhotelsevillatex.png",
             'urlWebapp' => '#',
             'urlCheckin' => '#',
