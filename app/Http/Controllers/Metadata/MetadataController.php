@@ -32,7 +32,7 @@ class MetadataController extends Controller
             'data' => [
                 'title' => $hotel->name,
                 'description' => $hotel->description,
-                'image' => $hotel->image,
+                'image' => config('url_bucket').$hotel->image,
                 'url' => 'https://' . $slug . '.thehoster.app/',
                 'hotel_name' => $hotel->name,
             ]
