@@ -293,6 +293,7 @@ class UtilsController extends Controller
                 'urlCheckin' => $urlCheckin,
                 'hotel' => $hotel,
                 'stay_language' => $stay->language,
+                'test' => false,
                 'urlFooterEmail' => $urlFooterEmail,
                 'urlPrivacy' => buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}"),
             ];

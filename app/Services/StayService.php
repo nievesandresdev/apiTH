@@ -140,15 +140,19 @@ class StayService {
                 $settings = (object)$settingsArray;
             }
 
-            //envio de emails
-            if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
-                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,true);
-            } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
-                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay,false,true);
-            } else {
-                $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+            //envio de emails - try vatch para que no afecte la funcion
+            try {
+                if (now()->greaterThan($stay->check_out)) { // aqui valido si la persona se registro despues del checkout
+                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay, true);
+                } else if (now()->lessThan($stay->check_in)) { // valido si la persona se registro antes del checkin
+                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay, false, true);
+                } else {
+                    $this->guestWelcomeEmail('welcome', $chainSubdomain, $hotel, $guest, $stay);
+                }
+            } catch (\Exception $emailError) {
+                // Log del error pero no afecta la creación de la estancia
+                Log::error('Error enviando correo de bienvenida WELCOMESTAYEMAIL para estancia ' . $stay->id . ': ' . $emailError->getMessage());
             }
-
 
             $colorsExists = $stay->guests()->select('color')->pluck('color');
             $color = $this->guestService->updateColorGuestForStay($colorsExists);
@@ -561,7 +565,8 @@ class StayService {
                 'urlCheckin' => $urlCheckin,
                 'guest_language' => $guest->lang_web,
                 'urlFooterEmail' => $urlFooterEmail,
-                'urlPrivacy' => $urlPrivacy
+                'urlPrivacy' => $urlPrivacy,
+                'test' => false
             ];
 
             //Log::info('dataEmail WelcomeStayEmailServices: '.json_encode($dataEmail, JSON_PRETTY_PRINT));
@@ -578,8 +583,8 @@ class StayService {
 
         } catch (\Exception $e) {
             Log::error('Error service guestWelcomeEmail: ' . $e->getMessage());
-            DB::rollback();
-            return $e;
+            // Removido DB::rollback() para no afectar transacciones externas
+            throw $e; // Re-lanzar la excepción para que sea manejada por el caller
         }
     }
 }

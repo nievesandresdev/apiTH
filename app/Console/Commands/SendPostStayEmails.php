@@ -147,7 +147,8 @@ class SendPostStayEmails extends Command
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
                     'queryData' => $queryData,
-                    'urlPrivacy' => $urlPrivacy
+                    'urlPrivacy' => $urlPrivacy,
+                    'test' => false
                 ];
 
                 try {

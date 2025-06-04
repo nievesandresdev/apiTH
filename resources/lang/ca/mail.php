@@ -103,7 +103,7 @@ return [
     ],
     'chatLink' => [
         'title' => 'Tens dubtes o consultes?',
-        'body' => 'Recorda que a la WebApp pots contactar-nos pel canal de xat.',
+        'body' => 'Recorda que des de la WebApp t’oferim el contacte des de diferents canals.',
         'button' => 'Anar al xat',
     ],
     'qrHotel' => [
