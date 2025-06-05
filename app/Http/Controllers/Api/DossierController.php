@@ -47,6 +47,10 @@ class DossierController extends Controller
             ['tab_number' => $request->tab_number],
             $request->all()
         ); */
+        $dossierData = DossierData::updateOrCreate(
+            ['tab_number' => $request->tab_number],
+            $request->all()
+        );
         //foreach($dossierTypes as $d){
              // Actualizar todos los registros que tengan el mismo dossier_id
             DossierData::where('dossier_id', $dossier->id)
@@ -54,8 +58,9 @@ class DossierController extends Controller
                     //'pricePerRoomPerMonth' => $request->pricePerRoomPerMonth,
                     'implementationPrice' => $request->implementationPrice,
                     'rooms' => $request->rooms,
+                    //'dossier_id' => $dossier->id,
                 ]);
-       // }
+       //}
 
 
         //$dossier = Dossier::find($dossierData->dossier_id);
