@@ -127,7 +127,7 @@ class EmailTestService
             'guest_language' => $guest->lang_web,
             'urlFooterEmail' => '#',
             'urlPrivacy' => '#',
-            'test' => true
+            'test' => false
         ];
     }
 
@@ -155,7 +155,7 @@ class EmailTestService
             'guest_language' => $guest->lang_web,
             'urlFooterEmail' => '#',
             'urlPrivacy' => '#',
-            'test' => true
+            'test' => false
         ];
     }
 

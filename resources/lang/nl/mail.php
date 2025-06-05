@@ -103,7 +103,7 @@ return [
     'chatLink' => [
         'title' => 'Heb je vragen of twijfels?',
         'body' => 'Vergeet dat de WebApp je helpt contact op te nemen via verschillende kanalen.',
-        'button' => 'Ga naar de chat',
+        'button' => 'Contacteer ons',
     ],
     'qrHotel' => [
         'body' => 'Scan de QR-code en krijg toegang tot de WebApp',
