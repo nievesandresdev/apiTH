@@ -79,8 +79,8 @@ class ReportHosterCommand extends Command
     protected function weeklyTracking()
     {
         Log::info('inicia cron semana');
-        $from = now()->subWeek()->startOfWeek()->format('Y-m-d'); // Inicio de la semana pasada
-        $to = now()->subWeek()->endOfWeek()->format('Y-m-d');     // Fin de la semana pasada
+        $from = now()->startOfWeek()->subDays(1)->format('Y-m-d'); // ultimo dia de la semana pasada
+        $to = now()->endOfWeek()->subDays(1)->format('Y-m-d');     // penultimo dia de esta semana
         $this->getUsersInformGeneral($this->notificationFiltersInformGeneral, $this->specificChannels, 2, $from, $to);
     }
 
@@ -89,9 +89,7 @@ class ReportHosterCommand extends Command
     protected function getUsersInformGeneral($notificationFilters, $specificChannels, $periodicity, $from, $to)
     {
         try {
-            Log::info('Iniciando getUsersInformGeneral con periodicity: ' . $periodicity);
-            Log::info('from: ' . $from);
-            Log::info('to: ' . $to);
+            
             $usersByChannel = $this->userServices->getUsersWithNotifications($notificationFilters, $specificChannels, $periodicity);
 
             // Primero creamos un mapa de hoteles a usuarios
@@ -112,6 +110,11 @@ class ReportHosterCommand extends Command
                 Log::info("Procesando hotel ID: $hotelId");
 
                 // Obtenemos las estadísticas para este hotel (solo una consulta por hotel)
+                $hotelCurrent = $users[0]->hotel->where('id', $hotelId)->first();
+                $hotelCreatedAt = Carbon::parse($hotelCurrent->created_at)->format('Y-m-d');
+                if ($hotelCreatedAt > $from) {//si el hotel fue creado post $from
+                    $from = $hotelCreatedAt;
+                }
                 $hotelStats = $this->getStats($hotelId, $from, $to);
                 if ($hotelStats) {
                     foreach ($users as $user) {

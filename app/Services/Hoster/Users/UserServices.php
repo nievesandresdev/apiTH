@@ -309,7 +309,7 @@ class UserServices
         }
 
         $queryUsers = User::select('id', 'email', 'name', 'notifications','login_code')
-            ->with(['hotel:id,name'])
+            ->with(['hotel:id,name,created_at'])
             ->whereNotNull('notifications')
             ->where('del', 0)
             ->where('status', 1)
