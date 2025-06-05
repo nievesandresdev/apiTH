@@ -56,3 +56,4 @@ echo "Todas las tareas programadas se han ejecutado."
 #php artisan db:seed --class=UpdateHotelsShowButtonsSeeder
 #php artisan db:seed --class=UpdateQuerySettingsSeeder
 #php artisan db:seed --class=UpdateRequestSettingsSeeder
+#php artisan db:seed --class=DemoStaysSeeder
