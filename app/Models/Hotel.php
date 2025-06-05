@@ -70,12 +70,21 @@ class Hotel extends Model
         'offer_benefits',
         //
         'show_checkin_stay',
-        'parent_id'
+        'parent_id',
+        //
+        'chat_service_enabled',
+        'checkin_service_enabled',
+        'reviews_service_enabled',
+        //
+        'contact_whatsapp_number',
+        'contact_email',
+        'show_contact',
     ];
 
     //bool offer_benefits
     protected $casts = [
         'offer_benefits' => 'boolean',
+        'buttons_home' => 'boolean',
     ];
 
     /* public function user()
@@ -221,8 +230,15 @@ class Hotel extends Model
         return $query->where('del', 0);
     }
 
+    public function buttons()
+    {
+        return $this->hasMany(HotelButton::class)->orderBy('order');
+    }
 
-
+    public function activeButtons()
+    {
+        return $this->hasMany(HotelButton::class)->where('is_visible', true)->orderBy('order');
+    }
 
     // AUXILIARIES
 
@@ -259,7 +275,7 @@ class Hotel extends Model
         // $plan = $this->stripe->plans->retrieve($request->price_id);
     }
 
-    public function getButtonsHomeAttribute($value)
+ /*    public function getButtonsHomeAttribute($value)
     {
         $defaultButtonsHome = [
             'show_wifi' => false,
@@ -268,8 +284,12 @@ class Hotel extends Model
             'show_all' => false,
         ];
 
-        return $value ? json_decode($value, true) : $defaultButtonsHome;
-    }
+        if ($value === null || $value === 'null' || $value === '') {
+            return $defaultButtonsHome;
+        }
+
+        return json_decode($value, true) ?: $defaultButtonsHome;
+    } */
 
     public function getImageAttribute($value)
     {
@@ -280,6 +300,45 @@ class Hotel extends Model
     {
         return boolval($value);
     }
+
+    public function getChatServiceEnabledAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    public function getCheckinServiceEnabledAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    public function getReviewsServiceEnabledAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    public function getShowContactAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    /* public function getButtonsAttribute()
+    {
+        $allButtons = $this->buttons()->get();
+        $visibleButtons = $allButtons->where('is_visible', true)->sortBy('order')->values();
+        $hiddenButtons = $allButtons->where('is_visible', false)->values();
+
+        return [
+            'visible' => $visibleButtons,
+            'hidden' => $hiddenButtons
+        ];
+    } */
+
+
+
+
+
+
+
 
 
 }

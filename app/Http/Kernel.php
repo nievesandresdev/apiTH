@@ -40,13 +40,14 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\HttpsProtocol::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\CacheResponses::class,
         ],
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            //\App\Http\Middleware\CacheResponses::class,
+            \App\Http\Middleware\CacheResponses::class,
         ],
     ];
 
@@ -72,5 +73,6 @@ class Kernel extends HttpKernel
         'setlocale' => \App\Http\Middleware\SetLocale::class,
         'loadHotel' => \App\Http\Middleware\LoadHotel::class,
         'authStatic' => \App\Http\Middleware\VerifyApiKey::class,
+        'auth.either' => \App\Http\Middleware\AuthenticateEither::class,
     ];
 }

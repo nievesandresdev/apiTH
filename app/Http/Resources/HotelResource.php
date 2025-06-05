@@ -24,7 +24,7 @@ class HotelResource extends JsonResource
         ? auth()->user()->hotel()->wherePivot('hotel_id', $this->id)->wherePivot('is_default', 1)->exists()
         : false;
 
-        $is_subscribed = Subscription::where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists();
+        $is_subscribed = $this->subscription_active ? Subscription::where(['name' => $this->subscription_active, 'stripe_status' => 'active'])->exists() : false;
         //ya hay una key translate para la traduccion
         //dejo el descripcion normal para tener a la mano el original
         //guardado en el perfil del hotel en el sass
@@ -95,7 +95,9 @@ class HotelResource extends JsonResource
             'is_default' => $is_default,
             "buttons_home" => $this->buttons_home,
             // "legal" => $this->policies()->count() > 0 ? false : true,
-            "policies" => $this->policies,
+            "policies_count" => $this->policies()->count(),
+            "wifi_count" => $this->wifiNetworks()->where('visible', 1)->count(),
+            // "policies" => $this->policies,
             "chain" => new ChainResource($this->chain),
             "subscribed"=> $this->subscription_active ? $is_subscribed : false,
             "show_referrals" => $this->show_referrals,
@@ -105,6 +107,11 @@ class HotelResource extends JsonResource
             /* "referrals" => $this->referrals->first(),
             "referent" => $this->referent->first(), */
             "show_checkin_stay" => $this->show_checkin_stay,
+            "reviews_service_enabled" => $this->reviews_service_enabled,
+            "checkin_service_enabled" => $this->checkin_service_enabled,
+            "chat_service_enabled" => $this->chat_service_enabled,
+            "contact_email" => $this->contact_email,
+            "contact_whatsapp_number" => $this->contact_whatsapp_number
         ];
     }
 }

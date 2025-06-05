@@ -55,7 +55,6 @@ class DossierController extends Controller
             ->latest()
             ->first();
 
-
         $newDossierData = $lastData->replicate();
         $newDossierData->tab_number = null;
 

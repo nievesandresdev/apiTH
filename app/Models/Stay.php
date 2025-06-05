@@ -23,11 +23,13 @@ class Stay extends Model
         'sessions',
         'trial',
         'guest_id',
-        'son_id'
+        'son_id',
+        'is_demo'
     ];
 
     protected $casts = [
         'sessions' => 'array',
+        'is_demo' => 'boolean'
     ];
 
     public function staySurvey()

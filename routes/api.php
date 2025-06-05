@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UtilityController;
-use App\Http\Controllers\Api\revieNotificationController;
 use App\Http\Controllers\Subdomain\SubdomainController;
 use App\Http\Controllers\Api\{
     LanguageController,
@@ -52,6 +51,8 @@ Route::post('/language/getforItem', [LanguageController::class, 'getLanguageForI
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/login/code/{code}', [AuthController::class, 'loginByCode']);
+
     //loginAdmin
     Route::post('/loginAdmin', [AuthController::class, 'loginAdmin']);
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -81,8 +82,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/getUsers', [UsersController::class, 'getUsers']);
         Route::get('/getUser', [UsersController::class, 'getUser']);
 
-
-
         Route::get('/getTrial', [UsersController::class, 'getTrial']);
         //getUserData
         Route::get('/getUserData', [AuthController::class, 'getUserData']);
@@ -95,26 +94,18 @@ Route::middleware('auth:api')->group(function () {
 
         Route::get('/get-subscription-status', [UsersController::class, 'getStatusSubscription']);
 
-
         //test mail
         Route::get('/testMail', [UsersController::class, 'testMail']);
     });
 
-
-
-    //dashboard
-
 });
-        Route::group(['prefix' => 'dashboard'], function () {
-            Route::get('/dataCustomerExperience', [DasboardController::class, 'dataCustomerExperience']);
-            Route::get('/dataFeedback', [DasboardController::class, 'dataFeedback']);
-            Route::get('/getDataReviewOTA', [DasboardController::class, 'getDataReviewOTA']);
-        });
 
-
-Route::group(['prefix' => 'review/notification'], function () {
-    Route::post('/', [revieNotificationController::class, 'send']);
+Route::group(['prefix' => 'dashboard'], function () {
+    Route::get('/dataCustomerExperience', [DasboardController::class, 'dataCustomerExperience']);
+    Route::get('/dataFeedback', [DasboardController::class, 'dataFeedback']);
+    Route::get('/getDataReviewOTA', [DasboardController::class, 'getDataReviewOTA']);
 });
+
 
 Route::post('/async-hotel-default', [AsyncHotelDefaultController::class, 'handle']);
 Route::get('/hotel/ids-cloned', [AsyncHotelDefaultController::class, 'getIdsCloned']);

@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Mail\Guest\ContactToHoster;
 use App\Mail\Guest\MsgStay;
 use App\Mail\Guest\ResetPasswordGuest;
 use App\Models\Chat;
+use App\Models\ContactEmail;
 use App\Models\Guest;
 use App\Models\hotel;
 use App\Models\NoteGuest;
@@ -23,6 +25,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 use App\Services\MailService;
+use App\Utils\Enums\EnumsLanguages;
 use App\Utils\Enums\GuestEnum;
 
 class GuestService {
@@ -106,6 +109,11 @@ class GuestService {
         }
     }
 
+    public function findByGoogleId($googleId){
+        if (!$googleId) return null;
+        return Guest::where('googleId', $googleId)->first();
+    }
+
     public function updatePasswordGuest($data)
     {
         try {
@@ -135,32 +143,40 @@ class GuestService {
         }
     }
 
-    public function updateDataGuest($guest, $request, $completeCheckin = false) {
+    public function updateDataGuest($guest, $request, $completeCheckin = false, $updateFields = []) {
         try {
+            Log::info('test updateDataGuest'. json_encode($request->all(), JSON_PRETTY_PRINT));
+            Log::info('updateFields'.json_encode(is_array($updateFields)));
+            //name e email no pueden ser borrados
             $guest->name = $request->name ?? $guest->name;
-            $guest->lastname = $request->lastname ?? $guest->lastname;
-            $guest->second_lastname = $request->secondLastname ?? $guest->second_lastname;
             $guest->email = $request->email ?? $guest->email;
-            $guest->phone = $request->phone ?? $guest->phone;
-            $guest->sex = $request->gender ?? $guest->sex;
-            if($request->birthdate){
+            
+            in_array('lastname', $updateFields, true) || count($updateFields) == 0 ? $guest->lastname = $request->lastname : '';
+            in_array('secondLastname', $updateFields, true) || count($updateFields) == 0 ? $guest->second_lastname = $request->secondLastname : '';
+            in_array('gender', $updateFields, true) || count($updateFields) == 0 ? $guest->sex = $request->gender : '';
+
+            if($request->birthdate && (in_array('birthdate', $updateFields, true) || count($updateFields) == 0)){ 
                 $birthdate = Carbon::createFromFormat('d/m/Y', $request->birthdate)
                 ->format('Y-m-d');
                 $guest->birthdate = $birthdate;
             }
+            in_array('responsibleAdult', $updateFields, true) || count($updateFields) == 0 ? $guest->responsible_adult = $request->responsibleAdult : '';
+            in_array('kinshipRelationship', $updateFields, true) || count($updateFields) == 0 ? $guest->kinship_relationship = $request->kinshipRelationship : '';
+            in_array('nationality', $updateFields, true) || count($updateFields) == 0 ? $guest->nationality = $request->nationality : '';
+            in_array('docType', $updateFields, true) || count($updateFields) == 0 ? $guest->doc_type = $request->docType : '';
+            
             //
-            $guest->responsible_adult = $request->responsibleAdult ?? $guest->responsible_adult;
-            $guest->kinship_relationship = $request->kinshipRelationship ?? $guest->kinship_relationship;
-            //
-            $guest->nationality = $request->nationality ?? $guest->nationality;
-            $guest->doc_type = $request->docType ?? $guest->doc_type;
-            $guest->doc_support_number = $request->docSupportNumber ?? $guest->doc_support_number;
-            $guest->doc_num = $request->docNumber ?? $guest->doc_num;
-            $guest->country_address = $request->countryResidence ?? $guest->country_address;
-            $guest->postal_code = $request->postalCode ?? $guest->postal_code;
-            $guest->municipality = $request->municipality ?? $guest->municipality;
-            $guest->address = $request->addressResidence ?? $guest->address;
-            $guest->checkin_email = $request->checkinEmail ?? null;
+            in_array('docSupportNumber', $updateFields, true) || count($updateFields) == 0 ? $guest->doc_support_number = $request->docSupportNumber : '';
+            in_array('docNumber', $updateFields, true) || count($updateFields) == 0 ? $guest->doc_num = $request->docNumber : '';
+            in_array('countryResidence', $updateFields, true) || count($updateFields) == 0 ? $guest->country_address = $request->countryResidence : '';
+            in_array('postalCode', $updateFields, true) || count($updateFields) == 0 ? $guest->postal_code = $request->postalCode : '';
+            in_array('municipality', $updateFields, true) || count($updateFields) == 0 ? $guest->municipality = $request->municipality : '';
+            in_array('addressResidence', $updateFields, true) || count($updateFields) == 0 ? $guest->address = $request->addressResidence : '';
+            in_array('checkinEmail', $updateFields, true) || count($updateFields) == 0 ? $guest->checkin_email = $request->checkinEmail : '';
+    
+            if((in_array('phone', $updateFields, true) || count($updateFields) == 0)){
+                $guest->phone = strlen($request->phone) > 4 ? $request->phone : null;
+            }
 
             if($completeCheckin){
                 $guest->complete_checkin_data = true;
@@ -322,10 +338,9 @@ class GuestService {
 
             // Log::info('pass '.$data->password);
             if (isset($data->password) && !empty($data->password)) {
-                $guest->password = bcrypt($data->password);
-                // Log::info('update pass'. $guest->password);
+                // $guest->password = bcrypt($data->password);
+                $guest->password = Hash::make($data->password);
             }
-
             $guest->save();
             return $guest;
         } catch (\Exception $e) {
@@ -334,17 +349,15 @@ class GuestService {
     }
 
     public function confirmPassword($data){
-        try{
+        // try{
             $guest = $this->findByEmail($data->email);
-            Log::info('$guest find '.json_encode($guest));
-            Log::info('compare '.Hash::check($data->password, $guest->password));
             if ($guest && Hash::check($data->password, $guest->password)) {
                 return $guest;
             }
             return null;
-        } catch (\Exception $e) {
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
-        }
+        // } catch (\Exception $e) {
+        //     return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.confirmPassword');
+        // }
     }
 
     public function sendEmail($stayId,$guestId,$guestEmail,$hotelId,$concept = null){
@@ -472,7 +485,7 @@ class GuestService {
     public function resetPassword($token, $newPassword){
 
         try {
-
+            $newPassword = Hash::make($newPassword);
             $reset = DB::table('password_resets')->where([
                 ['token', $token]
             ])->first();
@@ -631,4 +644,32 @@ class GuestService {
         }
     }
 
+    public function sendContactEmail($data, $guest, $stay, $hotelContactEmail){
+        try {
+            $contactEmail = ContactEmail::create([
+                'stay_id' => $data->stayId,
+                'guest_id' => $data->guestId,
+                'message' => $data->message
+            ]);
+
+            $data = [
+                'guestName' => $guest->name.' '.$guest->lastname,
+                'guestEmail' => $guest->email,
+                'guestLanguageAbbr' => $guest->lang_web,
+                'guestLanguageName' => EnumsLanguages::NAME[$guest->lang_web],
+                'stayCheckin' => Carbon::parse($stay->check_in)->format('d/m/Y'),
+                'stayCheckout' => Carbon::parse($stay->check_out)->format('d/m/Y'),
+                'message' => $data->message
+            ];
+            
+            Mail::to($hotelContactEmail)->send(new ContactToHoster($data));
+            return $contactEmail;
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    public function getContactEmailsByStayId($stayId, $guestId){
+        return ContactEmail::where('stay_id', $stayId)->where('guest_id', $guestId)->get();
+    }
 }

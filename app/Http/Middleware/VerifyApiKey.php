@@ -23,6 +23,7 @@ class VerifyApiKey
             'api/guest/auth/facebook/deleteData',
             'test',
             'testEmailPostCheckout',
+            'testDissatisfiedGuest',
             'testPrepareYourArrival',
             'testPostCheckin',
             'testEmailGeneral',

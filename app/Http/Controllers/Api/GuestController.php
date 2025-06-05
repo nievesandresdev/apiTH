@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\GuestResource;
 use App\Http\Resources\StayResource;
 use App\Models\Guest;
+use App\Models\Stay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -194,8 +195,9 @@ class GuestController extends Controller
 
 
     public function updateDataGuest(Request $request) {
+        
         $guest = Guest::find($request->id);
-
+        
         if (!$guest) {
             $data = [
                 'message' => __('response.bad_request_long')
@@ -212,8 +214,35 @@ class GuestController extends Controller
             // Guarda el nuevo avatar usando el helper
             $guest->avatar = saveImage($request->file('avatar'), 'guest-avatar', null, null, false, null);
         }
+        //sanar inputs null
+        $inputs = $request->all();
+        
+        array_walk($inputs, function (&$value) {
+            if (is_string($value) && strtolower($value) === 'null') {
+                $value = null;
+            }
+        });
+        // Reemplazamos el request con los valores saneados
+        $request->replace($inputs);
 
-        $model = $this->service->updateDataGuest($guest, $request);
+        // Obtienes el valor bruto de updateFields (puede venir como array o string)
+        $rawFields = $request->updateFields;
+
+        // Si es un string, lo convertimos en array separando por comas y quitando espacios
+        if (is_string($rawFields)) {
+            $updateFields = array_map('trim', explode(',', $rawFields));
+        } else {
+            // Si ya es array (o null), lo dejamos tal cual
+            $updateFields = $rawFields;
+        }
+
+        // Ahora llamas al servicio siempre con un array (o null)
+        $model = $this->service->updateDataGuest(
+            $guest,
+            $request,
+            false,
+            $updateFields
+        );
 
         if (!$model) {
             $data = [
@@ -332,7 +361,36 @@ class GuestController extends Controller
         }
     }
 
+    public function sendContactEmail(Request $request){
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $guest = Guest::find($request->guestId);
+            $stay = Stay::find($request->stayId);
+            $model = $this->service->sendContactEmail($request, $guest, $stay, $hotel->contact_email);
+            if(!$guest || !$stay || !$model){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.sendContactEmail');
+        }
+    }
 
+    public function getContactEmailsByStayId(Request $request){
+        $stayId = $request->stayId;
+        $guestId = $request->guestId;
+        $model = $this->service->getContactEmailsByStayId($stayId, $guestId);
+        if(!$model){
+            $data = [
+                'message' => __('response.bad_request_long')
+            ];
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+        }
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+    }
 
 
 }

@@ -7,6 +7,9 @@ use Illuminate\Console\Command;
 use App\Services\Apis\ApiReviewServices;
 use App\Models\Hotel;
 use App\Jobs\UpdateReviewsJob;
+use App\Jobs\UpdateTranslateReviewsJob;
+use Illuminate\Support\Facades\Bus;
+
 class UpdateReviewsCommand extends Command
 {
     protected $signature = 'app:update-reviews-command';
@@ -21,6 +24,9 @@ class UpdateReviewsCommand extends Command
 
     public function handle()
     {
-        UpdateReviewsJob::dispatch($this->apiReviewService); 
+        Bus::chain([
+            new UpdateReviewsJob($this->apiReviewService),
+            new UpdateTranslateReviewsJob($this->apiReviewService)
+        ])->dispatch();
     }
 }

@@ -27,14 +27,15 @@ class RequestSettingService {
     }
 
 
-    public function getRequestData($settings, $hotel, $period){
-        Log::info('msg_text: ' . json_encode($settings->msg_text));
-        Log::info('in_stay_msg_text: ' . json_encode($settings->in_stay_msg_text));
+    public function getRequestData($settings, $guestName, $period){
+        // Log::info('msg_text: ' . json_encode($settings->msg_text,JSON_PRETTY_PRINT));
+        // Log::info('guestName: ' . json_encode($guestName));
+        // Log::info('period: ' . json_encode($period));
         try {
             $localLang = localeCurrent();
             
             //titulo
-            $nameHotelText = "[nombre del hotel]";
+            $nameGuestText = "[nombreHuesped]";
             
             $title = $settings->msg_title[$localLang];
             $text = preg_replace('/>\s+</', '><', $settings->msg_text[$localLang]);
@@ -43,7 +44,7 @@ class RequestSettingService {
                 $text = preg_replace('/>\s+</', '><', $settings->in_stay_msg_text[$localLang]);
             }
 
-            $title = str_replace($nameHotelText, $hotel->name, $title);
+            $title = str_replace($nameGuestText, $guestName, $title);
 
             //mensaje
             $linkText = "[Link a las OTAs]";
