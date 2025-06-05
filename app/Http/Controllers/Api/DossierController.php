@@ -39,29 +39,29 @@ class DossierController extends Controller
     //store update or create
     public function storeUpdateOrCreate(Request $request)
     {
-        if($request->rooms >=1 && $request->rooms <= 100){
-            $type = 'B';
-        }else if($request->rooms >=101 ){
-            $type = 'A';
-        }else{
-            $type = 'A';
-        }
+        //buscar dossier domain
+        //$dossier = Dossier::where('id', $request->dossier_id)->first();
+        //buscar ambosos tipos a y b
+        $dossierTypes = Dossier::where('domain', $request->domain)->get();
 
         // Crear o actualizar el registro
         $dossierData = DossierData::updateOrCreate(
             ['tab_number' => $request->tab_number],
             $request->all()
         );
-
-        // Actualizar todos los registros que tengan el mismo dossier_id
-        DossierData::where('dossier_id', $dossierData->dossier_id)
+        foreach($dossierTypes as $d){
+             // Actualizar todos los registros que tengan el mismo dossier_id
+            DossierData::where('dossier_id', $d->id)
             ->update([
-                'pricePerRoomPerMonth' => $request->pricePerRoomPerMonth,
-                'implementationPrice' => $request->implementationPrice,
-            ]);
+                    //'pricePerRoomPerMonth' => $request->pricePerRoomPerMonth,
+                    'implementationPrice' => $request->implementationPrice,
+                    'rooms' => $request->rooms,
+                ]);
+        }
 
-        $dossier = Dossier::find($dossierData->dossier_id);
-        return response()->json($dossier->load('dossierData'));
+
+        //$dossier = Dossier::find($dossierData->dossier_id);
+        return response()->json($dossierData->dossier->load('dossierData'));
     }
 
     public function storeDossierData(Request $request)
