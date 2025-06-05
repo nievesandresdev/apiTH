@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class StayHosterServices {
-    
+
     public $queryService;
     public $utilsServices;
     public $staySessionServices;
@@ -33,7 +33,7 @@ class StayHosterServices {
     // DB::raw('(SELECT COUNT(*) FROM note_guests as ng WHERE ng.stay_id = stays.id) as guests_notes_count'),
     public function getAllByHotel($hotel, $filters, $offset = 0, $limit = 10) {
         try {
-            
+
             $now = Carbon::now()->format('Y-m-d H:i');
             $limit = $filters['limit'] ?? $limit;
             $offset = $filters['offset'] ?? $offset;
@@ -50,31 +50,33 @@ class StayHosterServices {
                     'stays.check_out',
                     'stays.check_in',
                     'stays.trial',
+                    'stays.is_demo',
                     DB::raw('(SELECT COUNT(*) FROM queries WHERE queries.stay_id = stays.id AND queries.attended = 0 AND queries.answered = 1) as pending_queries_count'),
                     DB::raw('(SELECT COUNT(*) FROM queries WHERE queries.stay_id = stays.id AND queries.answered = 1) as answered_queries_count'),
                     DB::raw('(SELECT MAX(pending) FROM chats WHERE chats.stay_id = stays.id) as has_pending_chats'),
                     DB::raw('(SELECT COUNT(*) FROM chats WHERE chats.stay_id = stays.id) as has_chats'),
-                    DB::raw("CASE 
+                    DB::raw("CASE
                         WHEN '$now' < DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) THEN 'pre-stay'
                         WHEN '$now' >= DATE_FORMAT(stays.check_in, CONCAT('%Y-%m-%d ', COALESCE((SELECT checkin FROM hotels WHERE hotels.id = stays.hotel_id), '16:00'))) AND '$now' < stays.check_out THEN 'in-stay'
                         WHEN '$now' >= stays.check_out AND '$now' THEN 'post-stay'
                         END as period")
                 ])
-                ->where('hotel_id', $hotel->id);
-    
+                ->where('hotel_id', $hotel->id)
+                ->where('is_demo', 0);
+
             if (!empty($filters['search'])) {
                 $query->whereHas('guests', function($q) use ($filters) {
                     $q->where('name', 'like', '%' . $filters['search'] . '%');
                 });
             }
-            
+
             $allStaysOnlySearch = (clone $query)->get();
 
             $periodCondition = !empty($filters['periods']);
             if ($periodCondition) {
                 $query->havingRaw("period IN ('" . implode("','", $filters['periods']) . "')");
             }
-            
+
             $pendingCondition = isset($filters['pendings']) && $filters['pendings'] == 'pending';
             if ($pendingCondition) {
                 $query->where(function($q) {
@@ -82,21 +84,21 @@ class StayHosterServices {
                       ->orWhereRaw('(SELECT MAX(pending) FROM chats WHERE chats.stay_id = stays.id) > 0');
                 });
             }
-            
+
             // $totalCount = (clone $query)->count();
             $allStays = (clone $query)->get();
             $countStayTest = $allStays->where('trial', 1)->count();
             $totalCount = count($allStays);
-            
+
 
             $stays = $query->orderByRaw('
-                CASE 
+                CASE
                     WHEN has_pending_chats = 1 OR pending_queries_count > 0 THEN 0
                     WHEN has_chats > 0 THEN 1
                     WHEN answered_queries_count > 0 THEN 2
                     ELSE 3
-                END ASC, 
-                stays.updated_at DESC, 
+                END ASC,
+                stays.updated_at DESC,
                 stays.id DESC
             ')
             ->offset($offset)
@@ -104,14 +106,14 @@ class StayHosterServices {
             ->get();
             // ->paginate($limit, ['*'], 'page', $page);
             // WHEN stays.room IS NULL OR stays.room = "" AND CURDATE() BETWEEN stays.check_in AND stays.check_out THEN 2
-    
+
             // Counts for all, each period, and pending
             $totalValidCount = $allStays->where('period','!=','post-stay')->count();
 
             $countsByPeriod = $allStays->groupBy('period')->mapWithKeys(function ($items, $period) {
                 return [$period => $items->count()];
             });
-            
+
             //conteos general
             $countsGeneralByPeriod = $allStaysOnlySearch->groupBy('period')->mapWithKeys(function ($items, $period) {
                 return [$period => $items->count()];
@@ -127,8 +129,11 @@ class StayHosterServices {
                 return $carry;
             }, []);
 
-    
-            $stays->each(function ($stay) {
+
+            $stays->each(function ($stay) use ($hotel) {
+                if(!$hotel->chat_service_enabled){
+                    $stay->has_pending_chats = 0;
+                }
                 // Verificamos si al menos uno de sus huéspedes tiene complete_checkin_data = 1
                 $atLeastOneCheckin = $stay->guests->contains(fn($guest) => $guest->complete_checkin_data == 1);
                 // Agregamos la propiedad al modelo (no se guarda en DB, sino en la instancia)
@@ -163,7 +168,7 @@ class StayHosterServices {
             $guestsByPeriod = ['pre-stay' => 0,'in-stay' => 0,'post-stay' => 0];
             $langsTotal = ['es' => 0,'fr' => 0,'en' => 0];
             $percentageLangs = ['es' => 0,'fr' => 0,'en' => 0];
-            
+
             foreach($dataStays['stays'] as $stay){
                 //today data
                 $today == $stay->check_in ? $checkinToday++:'';
@@ -178,7 +183,7 @@ class StayHosterServices {
                 $countsByPeriod[$stay->period] += 1;
             }
 
-            
+
             foreach(['es','en','fr'] as $lang){
                 if($langsTotal[$lang] > 0){
                     $percentageLangs[$lang] = round(($langsTotal[$lang]/$totalGuests)*100);
@@ -206,7 +211,7 @@ class StayHosterServices {
             $stay = Stay::find($stayId);
 
             $periodStay = $this->queryService->getCurrentPeriod($hotel, $stay->id);
-            
+
             //detalle de estancia
             if($periodStay == 'pre-stay'){
                 $untilCheckin = $this->utilsServices->calculateDaysUntilTo($stay->check_in);
@@ -258,7 +263,7 @@ class StayHosterServices {
             $stay = Stay::find($stayId);
             $stayCheckin = $stay->check_in;
             $stayCheckout = $stay->check_out;
-            
+
             //detalle de estancia
             if($periodStay == 'pre-stay'){
                 $untilCheckin = $this->utilsServices->calculateDaysUntilTo($stayCheckin);
@@ -311,7 +316,7 @@ class StayHosterServices {
     }
 
     public function calculateCurrentNight($checkinDate, $checkoutDate) {
-        
+
         $checkin = Carbon::parse($checkinDate);
         $checkout = Carbon::parse($checkoutDate);
         $now = Carbon::now();
@@ -344,7 +349,7 @@ class StayHosterServices {
             // $delete = Stay::where('hotel_id',$hotelId)
             //         ->where('trial',1)
             //         ->delete();
-            
+
 
             $delete = Stay::where('hotel_id', $hotelId)
             ->where('trial', 1)
@@ -357,7 +362,7 @@ class StayHosterServices {
                 DB::table('guest_stay')->where('stay_id', $stay->id)->delete();
                 DB::table('note_guests')->where('stay_id', $stay->id)->delete();
                 DB::table('note_stays')->where('stay_id', $stay->id)->delete();
-                
+
                 // Finalmente, se elimina la estancia
                 $stay->delete();
             });
@@ -371,7 +376,7 @@ class StayHosterServices {
     public function findById($stayId) {
         return Stay::find($stayId);
     }
-    //notes 
+    //notes
 
     public function getAllNotesByStay($stayId){
         return DB::select("
@@ -389,8 +394,8 @@ class StayHosterServices {
             ORDER BY created_at DESC
         ", ['stayId1' => $stayId, 'stayId2' => $stayId]);
     }
-    
-    //guest 
+
+    //guest
 
     public function getGuestListWithNoti($stayId){
         try {

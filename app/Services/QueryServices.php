@@ -15,10 +15,12 @@ use App\Services\Hoster\Users\{UserServices};
 use App\Utils\Enums\EnumResponse;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\Queries\FeedbackMsg;
+use App\Mail\Queries\DissatisfiedGuest;
 use Carbon\Carbon;
 use App\Services\ChatGPTService;
 use Illuminate\Support\Facades\Log;
 use App\Services\MailService;
+use App\Utils\Enums\EnumsLanguages;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -51,27 +53,29 @@ class QueryServices {
             $stayId = $request->stayId ?? null;
             $guestId = $request->guestId ?? null;
             $period = $request->period ?? null;
-            $answered = $request->answered ?? 'null';
-            $visited = $request->visited ?? 'null';
+            $answered = strval($request->answered) == "true" || strval($request->answered) == "false" ? $request->answered : 'null';
+            $visited = strval($request->visited) == "true" || strval($request->visited) == "false" ? $request->visited : 'null';
             $disabled = $request->disabled ?? false;
 
+            Log::info('answered: ' . strval($request->answered));
             $query = Query::where(function($query) use($stayId, $guestId, $period, $visited, $disabled,$answered){
                 if ($stayId) {
+                    Log::info('entro en stayId');
                     $query->where('stay_id', $stayId);
                 }
                 if ($guestId) {
+                    Log::info('entro en guestId');
                     $query->where('guest_id', $guestId);
                 }
                 if ($period) {
-                    $query->where('period', $period);
-                }
-                if ($period) {
+                    Log::info('entro en period');
                     $query->where('period', $period);
                 }
                 if ($visited !== 'null') {
                     $query->where('visited', $visited);
                 }
                 if ($answered !== 'null') {
+                    Log::info('entro en answered'. json_encode($answered));
                     $query->where('answered', $answered);
                 }
                 if ($disabled) {
@@ -84,7 +88,7 @@ class QueryServices {
 
             $data = new QueryResource($model);
 
-            return $model;
+            return $data;
 
         } catch (\Exception $e) {
             return $e;
@@ -170,6 +174,7 @@ class QueryServices {
     }
 
     public function saveResponse ($id, $request, $hotel) {
+        Log::info('saveResponse: ' . json_encode($request, JSON_PRETTY_PRINT));
         try{
             /**
              * guardar nuevo feedback
@@ -256,7 +261,7 @@ class QueryServices {
 
     public function sendNotificationsToHoster ($stay, $hotel, $periodUrl, $query, $guest) {
         try{
-
+            // Log::info('query: ' . json_encode($query, JSON_PRETTY_PRINT));
             $settings = $this->settings->notifications($hotel->id);
 
             /**
@@ -265,6 +270,7 @@ class QueryServices {
 
             $notificationFiltersNewFeedback = [
                 'newFeedback' => true,
+                'informDiscontent' => true,
             ];
 
             $specificChannels = ['push','email'];
@@ -274,6 +280,59 @@ class QueryServices {
             $pushUsersFeedback = $usersByChannel['push'];
             $emailUserNewFeedback = $usersByChannel['email'];
 
+            //email de descontento para el usuario
+            if($query->qualification == 'WRONG' || $query->qualification == 'VERYWRONG'){
+                $users = $usersByChannel['email'] ?? [];
+                $usersWithInformDiscontent = collect($users)
+                    ->filter(function ($user) {
+                        // Decodificar el JSON de notifications
+                        $notifications = json_decode($user['notifications'], true);
+
+                        // Verificar si email.informDiscontent es true
+                        return isset($notifications['email']['informDiscontent'])
+                            && $notifications['email']['informDiscontent'] === true;
+                    })
+                ->values() // Reindexar el array
+                ->all(); // Convertir de nuevo a array si es necesario
+
+                $showNotify = true;
+                //
+                $respondedAt   = Carbon::createFromFormat('Y-m-d H:i:s', $query->responded_at, 'Europe/Madrid');
+                $referenceDate = $query->period === 'post-stay'
+                    ? Carbon::parse($stay->check_out, 'Europe/Madrid')
+                    : Carbon::parse($stay->check_in,  'Europe/Madrid');
+                $daysDifference = max(0, $respondedAt->diffInDays($referenceDate));
+                $dayLabel = $daysDifference === 1 ? 'día' : 'días';
+                $beforeOrAfter = $respondedAt->lt($referenceDate) ? 'antes' : 'después';
+                $periodLabel = $query->period === 'post-stay' ? 'check-out' : 'check-in';
+                $respondedAtFormatted = $respondedAt->format('d/m/Y');
+                $textDate = "{$respondedAtFormatted} | {$daysDifference} {$dayLabel} {$beforeOrAfter} del {$periodLabel}";
+                //
+                $saasUrl = config('app.hoster_url');
+                $questionInStay = "¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?";
+                $questionPostStay = "¿Cómo ha sido tu experiencia con nosotros?";
+                $data = [
+                    "guestName" => "{$guest->name} {$guest->lastname}",
+                    "checkin" => $stay->check_in ?? '-',
+                    "textDate" => $textDate,
+                    "respondedAtFormatted" => $respondedAtFormatted,
+                    "respondedHour" => $respondedAt->format('H:i') ?? '-',
+                    "responseLang" => $query->response_lang,
+                    "question" => $query->period === 'post-stay' ? $questionPostStay : $questionInStay,
+                    "comment" =>  $query->comment ? translateQualification($query->qualification, $query->period).'. '.$query->comment[$query->response_lang] : translateQualification($query->qualification, $query->period),
+                    "langAbbr" => $query->response_lang,
+                    "languageResponse" => EnumsLanguages::NAME[$query->response_lang],
+                    "urlToStay" => null,
+                    "guestEmail" => $guest->email,
+                ];
+                foreach ($usersWithInformDiscontent as $user) {
+                    // Log::info('user: ' . json_encode($user, JSON_PRETTY_PRINT));
+                    $email = $user->email;
+                    $urlToStay = "{$saasUrl}estancias/{$stay->id}/feedback?g={$guest->id}&redirect=view&code={$user->login_code}";
+                    $data['urlToStay'] = $urlToStay;
+                    $this->mailService->sendEmail(new DissatisfiedGuest($hotel, $showNotify, $data), $email);
+                }
+            }
             return [
                 'pushUsersFeedback' => $pushUsersFeedback,
                 'emailUserNewFeedback' => $emailUserNewFeedback,
@@ -308,7 +367,7 @@ class QueryServices {
             //trae los ususarios y sus roles asociados al hotel en cuestion
             //$queryUsers = $this->userServices->getUsersHotelBasicData($hotel->id);
 
-/*
+            /*
             $notificacionFilterFeedbackPending10 = [
                 'pendingFeedback10' => true,
             ]; */
@@ -375,6 +434,35 @@ class QueryServices {
             //}
         } catch (\Exception $e) {
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getResponses');
+        }
+    }
+
+
+    public function getCurrentQuery ($request) {
+
+        try{
+            $query = Query::where('stay_id', $request->stayId)
+            ->where('guest_id', $request->guestId)
+            ->where('period', $request->period)
+            ->first();
+            $query = new QueryResource($query);
+            return $query;
+        } catch (\Exception $e) {
+            //\Log::error('Error Mail Feedback new',$e->getMessage());
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCurrentQuery');
+        }
+    }
+
+    public function existingPendingQuery ($request) {
+        try{
+            $exist = Query::where('stay_id', $request->stayId)
+            ->where('guest_id', $request->guestId)
+            ->where('period', $request->period)
+            ->where('answered', false)
+            ->exists();
+            return $exist;
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getCurrentQueryByStayId');
         }
     }
 }

@@ -18,11 +18,19 @@ class HotelWifiNetworksServices
         }
     }
 
+    public function getAllByHotelAndVisible($hotelId){
+        try{
+            return HotelWifiNetworks::where('hotel_id', $hotelId)->where('visible', 1)->get();
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getAllByHotelAndVisible');
+        }
+    }
+
     public function store($data, $hotelId){
 
         try{
             $save = new HotelWifiNetworks();
-            
+
             $save->hotel_id = $hotelId;
             $save->name = $data->name;
             $save->password = $data->password;
@@ -37,7 +45,7 @@ class HotelWifiNetworksServices
 
         try{
             $update = HotelWifiNetworks::find($networkId);
-            
+
             $update->name = $data->name;
             $update->password = $data->password;
 
@@ -60,5 +68,5 @@ class HotelWifiNetworksServices
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateVisibility');
         }
     }
-    
+
 }

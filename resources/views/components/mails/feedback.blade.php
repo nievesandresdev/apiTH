@@ -1,4 +1,4 @@
-<section style="background: #FFFFFF; border-radius: 3px; margin-left: 16px; margin-right: 36px;">
+<section style="background: #FFFFFF; border-radius: 3px; margin-left: 16px; margin-right: 36px; padding-top: 32px;">
     @if($currentPeriod == 'in-stay')
         <div style="margin-top: 32px;"></div>
     @endif

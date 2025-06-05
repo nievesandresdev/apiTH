@@ -1,19 +1,21 @@
 <?php
 
 return [
-    'default_ttl' => 86400, // 1 hora por defecto
+    'enabled' => env('CACHE_ENABLED', true),
+    
+    'default_ttl' => 300, // 5 minutos por defecto
     
     'excluded_routes' => [
         'api/auth/*',
+        'api/guest/findByIdApi/*',
         //'api/user/profile',
-        //'api/formularios/*'
     ],
     
     'route_specific_ttl' => [
-        'api/place/*' => 86400, // 1 día para endpoints de lugares
+        'api/place/*' => 1800, // 1 día para endpoints de lugares
     ],
     
-    'key_prefix' => 'hotel_prod_:',
+    'key_prefix' => config('app.production') === 'true' ? 'hotel_prod_main:' : 'hotel_prod_test:',
     
     'cacheable_post_routes' => [
         'api/place/getPointers',
@@ -23,6 +25,7 @@ return [
     
     'required_headers' => [
         'subdomainhotel',
+        'reset-cache',
         'authorization'
     ],
     

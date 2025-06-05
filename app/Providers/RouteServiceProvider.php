@@ -31,7 +31,7 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function loadApiRoutes(): void
     {
-        Route::middleware('api')
+        Route::middleware(['api', 'setlocale', 'loadHotel', 'authStatic'])
              ->group(function () {
                  $this->loadModuleRoutes('api_chatgpt.php');
                  $this->loadModuleRoutes('api_hotel.php');
@@ -43,10 +43,11 @@ class RouteServiceProvider extends ServiceProvider
                  $this->loadModuleRoutes('api_city.php');
                  $this->loadModuleRoutes('api_rewards.php');
                  $this->loadModuleRoutes('api_external_platforms.php');
-                 $this->loadModuleRoutes('api_experience.php');
-                 $this->loadModuleRoutes('api_place.php');
+                //  $this->loadModuleRoutes('api_experience.php');
+                //  $this->loadModuleRoutes('api_place.php');
                  $this->loadModuleRoutes('api_chat.php');
                  $this->loadModuleRoutes('api_legal.php');
+                 $this->loadModuleRoutes('api_emails.php');
                  $this->loadModuleRoutes('api_utils.php');
                  $this->loadModuleRoutes('api_facility.php');
                  $this->loadModuleRoutes('api_queries.php');
@@ -58,6 +59,8 @@ class RouteServiceProvider extends ServiceProvider
                  $this->loadModuleRoutes('api_notifications.php');
                  $this->loadModuleRoutes('api_chain.php');
                  $this->loadModuleRoutes('api_dossier.php');
+                 $this->loadModuleRoutes('api_hotel_buttons.php');
+                 $this->loadModuleRoutes('api_metadata.php');
                  // Aquí puedes añadir más archivos de módulos según sea necesario
              });
     }

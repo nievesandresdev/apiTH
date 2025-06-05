@@ -30,6 +30,7 @@ return [
     */
 
     'env' => env('APP_ENV', 'pro'),
+    'production' => env('PRODUCTION', 'false'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,6 +56,9 @@ return [
     |
     */
 
+    'passport_guest_client_id' => env('PASSPORT_CLIENT_ID_GUEST', null),
+    'passport_guest_client_secret' => env('PASSPORT_CLIENT_SECRET_GUEST', null),
+
     'url' => env('APP_URL', 'http://localhost'),
     'guest_path' => env('LOCAL_GUEST_URL', 'http://localhost'),
     'url_bucket' => env('URL_BUCKET', 'https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test'),
@@ -71,7 +75,7 @@ return [
     'azure_openia_base_uri' => env('AZURE_OPENAI_BASE_URI', null),
     'azure_openia_deployment' => env('AZURE_OPENAI_DEPLOYMENT', null),
     'azure_openia_version' => env('AZURE_OPENAI_VERSION', null),
-
+    'discord_webhook_url' => env('DISCORD_WEBHOOK_URL', null),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
