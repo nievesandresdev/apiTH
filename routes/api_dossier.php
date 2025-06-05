@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\{
         Route::get('/getDossierData/{tabNumber}/{type?}', [DossierController::class, 'getDossierData']);
         Route::post('/storeUpdateOrCreate', [DossierController::class, 'storeUpdateOrCreate']);
         Route::post('/createNewScenario', [DossierController::class, 'storeDossierData']);
+        Route::post('/createInitialDossier', [DossierController::class, 'createInitialDossier']);
         Route::delete('/deleteDossierData/{id}', [DossierController::class, 'deleteDossierData']);
     });
 // });
