@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Bus;
 
 class UpdateReviewsCommand extends Command
 {
-    protected $signature = '}';
+    protected $signature = 'app:update-reviews-command';
 
     protected $description = 'Command description';
 
