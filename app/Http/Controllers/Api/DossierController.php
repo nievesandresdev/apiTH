@@ -20,7 +20,7 @@ class DossierController extends Controller
         return response()->json($dossier->load('dossierData'));
     }
 
-    public function getDossierData($tabNumber)
+    public function getDossierData($tabNumber, $type)
     {
         $dossierData = DossierData::where('tab_number', $tabNumber)->first();
         return response()->json($dossierData);
@@ -29,8 +29,16 @@ class DossierController extends Controller
     //store update or create
     public function storeUpdateOrCreate(Request $request)
     {
+        if($request->rooms >=1 && $request->rooms <= 100){
+            $type = 'B';
+        }else if($request->rooms >=101 ){
+            $type = 'A';
+        }else{
+            $type = 'A';
+        }
+
         //buscar dossier domain
-        $dossier = Dossier::where('domain', $request->domain)->where('type', $request->type == '-' ? 'A' : $request->type)->first();
+        $dossier = Dossier::where('domain', $request->domain)->where('type', $type)->first();
         //buscar ambosos tipos a y b
         $dossierTypes = Dossier::where('domain', $request->domain)->get();
 
@@ -43,7 +51,7 @@ class DossierController extends Controller
              // Actualizar todos los registros que tengan el mismo dossier_id
             DossierData::where('dossier_id', $dossier->id)
             ->update([
-                    'pricePerRoomPerMonth' => $request->pricePerRoomPerMonth,
+                    //'pricePerRoomPerMonth' => $request->pricePerRoomPerMonth,
                     'implementationPrice' => $request->implementationPrice,
                     'rooms' => $request->rooms,
                 ]);
