@@ -57,18 +57,18 @@ class DossierController extends Controller
     //store dossierdata new data
     public function storeDossierData(Request $request)
     {
-        //$dossier_id = $request->dossier_id;
-        $type = 'A';
+        $dossier_id = $request->dossier_id;
+       /*  $type = 'A';
         if($request->rooms >=1 && $request->rooms <= 100){
             $type = 'B';
         }else if($request->rooms >=101 ){
             $type = 'A';
-        }
+        } */
 
         //return response()->json(['type' => $type,'request' => $request->all()]);
 
         //$domainDossier = Dossier::where('id', $dossier_id)->first();
-        $dossierType = Dossier::where('domain', $request->domain)->where('type', $type)->first();
+        $dossierType = Dossier::where('id', $dossier_id)->first();
 
         //return response()->json(['dossierType' => $dossierType]);
 
