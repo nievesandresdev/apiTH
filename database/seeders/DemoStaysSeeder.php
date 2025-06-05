@@ -32,7 +32,7 @@ class DemoStaysSeeder extends Seeder
                         'lastname' => 'Demo',
                         'phone' => '123456789',
                         'lang_web' => $hotel->language_default_webapp ?? 'es',
-                        'acronym' => substr($hotel->name, 0, 2),
+                        'acronym' => strtoupper(substr(iconv('UTF-8', 'ASCII//TRANSLIT', $hotel->name), 0, 2)),
                         'color' => '5E7A96',
                         'complete_checkin_data' => true,
                         'checkin_email' => true,
