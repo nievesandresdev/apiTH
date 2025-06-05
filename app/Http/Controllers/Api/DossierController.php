@@ -58,43 +58,18 @@ class DossierController extends Controller
     public function storeDossierData(Request $request)
     {
         $dossier_id = $request->dossier_id;
-       /*  $type = 'A';
-        if($request->rooms >=1 && $request->rooms <= 100){
-            $type = 'B';
-        }else if($request->rooms >=101 ){
-            $type = 'A';
-        } */
 
-        //return response()->json(['type' => $type,'request' => $request->all()]);
-
-        //$domainDossier = Dossier::where('id', $dossier_id)->first();
-        $dossierType = Dossier::where('id', $dossier_id)->first();
-
-        //return response()->json(['dossierType' => $dossierType]);
-
-        $lastData = DossierData::where('dossier_id', $dossierType->id)
+        $lastData = DossierData::where('dossier_id', $dossier_id)
             ->latest()
             ->first();
-
-        //return response()->json(['lastData' => $lastData,'dossierType' => $dossierType]);
 
         $newDossierData = $lastData->replicate();
         $newDossierData->tab_number = null;
 
-        // IMPORTANTE: Establecer el dossier_id correcto para el tipo correspondiente
-        $newDossierData->dossier_id = $dossierType->id;
-
         $newDossierData->save();
 
-        // Debug: Ver los IDs antes y después
-       /*  $debug = [
-            'dossierType_id' => $dossierType->id,
-            'newDossierData_after_save' => $newDossierData->dossier_id,
-            'newDossierData_fresh' => $newDossierData->fresh()->dossier_id,
-        ]; */
-
-        // Retornar el dossier correcto con todos sus datos incluyendo el nuevo registro
-        return response()->json($dossierType->load('dossierData'));
+        $dossier = Dossier::find($dossier_id);
+        return response()->json($dossier->load('dossierData'));
     }
 
     public function deleteDossierData($id)
