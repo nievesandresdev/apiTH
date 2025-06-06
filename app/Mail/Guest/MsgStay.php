@@ -61,6 +61,7 @@ class MsgStay extends Mailable
                     ? $this->hotel->sender_mail_mask
                     : config('app.mail_sender');
         $fromName   = $this->hotel->name;
+        \Log::info('MsgStay → direct: ' . $this->hotel->sender_mail_mask);
         \Log::info('MsgStay → smtpSender: ' . $smtpSender);
         \Log::info('MsgStay → maskEmail:  ' . $maskEmail);
         return new Envelope(
