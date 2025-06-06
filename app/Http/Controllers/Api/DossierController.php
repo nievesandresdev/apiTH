@@ -71,7 +71,7 @@ class DossierController extends Controller
 
         // Crear o actualizar el registro
         $dossierData = DossierData::updateOrCreate(
-            ['dossier_id' => $dossierDataResponse->dossier_id],
+            ['tab_number' => $request->tab_number],
             $requestData
         );
 
