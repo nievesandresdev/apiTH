@@ -80,10 +80,8 @@ class MsgStay extends Mailable
         // }
 
         $senderName = $this->hotel->sender_for_sending_email;
-        $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
-        if($this->hotel->sender_mail_mask){
-            $senderEmail = $this->hotel->sender_mail_mask;
-        }
+        //$senderEmail = !empty($this->hotel->sender_mail_mask) ? $this->hotel->sender_mail_mask : config('app.mail_sender');
+        $senderEmail = config('app.mail_sender');
         return $this->from($senderEmail, $this->hotel->name)
                     ->subject($subject)->view('Mails.guest.msgStay');
 

@@ -24,7 +24,11 @@ class ReportHoster extends Mailable
 
     public function build()
     {
-        return $this->subject('Informe de Seguimiento')
+
+        $senderEmail = config('app.mail_sender');
+
+        return $this->from($senderEmail, $this->hotel->name)
+            ->subject('Informe de Seguimiento')
             ->view('Mails.queries.ReportHoster')
             ->with([
                 'hotel' => $this->hotel,
