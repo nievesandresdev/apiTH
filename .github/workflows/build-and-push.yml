@@ -131,7 +131,7 @@ jobs:
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
             echo "PRODUCTION=\"${{ vars.PRODUCTION_MAIN }}\"" >> .env
 
-            echo "CACHE_ENABLED=false" >> .env
+            echo "CACHE_ENABLED=true" >> .env
 
             echo "CACHE_DRIVER=redis" >> .env
             echo "REDIS_HOST=th-api.redis.cache.windows.net" >> .env
