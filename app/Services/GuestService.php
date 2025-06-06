@@ -662,7 +662,7 @@ class GuestService {
                 'message' => $data->message
             ];
             
-            Mail::to($hotelContactEmail)->send(new ContactToHoster($data));
+            $this->mailService->sendEmail(new ContactToHoster($data), $hotelContactEmail);
             return $contactEmail;
         } catch (\Exception $e) {
             return $e;
