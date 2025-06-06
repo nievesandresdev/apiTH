@@ -21,17 +21,24 @@ class DossierController extends Controller
         return response()->json($dossier->load('dossierData'));
     }
 
-    public function getDossierData($tabNumber, $type)
+    public function getDossierData($tabNumber, $type, $domain)
     {
-        $dossierData = DossierData::where('tab_number', $tabNumber);
+        //$dossierData = DossierData::where('tab_number', $tabNumber);
+
+        $typeQuery = $type == '-' ? 'A' : $type;
 
         if($type != null){
-            $dossierData->whereHas('dossier', function($query) use ($type){
-                $query->where('type', $type);
+            $dossierData = DossierData::whereHas('dossier', function($query) use ($typeQuery, $domain){
+                $query->where('type', $typeQuery)->where('domain', $domain);
+            })->where('tab_number', $tabNumber);
+        }else{
+            $dossierData = DossierData::where('tab_number', $tabNumber)->whereHas('dossier', function($query) use ($domain){
+                $query->where('domain', $domain);
             });
         }
 
         $dossierData = $dossierData->first();
+
 
         return response()->json($dossierData);
     }
@@ -42,26 +49,42 @@ class DossierController extends Controller
         //buscar dossier domain
         //$dossier = Dossier::where('id', $request->dossier_id)->first();
         //buscar ambosos tipos a y b
-        $dossierTypes = Dossier::where('domain', $request->domain)->get();
+        $type = 'A';
+        if($request->rooms >= 1 && $request->rooms <= 100){
+            $type = 'B';
+        }else if($request->rooms >= 101){
+            $type = 'A';
+        }
+
+        $dossierTypes = Dossier::where('domain', $request->domain)->where('type', $type)->get();
+        $dossierDataResponse = DossierData::whereHas('dossier', function($query) use ($request, $type){
+            $query->where('domain', $request->domain)->where('type', $type);
+        })->first();
+
+        //return response()->json(['dossierTypes' => $dossierTypes]);
+
+        $requestData = $request->except('dossier_id');
 
         // Crear o actualizar el registro
         $dossierData = DossierData::updateOrCreate(
-            ['tab_number' => $request->tab_number],
-            $request->all()
+            ['tab_number' => $request->tab_number, 'dossier_id' => $request->dossier_id],
+            $requestData
         );
+
+
         foreach($dossierTypes as $d){
              // Actualizar todos los registros que tengan el mismo dossier_id
             DossierData::where('dossier_id', $d->id)
             ->update([
                     //'pricePerRoomPerMonth' => $request->pricePerRoomPerMonth,
                     'implementationPrice' => $request->implementationPrice,
-                    'rooms' => $request->rooms,
+                    //'rooms' => $request->rooms,
                 ]);
         }
 
 
         //$dossier = Dossier::find($dossierData->dossier_id);
-        return response()->json($dossierData->dossier->load('dossierData'));
+        return response()->json($dossierDataResponse->dossier->load('dossierData'));
     }
 
     public function storeDossierData(Request $request)
@@ -77,23 +100,26 @@ class DossierController extends Controller
         //return response()->json(['type' => $type,'request' => $request->all()]);
 
         //$domainDossier = Dossier::where('id', $dossier_id)->first();
-        $dossierType = Dossier::where('domain', $request->domain)->where('type', $type)->first();
+        $dossierTypeResponse = Dossier::where('domain', $request->domain)->where('type', $type)->first();
+        $dossierTypes = Dossier::where('domain', $request->domain)->get();
 
-        //return response()->json(['dossierType' => $dossierType]);
+        //return response()->json(['dossierTypes' => $dossierTypes]);
 
-        $lastData = DossierData::where('dossier_id', $dossierType->id)
-            ->latest()
-            ->first();
+        foreach($dossierTypes as $d){
+            $lastData = DossierData::where('dossier_id', $d->id)
+                ->latest()
+                ->first();
 
-        //return response()->json(['lastData' => $lastData,'dossierType' => $dossierType]);
+            //return response()->json(['lastData' => $lastData,'dossierType' => $dossierType]);
 
-        $newDossierData = $lastData->replicate();
-        $newDossierData->tab_number = null;
+            $newDossierData = $lastData->replicate();
+            $newDossierData->tab_number = null;
 
-        // IMPORTANTE: Establecer el dossier_id correcto para el tipo correspondiente
-        $newDossierData->dossier_id = $dossierType->id;
+            // IMPORTANTE: Establecer el dossier_id correcto para el tipo correspondiente
+            $newDossierData->dossier_id = $d->id;
 
-        $newDossierData->save();
+            $newDossierData->save();
+        }
 
         // Debug: Ver los IDs antes y después
        /*  $debug = [
@@ -103,7 +129,7 @@ class DossierController extends Controller
         ]; */
 
         // Retornar el dossier correcto con todos sus datos incluyendo el nuevo registro
-        return response()->json($dossierType->load('dossierData'));
+        return response()->json($dossierTypeResponse->load('dossierData'));
     }
 
     //store dossierdata new data
