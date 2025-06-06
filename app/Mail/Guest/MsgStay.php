@@ -58,8 +58,8 @@ class MsgStay extends Mailable
 
         $smtpSender = config('app.mail_sender');
         $maskEmail  = !empty($this->hotel->sender_mail_mask)
-                      ? $this->hotel->sender_mail_mask
-                      : config('app.mail_sender');
+                    ? $this->hotel->sender_mail_mask
+                    : config('app.mail_sender');
         $fromName   = $this->hotel->name;
 
         return new Envelope(

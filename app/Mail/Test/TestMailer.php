@@ -33,15 +33,13 @@ class TestMailer extends Mailable implements ShouldQueue
         $fromName   = 'Mi Hotel de Prueba';
 
         // 2) Dirección técnica que usará SMTP (Return-Path)
-        $smtpSender = 'no-reply@thster.com';
+        $smtpSender = config('app.mail_sender');
 
         return new Envelope(
             from: new Address($maskEmail, $fromName),
             subject: 'Test Mailer',
             using: [
                 function (Email $message) use ($smtpSender) {
-                    // Fija el encabezado "Sender:", que Symfony Mailer usará
-                    // como Return-Path / MAIL FROM técnico.
                     $message->sender($smtpSender);
                 },
             ],
