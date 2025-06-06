@@ -2,8 +2,6 @@
 
 namespace App\Mail\Guest;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Content;
@@ -11,9 +9,9 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
-class MsgStay extends Mailable implements ShouldQueue
+class MsgStay extends Mailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     public $type;
     public $hotel;
@@ -81,16 +79,22 @@ class MsgStay extends Mailable implements ShouldQueue
         $smtpSender = config('app.mail_sender'); 
         // 4) “Máscara” que ve el usuario final (Sender/Header)
         $maskEmail = !empty($this->hotel->sender_mail_mask)
-                     ? $this->hotel->sender_mail_mask
-                     : config('app.mail_sender');
+                    ? $this->hotel->sender_mail_mask
+                    : config('app.mail_sender');
 
         // 5) Nombre que se muestra como “From” (puede ser el nombre del hotel)
         $fromName = $this->hotel->name;
 
         return new Envelope(
-            from:   new Address($smtpSender, $fromName),
-            sender: new Address($maskEmail),
+            from: new Address($maskEmail, $fromName),
             subject: $subject,
+            using: [
+                function (Email $message) use ($smtpSender) {
+                    // Fijamos el encabezado "Sender:" (envoltorio del correo)
+                    // Sym﻿fony Mailer usará esto como Return-Path / MAIL FROM técnico
+                    $message->sender($smtpSender);
+                },
+            ],
         );
     }
 
