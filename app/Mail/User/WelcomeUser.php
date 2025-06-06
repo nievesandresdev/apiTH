@@ -34,9 +34,10 @@ class WelcomeUser extends Mailable
     {
 
         $subject = 'Bienvendio a TheHoster';
+        $senderEmail = config('app.mail_sender');
 
 
-        return $this->from("no-reply@thehoster.es", "Hoster Team")
+        return $this->from($senderEmail, "Hoster Team")
                     ->subject($subject)->view('Mails.users.welcome');
 
 
