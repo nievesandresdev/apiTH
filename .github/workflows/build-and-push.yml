@@ -58,8 +58,8 @@ jobs:
           if [ "${{ github.ref_name }}" == "main" ]; then
 
             echo "MAIL_FROM_NAME=TheHoster" >> .env
-            echo "MAIL_FROM_ADDRESS=no-reply@thehster.io" >> .env
-            echo "MAIL_ADMIN=no-reply@thehster.io" >> .env
+            echo "MAIL_FROM_ADDRESS=no-reply@thster.com" >> .env
+            echo "MAIL_ADMIN=no-reply@thster.com" >> .env
             echo "MAIL_FROM_NAME=TheHoster" >> .env
             echo "ASSET_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             
