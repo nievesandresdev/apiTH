@@ -34,10 +34,11 @@ class InviteToInWebapp extends Mailable
     {
 
         $senderName = $this->hotel['sender_for_sending_email'];
-        $senderEmail = "no-reply@thehster.io";
+        /* $senderEmail = "no-reply@thehster.io";
         if($this->hotel['sender_mail_mask']){
             $senderEmail = $this->hotel['sender_mail_mask'];
-        }
+        } */
+       $senderEmail = config('app.mail_sender');
         return $this->from($senderEmail, $this->hotel->name)
                     ->subject('Asunto test')->view('Mails.guest.InviteToInWebapp');
 

@@ -31,17 +31,18 @@ class UnreadHosterMsg extends Mailable
         $this->webappLink = $webappLink;
         $qrImage = 'https://quickchart.io/qr?text=' . urlencode($this->webappLink) . '&size=200';
         $this->qrImage = $qrImage;
-        
+
     }
 
     public function build()
     {
 
         $senderName = $this->hotel['sender_for_sending_email'];
-        $senderEmail = "no-reply@thehoster.es";
+        /* $senderEmail = "no-reply@thehoster.es";
         if($this->hotel['sender_mail_mask']){
             $senderEmail = $this->hotel['sender_mail_mask'];
-        }
+        } */
+        $senderEmail = config('app.mail_sender');
         // Log::info('qrimage '.json_decode($this->qrImage));
         return $this->from($senderEmail, $senderName)
                     ->subject("Mensaje pendiente en Chat")->view('Mails.guest.unreadMsg');
