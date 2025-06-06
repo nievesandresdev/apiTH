@@ -4,7 +4,7 @@ namespace App\Mail\Queries;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Support\Str;  
+use Illuminate\Support\Str;
 class DissatisfiedGuest extends Mailable
 {
     use Queueable;
@@ -24,7 +24,10 @@ class DissatisfiedGuest extends Mailable
     {
         $subject = 'Huésped disconforme: '.$this->data['guestName'].' - '.$this->data['respondedAtFormatted'];
 
-        return $this->subject($subject)
+        $senderEmail = config('app.mail_sender');
+
+        return $this->from($senderEmail, $this->hotel->name)
+            ->subject($subject)
             ->view('Mails.queries.DissatisfiedGuest')
             ->with([
                 'hotel' => $this->hotel,
