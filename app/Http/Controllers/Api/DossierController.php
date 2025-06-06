@@ -29,7 +29,7 @@ class DossierController extends Controller
 
         if($type != null){
             $dossierData = DossierData::whereHas('dossier', function($query) use ($typeQuery, $domain){
-                $query->where('type', $typeQuery)->where('domain', $domain);
+                $query->where('domain', $domain);
             })->where('tab_number', $tabNumber);
         }else{
             $dossierData = DossierData::where('tab_number', $tabNumber)->whereHas('dossier', function($query) use ($domain){
@@ -56,10 +56,14 @@ class DossierController extends Controller
             $type = 'A';
         }
 
+
+
         $dossierTypes = Dossier::where('domain', $request->domain)->where('type', $type)->get();
         $dossierDataResponse = DossierData::whereHas('dossier', function($query) use ($request, $type){
             $query->where('domain', $request->domain)->where('type', $type);
         })->first();
+
+        //return response()->json(['type' => $type,'dossierTypes' => $dossierTypes]);
 
         //return response()->json(['dossierTypes' => $dossierTypes]);
 
@@ -67,7 +71,7 @@ class DossierController extends Controller
 
         // Crear o actualizar el registro
         $dossierData = DossierData::updateOrCreate(
-            ['tab_number' => $request->tab_number, 'dossier_id' => $request->dossier_id],
+            ['dossier_id' => $dossierDataResponse->dossier_id],
             $requestData
         );
 
