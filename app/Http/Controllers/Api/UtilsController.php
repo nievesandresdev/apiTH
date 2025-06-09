@@ -408,10 +408,11 @@ class UtilsController extends Controller
 
     protected function test()
     {
-        Log::info('inicia cron semana');
-        $from = now()->startOfWeek()->subDays(1)->format('Y-m-d'); // ultimo dia de la semana pasada
-        $to = now()->endOfWeek()->subDays(1)->format('Y-m-d');     // penultimo dia de esta semana
-        return $this->getUsersInformGeneral(['informGeneral' => true], ['email'], 2, $from, $to);
+        // Log::info('inicia cron semana');
+        // $from = now()->startOfWeek()->subDays(1)->format('Y-m-d'); // ultimo dia de la semana pasada
+        // $to = now()->endOfWeek()->subDays(1)->format('Y-m-d');     // penultimo dia de esta semana
+        // return $this->getUsersInformGeneral(['informGeneral' => true], ['email'], 2, $from, $to);
+        return 'test';
     }
 
 
