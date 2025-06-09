@@ -2,14 +2,16 @@
 
 namespace App\Mail\Guest;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use Symfony\Component\Mime\Email;
 class prepareArrival extends Mailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
     public $type;
     public $hotel;
     public $guest;
@@ -40,25 +42,35 @@ class prepareArrival extends Mailable
         $this->locale = $guest->lang_web ?? 'es';
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function envelope(): Envelope
     {
-       // Establecer el idioma del huésped
-       App::setLocale($this->locale);
+        App::setLocale($this->locale);
 
         $subject = __('mail.prepareArrival.subject', ['guest_name' => $this->guest->name]);
 
-       /*  $senderEmail = $this->hotel->sender_mail_mask ??  "no-reply@thehoster.es";
-        if($this->hotel->sender_mail_mask){
-            $senderEmail = $this->hotel->sender_mail_mask;
-        } */
-        $senderEmail = config('app.mail_sender');
-        return $this->from($senderEmail, $this->hotel->name)
-                    ->subject($subject)->view('Mails.guest.prepareYourArrival');
+        $smtpSender = config('app.mail_sender');
+        $maskEmail  = !empty($this->hotel->sender_mail_mask)
+                    ? $this->hotel->sender_mail_mask
+                    : config('app.mail_sender');
+        $fromName   = $this->hotel->name;
 
+        return new Envelope(
+            from: new Address($maskEmail, $fromName),
+            subject: $subject,
+            using: [
+                function (Email $message) use ($smtpSender) {
+                    $message->sender($smtpSender);
+                },
+            ],
+        );
+    }
+
+    public function content(): Content
+    {
+        App::setLocale($this->locale);
+
+        return new Content(
+            view: 'Mails.guest.prepareYourArrival'
+        );
     }
 }

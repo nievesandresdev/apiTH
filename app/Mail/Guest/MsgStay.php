@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mime\Email;  // <--- Import correcto
 
 class MsgStay extends Mailable
@@ -61,7 +62,7 @@ class MsgStay extends Mailable
                     ? $this->hotel->sender_mail_mask
                     : config('app.mail_sender');
         $fromName   = $this->hotel->name;
-        
+
         return new Envelope(
             from: new Address($maskEmail, $fromName),
             subject: $subject,
