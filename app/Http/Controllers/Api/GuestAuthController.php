@@ -257,8 +257,8 @@ class GuestAuthController extends Controller
         return Socialite::driver('facebook')
             ->stateless() // Modo sin estado
             ->with(['state' => $state])
-            ->scopes(['public_profile', 'email']) // Solicitar permisos necesarios
             ->redirect();
+            // ->scopes(['public_profile', 'email']) // Solicitar permisos necesarios
     }
 
     public function handleFacebookCallback(Request $request)
