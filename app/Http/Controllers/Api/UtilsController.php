@@ -412,13 +412,13 @@ class UtilsController extends Controller
         // $from = now()->startOfWeek()->subDays(1)->format('Y-m-d'); // ultimo dia de la semana pasada
         // $to = now()->endOfWeek()->subDays(1)->format('Y-m-d');     // penultimo dia de esta semana
         // return $this->getUsersInformGeneral(['informGeneral' => true], ['email'], 2, $from, $to);
-        // $stateData = [  
-        //     'redirect' => config('services.facebook.redirect'),
-        //     'client_secret' => config('services.facebook.client_secret').'33133',
-        //     'client_id' => config('services.facebook.client_id'),
-        // ];
-        // return $stateData;
-        return 'test';
+        $stateData = [  
+            'redirect' => config('services.facebook.redirect'),
+            'client_secret' => config('services.facebook.client_secret').'33133',
+            'client_id' => config('services.facebook.client_id'),
+        ];
+        return $stateData;
+        // return 'test';
     }
 
 
