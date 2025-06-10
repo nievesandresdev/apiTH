@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\Hoster\ChainCustomizationController;
 use App\Http\Controllers\Api\Hoster\HotelHosterController;
 use App\Http\Controllers\Api\Hoster\HotelWifiNetworksController;
 use App\Http\Controllers\Api\HotelCommunicationController;
-
+use App\Http\Controllers\MetaTagController;
 
 Route::middleware('auth.either:user,guest')->group(function () {
     Route::post('/appearence', [ChainCustomizationController::class, 'update']);
@@ -29,6 +29,8 @@ Route::middleware('auth.either:user,guest')->group(function () {
             Route::get('/getProfileWhatsapp', [HotelHosterController::class, 'getProfileWhatsapp']);
             Route::post('/toggleShowContact', [HotelHosterController::class, 'toggleShowContact']);
             Route::get('/getShowContact', [HotelHosterController::class, 'getShowContact']);
+
+
         });
 
 
@@ -88,6 +90,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/getAllCrossellings', [HotelController::class, 'getAllCrossellings']);
     Route::get('getMainData', [HotelController::class, 'getMainData']);
     Route::get('getDataLegal', [HotelController::class, 'getDataLegal']);
+    Route::get('/meta-tags', [MetaTagController::class, 'getMetaTags']);
 });
 
 
