@@ -23,7 +23,6 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\SetLocale::class,
         \App\Http\Middleware\LoadHotel::class,
-        \App\Http\Middleware\SocialCrawlerMiddleware::class,
         \App\Http\Middleware\VerifyApiKey::class,
     ];
 

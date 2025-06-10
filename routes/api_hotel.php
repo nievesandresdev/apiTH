@@ -90,7 +90,6 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/getAllCrossellings', [HotelController::class, 'getAllCrossellings']);
     Route::get('getMainData', [HotelController::class, 'getMainData']);
     Route::get('getDataLegal', [HotelController::class, 'getDataLegal']);
-    Route::get('/meta-tags', [MetaTagController::class, 'getMetaTags']);
 });
 
 
