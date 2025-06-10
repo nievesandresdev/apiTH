@@ -22,13 +22,7 @@ class DissatisfiedGuest extends Mailable
 
     public function build()
     {
-        $base    = 'Huésped disconforme';
-        $comment = trim($this->data['comment'] ?? '');
-
-        // Máx. 15 caracteres y sólo si hay comentario
-        $subject = $comment !== ''
-            ? $base.' - '.Str::limit($comment, 40)
-            : $base;
+        $subject = 'Huésped disconforme: '.$this->data['guestName'].' - '.$this->data['respondedAtFormatted'];
 
         $senderEmail = config('app.mail_sender');
 

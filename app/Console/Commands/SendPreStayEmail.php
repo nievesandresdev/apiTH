@@ -80,7 +80,7 @@ class SendPreStayEmail extends Command
                         ]);
                 },
                 'hotel' => function ($query) {
-                    $query->select('id', 'name', 'checkout', 'checkin', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id')
+                    $query->select('id', 'name', 'checkout', 'checkin', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id','sender_mail_mask')
                         ->with(['hotelCommunications' => function($query) {
                             $query->where('type', 'email');
                         }]);
