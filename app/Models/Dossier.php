@@ -13,6 +13,7 @@ class Dossier extends Model
         'name',
         'type',
         'domain',
+        'status',
     ];
 
     public function dossierData()
