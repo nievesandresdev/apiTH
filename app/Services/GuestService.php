@@ -114,6 +114,11 @@ class GuestService {
         return Guest::where('googleId', $googleId)->first();
     }
 
+    public function findByFacebookId($facebookId){
+        if (!$facebookId) return null;
+        return Guest::where('facebookId', $facebookId)->first();
+    }
+
     public function updatePasswordGuest($data)
     {
         try {
