@@ -11,6 +11,8 @@ class DossierData extends Model
 
     protected $fillable = [
         'dossier_id',
+        'type',
+        'numeral',
         'rooms',
         'averagePrice',
         'occupancyRate',

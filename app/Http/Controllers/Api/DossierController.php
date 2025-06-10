@@ -27,12 +27,13 @@ class DossierController extends Controller
 
         $typeQuery = $type == '-' ? 'A' : $type;
 
+
         if($type != null){
             $dossierData = DossierData::whereHas('dossier', function($query) use ($typeQuery, $domain){
-                $query->where('domain', $domain);
-            })->where('tab_number', $tabNumber);
+                $query->where('domain', $domain)->where('type', $typeQuery);
+            })->where('numeral', $tabNumber);
         }else{
-            $dossierData = DossierData::where('tab_number', $tabNumber)->whereHas('dossier', function($query) use ($domain){
+            $dossierData = DossierData::where('numeral', $tabNumber)->whereHas('dossier', function($query) use ($domain){
                 $query->where('domain', $domain);
             });
         }
@@ -63,28 +64,74 @@ class DossierController extends Controller
             $query->where('domain', $request->domain)->where('type', $type);
         })->first();
 
-        //return response()->json(['type' => $type,'dossierTypes' => $dossierTypes]);
+
 
         //return response()->json(['dossierTypes' => $dossierTypes]);
 
-        $requestData = $request->except('dossier_id');
+        $requestType = $type; // Siempre usar el tipo calculado basado en rooms
+
+        // Debug log
+        /* Log::info('DossierController Debug', [
+            'rooms' => $request->rooms,
+            'calculated_type' => $type,
+            'request_type' => $request->type,
+            'final_requestType' => $requestType,
+            'tab_number' => $request->tab_number,
+            'domain' => $request->domain
+        ]); */
 
         // Crear o actualizar el registro
-        $dossierData = DossierData::updateOrCreate(
-            ['tab_number' => $request->tab_number],
-            $requestData
-        );
+        $requestData = $request->except(['dossier_id']);
+        $requestData['type'] = $requestType; // Sobrescribir el type con el valor calculado
+
+        // Buscar el registro DossierData existente con el numeral y tipo específicos para este dominio
+        $existingRecord = DossierData::whereHas('dossier', function($query) use ($request) {
+            $query->where('domain', $request->domain);
+        })->where('numeral', $request->tab_number)
+          ->where('type', $requestType)
+          ->first();
+
+                if ($existingRecord) {
+            // Si existe, verificar si cambió el tipo
+            $updateData = $requestData;
+
+            // Si cambió el tipo (B→A o A→B), preservar el pricePerRoomPerMonth del registro existente
+            if ($existingRecord->type !== $requestType) {
+                unset($updateData['pricePerRoomPerMonth']); // Preservar el pricePerRoomPerMonth existente
+            }
+            // Si el tipo es el mismo (B→B o A→A), sí actualizar el pricePerRoomPerMonth
+
+            $dossierData = DossierData::updateOrCreate(
+                [
+                    'numeral' => $request->tab_number,
+                    'type' => $requestType,
+                    'dossier_id' => $existingRecord->dossier_id
+                ],
+                $updateData
+            );
+        } else {
+            // Si no existe, buscar el dossier correcto para crear uno nuevo
+            $targetDossier = Dossier::where('domain', $request->domain)->where('type', $requestType)->first();
+            $dossierData = DossierData::updateOrCreate(
+                [
+                    'numeral' => $request->tab_number,
+                    'type' => $requestType,
+                    'dossier_id' => $targetDossier->id
+                ],
+                $requestData
+            );
+        }
 
 
-        foreach($dossierTypes as $d){
+        /* foreach($dossierTypes as $d){
              // Actualizar todos los registros que tengan el mismo dossier_id
             DossierData::where('dossier_id', $d->id)
             ->update([
                     //'pricePerRoomPerMonth' => $request->pricePerRoomPerMonth,
-                    'implementationPrice' => $request->implementationPrice,
+                    //'implementationPrice' => $request->implementationPrice,
                     //'rooms' => $request->rooms,
                 ]);
-        }
+        } */
 
 
         //$dossier = Dossier::find($dossierData->dossier_id);
@@ -118,6 +165,7 @@ class DossierController extends Controller
 
             $newDossierData = $lastData->replicate();
             $newDossierData->tab_number = null;
+            $newDossierData->numeral = $lastData->numeral + 1;
 
             // IMPORTANTE: Establecer el dossier_id correcto para el tipo correspondiente
             $newDossierData->dossier_id = $d->id;
