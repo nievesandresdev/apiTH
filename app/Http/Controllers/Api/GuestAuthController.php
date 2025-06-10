@@ -313,7 +313,7 @@ class GuestAuthController extends Controller
             $avatar = $facebookUser->getAvatar();
             if(!$email){
                 $redirectUrl = buildUrlWebApp($chainSubdomain, $subdomainHotel ?? null);
-                return redirect()->to("{$redirectUrl}?error=correo-no-asociado");
+                return redirect()->to("{$redirectUrl}?error=unaffiliated-mail");
             }
             // $avatar = $facebookUser->attributes['avatar_original'] ?? 'avatarnulo';
             // Buscar al usuario por email
