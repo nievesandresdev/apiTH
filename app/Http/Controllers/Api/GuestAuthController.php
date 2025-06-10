@@ -21,7 +21,7 @@ class GuestAuthController extends Controller
     public $service;
     public $chainServices;
     public $hotelServices;
-
+    public $authService;
     function __construct(
         GuestService $_GuestService,
         ChainService $_ChainService,
@@ -74,6 +74,24 @@ class GuestAuthController extends Controller
         ];
         return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
     }
+
+    public function autenticateByFacebook(Request $request){
+        // AUTHENTICATION
+        $guestModel = $this->service->findByFacebookId($request->facebookId);
+        if(!$guestModel) {
+            return bodyResponseRequest(EnumResponse::NOT_FOUND, ['message' => 'No se encontró el huesped']);
+        }
+        $this->authService->login($guestModel, 'session-guest');
+        $token = $this->authService->createToken($guestModel, 'session-guest');
+        $guestData = new GuestResource($guestModel);
+        $data = [
+            'token' => $token,
+            'guest' => $guestData
+        ];
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+    }   
+
+
 
     public function updateById(Request $request){
         try {
@@ -286,8 +304,7 @@ class GuestAuthController extends Controller
 
             // Obtener el usuario autenticado de Facebook
             $facebookUser = Socialite::driver('facebook')->stateless()->user();
-            Log::info('$facebookUser '.json_encode($facebookUser));
-            Log::info('$facebookUser->user '.json_encode($facebookUser->user));
+            
             // Extraer información del usuario
             $facebookId = $facebookUser->getId();
             $firstName = $facebookUser->user['name'] ?? '';
@@ -314,7 +331,7 @@ class GuestAuthController extends Controller
           if(isset($findValidLastStay["stay"])){
               $stay = $findValidLastStay["stay"];
               $hotel = $this->hotelServices->findById($stay->hotel_id);
-              $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}");
+              $redirectUrl = buildUrlWebApp($chainSubdomain, $hotel->subdomain, null,"g={$guest->id}&e={$stay->id}&action=toLogin&fid={$facebookId}");
           }else{
               if(!$hotelId){
                   $subdomainHotel = null;
