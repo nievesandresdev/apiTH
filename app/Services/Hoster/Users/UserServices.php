@@ -420,6 +420,23 @@ class UserServices
         return auth()->user()->hotel->pluck('id');
     }
 
+    public function store($request)
+    {
+        $url = config('app.hoster_url');
+        $user = User::create([
+            'name' => $request->name,
+            'type_user' => $request->type_user ?? 'admin',             
+            'email' => $request->email,
+            'parent_id' => $this->getParentId(),
+            'password' => Hash::make($request->password),
+            'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
+            'notifications' => json_encode($request->notifications),
+            'periodicity_chat' => json_encode($request->periodicityChat),
+            'periodicity_stay' => json_encode($request->periodicityStay),
+        ]);
+
+        return $user;
+    }
 
 
     public function storeUserHoster($request)
@@ -428,12 +445,13 @@ class UserServices
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'parent_id' => $this->getParentId(),
+            'parent_id' => null,
             'password' => Hash::make($request->password),
-            'permissions' => json_encode($request->permissions), // Guarda el JSON de permisos
-            'notifications' => json_encode($request->notifications),
-            'periodicity_chat' => json_encode($request->periodicityChat),
-            'periodicity_stay' => json_encode($request->periodicityStay),
+            'permissions' => $request->permissions ? json_encode($request->permissions) : null, // Guarda el JSON de permisos
+            'notifications' => $request->notifications ? json_encode($request->notifications) : null,
+            'periodicity_chat' => $request->periodicityChat ? json_encode($request->periodicityChat) : null,
+            'periodicity_stay' => $request->periodicityStay ? json_encode($request->periodicityStay) : null,
+            'type_user' => $request->type_user ?? 'admin',
         ]);
 
 
