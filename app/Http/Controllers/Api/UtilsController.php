@@ -35,6 +35,7 @@ use App\Services\Apis\ApiReviewServices;
 use App\Services\Hoster\CloneHotelServices;
 use App\Services\Hoster\Stay\StayHosterServices;
 use App\Utils\Enums\EnumsLanguages;
+use App\Utils\Enums\EnumsQueries\QuerySettingsEnums;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -408,17 +409,7 @@ class UtilsController extends Controller
 
     protected function test()
     {
-        // Log::info('inicia cron semana');
-        // $from = now()->startOfWeek()->subDays(1)->format('Y-m-d'); // ultimo dia de la semana pasada
-        // $to = now()->endOfWeek()->subDays(1)->format('Y-m-d');     // penultimo dia de esta semana
-        // return $this->getUsersInformGeneral(['informGeneral' => true], ['email'], 2, $from, $to);
-        // $stateData = [  
-        //     'redirect' => config('services.facebook.redirect'),
-        //     'client_secret' => config('services.facebook.client_secret').'33133',
-        //     'client_id' => config('services.facebook.client_id'),
-        // ];
-        // return $stateData;
-        return 'test';
+        return QuerySettingsEnums::queriesTextDefault();
     }
 
 

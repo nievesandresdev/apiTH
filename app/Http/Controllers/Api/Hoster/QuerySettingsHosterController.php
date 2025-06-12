@@ -31,7 +31,7 @@ class QuerySettingsHosterController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }   
-            $model = new QuerySettingsHosterResource($model,['pre_stay_activate', 'pre_stay_thanks']);
+            $model = new QuerySettingsHosterResource($model,['pre_stay_activate', 'pre_stay_comment']);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
@@ -42,7 +42,7 @@ class QuerySettingsHosterController extends Controller
     public function updatePreStaySettings(Request $request){
         try {
             $hotel = $request->attributes->get('hotel');
-            $model = $this->service->updateSettings($hotel->id, ['pre_stay_activate','pre_stay_thanks'], $request, 'pre-stay');
+            $model = $this->service->updateSettings($hotel->id, ['pre_stay_activate','pre_stay_comment'], $request, 'pre-stay');
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

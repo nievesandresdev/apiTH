@@ -25,27 +25,46 @@ class QuerySettingsHosterResource extends JsonResource
     {
         $allData = [
             "hotel_id" => $this->hotel_id ?? null,
+            //////////////////////
             "pre_stay_activate" => $this->pre_stay_activate,
-            "pre_stay_thanks" => $this->pre_stay_thanks,
             "pre_stay_comment" => $this->pre_stay_comment,
-            "in_stay_activate" => $this->in_stay_activate,
-            "in_stay_thanks_good" => $this->in_stay_thanks_good,
-            "in_stay_assessment_good_activate" => $this->in_stay_assessment_good_activate,
-            "in_stay_assessment_good" => $this->in_stay_assessment_good,
-            "in_stay_thanks_normal" => $this->in_stay_thanks_normal,
-            "in_stay_assessment_normal_activate" => $this->in_stay_assessment_normal_activate,
-            "in_stay_assessment_normal" => $this->in_stay_assessment_normal,
-            "in_stay_comment" => $this->in_stay_comment,
-            "post_stay_thanks_good" => $this->post_stay_thanks_good,
-            "post_stay_assessment_good_activate" => $this->post_stay_assessment_good_activate,
-            "post_stay_assessment_good" => $this->post_stay_assessment_good,
-            "post_stay_thanks_normal" => $this->post_stay_thanks_normal,
-            "post_stay_assessment_normal_activate" => $this->post_stay_assessment_normal_activate,
-            "post_stay_assessment_normal" => $this->post_stay_assessment_normal,
-            "post_stay_comment" => $this->post_stay_comment,
-            "notify_to_hoster" => $this->notify_to_hoster,
-            "email_notify_new_feedback_to" => $this->email_notify_new_feedback_to,
-            "email_notify_pending_feedback_to" => $this->email_notify_pending_feedback_to
+            //////////////////////
+            'in_stay_verygood_request_activate' => $this->in_stay_verygood_request_activate,
+            'in_stay_verygood_response_title' => $this->in_stay_verygood_response_title,
+            'in_stay_verygood_response_msg' => $this->in_stay_verygood_response_msg,
+            'in_stay_verygood_request_otas' => $this->in_stay_verygood_request_otas,
+            'in_stay_verygood_no_request_comment_activate' => $this->in_stay_verygood_no_request_comment_activate,
+            'in_stay_verygood_no_request_comment_msg' => $this->in_stay_verygood_no_request_comment_msg,
+            'in_stay_verygood_no_request_thanks_title' => $this->in_stay_verygood_no_request_thanks_title,
+            'in_stay_verygood_no_request_thanks_msg' => $this->in_stay_verygood_no_request_thanks_msg,
+            //
+            'in_stay_good_request_activate' => $this->in_stay_good_request_activate,
+            'in_stay_good_response_title' => $this->in_stay_good_response_title,
+            'in_stay_good_response_msg' => $this->in_stay_good_response_msg,
+            'in_stay_good_request_otas' => $this->in_stay_good_request_otas,
+            'in_stay_good_no_request_comment_activate' => $this->in_stay_good_no_request_comment_activate,
+            'in_stay_good_no_request_comment_msg' => $this->in_stay_good_no_request_comment_msg,
+            'in_stay_good_no_request_thanks_title' => $this->in_stay_good_no_request_thanks_title,
+            'in_stay_good_no_request_thanks_msg' => $this->in_stay_good_no_request_thanks_msg,
+            //
+            'in_stay_bad_response_title' => $this->in_stay_bad_response_title,
+            'in_stay_bad_response_msg' => $this->in_stay_bad_response_msg,
+            //////////////////////
+            'post_stay_verygood_response_title' => $this->post_stay_verygood_response_title,
+            'post_stay_verygood_response_msg' => $this->post_stay_verygood_response_msg,
+            'post_stay_verygood_request_otas' => $this->post_stay_verygood_request_otas,
+            //
+            'post_stay_good_request_activate' => $this->post_stay_good_request_activate,
+            'post_stay_good_response_title' => $this->post_stay_good_response_title,
+            'post_stay_good_response_msg' => $this->post_stay_good_response_msg,
+            'post_stay_good_request_otas' => $this->post_stay_good_request_otas,
+            'post_stay_good_no_request_comment_activate' => $this->post_stay_good_no_request_comment_activate,
+            'post_stay_good_no_request_comment_msg' => $this->post_stay_good_no_request_comment_msg,
+            'post_stay_good_no_request_thanks_title' => $this->post_stay_good_no_request_thanks_title,
+            'post_stay_good_no_request_thanks_msg' => $this->post_stay_good_no_request_thanks_msg,
+            //
+            'post_stay_bad_response_title' => $this->post_stay_bad_response_title,
+            'post_stay_bad_response_msg' => $this->post_stay_bad_response_msg,
         ];
 
         if (empty($this->fields)) {
