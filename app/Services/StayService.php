@@ -569,6 +569,8 @@ class StayService {
                 'test' => false
             ];
 
+
+
             //Log::info('dataEmail WelcomeStayEmailServices: '.json_encode($dataEmail, JSON_PRETTY_PRINT));
 
             if(!$guest->off_email){
