@@ -189,7 +189,7 @@
             </div> --}}
             <div style="max-width:260px;margin:0 auto;margin-top: 32px;">
                 <a
-                    href="{{$links['urlComunications']}}"
+                    href="{{$links['urlToReport']}}"
                     style="margin:0;border-radius: 6px;background-color: #FFD453;padding: 12px 0;text-align:center;color:#333333 !important;font-size: 14px;font-weight: 600;line-height: 110%;font-family:'Roboto', sans-serif;margin-top:16px;display:block;text-decoration: none;width:100%"
                 >
                     Ver informe completo
