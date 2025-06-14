@@ -751,7 +751,7 @@ if (! function_exists('requestSettingsDefault')) {
             "gl" => "<p>Moitas grazas [nombreHuesped]!</p>",
             "nl" => "<p>Hartelijk dank [nombreHuesped]!</p>"
         ];
-        
+
 
         //
         $requestSettings->in_stay_msg_text = [
@@ -766,7 +766,7 @@ if (! function_exists('requestSettingsDefault')) {
             "gl" => '<p>A túa experiencia é moi importante, compartila axudaría a outros viaxeiros a coñecernos. ¿Déixanos a túa opinión?</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p class="ql-align-center">Agradecemos o teu tempo e grazas por elixirnos!</p>',
             "nl" => '<p>Jouw ervaring is erg belangrijk, het delen ervan zou andere reizigers helpen ons te leren kennen. Wil je ons je recensie achterlaten?</p><p><br></p><p><strong>[Link a las OTAs]</strong></p><p><br></p><p class="ql-align-center">We waarderen je tijd en danken je dat je voor ons gekozen hebt!</p>'
         ];
-        
+
         $requestSettings->in_stay_otas_enabled = [
             "booking" => false,
             "expedia" => false,
