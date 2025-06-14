@@ -14,10 +14,21 @@ Route::middleware('auth.either:user,guest')->group(function () {
             Route::post('/updateNotificationsEmail', [QuerySettingsHosterController::class, 'updateNotificationsEmail']);
             Route::get('/getPreStaySettings', [QuerySettingsHosterController::class, 'getPreStaySettings']);
             Route::post('/updatePreStaySettings', [QuerySettingsHosterController::class, 'updatePreStaySettings']);
-            Route::get('/getStaySettings', [QuerySettingsHosterController::class, 'getStaySettings']);
-            Route::post('/updateStaySettings', [QuerySettingsHosterController::class, 'updateStaySettings']);
-            Route::get('/getPostStaySettings', [QuerySettingsHosterController::class, 'getPostStaySettings']);
-            Route::post('/updatePostStaySettings', [QuerySettingsHosterController::class, 'updatePostStaySettings']);
+            //////////////////////
+            Route::get('/getStayVeryGoodSettings', [QuerySettingsHosterController::class, 'getStayVeryGoodSettings']);
+            Route::post('/updateStayVeryGoodSettings', [QuerySettingsHosterController::class, 'updateStayVeryGoodSettings']);
+            Route::get('/getStayGoodSettings', [QuerySettingsHosterController::class, 'getStayGoodSettings']);
+            Route::post('/updateStayGoodSettings', [QuerySettingsHosterController::class, 'updateStayGoodSettings']);
+            Route::get('/getStayBadSettings', [QuerySettingsHosterController::class, 'getStayBadSettings']);
+            Route::post('/updateStayBadSettings', [QuerySettingsHosterController::class, 'updateStayBadSettings']);
+            //////////////////////
+            Route::get('/getPostStayVeryGoodSettings', [QuerySettingsHosterController::class, 'getPostStayVeryGoodSettings']);
+            Route::post('/updatePostStayVeryGoodSettings', [QuerySettingsHosterController::class, 'updatePostStayVeryGoodSettings']);
+            Route::get('/getPostStayGoodSettings', [QuerySettingsHosterController::class, 'getPostStayGoodSettings']);
+            Route::post('/updatePostStayGoodSettings', [QuerySettingsHosterController::class, 'updatePostStayGoodSettings']);
+            Route::get('/getPostStayBadSettings', [QuerySettingsHosterController::class, 'getPostStayBadSettings']);
+            Route::post('/updatePostStayBadSettings', [QuerySettingsHosterController::class, 'updatePostStayBadSettings']);
+            //////////////////////
         });
     });
 
