@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Customization;
 use App\Models\HotelTranslate;
 use App\Models\HotelWifiNetworks;
+use App\Utils\Enums\EnumsQueries\QuerySettingsEnums;
 
 class CloneHotelServices
 {
@@ -658,7 +659,7 @@ class CloneHotelServices
             //settings query
             //
             //
-            $default = queriesTextDefault();
+            $default = QuerySettingsEnums::queriesTextDefault();
             $originalQuerySettings = $originalHotel->querySettings;
             $copyQuerySettings = $copyHotel->querySettings;
             if($originalQuerySettings){
