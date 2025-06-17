@@ -57,3 +57,6 @@ echo "Todas las tareas programadas se han ejecutado."
 #php artisan db:seed --class=UpdateQuerySettingsSeeder
 #php artisan db:seed --class=UpdateRequestSettingsSeeder
 #php artisan db:seed --class=DemoStaysSeeder
+
+#seeders de sprint 8
+#limpiar tabla queries_settings
