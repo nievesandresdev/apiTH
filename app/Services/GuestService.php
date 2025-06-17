@@ -114,6 +114,11 @@ class GuestService {
         return Guest::where('googleId', $googleId)->first();
     }
 
+    public function findByFacebookId($facebookId){
+        if (!$facebookId) return null;
+        return Guest::where('facebookId', $facebookId)->first();
+    }
+
     public function updatePasswordGuest($data)
     {
         try {
@@ -662,7 +667,7 @@ class GuestService {
                 'message' => $data->message
             ];
             
-            Mail::to($hotelContactEmail)->send(new ContactToHoster($data));
+            $this->mailService->sendEmail(new ContactToHoster($data), $hotelContactEmail);
             return $contactEmail;
         } catch (\Exception $e) {
             return $e;

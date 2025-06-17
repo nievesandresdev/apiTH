@@ -79,7 +79,7 @@ class SendPostStayEmails extends Command
                     $query->select('id', 'name', 'email','off_email','lang_web');
                 },
                 'hotel' => function ($query) {
-                    $query->select('id', 'name', 'checkout', 'subdomain','show_facilities','show_experiences','show_places','zone');
+                    $query->select('id', 'name', 'checkout', 'subdomain','show_facilities','show_experiences','show_places','zone','sender_mail_mask');
                 }
             ])
             ->get();
@@ -147,7 +147,8 @@ class SendPostStayEmails extends Command
                     'urlQr' => $urlQr,
                     'urlWebapp' => $urlWebapp,
                     'queryData' => $queryData,
-                    'urlPrivacy' => $urlPrivacy
+                    'urlPrivacy' => $urlPrivacy,
+                    'test' => false
                 ];
 
                 try {
@@ -363,7 +364,7 @@ class SendPostStayEmails extends Command
                     $query->select('id', 'name', 'email','off_email','lang_web');
                 },
                 'hotel' => function ($query) {
-                    $query->select('id', 'name', 'checkout', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id');
+                    $query->select('id', 'name', 'checkout', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id','sender_mail_mask');
                 }
             ])
             ->get();

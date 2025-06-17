@@ -17,6 +17,7 @@ use App\Models\Query;
 use App\Models\QuerySetting;
 use App\Models\Stay;
 use App\Models\RewardStay;
+use App\Mail\Queries\DissatisfiedGuest;
 /*services*/
 use App\Services\ChatService;
 use App\Services\Hoster\Chat\ChatSettingsServices;
@@ -34,6 +35,7 @@ use App\Services\Apis\ApiReviewServices;
 use App\Services\Hoster\CloneHotelServices;
 use App\Services\Hoster\Stay\StayHosterServices;
 use App\Utils\Enums\EnumsLanguages;
+use App\Utils\Enums\EnumsQueries\QuerySettingsEnums;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -293,6 +295,7 @@ class UtilsController extends Controller
                 'urlCheckin' => $urlCheckin,
                 'hotel' => $hotel,
                 'stay_language' => $stay->language,
+                'test' => false,
                 'urlFooterEmail' => $urlFooterEmail,
                 'urlPrivacy' => buildUrlWebApp($chainSubdomain, $hotel->subdomain,'privacidad',"e={$stay->id}&g={$guest->id}&email=true&lang={$guest->lang_web}"),
             ];
@@ -326,21 +329,21 @@ class UtilsController extends Controller
     }
 
 
-    public function test(Request $r)
+    public function testReporte(Request $r)
     {
         $userHotelCode = 'mMGbiJUdt5aS';
         $hotelId = 291;
         $hotel = Hotel::find($hotelId);
         $showNotify = true;
-        $query = Query::find(579);
+        $query = Query::find(222);
         $stay = Stay::find($query->stay_id);
         $guest = Guest::find($query->guest_id);
 
 
         // http://localhost:82/estancias?redirect=view&code=mMGbiJUdt5aS
 
-        $from    = '2025-04-01';
-        $to      = '2025-04-30';
+        $from    = '2025-04-10';
+        $to      = '2025-04-20';
 
         $qs = Query::join('stays','queries.stay_id','stays.id')
             ->where('stays.hotel_id', $hotelId)
@@ -399,8 +402,109 @@ class UtilsController extends Controller
             'urlComunications' => "{$saasUrl}/promociona-webapp?redirect=view&code={$userHotelCode}",
             'urlPromotions' => "{$saasUrl}/promociona-webapp?redirect=view&code={$userHotelCode}",
         ];
-        $this->mailService->sendEmail(new ReportHoster($hotel, $showNotify, $stats, $links), 'futfran.dev@gmail.com');
+        // $this->mailService->sendEmail(new ReportHoster($hotel, $showNotify, $stats, $links), 'andresdreamerf@gmail.com');
         return view('mails.queries.reportHoster', compact('hotel','showNotify','stats','links'));
+    }
+
+
+    protected function test()
+    {
+        return QuerySettingsEnums::queriesTextDefault();
+    }
+
+
+
+    protected function getUsersInformGeneral($notificationFilters, $specificChannels, $periodicity, $from, $to)
+    {
+        try {
+            
+            $usersByChannel = $this->userServices->getUsersWithNotifications($notificationFilters, $specificChannels, $periodicity);
+
+            // Primero creamos un mapa de hoteles a usuarios
+            $hotelsToUsers = [];
+
+            foreach ($usersByChannel as $channel => $users) {
+                foreach ($users as $user) {
+                    foreach ($user->hotel as $hotel) {
+                        $hotelId = $hotel->id;
+                        if (!isset($hotelsToUsers[$hotelId])) {
+                            $hotelsToUsers[$hotelId] = [];
+                        }
+                        $hotelsToUsers[$hotelId][] = $user;
+                    }
+                }
+            }
+            foreach ($hotelsToUsers as $hotelId => $users) {
+                Log::info("Procesando hotel ID: $hotelId");
+
+                // Obtenemos las estadísticas para este hotel (solo una consulta por hotel)
+                $hotelCurrent = $users[0]->hotel->where('id', $hotelId)->first();
+                $hotelCreatedAt = Carbon::parse($hotelCurrent->created_at)->format('Y-m-d');
+                if ($hotelCreatedAt > $from) {//si el hotel fue creado post $from
+                    $from = $hotelCreatedAt;
+                }
+                $hotelStats = $this->getStats($hotelId, $from, $to);
+                if ($hotelStats) {
+                    foreach ($users as $user) {
+                        $saasUrl = config('app.hoster_url');
+                        $periodReport = $periodicity === 1 ? 'monthly' : 'weekly';
+                        $links = [
+                            'urlToReport' => "{$saasUrl}seguimiento/general-report?periodType={$periodReport}&from={$from}&to={$to}&redirect=view&code={$user->login_code}",
+                            'urlComunications' => "{$saasUrl}promociona-webapp?redirect=view&code={$user->login_code}",
+                            'urlPromotions' => "{$saasUrl}promociona-webapp?redirect=view&code={$user->login_code}",
+                        ];
+                        Log::info("Enviando reporte del hotel $hotelId al usuario: " . $user->email);
+                        if ($this->hasAccents($user->email)) {
+                            Log::info("El email $user->email tiene caracteres no ASCII, se omite");
+                            continue;
+                        }
+
+                        $this->mailService->sendEmail(new ReportHoster($hotel, true, $hotelStats, $links), $user->email);
+                    }
+                } else {
+                    Log::info("No hay estadísticas disponibles para el hotel $hotelId");
+                }
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error en getUsersInformGeneral: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+        }
+    }
+
+    public function testDissatisfiedGuest(){
+        $hotel = Hotel::find(292);
+        $guest = Guest::find(49);
+        $query = Query::find(222);
+        $stay = Stay::find($query->stay_id);
+        $respondedAt   = Carbon::createFromFormat('Y-m-d H:i:s', $query->responded_at, 'Europe/Madrid');
+        $referenceDate = $query->period === 'post-stay'
+                ? Carbon::parse($stay->check_out, 'Europe/Madrid')
+                : Carbon::parse($stay->check_in,  'Europe/Madrid');
+            $daysDifference = max(0, $respondedAt->diffInDays($referenceDate));
+            $dayLabel = $daysDifference === 1 ? 'día' : 'días';
+            $beforeOrAfter = $respondedAt->lt($referenceDate) ? 'antes' : 'después';
+            $periodLabel = $query->period === 'post-stay' ? 'check-out' : 'check-in';
+            $respondedAtFormatted = $respondedAt->format('d/m/Y');
+            $textDate = "{$respondedAtFormatted} | {$daysDifference} {$dayLabel} {$beforeOrAfter} del {$periodLabel}";
+        $data = [
+            'guestName' => $guest->name,
+            'checkin' => $stay->check_in,
+            'textDate' => $textDate,
+            "respondedAtFormatted" => $respondedAtFormatted,
+            "respondedHour" => $respondedAt->format('H:i') ?? '-',
+            'responseLang' => $query->response_lang,
+            'question' => $query->period === 'post-stay' ? '¿Cómo ha sido tu experiencia con nosotros?' : '¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?',
+            'comment' => 'No me ha gustado nada, la habitación estaba sucia y el personal no era amable.'	,
+            'langAbbr' => $query->response_lang,
+            'languageResponse' => EnumsLanguages::NAME[$query->response_lang],
+            'urlToStay' => null,
+            'guestEmail' => $guest->email,
+        ];
+        $showNotify = true;
+        //dd($data);
+        //$this->mailService->sendEmail(new DissatisfiedGuest($hotel, $showNotify, $data), 'xxxx@gmail.com');
+        return view('Mails.queries.DissatisfiedGuest', compact('hotel','guest','data'));
     }
 
 

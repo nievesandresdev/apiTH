@@ -287,9 +287,9 @@ class QueryServices {
                     ->filter(function ($user) {
                         // Decodificar el JSON de notifications
                         $notifications = json_decode($user['notifications'], true);
-                        
+
                         // Verificar si email.informDiscontent es true
-                        return isset($notifications['email']['informDiscontent']) 
+                        return isset($notifications['email']['informDiscontent'])
                             && $notifications['email']['informDiscontent'] === true;
                     })
                 ->values() // Reindexar el array
@@ -300,25 +300,26 @@ class QueryServices {
                 $respondedAt   = Carbon::createFromFormat('Y-m-d H:i:s', $query->responded_at, 'Europe/Madrid');
                 $referenceDate = $query->period === 'post-stay'
                     ? Carbon::parse($stay->check_out, 'Europe/Madrid')
-                    : Carbon::parse($stay->check_in,  'Europe/Madrid');   
+                    : Carbon::parse($stay->check_in,  'Europe/Madrid');
                 $daysDifference = max(0, $respondedAt->diffInDays($referenceDate));
                 $dayLabel = $daysDifference === 1 ? 'día' : 'días';
                 $beforeOrAfter = $respondedAt->lt($referenceDate) ? 'antes' : 'después';
                 $periodLabel = $query->period === 'post-stay' ? 'check-out' : 'check-in';
-                $textDate = "{$daysDifference} {$dayLabel} {$beforeOrAfter} del {$periodLabel}";
+                $respondedAtFormatted = $respondedAt->format('d/m/Y');
+                $textDate = "{$respondedAtFormatted} | {$daysDifference} {$dayLabel} {$beforeOrAfter} del {$periodLabel}";
                 //
                 $saasUrl = config('app.hoster_url');
                 $questionInStay = "¿Cómo calificarías tu nivel de satisfacción con tu estancia hasta ahora?";
                 $questionPostStay = "¿Cómo ha sido tu experiencia con nosotros?";
                 $data = [
                     "guestName" => "{$guest->name} {$guest->lastname}",
-                    "checkin" => "2025-05-01",
+                    "checkin" => $stay->check_in ?? '-',
                     "textDate" => $textDate,
-                    "respondedAtFormatted" => $respondedAt->format('d/m/Y'),
-                    "respondedHour" => $respondedAt->format('H:i'),
+                    "respondedAtFormatted" => $respondedAtFormatted,
+                    "respondedHour" => $respondedAt->format('H:i') ?? '-',
                     "responseLang" => $query->response_lang,
                     "question" => $query->period === 'post-stay' ? $questionPostStay : $questionInStay,
-                    "comment" =>  $query->comment ? translateQualification($query->qualification, $query->period).'.'.$query->comment[$query->response_lang] : translateQualification($query->qualification, $query->period),
+                    "comment" =>  $query->comment ? translateQualification($query->qualification, $query->period).'. '.$query->comment[$query->response_lang] : translateQualification($query->qualification, $query->period),
                     "langAbbr" => $query->response_lang,
                     "languageResponse" => EnumsLanguages::NAME[$query->response_lang],
                     "urlToStay" => null,
@@ -438,7 +439,7 @@ class QueryServices {
 
 
     public function getCurrentQuery ($request) {
-        
+
         try{
             $query = Query::where('stay_id', $request->stayId)
             ->where('guest_id', $request->guestId)

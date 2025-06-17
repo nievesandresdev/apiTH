@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Customization;
 use App\Models\HotelTranslate;
 use App\Models\HotelWifiNetworks;
+use App\Utils\Enums\EnumsQueries\QuerySettingsEnums;
 
 class CloneHotelServices
 {
@@ -184,35 +185,21 @@ class CloneHotelServices
     {
         Log::info('UpdateTrialStays');
         try {
-            // $subDays5 = Carbon::now()->subDays(5)->toDateString();
-            // $subDay = Carbon::now()->subDay()->toDateString();
-            // $subDays2 = Carbon::now()->subDays(2)->toDateString();
-            // $addDays2 = Carbon::now()->addDays(2)->toDateString();
-            // $addDays6 = Carbon::now()->addDays(6)->toDateString();
-            // $dataDates = [
-            //     'amador.rivas@email.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
-            //     'maite.figueroa.lopez@gmail.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
-            //     'antonio_recio@email.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
-            //     'enriquePastor@email.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
-            //     'BertaEscobar@email.com' => ['check_in'=>$subDays2,'check_out'=>$addDays2],
-            //     'vicente.maroto.sanchez@email.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
-            //     'fermin.trujillo@gmail.com' => ['check_in'=>$subDays5,'check_out'=>$subDay],
-            //     'calatrava.coque.25@gmail.com' => ['check_in'=>$addDays2,'check_out'=>$addDays6],
-            //     'judith,becker@email.com' => ['check_in'=>$subDays2,'check_out'=>$addDays2]
-            // ];
-
+            
             // Obtiene las estancias 'trial' del hotel padre y las del hotel hijo
-            $trialStays = $originalHotel->stays()->where('trial', 1)->get();
+            $updateTrialStays = $originalHotel->stays()->where('trial', 1)->get();
             // Log::info('trialStays '.json_encode($trialStays, JSON_PRETTY_PRINT));
             DB::beginTransaction();
-
+            foreach ($updateTrialStays as $stay) {
+                $addDayToCheckIn = Carbon::parse($stay->check_in)->addDay()->toDateString();
+                $addDayToCheckOut = Carbon::parse($stay->check_out)->addDay()->toDateString();
+                $stay->check_in = $addDayToCheckIn;
+                $stay->check_out = $addDayToCheckOut;
+                $stay->save();
+            }
+            
+            $trialStays = $originalHotel->stays()->where('trial', 1)->get();
             foreach ($trialStays as $stayParent) {
-                $addDayCheckIn = Carbon::parse($stayParent->check_in)->addDay()->toDateString();
-                $addDayCheckOut = Carbon::parse($stayParent->check_out)->addDay()->toDateString();
-                // Log::info('check_in '.$stayParent->check_in);
-                // Log::info('addDayCheckIn '.$addDayCheckIn);
-                // Log::info('check_out '.$stayParent->check_out);
-                // Log::info('addDayCheckOut '.$addDayCheckOut);
 
                 if ($stayParent->son_id) {
                     // Si ya se había creado un stay hijo previamente, se intenta recuperarlo
@@ -223,8 +210,6 @@ class CloneHotelServices
                         $stayChild->fill($stayParent->toArray());
                         $stayChild->hotel_id = $copyHotel->id;
                         $stayChild->son_id = null;
-                        $stayChild->check_in = $addDayCheckIn;
-                        $stayChild->check_out = $addDayCheckOut;
                         $stayChild->save();
                     } else {
                         // Si el stay hijo no existe (fue eliminado en el hotel hijo),
@@ -234,8 +219,6 @@ class CloneHotelServices
                         $stayChild->id = $stayParent->son_id;
                         $stayChild->hotel_id = $copyHotel->id;
                         $stayChild->son_id = null;
-                        $stayChild->check_in = $addDayCheckIn;
-                        $stayChild->check_out = $addDayCheckOut;
                         // Forzamos la inserción con el id específico.
                         $stayChild->exists = false;
                         $stayChild->save();
@@ -245,8 +228,6 @@ class CloneHotelServices
                     $stayChild = $stayParent->replicate();
                     $stayChild->hotel_id = $copyHotel->id;
                     $stayChild->son_id = null;
-                    $stayChild->check_in = $addDayCheckIn;
-                    $stayChild->check_out = $addDayCheckOut;
                     $stayChild->save();
                     // Se actualiza el stay padre para registrar el id del stay hijo creado
                     $stayParent->son_id = $stayChild->id;
@@ -283,7 +264,7 @@ class CloneHotelServices
             foreach ($stayParent->guests as $parentGuest) {
                 $partesEmail = explode('@', $parentGuest->email);
                 // Genera el nuevo email concatenando la primera parte, el timestamp y luego el dominio
-                $newEmail = $partesEmail[0] . '.B' . '@' . $partesEmail[1];
+                $newEmail = $partesEmail[0] . '.C' . '@' . $partesEmail[1];
                 // Verifica si ya se registró un hijo para este huésped
                 if ($parentGuest->son_id) {
                     $childGuest = Guest::find($parentGuest->son_id);
@@ -678,7 +659,7 @@ class CloneHotelServices
             //settings query
             //
             //
-            $default = queriesTextDefault();
+            $default = QuerySettingsEnums::queriesTextDefault();
             $originalQuerySettings = $originalHotel->querySettings;
             $copyQuerySettings = $copyHotel->querySettings;
             if($originalQuerySettings){

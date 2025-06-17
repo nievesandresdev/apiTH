@@ -102,7 +102,7 @@ return [
     ],
     'chatLink' => [
         'title' => 'Zalantzarik edo galderarik?',
-        'body' => 'Gogoratu WebApp-en bidez gurekin harremanetan jar zaitezkeela txat kanalaren bidez.',
+        'body' => 'Gogoratu WebApp-en bidez gurekin harremanetan jar zaitezkeela.',
         'button' => 'Joan txatera',
     ],
     'qrHotel' => [

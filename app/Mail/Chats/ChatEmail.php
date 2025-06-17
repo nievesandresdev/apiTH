@@ -41,6 +41,7 @@ class ChatEmail extends Mailable
         if ($this->type == 'pending') {
             $typeTitle = "Chat pendiente";
         }
+        $senderEmail = config('app.mail_sender');
         /* return $this->from("no-reply@thehoster.es", $this->hotel['sender_for_sending_email'])
                     ->subject($typeTitle)
                     ->view('Mails.queries.NewFeedback')
@@ -48,7 +49,7 @@ class ChatEmail extends Mailable
                         'languageName' => $this->languageName,
                     ]); */
 
-                    return $this->from("no-reply@thehoster.es", 'Nuevo Chat')
+                return $this->from($senderEmail, 'Nuevo Chat')
                     ->subject($typeTitle)
                     ->view('Mails.chats.NewChat');
     }

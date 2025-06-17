@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nuevo Chat</title>
+    <title>Informe de Seguimiento</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
@@ -189,7 +189,7 @@
             </div> --}}
             <div style="max-width:260px;margin:0 auto;margin-top: 32px;">
                 <a
-                    href="{{$links['urlComunications']}}"
+                    href="{{$links['urlToReport']}}"
                     style="margin:0;border-radius: 6px;background-color: #FFD453;padding: 12px 0;text-align:center;color:#333333 !important;font-size: 14px;font-weight: 600;line-height: 110%;font-family:'Roboto', sans-serif;margin-top:16px;display:block;text-decoration: none;width:100%"
                 >
                     Ver informe completo

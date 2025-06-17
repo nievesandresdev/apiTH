@@ -9,6 +9,7 @@ use App\Mail\Guest\{postCheckoutMail,prepareArrival,MsgStay};
 use App\Services\MailService;
 use App\Services\EmailTestService;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class EmailTestController extends Controller
 {
@@ -127,7 +128,7 @@ class EmailTestController extends Controller
                 }
 
                 // Optional: Log progress
-                \Log::info("Email sent: {$emailType} to {$guest->email}");
+                Log::info("Email sent: {$emailType} to {$guest->email}");
             }
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, ['request' => $request->all()], 'sendEmails');

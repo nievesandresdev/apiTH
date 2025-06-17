@@ -61,6 +61,7 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
     'guest_path' => env('LOCAL_GUEST_URL', 'http://localhost'),
+    'mail_sender' => env('MAIL_FROM_ADDRESS', 'no-reply@thehster.io'),
     'url_bucket' => env('URL_BUCKET', 'https://thehosterappbucket.s3.eu-south-2.amazonaws.com/test'),
     'storage_env' => env('AWS_STORAGE_PATH', null),
     'asset_url' => env('ASSET_URL'),
