@@ -77,8 +77,13 @@ class StayObserver
                             ->where('stay_id',$stay->id)
                             ->where('period','post-stay')
                             ->first();
-                        $postQuery->histories()->delete();
-                        $postQuery->delete();
+                        if($postQuery && $postQuery->histories()->count() > 0){
+                            $postQuery->histories()->delete();
+                        }
+                        if($postQuery){
+                            $postQuery->delete();
+                        }
+                        
                         
                         // $this->queryservice->updateParams( $postQuery->id, $arrUpdate);
                         // Log::info('reset postQuery');
@@ -90,8 +95,12 @@ class StayObserver
                             ->where('stay_id',$stay->id)
                             ->where('period','in-stay')
                             ->first();
-                        $InQuery->histories()->delete();
-                        $InQuery->delete();
+                        if($InQuery && $InQuery->histories()->count() > 0){
+                            $InQuery->histories()->delete();
+                        }
+                        if($InQuery){
+                            $InQuery->delete();
+                        }
                         // $this->queryservice->updateParams( $InQuery->id, $arrUpdate);
                     }
                 }   

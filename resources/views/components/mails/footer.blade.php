@@ -17,9 +17,9 @@
     <div class="responsive-footer-links" style="margin-bottom: 24px; margin-top:16px;">
         <a href="https://thehoster.io/aviso-legal" style="color: #A0A0A0; text-decoration: none; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%; margin-right: 15px;">Aviso legal</a>
         <a href="https://thehoster.io/privacidad" style="color: #A0A0A0; text-decoration: none; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%; margin-right: 15px;">Política de privacidad</a>
-        @if($showNotify)
+        {{-- @if($showNotify)
             <a href="{{$url}}equipo/configuracion/usuarios?n={{$showNotify}}" class="config-notifications" style="color: #A0A0A0; text-decoration: none; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%;">Configurar notificaciones</a>
-        @endif
+        @endif --}}
     </div>
     <p style="margin: 12px 0 0; font-size: 12px; font-style: normal; font-weight: 400; line-height: 150%;">© Copyright TheHoster 2024</p>
 </div>

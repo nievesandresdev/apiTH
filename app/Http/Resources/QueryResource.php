@@ -16,12 +16,14 @@ class QueryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "id" => $this->id,
             "period"=> $this->period,
             "stay_id"=> $this->stay_id,
             "guest_id"=> $this->guest_id,
             "answered" => $this->answered,
             "qualification" => $this->qualification,
-            "comment" => $this->comment
+            "comment" => $this->comment,
+            "created_at" => $this->created_at,
         ];
     }
 }

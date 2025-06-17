@@ -7,51 +7,127 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
 class CacheResponses
 {
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  int|null  $ttl
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function handle(Request $request, Closure $next, $ttl = null)
     {
+        if (! config('api_cache.enabled')) {
+            return $next($request);
+        }
+        
+        $start  = microtime(true);
         $config = config('api_cache');
 
+        // revisar si aplica para cache CACHE-NOT-ALLOWED
         if (! $this->shouldCacheRequest($request, $config)) {
-            return $this->addCacheHeader($next($request), 'BYPASS');
+            $response = $next($request);
+            return $this->finishResponse($response, 'CACHE-NOT-ALLOWED', $start);
         }
 
-        // Generación de clave con fallback en caso de error
+        // Generar clave de cache
         try {
             $key = $this->generateCacheKey($request, $config);
         } catch (\Throwable $e) {
-            Log::warning("Error generando cache key: {$e->getMessage()}");
-            return $this->addCacheHeader($next($request), 'BYPASS');
+            Log::warning("Cache key error: {$e->getMessage()}");
+            $response = $next($request);
+            return $this->finishResponse($response, 'CACHE-NOT-ALLOWED-FOR-KEY', $start);
         }
 
+        // traer desde el cache BROUGHT-FROM-CACHE
         try {
             if ($cached = Cache::get($key)) {
-                return response($cached['content'], $cached['status'])
-                    ->withHeaders($cached['headers'])
-                    ->header('X-Cache', 'HIT');
+                    $response = $this->buildCachedResponse($cached);
+                    $response->headers->set('X-Cache-Key', $key);
+                    return $this->finishResponse($response, 'BROUGHT-FROM-CACHE', $start);
             }
         } catch (\Throwable $e) {
             Log::error("Cache read error: {$e->getMessage()}");
-        }
+        } 
 
+        // CACHED: procesar y luego guardar
         $response = $next($request);
+        $origin   = strtolower($request->header('origin-component'));
 
-        if ($response->isSuccessful()) {
-            $this->storeInCache($key, $response, $this->getFinalTtl($request, $ttl, $config));
-            return $this->addCacheHeader($response, 'MISS');
+        if (in_array($origin, ['hoster', 'huesped'])) {
+
+            $filteredHeaders = $this->filterResponseHeaders($response->headers->all());
+
+            try {
+                Cache::put($key, [
+                    'timestamp' => now()->toDateTimeString(),
+                    'route'     => $request->method() . ' ' . $request->path(),
+                    'params'    => $this->normalize(
+                        $request->isMethod('GET') ? $request->query() : $request->all()
+                    ),
+                    'status'    => $response->getStatusCode(),
+                    'headers'   => $filteredHeaders,   // <-- aquí
+                    'body'      => $response->getContent(),
+                    'origin'    => $origin,
+                ], $ttl ?? $config['default_ttl']);
+            } catch (\Throwable $e) {
+                Log::error("Cache save error: {$e->getMessage()}");
+            }
         }
 
-        return $this->addCacheHeader($response, 'BYPASS');
+        return $this->finishResponse($response, 'CACHED', $start);
     }
 
+    /**
+     * Añade headers de cache y tiempo.
+     */
+    protected function finishResponse(Response $response, string $status, float $start): Response
+    {
+        $elapsed = round((microtime(true) - $start) * 1000);
+
+        $ttl = property_exists($this, 'ttl')
+        ? $this->ttl
+        : config('api_cache.default_ttl');
+
+        $response->header('X-Cache', $status)
+                ->header('X-Response-Time', "{$elapsed}ms")
+                ->header('Vary', 'hash-user, hash-hotel, origin-component, reset-cache');
+
+            // 2) Cache-Control según el estado
+            if (! in_array($status, ['BROUGHT-FROM-CACHE', 'CACHED'], true)) {
+                $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+            } else {
+                $response->header('Cache-Control', 'public, max-age=' . $ttl);
+            }
+        return $response;
+                
+    }
+
+    /**
+     * Determina si la petición es cacheable.
+     */
     protected function shouldCacheRequest(Request $request, array $config): bool
     {
+        if (! $request->expectsJson()) {
+            return false;
+        }
+        
         $method = strtoupper($request->getMethod());
         if (! in_array($method, ['GET', 'POST'])) {
             return false;
         }
+
+        if ($request->query('mockup') === 'true') {
+            return false;
+        }
+
+        $pathWithoutQuery = strtok($request->getRequestUri(), '?');
+
+        $pathForCheck = ltrim(parse_url($pathWithoutQuery, PHP_URL_PATH), '/');
 
         foreach ($config['excluded_routes'] as $route) {
             if ($request->is($route)) {
@@ -59,6 +135,13 @@ class CacheResponses
             }
         }
 
+        // Requiere headers para caché: hash-user, hash-hotel y origin-component
+        if (! $request->hasHeader('hash-user')
+            || ! $request->hasHeader('hash-hotel')
+            || ! $request->hasHeader('origin-component')
+            || ! $request->hasHeader('reset-cache')) {
+            return false;
+        }
         if ($method === 'POST') {
             foreach ($config['cacheable_post_routes'] as $pattern) {
                 if ($request->is($pattern)) {
@@ -67,110 +150,85 @@ class CacheResponses
             }
             return false;
         }
-
         return true;
     }
 
+    /**
+     * Construye la clave de cache usando headers de usuario, hotel y origin.
+     */
     protected function generateCacheKey(Request $request, array $config): string
     {
-        $userId  = $this->getUserIdFromRequest($request);
-        $hotelId = $this->getHotelIdFromRequest($request);
-        $path    = $request->path();
-        $params  = $this->normalizeParameters($request);
+        $userHash  = $request->header('hash-user');
+        $hotelHash = $request->header('hash-hotel');
+        $resetCache = $request->header('reset-cache');
+        $origin    = strtolower($request->header('origin-component'));
 
-        $composite = $path . '|' . json_encode($params);
+        if (empty($userHash) || empty($hotelHash) || empty($origin) || empty($resetCache)) {
+            throw new \RuntimeException('Missing identifiers for cache key');
+        }
 
+        $path   = $request->path();
+        $params = $this->normalize(
+            $request->isMethod('GET') ? $request->query() : $request->all()
+        );
+        
         return sprintf(
-            '%suser:%s:hotel:%s:%s',
-            $config['key_prefix'],
-            $userId,
-            $hotelId,
-            sha1($composite)
+            '%suser:%s:hotel:%s:origin:%s:reset:%s:path:%s:%s',
+            $config['key_prefix'], $userHash, $hotelHash,
+            $origin, $resetCache, $path,
+            sha1($path . '|' . json_encode($params))
         );
     }
 
-    protected function normalizeParameters(Request $request): array
+    /**
+     * Ordena parámetros para hashing.
+     */
+    protected function normalize(array $params): array
     {
-        $sensitive = config('api_cache.sensitive_params', []);
-        $params    = $request->isMethod('GET')
-                   ? $request->query()
-                   : $request->except($sensitive);
-
-        if (isset($params['hotel']) && is_array($params['hotel'])) {
-            $keep = ['id', 'zone', 'latitude', 'longitude'];
-            $params['hotel'] = array_intersect_key(
-                $params['hotel'], array_flip($keep)
-            );
-            ksort($params['hotel']);
+        foreach ($params as $key => $value) {
+            if (is_array($value)) {
+                $params[$key] = $this->normalize($value);
+            }
         }
-
         ksort($params);
         return $params;
     }
 
-    protected function getUserIdFromRequest(Request $request): string
+    /**
+     * Reconstruye la respuesta cacheada.
+     */
+    protected function buildCachedResponse(array $c): Response
     {
-        if (! $token = $request->bearerToken()) {
-            Log::warning('Token ausente, usando guest');
-            return 'guest';
-        }
+        $response = response($c['body'], $c['status']);
 
-        try {
-            $payload = json_decode(
-                base64_decode(explode('.', $token)[1]),
-                true
-            );
-            return (string) ($payload['sub'] ?? 'guest');
-        } catch (\Throwable $e) {
-            Log::warning("Token inválido, usando guest: {$e->getMessage()}");
-            return 'guest';
-        }
-    }
-
-    protected function getHotelIdFromRequest(Request $request): string
-    {
-        $hotel = $request->header('subdomainhotel');
-        if (empty($hotel)) {
-            Log::warning('Header subdomainhotel ausente, usando no-hotel');
-            return 'no-hotel';
-        }
-        return $hotel;
-    }
-
-    protected function storeInCache(string $key, Response $response, int $ttl): void
-    {
-        try {
-            Cache::put($key, [
-                'content' => $response->getContent(),
-                'status'  => $response->getStatusCode(),
-                'headers' => $response->headers->all(),
-            ], $ttl);
-        } catch (\Throwable $e) {
-            Log::error("Cache write error: {$e->getMessage()}");
-        }
-    }
-
-    protected function getFinalTtl(Request $request, $ttl, array $config): int
-    {
-        if ($ttl !== null) {
-            return $ttl;
-        }
-
-        foreach ($config['route_specific_ttl'] as $route => $routeTtl) {
-            if ($request->is($route)) {
-                return $routeTtl;
+        // 2) APLICAMOS sólo los headers permitidos al reconstruir la respuesta
+        foreach ($this->filterResponseHeaders($c['headers']) as $name => $vals) {
+            foreach ((array) $vals as $v) {
+                $response->header($name, $v);
             }
         }
 
-        return $config['default_ttl'];
+        return $response;
     }
 
-    protected function addCacheHeader(Response $response, string $status): Response
+    protected function filterResponseHeaders(array $headers): array
     {
-        $response->headers->set('X-Cache', $status);
-        if (! $response->headers->has('Cache-Control')) {
-            $response->headers->set('Cache-Control', 'private, max-age=3600');
-        }
-        return $response;
+        $exclude = [
+            'subdomainhotel',
+            'reset-cache',
+            'chainsubdomain',
+            'hash-hotel',
+            'hash-user',
+            'origin-component',
+            ':path',
+        ];
+
+        return array_filter(
+            $headers,
+            function (string $name) use ($exclude) {
+                return ! in_array(strtolower($name), $exclude, true);
+            },
+            ARRAY_FILTER_USE_KEY
+        );
     }
 }

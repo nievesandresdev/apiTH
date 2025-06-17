@@ -5,6 +5,7 @@ namespace App\Services\Hoster\Queries;
 use App\Jobs\TranslateGenericMultipleJob;
 use App\Jobs\TranslateModelJob;
 use App\Models\QuerySetting;
+use App\Utils\Enums\EnumsQueries\QuerySettingsEnums;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +22,7 @@ class QuerySettingsHosterServices {
         try {
             $default = QuerySetting::where('hotel_id',$hotelId)->first();
             if(!$default){
-                $default = queriesTextDefault();
+                $default = QuerySettingsEnums::queriesTextDefault();
             }
             return $default;
         } catch (\Exception $e) {
@@ -35,28 +36,44 @@ class QuerySettingsHosterServices {
             $save = QuerySetting::updateOrCreate(['hotel_id' => $hotelId],
                 [
                     'pre_stay_activate' => in_array('pre_stay_activate', $keysToSave) ? $newdata->pre_stay_activate : $default->pre_stay_activate,
-                    'pre_stay_thanks' => in_array('pre_stay_thanks', $keysToSave) ? $newdata->pre_stay_thanks : $default->pre_stay_thanks,
                     'pre_stay_comment' => in_array('pre_stay_comment', $keysToSave) ? $newdata->pre_stay_comment : $default->pre_stay_comment,
-                    //    
-                    'in_stay_activate' => in_array('in_stay_activate', $keysToSave) ? $newdata->in_stay_activate : $default->in_stay_activate,
-                    'in_stay_thanks_good' => in_array('in_stay_thanks_good', $keysToSave) ? $newdata->in_stay_thanks_good : $default->in_stay_thanks_good,
-                    'in_stay_assessment_good_activate' => in_array('in_stay_assessment_good_activate', $keysToSave) ? $newdata->in_stay_assessment_good_activate : $default->in_stay_assessment_good_activate,
-                    'in_stay_assessment_good' => in_array('in_stay_assessment_good', $keysToSave) ? $newdata->in_stay_assessment_good : $default->in_stay_assessment_good,
-                    'in_stay_thanks_normal' => in_array('in_stay_thanks_normal', $keysToSave) ? $newdata->in_stay_thanks_normal : $default->in_stay_thanks_normal,
-                    'in_stay_assessment_normal_activate' => in_array('in_stay_assessment_normal_activate', $keysToSave) ? $newdata->in_stay_assessment_normal_activate : $default->in_stay_assessment_normal_activate,
-                    'in_stay_assessment_normal' => in_array('in_stay_assessment_normal', $keysToSave) ? $newdata->in_stay_assessment_normal : $default->in_stay_assessment_normal,
-                    'in_stay_comment' => in_array('in_stay_comment', $keysToSave) ? $newdata->in_stay_comment : $default->in_stay_comment,
+                    //////////////////////
+                    'in_stay_verygood_request_activate' => in_array('in_stay_verygood_request_activate', $keysToSave) ? $newdata->in_stay_verygood_request_activate : $default->in_stay_verygood_request_activate,
+                    'in_stay_verygood_response_title' => in_array('in_stay_verygood_response_title', $keysToSave) ? $newdata->in_stay_verygood_response_title : $default->in_stay_verygood_response_title,
+                    'in_stay_verygood_response_msg' => in_array('in_stay_verygood_response_msg', $keysToSave) ? $newdata->in_stay_verygood_response_msg : $default->in_stay_verygood_response_msg,
+                    'in_stay_verygood_request_otas' => in_array('in_stay_verygood_request_otas', $keysToSave) ? $newdata->in_stay_verygood_request_otas : $default->in_stay_verygood_request_otas,
+                    'in_stay_verygood_no_request_comment_activate' => in_array('in_stay_verygood_no_request_comment_activate', $keysToSave) ? $newdata->in_stay_verygood_no_request_comment_activate : $default->in_stay_verygood_no_request_comment_activate,
+                    'in_stay_verygood_no_request_comment_msg' => in_array('in_stay_verygood_no_request_comment_msg', $keysToSave) ? $newdata->in_stay_verygood_no_request_comment_msg : $default->in_stay_verygood_no_request_comment_msg,
+                    'in_stay_verygood_no_request_thanks_title' => in_array('in_stay_verygood_no_request_thanks_title', $keysToSave) ? $newdata->in_stay_verygood_no_request_thanks_title : $default->in_stay_verygood_no_request_thanks_title,
+                    'in_stay_verygood_no_request_thanks_msg' => in_array('in_stay_verygood_no_request_thanks_msg', $keysToSave) ? $newdata->in_stay_verygood_no_request_thanks_msg : $default->in_stay_verygood_no_request_thanks_msg,
                     //
-                    'post_stay_thanks_good' => in_array('post_stay_thanks_good', $keysToSave) ? $newdata->post_stay_thanks_good : $default->post_stay_thanks_good,
-                    'post_stay_assessment_good_activate' => in_array('post_stay_assessment_good_activate', $keysToSave) ? $newdata->post_stay_assessment_good_activate : $default->post_stay_assessment_good_activate,
-                    'post_stay_assessment_good' => in_array('post_stay_assessment_good', $keysToSave) ? $newdata->post_stay_assessment_good : $default->post_stay_assessment_good,
-                    'post_stay_thanks_normal' => in_array('post_stay_thanks_normal', $keysToSave) ? $newdata->post_stay_thanks_normal : $default->post_stay_thanks_normal,
-                    'post_stay_assessment_normal_activate' => in_array('post_stay_assessment_normal_activate', $keysToSave) ? $newdata->post_stay_assessment_normal_activate : $default->post_stay_assessment_normal_activate,
-                    'post_stay_assessment_normal' => in_array('post_stay_assessment_normal', $keysToSave) ? $newdata->post_stay_assessment_normal : $default->post_stay_assessment_normal,
-                    'post_stay_comment' => in_array('post_stay_comment', $keysToSave) ? $newdata->post_stay_comment : $default->post_stay_comment,
-                    'notify_to_hoster' => in_array('notify_to_hoster', $keysToSave) ? $newdata->notify_to_hoster : $default->notify_to_hoster,
-                    'email_notify_new_feedback_to' => in_array('email_notify_new_feedback_to', $keysToSave) ? $newdata->email_notify_new_feedback_to : $default->email_notify_new_feedback_to,
-                    'email_notify_pending_feedback_to' => in_array('email_notify_pending_feedback_to', $keysToSave) ? $newdata->email_notify_pending_feedback_to : $default->email_notify_pending_feedback_to,
+                    'in_stay_good_request_activate' => in_array('in_stay_good_request_activate', $keysToSave) ? $newdata->in_stay_good_request_activate : $default->in_stay_good_request_activate,
+                    'in_stay_good_response_title' => in_array('in_stay_good_response_title', $keysToSave) ? $newdata->in_stay_good_response_title : $default->in_stay_good_response_title,
+                    'in_stay_good_response_msg' => in_array('in_stay_good_response_msg', $keysToSave) ? $newdata->in_stay_good_response_msg : $default->in_stay_good_response_msg,
+                    'in_stay_good_request_otas' => in_array('in_stay_good_request_otas', $keysToSave) ? $newdata->in_stay_good_request_otas : $default->in_stay_good_request_otas,
+                    'in_stay_good_no_request_comment_activate' => in_array('in_stay_good_no_request_comment_activate', $keysToSave) ? $newdata->in_stay_good_no_request_comment_activate : $default->in_stay_good_no_request_comment_activate,
+                    'in_stay_good_no_request_comment_msg' => in_array('in_stay_good_no_request_comment_msg', $keysToSave) ? $newdata->in_stay_good_no_request_comment_msg : $default->in_stay_good_no_request_comment_msg,
+                    'in_stay_good_no_request_thanks_title' => in_array('in_stay_good_no_request_thanks_title', $keysToSave) ? $newdata->in_stay_good_no_request_thanks_title : $default->in_stay_good_no_request_thanks_title,
+                    'in_stay_good_no_request_thanks_msg' => in_array('in_stay_good_no_request_thanks_msg', $keysToSave) ? $newdata->in_stay_good_no_request_thanks_msg : $default->in_stay_good_no_request_thanks_msg,
+                    //
+                    'in_stay_bad_response_title' => in_array('in_stay_bad_response_title', $keysToSave) ? $newdata->in_stay_bad_response_title : $default->in_stay_bad_response_title,
+                    'in_stay_bad_response_msg' => in_array('in_stay_bad_response_msg', $keysToSave) ? $newdata->in_stay_bad_response_msg : $default->in_stay_bad_response_msg,
+                    //////////////////////
+                    'post_stay_verygood_response_title' => in_array('post_stay_verygood_response_title', $keysToSave) ? $newdata->post_stay_verygood_response_title : $default->post_stay_verygood_response_title,
+                    'post_stay_verygood_response_msg' => in_array('post_stay_verygood_response_msg', $keysToSave) ? $newdata->post_stay_verygood_response_msg : $default->post_stay_verygood_response_msg,
+                    'post_stay_verygood_request_otas' => in_array('post_stay_verygood_request_otas', $keysToSave) ? $newdata->post_stay_verygood_request_otas : $default->post_stay_verygood_request_otas,
+                    //
+                    'post_stay_good_request_activate' => in_array('post_stay_good_request_activate', $keysToSave) ? $newdata->post_stay_good_request_activate : $default->post_stay_good_request_activate,
+                    'post_stay_good_response_title' => in_array('post_stay_good_response_title', $keysToSave) ? $newdata->post_stay_good_response_title : $default->post_stay_good_response_title,
+                    'post_stay_good_response_msg' => in_array('post_stay_good_response_msg', $keysToSave) ? $newdata->post_stay_good_response_msg : $default->post_stay_good_response_msg,
+                    'post_stay_good_request_otas' => in_array('post_stay_good_request_otas', $keysToSave) ? $newdata->post_stay_good_request_otas : $default->post_stay_good_request_otas,
+                    'post_stay_good_no_request_comment_activate' => in_array('post_stay_good_no_request_comment_activate', $keysToSave) ? $newdata->post_stay_good_no_request_comment_activate : $default->post_stay_good_no_request_comment_activate,
+                    'post_stay_good_no_request_comment_msg' => in_array('post_stay_good_no_request_comment_msg', $keysToSave) ? $newdata->post_stay_good_no_request_comment_msg : $default->post_stay_good_no_request_comment_msg,
+                    'post_stay_good_no_request_thanks_title' => in_array('post_stay_good_no_request_thanks_title', $keysToSave) ? $newdata->post_stay_good_no_request_thanks_title : $default->post_stay_good_no_request_thanks_title,
+                    'post_stay_good_no_request_thanks_msg' => in_array('post_stay_good_no_request_thanks_msg', $keysToSave) ? $newdata->post_stay_good_no_request_thanks_msg : $default->post_stay_good_no_request_thanks_msg,
+                    //
+                    'post_stay_bad_response_title' => in_array('post_stay_bad_response_title', $keysToSave) ? $newdata->post_stay_bad_response_title : $default->post_stay_bad_response_title,
+                    'post_stay_bad_response_msg' => in_array('post_stay_bad_response_msg', $keysToSave) ? $newdata->post_stay_bad_response_msg : $default->post_stay_bad_response_msg,
                 ]
             );
             Log::info('save '.json_encode($save));
@@ -80,22 +97,35 @@ class QuerySettingsHosterServices {
                 }
             }
         }
-        
-        $model->pre_stay_thanks = isset($translationFormat['pre_stay_thanks']) ? $translationFormat['pre_stay_thanks'] : $model->pre_stay_thanks;
         $model->pre_stay_comment = isset($translationFormat['pre_stay_comment']) ? $translationFormat['pre_stay_comment'] : $model->pre_stay_comment;
+        //////////////////////
+        $model->in_stay_verygood_response_title = isset($translationFormat['in_stay_verygood_response_title']) ? $translationFormat['in_stay_verygood_response_title'] : $model->in_stay_verygood_response_title;
+        $model->in_stay_verygood_response_msg = isset($translationFormat['in_stay_verygood_response_msg']) ? $translationFormat['in_stay_verygood_response_msg'] : $model->in_stay_verygood_response_msg;
+        $model->in_stay_verygood_no_request_comment_msg = isset($translationFormat['in_stay_verygood_no_request_comment_msg']) ? $translationFormat['in_stay_verygood_no_request_comment_msg'] : $model->in_stay_verygood_no_request_comment_msg;
+        $model->in_stay_verygood_no_request_thanks_title = isset($translationFormat['in_stay_verygood_no_request_thanks_title']) ? $translationFormat['in_stay_verygood_no_request_thanks_title'] : $model->in_stay_verygood_no_request_thanks_title;
+        $model->in_stay_verygood_no_request_thanks_msg = isset($translationFormat['in_stay_verygood_no_request_thanks_msg']) ? $translationFormat['in_stay_verygood_no_request_thanks_msg'] : $model->in_stay_verygood_no_request_thanks_msg;
         //
-        $model->in_stay_thanks_good = isset($translationFormat['in_stay_thanks_good']) ? $translationFormat['in_stay_thanks_good'] : $model->in_stay_thanks_good;
-        $model->in_stay_assessment_good = isset($translationFormat['in_stay_assessment_good']) ? $translationFormat['in_stay_assessment_good'] : $model->in_stay_assessment_good;
-        $model->in_stay_thanks_normal = isset($translationFormat['in_stay_thanks_normal']) ? $translationFormat['in_stay_thanks_normal'] : $model->in_stay_thanks_normal;
-        $model->in_stay_assessment_normal = isset($translationFormat['in_stay_assessment_normal']) ? $translationFormat['in_stay_assessment_normal'] : $model->in_stay_assessment_normal;
-        $model->in_stay_comment = isset($translationFormat['in_stay_comment']) ? $translationFormat['in_stay_comment'] : $model->in_stay_comment;
+        $model->in_stay_good_response_title = isset($translationFormat['in_stay_good_response_title']) ? $translationFormat['in_stay_good_response_title'] : $model->in_stay_good_response_title;
+        $model->in_stay_good_response_msg = isset($translationFormat['in_stay_good_response_msg']) ? $translationFormat['in_stay_good_response_msg'] : $model->in_stay_good_response_msg;
+        $model->in_stay_good_no_request_comment_msg = isset($translationFormat['in_stay_good_no_request_comment_msg']) ? $translationFormat['in_stay_good_no_request_comment_msg'] : $model->in_stay_good_no_request_comment_msg;
+        $model->in_stay_good_no_request_thanks_title = isset($translationFormat['in_stay_good_no_request_thanks_title']) ? $translationFormat['in_stay_good_no_request_thanks_title'] : $model->in_stay_good_no_request_thanks_title;
+        $model->in_stay_good_no_request_thanks_msg = isset($translationFormat['in_stay_good_no_request_thanks_msg']) ? $translationFormat['in_stay_good_no_request_thanks_msg'] : $model->in_stay_good_no_request_thanks_msg;
         //
-        $model->post_stay_thanks_good = isset($translationFormat['post_stay_thanks_good']) ? $translationFormat['post_stay_thanks_good'] : $model->post_stay_thanks_good;
-        $model->post_stay_assessment_good = isset($translationFormat['post_stay_assessment_good']) ? $translationFormat['post_stay_assessment_good'] : $model->post_stay_assessment_good;
-        $model->post_stay_thanks_normal = isset($translationFormat['post_stay_thanks_normal']) ? $translationFormat['post_stay_thanks_normal'] : $model->post_stay_thanks_normal;
-        $model->post_stay_assessment_normal = isset($translationFormat['post_stay_assessment_normal']) ? $translationFormat['post_stay_assessment_normal'] : $model->post_stay_assessment_normal;
-        $model->post_stay_comment = isset($translationFormat['post_stay_comment']) ? $translationFormat['post_stay_comment'] : $model->post_stay_comment;
+        $model->in_stay_bad_response_title = isset($translationFormat['in_stay_bad_response_title']) ? $translationFormat['in_stay_bad_response_title'] : $model->in_stay_bad_response_title;
+        $model->in_stay_bad_response_msg = isset($translationFormat['in_stay_bad_response_msg']) ? $translationFormat['in_stay_bad_response_msg'] : $model->in_stay_bad_response_msg;
+        //////////////////////
+        $model->post_stay_verygood_response_title = isset($translationFormat['post_stay_verygood_response_title']) ? $translationFormat['post_stay_verygood_response_title'] : $model->post_stay_verygood_response_title;
+        $model->post_stay_verygood_response_msg = isset($translationFormat['post_stay_verygood_response_msg']) ? $translationFormat['post_stay_verygood_response_msg'] : $model->post_stay_verygood_response_msg;
         //
+        $model->post_stay_good_response_title = isset($translationFormat['post_stay_good_response_title']) ? $translationFormat['post_stay_good_response_title'] : $model->post_stay_good_response_title;
+        $model->post_stay_good_response_msg = isset($translationFormat['post_stay_good_response_msg']) ? $translationFormat['post_stay_good_response_msg'] : $model->post_stay_good_response_msg;
+        $model->post_stay_good_no_request_comment_msg = isset($translationFormat['post_stay_good_no_request_comment_msg']) ? $translationFormat['post_stay_good_no_request_comment_msg'] : $model->post_stay_good_no_request_comment_msg;
+        $model->post_stay_good_no_request_thanks_title = isset($translationFormat['post_stay_good_no_request_thanks_title']) ? $translationFormat['post_stay_good_no_request_thanks_title'] : $model->post_stay_good_no_request_thanks_title;
+        $model->post_stay_good_no_request_thanks_msg = isset($translationFormat['post_stay_good_no_request_thanks_msg']) ? $translationFormat['post_stay_good_no_request_thanks_msg'] : $model->post_stay_good_no_request_thanks_msg;
+        //
+        $model->post_stay_bad_response_title = isset($translationFormat['post_stay_bad_response_title']) ? $translationFormat['post_stay_bad_response_title'] : $model->post_stay_bad_response_title;
+        $model->post_stay_bad_response_msg = isset($translationFormat['post_stay_bad_response_msg']) ? $translationFormat['post_stay_bad_response_msg'] : $model->post_stay_bad_response_msg;
+
         $model->save();
         Log::info('nueva traduccion guardada');
     }
@@ -103,34 +133,65 @@ class QuerySettingsHosterServices {
 
     public function processTranslateTexts ($request, $model, $period){
         
-        $pre_stay_thanks = $request->pre_stay_thanks['es'] ?? null;
-        // $pre_stay_comment = $request->pre_stay_comment['es'];
-        $arrToTranslate = ['pre_stay_thanks' => $pre_stay_thanks];
+        $pre_stay_comment = $request->pre_stay_comment['es'] ?? null;
+        $arrToTranslate = ['pre_stay_comment' => $pre_stay_comment];
         if($period == 'in-stay'){
-            $in_stay_thanks_good = $request->in_stay_thanks_good['es'] ?? null;
-            $in_stay_thanks_normal = $request->in_stay_thanks_normal['es'] ?? null;
-            $in_stay_assessment_good = $request->in_stay_assessment_good['es'] ?? null;
-            $in_stay_assessment_normal = $request->in_stay_assessment_normal['es'] ?? null;
-            // $in_stay_comment = $request->in_stay_comment['es'] ?? null;
+            $in_stay_verygood_response_title = $request->in_stay_verygood_response_title['es'] ?? null;
+            $in_stay_verygood_response_msg = $request->in_stay_verygood_response_msg['es'] ?? null;
+            $in_stay_verygood_no_request_comment_msg = $request->in_stay_verygood_no_request_comment_msg['es'] ?? null;
+            $in_stay_verygood_no_request_thanks_title = $request->in_stay_verygood_no_request_thanks_title['es'] ?? null;
+            $in_stay_verygood_no_request_thanks_msg = $request->in_stay_verygood_no_request_thanks_msg['es'] ?? null;
+            //
+            $in_stay_good_response_title = $request->in_stay_good_response_title['es'] ?? null;
+            $in_stay_good_response_msg = $request->in_stay_good_response_msg['es'] ?? null;
+            $in_stay_good_no_request_comment_msg = $request->in_stay_good_no_request_comment_msg['es'] ?? null;
+            $in_stay_good_no_request_thanks_title = $request->in_stay_good_no_request_thanks_title['es'] ?? null;
+            $in_stay_good_no_request_thanks_msg = $request->in_stay_good_no_request_thanks_msg['es'] ?? null;
+            //
+            $in_stay_bad_response_title = $request->in_stay_bad_response_title['es'] ?? null;
+            $in_stay_bad_response_msg = $request->in_stay_bad_response_msg['es'] ?? null;
+            //
             $arrToTranslate = [
-                'in_stay_thanks_good' => $in_stay_thanks_good,
-                'in_stay_thanks_normal' => $in_stay_thanks_normal,
-                'in_stay_assessment_good' => $in_stay_assessment_good,
-                'in_stay_assessment_normal' => $in_stay_assessment_normal,
+                'in_stay_verygood_response_title' => $in_stay_verygood_response_title,
+                'in_stay_verygood_response_msg' => $in_stay_verygood_response_msg,
+                'in_stay_verygood_no_request_comment_msg' => $in_stay_verygood_no_request_comment_msg,
+                'in_stay_verygood_no_request_thanks_title' => $in_stay_verygood_no_request_thanks_title,
+                'in_stay_verygood_no_request_thanks_msg' => $in_stay_verygood_no_request_thanks_msg,
+                //
+                'in_stay_good_response_title' => $in_stay_good_response_title,
+                'in_stay_good_response_msg' => $in_stay_good_response_msg,
+                'in_stay_good_no_request_comment_msg' => $in_stay_good_no_request_comment_msg,
+                'in_stay_good_no_request_thanks_title' => $in_stay_good_no_request_thanks_title,
+                'in_stay_good_no_request_thanks_msg' => $in_stay_good_no_request_thanks_msg,
+                //
+                'in_stay_bad_response_title' => $in_stay_bad_response_title,
+                'in_stay_bad_response_msg' => $in_stay_bad_response_msg,
             ];
         }
         if($period == 'post-stay'){
-            $post_stay_thanks_good = $request->post_stay_thanks_good['es'] ?? null;
-            $post_stay_thanks_normal = $request->post_stay_thanks_normal['es'] ?? null;
-            $post_stay_assessment_good = $request->post_stay_assessment_good['es'] ?? null;
-            $post_stay_assessment_normal = $request->post_stay_assessment_normal['es'] ?? null;
-
-            // $post_stay_comment = $request->post_stay_comment['es'] ?? null;
+            $post_stay_verygood_response_title = $request->post_stay_verygood_response_title['es'] ?? null;
+            $post_stay_verygood_response_msg = $request->post_stay_verygood_response_msg['es'] ?? null;
+            //
+            $post_stay_good_response_title = $request->post_stay_good_response_title['es'] ?? null;
+            $post_stay_good_response_msg = $request->post_stay_good_response_msg['es'] ?? null;
+            $post_stay_good_no_request_comment_msg = $request->post_stay_good_no_request_comment_msg['es'] ?? null;
+            $post_stay_good_no_request_thanks_title = $request->post_stay_good_no_request_thanks_title['es'] ?? null;
+            $post_stay_good_no_request_thanks_msg = $request->post_stay_good_no_request_thanks_msg['es'] ?? null;
+            //
+            $post_stay_bad_response_title = $request->post_stay_bad_response_title['es'] ?? null;
+            $post_stay_bad_response_msg = $request->post_stay_bad_response_msg['es'] ?? null;
             $arrToTranslate = [
-                'post_stay_thanks_good' => $post_stay_thanks_good,
-                'post_stay_thanks_normal' => $post_stay_thanks_normal,
-                'post_stay_assessment_good' => $post_stay_assessment_good,
-                'post_stay_assessment_normal' => $post_stay_assessment_normal
+                'post_stay_verygood_response_title' => $post_stay_verygood_response_title,
+                'post_stay_verygood_response_msg' => $post_stay_verygood_response_msg,
+                //
+                'post_stay_good_response_title' => $post_stay_good_response_title,
+                'post_stay_good_response_msg' => $post_stay_good_response_msg,
+                'post_stay_good_no_request_comment_msg' => $post_stay_good_no_request_comment_msg,
+                'post_stay_good_no_request_thanks_title' => $post_stay_good_no_request_thanks_title,
+                'post_stay_good_no_request_thanks_msg' => $post_stay_good_no_request_thanks_msg,
+                //
+                'post_stay_bad_response_title' => $post_stay_bad_response_title,
+                'post_stay_bad_response_msg' => $post_stay_bad_response_msg,
             ];
         }
         

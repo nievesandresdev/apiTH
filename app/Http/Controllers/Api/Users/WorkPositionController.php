@@ -31,7 +31,6 @@ class WorkPositionController extends Controller
 
     public function store()
     {
-
         try {
             // Guarda la posición de trabajo con los permisos y notificaciones enviados
             $work_position = WorkPosition::create([
@@ -39,7 +38,7 @@ class WorkPositionController extends Controller
                 'permissions' => json_encode(request()->permissions),
                 'notifications' => json_encode(request()->notifications),
                 'periodicity_chat' => json_encode(request()->periodicityChat),
-                'periodicity_stay' => json_encode(request()->periodicityStay),
+                'periodicity_stay' => json_encode(request()->periodicityStay)
             ]);
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
@@ -74,7 +73,6 @@ class WorkPositionController extends Controller
                 'notifications' => json_encode($data['notifications']),
                 'periodicity_chat' => json_encode($data['periodicityChat']),
                 'periodicity_stay' => json_encode($data['periodicityStay'])
-
             ]);
 
             foreach ($work_position->profiles as $profile) {

@@ -44,7 +44,7 @@ class RequestSettingController extends Controller
             $hotel = $request->attributes->get('hotel');
             $period = $request->period;
             $settings = $this->service->getAll($hotel->id);
-            $model = $this->service->getRequestData($settings, $hotel, $period);
+            $model = $this->service->getRequestData($settings, $request->guestName, $period);
             if(!$model){
                 $data = [
                     'message' => __('response.bad_request_long')

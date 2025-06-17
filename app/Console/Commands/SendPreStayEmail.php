@@ -80,7 +80,7 @@ class SendPreStayEmail extends Command
                         ]);
                 },
                 'hotel' => function ($query) {
-                    $query->select('id', 'name', 'checkout', 'checkin', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id')
+                    $query->select('id', 'name', 'checkout', 'checkin', 'subdomain', 'show_facilities', 'show_experiences', 'show_places', 'zone','city_id','sender_mail_mask')
                         ->with(['hotelCommunications' => function($query) {
                             $query->where('type', 'email');
                         }]);
@@ -196,7 +196,7 @@ class SendPreStayEmail extends Command
                         Log::info('Correo no enviado handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
                     }
                 }else{
-                    Log::info("No se envía correo preCheckin email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})");
+                    Log::info("No se envía correo preCheckin email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotel->name})");
                 }
             } catch (\Exception $e) {
                 Log::error('Error al enviar correo handleSendEmailPreCheckin', [

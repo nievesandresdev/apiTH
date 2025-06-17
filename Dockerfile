@@ -45,7 +45,7 @@ RUN echo "date.timezone = Europe/Madrid" > /usr/local/etc/php/conf.d/timezone.in
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Habilitar mod_rewrite de Apache
-RUN a2enmod rewrite
+RUN a2enmod rewrite headers
 
 # Configurar php.ini
 RUN { \

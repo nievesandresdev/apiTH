@@ -24,6 +24,7 @@ use App\Utils\Enums\EnumResponse;
 
 use App\Http\Requests\Hotel\UpdateProfileRequest;
 use App\Http\Resources\HotelMainDataWebappResource;
+use App\Services\HotelButtonsService;
 
 class HotelController extends Controller
 {
@@ -32,13 +33,14 @@ class HotelController extends Controller
     protected $serviceExperience;
     protected $servicePlace;
     protected $cityService;
-
+    protected $serviceButtons;
     function __construct(
         HotelService $_HotelService,
         FacilityService $_FacilityService,
         ExperienceService $_ExperienceService,
         PlaceService $_PlaceService,
-        CityService $_CityService
+        CityService $_CityService,
+        HotelButtonsService $_HotelButtonsService
     )
     {
         $this->service = $_HotelService;
@@ -46,6 +48,7 @@ class HotelController extends Controller
         $this->serviceExperience = $_ExperienceService;
         $this->servicePlace = $_PlaceService;
         $this->cityService = $_CityService;
+        $this->serviceButtons = $_HotelButtonsService;
     }
 
     public function getAll (Request $request) {
@@ -116,11 +119,16 @@ class HotelController extends Controller
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
 
+            if($request->stayDemo){ //si es demo, se devuelve el hotel y el stay
+                return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
+            }
+
             $data = new HotelResource($model);
 
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
 
         } catch (\Exception $e) {
+            return $e;
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.findByParams');
         }
     }
@@ -527,5 +535,14 @@ class HotelController extends Controller
         }
     }
 
-
+    public function getActiveHotelButtons(Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $data = $this->serviceButtons->getActiveHotelButtons($hotelModel);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getActiveHotelButtons');
+        }
+    }
+    
 }

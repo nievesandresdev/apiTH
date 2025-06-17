@@ -17,33 +17,27 @@ jobs:
         uses: actions/checkout@v3
 
       # Crear el archivo .env (si es necesario)
-      #echo "REDIS_HOST=th-api.redis.cache.windows.net" >> .env
-      #echo "REDIS_PORT=6380" >> .env
-      #echo "REDIS_SCHEME=tls" >> .env
-      #echo "REDIS_DB=0" >> .env
-      #echo "REDIS_CACHE_DB=1" >> .env
-      #echo "REDIS_CLIENT=phpredis" >> .env
       - name: Create .env file
         run: |
           echo "APP_NAME=TheHoster" >> .env
           echo "APP_KEY=" >> .env
           echo "LOG_CHANNEL=stack" >> .env
           echo "LOG_LEVEL=debug" >> .env
-          echo "PRODUCTION=true" >> .env
+          
           echo "DB_CONNECTION=mysql" >> .env
           echo "BROADCAST_DRIVER=pusher" >> .env
-          echo "CACHE_DRIVER=array" >> .env
           echo "FILESYSTEM_DRIVER=s3" >> .env
           echo "QUEUE_CONNECTION=database" >> .env
           echo "SESSION_DRIVER=file" >> .env
           echo "SESSION_LIFETIME=120" >> .env
           echo "MEMCACHED_HOST=127.0.0.1" >> .env
+
           
 
           echo "APP_DEBUG=true" >> .env
-          echo "MAIL_FROM_ADDRESS=info@thehoster.io" >> .env
+          
           echo "MAIL_FROM_NAME=TheHoster" >> .env
-          echo "MAIL_ADMIN=info@thehoster.es" >> .env
+          
           echo "AWS_DEFAULT_REGION=eu-south-2" >> .env
           echo "AWS_BUCKET=thehosterappbucket" >> .env
           echo "API_SMS_ACTIVE=true" >> .env
@@ -62,6 +56,11 @@ jobs:
           echo "AZURE_FORM_RECOGNIZER_MODEL_ID=${{ secrets.AZURE_FORM_RECOGNIZER_MODEL_ID }}" >> .env
 
           if [ "${{ github.ref_name }}" == "main" ]; then
+
+            echo "MAIL_FROM_NAME=TheHoster" >> .env
+            echo "MAIL_FROM_ADDRESS=no-reply@thster.com" >> .env
+            echo "MAIL_ADMIN=no-reply@thster.com" >> .env
+            echo "MAIL_FROM_NAME=TheHoster" >> .env
             echo "ASSET_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             
             echo "APP_URL=${{ secrets.APP_URL_MAIN }}" >> .env
@@ -130,7 +129,20 @@ jobs:
             echo "DOSSIER_HOTEL_ID=\"${{ vars.DOSSIER_HOTEL_ID_MAIN }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
+            echo "PRODUCTION=\"${{ vars.PRODUCTION_MAIN }}\"" >> .env
+
+            echo "CACHE_ENABLED=true" >> .env
+
+            echo "CACHE_DRIVER=redis" >> .env
+            echo "REDIS_HOST=th-api.redis.cache.windows.net" >> .env
+            echo "REDIS_PORT=6380" >> .env
+            echo "REDIS_SCHEME=tls" >> .env
+            echo "REDIS_DB=0" >> .env
+            echo "REDIS_CACHE_DB=1" >> .env
+            echo "REDIS_CLIENT=phpredis" >> .env
           else
+            echo "MAIL_FROM_ADDRESS=no-reply@thehoster.es" >> .env
+            echo "MAIL_ADMIN=no-reply@thehoster.es" >> .env
             echo "ASSET_URL=${{ secrets.APP_URL_TEST }}" >> .env
             echo "APP_URL=${{ secrets.APP_URL_TEST }}" >> .env
             echo "APP_ENV=${{secrets.APP_ENV_TEST}}" >> .env
@@ -198,6 +210,9 @@ jobs:
             echo "DOSSIER_HOTEL_ID=\"${{ vars.DOSSIER_HOTEL_ID_TEST }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
+            
+            echo "PRODUCTION=\"${{ vars.PRODUCTION_TEST }}\"" >> .env
+            echo "CACHE_ENABLED=false" >> .env
           fi
 
       # Configuración de Docker Buildx
@@ -308,3 +323,36 @@ jobs:
                     --data '{"purge_everything":true}' | jq -r '. | {zone_result: .success}'
             done
             
+      - name: Install redis-cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-tools
+
+      - name: Purge Redis cache keys
+        env:
+          REDIS_HOST: th-api.redis.cache.windows.net
+          REDIS_PORT: 6380
+          REDIS_PASSWORD: ${{ vars.REDIS_PASSWORD }}
+        run: |
+          # 1) Instalar redis-cli ya hecho arriba.
+
+          # 2) Elegir sólo el prefijo, sin comodines
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            PREFIX="thehoster_database_thehoster_cache_:hotel_prod_main"
+          else
+            PREFIX="thehoster_database_thehoster_cache_:hotel_prod_test"
+          fi
+
+          echo "🔑 Deleting Redis keys matching ${PREFIX}* …"
+
+          # Opción DEBUG: ver qué password se está usando
+          # echo "Using REDIS_PASSWORD='$REDIS_PASSWORD'" >&2
+
+          # 3) Scan en la DB 1 y borrado por lotes con xargs
+          redis-cli --tls \
+            -h "$REDIS_HOST" -p "$REDIS_PORT" -a "$REDIS_PASSWORD" -n 1 \
+            --scan --pattern "${PREFIX}*" \
+          | xargs -r redis-cli --tls \
+            -h "$REDIS_HOST" -p "$REDIS_PORT" -a "$REDIS_PASSWORD" -n 1 DEL
+
+          echo "✅ Done purging Redis."

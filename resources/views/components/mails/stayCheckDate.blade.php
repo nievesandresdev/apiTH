@@ -1,4 +1,4 @@
-<div style=" margin-left: 16px; margin-right: 16px; background-color: #ffffff;">
+<div style=" margin-left: 16px; margin-right: 16px; background-color: #ffffff; padding-top: 24px;">
     <h1 class="title-section" style="margin: 0 auto;color:#333;font-family: arial;font-weight: 600;font-size: 22px;line-height: 150%;">
         {{$title}}
     </h1>
