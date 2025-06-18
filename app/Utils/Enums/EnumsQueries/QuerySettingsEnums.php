@@ -8,7 +8,7 @@ class QuerySettingsEnums
     public static function preStayqueriesTextDefault(): stdClass
     {
         $queriesTextDefault = new stdClass();
-        $queriesTextDefault->pre_stay_activate = true;
+        $queriesTextDefault->pre_stay_activate = false;
         $queriesTextDefault->pre_stay_comment = [
             "es" => "Agradecemos tu respuesta. Nos importa tu experiencia y queremos cumplir tus expectativas.",
             "en" => "We appreciate your response. We care about your experience and we want to meet your expectations.",

@@ -193,9 +193,10 @@ class ApiReviewServices {
         return $this->convert_keys_to_snake_case($data);
     }
 
-    public function syncReviews($hotel) {
+    public function syncReviews($hotel,$ota) {
         $body = [
-            'googleMapCid' => $hotel->code
+            'googleMapCid' => $hotel->code,
+            'ota' => $ota
         ];
 
         $URL_BASE_API_REVIEW = config('app.url_base_api_review');
@@ -206,9 +207,11 @@ class ApiReviewServices {
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
             // \Log::error($response_request['message']??$response_request);
+            $this->notificationDiscordService->sendMessage("Error Sync Reviews $ota", "Error Sync Reviews $ota");
             return;
         } else {
             \Log::info("Sync Reviews");
+            $this->notificationDiscordService->sendMessage("Success Sync Reviews $ota", "Success Sync Reviews $ota");
             $data = $response_request ?? null;
         }
         return $data;
@@ -228,10 +231,12 @@ class ApiReviewServices {
         $data = null;
         if (isset($response_request['ok']) && $response_request['ok']) {
             var_dump('todo ok en leakedReviewsStoreBulkByOta '.$ota);
+            $this->notificationDiscordService->sendMessage("Success Leaked Reviews Store Bulk By Ota $ota", "Success Leaked Reviews Store Bulk By Ota $ota");
             \Log::info("Success Leaked Reviews Store Bulk By Ota $ota");
             return;
         } else {
             var_dump('error en leakedReviewsStoreBulkByOta');
+            $this->notificationDiscordService->sendMessage("Error Leaked Reviews Store Bulk By Ota $ota", "Error Leaked Reviews Store Bulk By Ota $ota");
             \Log::error("Error Leaked Reviews Store Bulk By Ota $ota");
             $data = $response_request ?? null;
         }
@@ -253,10 +258,12 @@ class ApiReviewServices {
         $data = null;
         if (isset($response_request['ok']) && $response_request['ok']) {
             var_dump('todo ok en translateReviewsByOta '.$ota);
+            $this->notificationDiscordService->sendMessage("Success Translate Reviews $ota", "Success Translate Reviews $ota");
             \Log::info("Success Translate Reviews $ota");
             return;
         } else {
             var_dump('error en translateReviewsByOta '.$ota);
+            $this->notificationDiscordService->sendMessage("Error Translate Reviews $ota", "Error Translate Reviews $ota");
             \Log::error("Error Translate Reviews $ota");
             $data = $response_request ?? null;
         }
@@ -264,12 +271,10 @@ class ApiReviewServices {
     }
 
     public function updateReviews($hotel) {
-        $this->syncReviews($hotel);
         $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
         foreach ($OTAS as $ota) {
+            $this->syncReviews($hotel, $ota);
             $this->leakedReviewsStoreBulkByOta($hotel, $ota);
-        }
-        foreach ($OTAS as $ota) {
             $this->translateReviewsByOta($hotel, $ota);
         }
 

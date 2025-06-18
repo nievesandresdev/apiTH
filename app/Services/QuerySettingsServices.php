@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\QuerySetting;
+use App\Utils\Enums\EnumsQueries\QuerySettingsEnums;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -18,7 +19,7 @@ class QuerySettingsServices {
         try {
             $default = QuerySetting::where('hotel_id',$hotelId)->first();
             if(!$default){
-                $default = queriesTextDefault();
+                $default = QuerySettingsEnums::queriesTextDefault();
             }
             return $default;
         } catch (\Exception $e) {

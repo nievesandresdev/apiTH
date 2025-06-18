@@ -85,7 +85,7 @@ class UsersController extends Controller
         }
     }
 
-    public function store()
+    public function store(Request $request)
     {
         try {
            request()->validate([
@@ -102,9 +102,12 @@ class UsersController extends Controller
                 'user' => request()->all()
             ]); */
 
-            // Si la validación pasa, proceder a crear el usuario
-            $user = $this->userServices->storeUserHoster(request());
-
+            if ($request->type_user == 'admin') {
+                $user = $this->userServices->store(request());
+            }
+            else{
+                $user = $this->userServices->storeUserHoster(request());
+            }
 
             return bodyResponseRequest(EnumResponse::SUCCESS, [
                 'message' => 'Usuario creado con éxito',
