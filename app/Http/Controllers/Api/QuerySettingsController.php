@@ -7,6 +7,7 @@ use App\Services\QuerySettingsServices;
 use Illuminate\Http\Request;
 
 use App\Utils\Enums\EnumResponse;
+use App\Http\Resources\QuerySettingsResource;
 
 class QuerySettingsController extends Controller
 {
@@ -31,7 +32,7 @@ class QuerySettingsController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);  
             }
-            
+            $model = QuerySettingsResource::make($model);
             return bodyResponseRequest(EnumResponse::ACCEPTED, $model);
 
         } catch (\Exception $e) {
