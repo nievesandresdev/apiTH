@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\QuerySettingsResource;
 use App\Models\Query;
 use App\Services\QueryServices;
 use App\Services\QuerySettingsServices;
@@ -196,7 +197,7 @@ class QueryController extends Controller
             
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'query' => $query,
-                'settings' => $settings,
+                'settings' => QuerySettingsResource::make($settings),
                 'requestData' => $requestData
             ]);
         } catch (\Exception $e) {
