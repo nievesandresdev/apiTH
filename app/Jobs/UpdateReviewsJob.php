@@ -47,7 +47,7 @@ class UpdateReviewsJob implements ShouldQueue
                     $this->notificationDiscordService->sendMessage("End UpdateReviewsJob", "Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id, "Reviews actualizadas correctamente");
                 }
             } catch (\Exception $e) {
-                $this->notificationDiscordService->sendMessage("Error UpdateReviewsJob", "Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id, $e->getMessage());
+                $this->notificationDiscordService->sendMessage("Error UpdateReviewsJob", $e->getMessage());
             }
         }
         \Log::info("End UpdateReviewsCommand");

@@ -6,17 +6,19 @@ use App\Models\HotelOta;
 use App\Services\HttpClientService;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
+use App\Services\NotificationDiscordService;
 
 
 class ApiReviewServices {
 
     protected $KEY_API_REVIEW;
     protected $X_KEY_API;
-
-    public function __construct()
+    protected $notificationDiscordService;
+    public function __construct(NotificationDiscordService $notificationDiscordService)
     {
         $this->KEY_API_REVIEW = config('app.key_api_review');
         $this->X_KEY_API = config('app.x_key_api');
+        $this->notificationDiscordService = $notificationDiscordService;
     }
 
 
