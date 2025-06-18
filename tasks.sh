@@ -60,3 +60,4 @@ echo "Todas las tareas programadas se han ejecutado."
 
 #seeders de sprint 8
 #limpiar tablas de queries_settings
+#php artisan db:seed --class=IntegrationPmsSeeder
