@@ -23,6 +23,11 @@ class IntegrationPmsController extends Controller
         return bodyResponseRequest(EnumResponse::ACCEPTED, $integrationPms);
     }
 
+    public function getPmsWithCredentialsById(Request $request) {
+        $integrationPms = $this->integrationPmsService->getPmsWithCredentialsById($request);
+        return bodyResponseRequest(EnumResponse::ACCEPTED, $integrationPms);
+    }
+
     public function getIntegrationPms(Request $request)
     {
         $hotelModel = $request->attributes->get('hotel');

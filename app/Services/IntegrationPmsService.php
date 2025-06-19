@@ -26,6 +26,11 @@ class IntegrationPmsService {
         return $integrationPms;
     }
 
+    public function getPmsWithCredentialsById($request) {
+        $integrationPms = IntegrationPms::where('hotel_id', $request->hotel_id)->where('id', $request->pms_id)->first();
+        return $this->mapIntegrationPms($integrationPms);
+    }
+
     public function getIntegrationPms($modelHotel) {
         $integrationPms = $modelHotel->integrationPms()->get();
 
