@@ -79,12 +79,14 @@ class Hotel extends Model
         'contact_whatsapp_number',
         'contact_email',
         'show_contact',
+        'order_sections',
     ];
 
     //bool offer_benefits
     protected $casts = [
         'offer_benefits' => 'boolean',
         'buttons_home' => 'boolean',
+        'order_sections' => 'array',
     ];
 
     /* public function user()
