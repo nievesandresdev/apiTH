@@ -70,6 +70,8 @@ return [
     'url_base_helpers' => env('URL_BASE_API_HELPERS',null),
     'key_api_review' => env('KEY_API_REVIEW',null),
     'hotelId_dossier' => env('DOSSIER_HOTEL_ID',null),
+    'mailgun_domain' => env('MAILGUN_DOMAIN', null),
+    'mailgun_key' => env('MAILGUN_KEY', null),
     //OPENAI
     'openia_key' => env('OPENAI_API_KEY', null),
     'azure_openia_key' => env('AZURE_OPENAI_API_KEY', null),

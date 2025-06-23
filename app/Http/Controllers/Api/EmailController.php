@@ -25,9 +25,9 @@ class EmailController extends Controller
         $guest->save();
 
         try {
-            $response = Http::withBasicAuth('api', env('MAILGUN_KEY'))
+            $response = Http::withBasicAuth('api', config('app.mailgun_key'))
                 ->asForm()
-                ->post("https://api.mailgun.net/v3/" . env('MAILGUN_DOMAIN') . "/unsubscribes", [
+                ->post("https://api.mailgun.net/v3/" . config('app.mailgun_domain') . "/unsubscribes", [
                     'address' => $guest->email,
                 ]);
 
