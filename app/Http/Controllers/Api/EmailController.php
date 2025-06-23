@@ -27,7 +27,7 @@ class EmailController extends Controller
         try {
             $response = Http::withBasicAuth('api', config('app.mailgun_key'))
                 ->asForm()
-                ->post("https://api.mailgun.net/v3/" . config('app.mailgun_domain') . "/unsubscribes", [
+                ->post("https://api.eu.mailgun.net/v3/" . config('app.mailgun_domain') . "/unsubscribes", [
                     'address' => $guest->email,
                 ]);
 
@@ -62,13 +62,13 @@ class EmailController extends Controller
         try {
             // Primero intentamos con DELETE
             $response = Http::withBasicAuth('api', env('MAILGUN_KEY'))
-                ->delete("https://api.mailgun.net/v3/" . env('MAILGUN_DOMAIN') . "/unsubscribes/" . $guest->email);
+                ->delete("https://api.eu.mailgun.net/v3/" . env('MAILGUN_DOMAIN') . "/unsubscribes/" . $guest->email);
 
             // Si el DELETE no funciona, intentamos con POST
             if (!$response->successful()) {
                 $response = Http::withBasicAuth('api', env('MAILGUN_KEY'))
                     ->asForm()
-                    ->post("https://api.mailgun.net/v3/" . env('MAILGUN_DOMAIN') . "/unsubscribes/" . $guest->email . "/remove", []);
+                    ->post("https://api.eu.mailgun.net/v3/" . env('MAILGUN_DOMAIN') . "/unsubscribes/" . $guest->email . "/remove", []);
             }
 
             if (!$response->successful()) {
