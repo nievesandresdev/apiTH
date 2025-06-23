@@ -61,14 +61,14 @@ class EmailController extends Controller
 
         try {
             // Primero intentamos con DELETE
-            $response = Http::withBasicAuth('api', env('MAILGUN_KEY'))
-                ->delete("https://api.eu.mailgun.net/v3/" . env('MAILGUN_DOMAIN') . "/unsubscribes/" . $guest->email);
+            $response = Http::withBasicAuth('api', config('app.mailgun_key'))
+                ->delete("https://api.eu.mailgun.net/v3/" . config('app.mailgun_domain') . "/unsubscribes/" . $guest->email);
 
             // Si el DELETE no funciona, intentamos con POST
             if (!$response->successful()) {
-                $response = Http::withBasicAuth('api', env('MAILGUN_KEY'))
+                $response = Http::withBasicAuth('api', config('app.mailgun_key'))
                     ->asForm()
-                    ->post("https://api.eu.mailgun.net/v3/" . env('MAILGUN_DOMAIN') . "/unsubscribes/" . $guest->email . "/remove", []);
+                    ->post("https://api.eu.mailgun.net/v3/" . config('app.mailgun_domain') . "/unsubscribes/" . $guest->email . "/remove", []);
             }
 
             if (!$response->successful()) {
