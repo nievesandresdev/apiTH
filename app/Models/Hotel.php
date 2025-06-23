@@ -242,6 +242,11 @@ class Hotel extends Model
         return $this->hasMany(HotelButton::class)->where('is_visible', true)->orderBy('order');
     }
 
+    public function integrationPms()
+    {
+        return $this->hasMany(IntegrationPms::class);
+    }
+
     // AUXILIARIES
 
     public function toArray()
