@@ -28,7 +28,7 @@ class UpdateReviewsCommand extends Command
         //     new UpdateReviewsJob($this->apiReviewService),
         //     new UpdateTranslateReviewsJob($this->apiReviewService)
         // ])->dispatch();
-        // UpdateReviewsJob::dispatch($this->apiReviewService);
-        UpdateTranslateReviewsJob::dispatch($this->apiReviewService);
+        UpdateReviewsJob::dispatch($this->apiReviewService);
+        // UpdateTranslateReviewsJob::dispatch($this->apiReviewService);
     }
 }
