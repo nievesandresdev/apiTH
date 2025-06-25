@@ -39,6 +39,10 @@ class FacilityResource extends JsonResource
             'always_open' => $this->always_open,
             'ad_tag' => $ad_tag,
             'order' => $this->order,
+            'document' => $this->document,
+            'document_file' => $this->document_file,
+            'text_document_button' => $this->text_document_button,
+            'link_document_url' => $this->link_document_url,
         ];
     }
 }

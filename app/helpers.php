@@ -672,7 +672,7 @@ if (!function_exists('defaultChatSettings')) {
             "ca" => "Sembla que està tardant més del previst, disculpa les molèsties. Podries deixar-nos el que necessites i et responrem tan aviat com sigui possible. També t'avisarem de la resposta per correu electrònic.",
             "eu" => "Dirudienez, espero baino gehiago denbora behar du, barkatu eragozpenak. Utzi mesedez behar duzun eta ahal bezain laster erantzungo dizugu. Halaber, posta elektronikoz jakinaratuko dizugu erantzuna.",
             "gl" => "Parece que está a demorar máis do esperado, desculpa as molestias. Poderías deixarnos o que necesitas e responderemos canto antes sexa posible. Tamén avisarémosche da resposta por correo electrónico.",
-            "nl" => "Het lijkt langer te duren dan verwacht, sorry voor het ongemak. Je kunt ons laten weten wat je nodig hebt en we zullen zo snel mogelijk reageren. We zullen je ook per e-mail op de hoogte stellen van het antwoord."
+            "nl" => "Jouw ervaring is erg belangrijk, het delen ervan zou andere reizigers helpen ons te leren kennen. Wil je ons je recensie achterlaten?"
         ];
         $chat_settings->three_available_show = true;
         $chat_settings->email_notify_new_message_to = [];
@@ -955,6 +955,80 @@ if (!function_exists('translateQualification')) {
             'NORMAL' => 'Normal' . ($period == 'in-stay' ? 'o' : 'a'),
         ];
         return $texts[$qualification] ?? $qualification;
+    }
+}
+
+/* if (! function_exists('saveDocument')) {
+    function saveDocument($file, $folder = 'documents', $customName = null) {
+        $storage_env = config('app.storage_env');
+        $rand = mt_Rand(1000000, 9999999);
+        $ext = '.'.$file->extension();
+        $time = time();
+
+        // Generate file name
+        $fileName = $customName ? $customName.$ext : $time.'-'.$rand.$ext;
+
+        // Define save path
+        $savePath = 'storage/'.$folder.'/'.$fileName;
+
+        // Save based on environment
+        if($storage_env == "test" || $storage_env == "pro") {
+            // For S3 storage
+            $content = file_get_contents($file->getRealPath());
+            Storage::disk('s3')->put($savePath, $content, 'public');
+        } else {
+            // For local storage
+            $file->move(public_path('storage/'.$folder.'/'), $fileName);
+        }
+
+        return '/'.$savePath;
+    }
+} */
+
+if (! function_exists('saveDocumentOrImage')) {
+    function saveDocumentOrImage($file, $model, $id = null, $type = null) {
+        // Get file extension and mime type
+        $extension = strtolower($file->getClientOriginalExtension());
+        $mimeType = $file->getMimeType();
+
+        // Define image types and document types
+        $imageTypes = ['jpg', 'jpeg', 'png'];
+        $documentTypes = ['pdf'];
+
+        // Check if it's an image
+        if (in_array($extension, $imageTypes)) {
+            // Use existing saveImage function for images
+            return saveImage($file, $model, $id, $type);
+        }
+        // Check if it's a document
+        else if (in_array($extension, $documentTypes)) {
+            $storage_env = config('app.storage_env');
+            $rand = mt_Rand(1000000, 9999999);
+            $time = time();
+            $name_file = $time.'-'.$rand.'.'.$extension;
+            $savePath = 'storage/'.$model.'/'.$name_file;
+
+            if($storage_env == "test" || $storage_env == "pro") {
+                // For S3 storage
+                $content = file_get_contents($file->getRealPath());
+                Storage::disk('s3')->put($savePath, $content, 'public');
+            } else {
+                // Ensure directory exists
+                $directory = public_path('storage/'.$model);
+                if (!file_exists($directory)) {
+                    mkdir($directory, 0755, true);
+                }
+                // For local storage
+                $file->move($directory, $name_file);
+            }
+
+            // Return only the filename
+            return $name_file;
+        }
+        // Unsupported file type
+        else {
+            throw new \Exception("Unsupported file type: $extension");
+        }
     }
 }
 
