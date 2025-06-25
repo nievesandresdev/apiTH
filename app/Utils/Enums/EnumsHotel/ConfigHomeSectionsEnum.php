@@ -15,7 +15,8 @@ use stdClass;
         public static function defaultOrderSections(): stdClass
         {
             $fieldsForm = new stdClass();
-            $fieldsForm->order = ['facilitiesSection', 'placesRecommendationSection', 'placesExploreSection', 'servicesSection', 'activitiesSection', 'socialNetworksSection'];
+            $fieldsForm->visibleOrder = ['buttonsSection', 'facilitiesSection', 'placesRecommendationSection', 'placesExploreSection', 'servicesSection', 'activitiesSection', 'socialNetworksSection'];
+            $fieldsForm->hiddenOrder = [];
             $fieldsForm->buttonsSection = [
                 "visibility" => true,
                 "style" => 1
