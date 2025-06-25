@@ -22,6 +22,10 @@ class FacilityHoster extends Model
         'schedules',
         'always_open',
         'ad_tag',
+        'document',
+        'document_file',
+        'text_document_button',
+        'link_document_url',
         'order',
 
         // para sincronización el registro padre y el registro hijo

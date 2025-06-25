@@ -111,10 +111,8 @@ class FacilityController extends Controller
     }
 
     public function storeOrUpdate (Request $request) {
-       /*  return bodyResponseRequest(EnumResponse::ACCEPTED, $request->all()); */
+        Log::info($request->all());
         try {
-            // $f = FacilityHoster::find($request->id);
-            // return $f;
             $image = null;
             $hotelModel = $request->attributes->get('hotel');
             if ($hotelModel->image == null) {
@@ -125,12 +123,19 @@ class FacilityController extends Controller
             \DB::beginTransaction();
             $facilityHosterModel = $this->service->storeOrUpdate($request, $hotelModel);
             $this->service->processTranslate($request, $facilityHosterModel, $hotelModel);
-            $images = $request->images ?? $image;
+
+            // Handle images
+            $images = $request->images;
+            if (is_string($images)) {
+                $images = json_decode($images, true);
+            }
+            $images = $images ?? $image;
+
             $this->service->updateImages($images, $facilityHosterModel, $hotelModel);
             $this->service->syncOrder($hotelModel);
             \DB::commit();
             $data = [];
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $image);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             \DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdate');
