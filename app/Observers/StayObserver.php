@@ -50,11 +50,9 @@ class StayObserver
                 $disabled = false;
                 // Log::info('observer stay: $currentPeriod ' . $currentPeriod);
                 $listGuests = $stay->guests()->get();
-                if($currentPeriod == 'pre-stay' || $currentPeriod == 'in-stay'){
+                if($currentPeriod == 'pre-stay'){
                     $settings = $this->settingsService->getAll($stay->hotel_id);
-                    $periodKey = str_replace("-", "_", $currentPeriod).'_activate';
-                    // Log::info('observer stay: $periodKey ' . $periodKey);
-                    if(!$settings->$periodKey){
+                    if(!$settings->pre_stay_activate){
                         $disabled = true;
                     }  
                 }
