@@ -107,7 +107,7 @@ class FacilityService {
             $facilityHosterModel->update([
                 'title' => $title,
                 'description' => $request->description,
-                'schedules' => $request->schedules ? json_encode($request->schedules) : null,
+                'schedules' => $request->schedules ? $request->schedules : null,
                 'ad_tag' => $request->ad_tag ?? null,
                 'always_open' => $request->always_open ?? false,
                 'document' => $request->document,
@@ -123,7 +123,7 @@ class FacilityService {
                 'select' => 1,
                 'user_id' =>  $hotelModel->user[0]->id,
                 'hotel_id' => $hotelModel->id,
-                'schedules' => $request->schedules ? json_encode($request->schedules) : null,
+                'schedules' => $request->schedules ? $request->schedules: null,
                 'ad_tag' => $request->ad_tag ?? null,
                 'order' => 0,
                 'always_open' => $request->always_open ?? false,
