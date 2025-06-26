@@ -997,12 +997,35 @@ if (! function_exists('saveDocumentOrImage')) {
 
         // Check if it's an image
         if (in_array($extension, $imageTypes)) {
-            // Use existing saveImage function for images
-            return saveImage($file, $model, $id, $type);
+            // Generate file name
+            $rand = mt_Rand(1000000, 9999999);
+            $time = time();
+            $name_file = $time.'-'.$rand.'.'.$extension;
+
+            $storage_env = config('app.storage_env');
+            $savePath = 'storage/'.$model.'/'.$name_file;
+
+            if($storage_env == "test" || $storage_env == "pro") {
+                // For S3 storage
+                $imgFileOriginal = resizeImage($file->getRealPath());
+                $imgFile = $imgFileOriginal->stream();
+                Storage::disk('s3')->put($savePath, $imgFile->__toString(), 'public');
+            } else {
+                // Ensure directory exists
+                $directory = public_path('storage/'.$model);
+                if (!file_exists($directory)) {
+                    mkdir($directory, 0755, true);
+                }
+                // For local storage
+                $imgFileOriginal = resizeImage($file->getRealPath());
+                saveImageToFilesystem($imgFileOriginal, public_path($savePath));
+            }
+
+            // Return only the filename
+            return $name_file;
         }
         // Check if it's a document
         else if (in_array($extension, $documentTypes)) {
-            $storage_env = config('app.storage_env');
             $rand = mt_Rand(1000000, 9999999);
             $time = time();
             $name_file = $time.'-'.$rand.'.'.$extension;
