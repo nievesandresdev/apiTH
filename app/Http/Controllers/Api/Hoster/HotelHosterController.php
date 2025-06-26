@@ -161,6 +161,38 @@ class HotelHosterController extends Controller
         $model = $this->services->getShowContact($hotel->id);
         return bodyResponseRequest(EnumResponse::SUCCESS, $model);
     }
+
+    public function getOrderSections (Request $request) {
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->services->getOrderSections($hotel->id);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')        
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::SUCCESS, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e->getMessage(), [], self::class . '.getOrderSections');
+        }
+    }
+
+    public function updateOrderSections (Request $request) {
+        try {
+            $hotel = $request->attributes->get('hotel');
+            $model = $this->services->updateOrderSections($hotel->id, $request->orderSections);
+            if(!$model){
+                $data = [
+                    'message' => __('response.bad_request_long')        
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::SUCCESS, $model);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e->getMessage(), [], self::class . '.updateOrderSections');
+        }
+    }
     
     
 }
