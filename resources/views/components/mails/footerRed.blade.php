@@ -14,6 +14,9 @@
             <p style="color: #FAFAFA;font-family: Arial;font-size: 10px;font-weight: 400;line-height: 140%;margin:0">
                 {{ __('mail.footer.body7') }}
             </p>
+            <p style="color: #FAFAFA;font-family: Arial;font-size: 10px;font-weight: 400;line-height: 140%;margin:0">
+                Si no está suscrito y desea volver a recibir nuestros correos, haga clic <a href="{{$data['urlFooterEmail']}}" style="font-weight: 600;text-decoration:underline;color: #FAFAFA;">aquí</a>
+            </p>
         </div>
     </div>
 </div>
