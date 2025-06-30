@@ -190,9 +190,9 @@ class QueryController extends Controller
             $settings = $this->settingsService->getAll($hotel->id);
             $requestData = null;
             // if($request->period == 'in-stay' || $request->period == 'post-stay' && $query->answered){
-                $requestSettings = $this->requestSettingService->getAll($hotel->id);
-                $guestName = $request->guestName;
-                $requestData = $this->requestSettingService->getRequestData($requestSettings, $guestName, $request->period);
+                // $requestSettings = $this->requestSettingService->getAll($hotel->id);
+                // $guestName = $request->guestName;
+                // $requestData = $this->requestSettingService->getRequestData($requestSettings, $guestName, $request->period);
             // }
             
             return bodyResponseRequest(EnumResponse::ACCEPTED, [

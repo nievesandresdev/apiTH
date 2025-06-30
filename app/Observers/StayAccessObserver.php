@@ -38,10 +38,9 @@ class StayAccessObserver
             
             $period = $this->queryservice->getCurrentPeriod($stay->hotel, $stay->id);    
             // Log::info('observer access: $period' . $period);
-            if($period == 'pre-stay' || $period == 'in-stay'){
+            if($period == 'pre-stay'){
                 $settings = $this->settingsService->getAll($stay->hotel_id);
-                $periodKey = str_replace("-", "_", $period).'_activate';
-                if(!$settings->$periodKey){
+                if(!$settings->pre_stay_activate){
                     $disabled = true;
                 }  
             }
