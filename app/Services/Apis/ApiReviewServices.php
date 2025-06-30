@@ -196,7 +196,7 @@ class ApiReviewServices {
     public function syncReviews($hotel, $otas) {
         $body = [
             'googleMapCid' => $hotel->code,
-            'ota' => $otas
+            'validOtas' => $otas
         ];
 
         $URL_BASE_API_REVIEW = config('app.url_base_api_review');
@@ -265,7 +265,7 @@ class ApiReviewServices {
     }
 
     public function updateReviews($hotel) {
-        $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
+        $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE', 'AIRBNB'];
         foreach ($OTAS as $ota) {
             $this->syncReviews($hotel, [$ota]);
             $this->leakedReviewsStoreBulkByOta($hotel, $ota);
