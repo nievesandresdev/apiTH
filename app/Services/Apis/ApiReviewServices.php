@@ -193,9 +193,10 @@ class ApiReviewServices {
         return $this->convert_keys_to_snake_case($data);
     }
 
-    public function syncReviews($hotel) {
+    public function syncReviews($hotel, $otas) {
         $body = [
-            'googleMapCid' => $hotel->code
+            'googleMapCid' => $hotel->code,
+            'validOtas' => $otas
         ];
 
         $URL_BASE_API_REVIEW = config('app.url_base_api_review');
@@ -264,12 +265,10 @@ class ApiReviewServices {
     }
 
     public function updateReviews($hotel) {
-        $this->syncReviews($hotel);
-        $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
+        $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE', 'AIRBNB'];
         foreach ($OTAS as $ota) {
+            $this->syncReviews($hotel, [$ota]);
             $this->leakedReviewsStoreBulkByOta($hotel, $ota);
-        }
-        foreach ($OTAS as $ota) {
             $this->translateReviewsByOta($hotel, $ota);
         }
 

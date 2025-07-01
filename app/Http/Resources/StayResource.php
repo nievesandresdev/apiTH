@@ -35,6 +35,7 @@ class StayResource extends JsonResource
             "middle_reservation" => $this->middle_reservation,
             "guestIdCreator" => $this->guest_id,
             "guestsIds" => $guestsIds,
+            "isDemo" => $this->is_demo,
         ];
     }
 }
