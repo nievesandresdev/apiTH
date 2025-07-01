@@ -14,9 +14,6 @@
             <p style="color: #FAFAFA;font-family: Arial;font-size: 10px;font-weight: 400;line-height: 140%;margin:0">
                 {{ __('mail.footer.body7') }}
             </p>
-            <p style="color: #FAFAFA;font-family: Arial;font-size: 10px;font-weight: 400;line-height: 140%;margin:0">
-                {{ __('mail.footer.body8') }} <a href="{{$data['urlFooterEmail']}}" style="font-weight: 600;text-decoration:underline;color: #FAFAFA;">{{ __('mail.footer.body9') }}</a>
-            </p>
         </div>
     </div>
 </div>
