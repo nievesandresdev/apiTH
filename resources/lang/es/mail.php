@@ -116,6 +116,8 @@ return [
         'body5' => 'Si desea dejar de recibir estos mensajes, puede modificar la configuración de notificaciones',
         'body6' => 'aquí',
         'body7' => 'La dirección desde la que se envía este mail está destinada al envío de información y no está habilitada para la recepción de mensajes. Por favor no responda a este mail.',
+        'body8' => 'Si no está suscrito y desea volver a recibir nuestros correos, haga clic',
+        'body9' => 'aquí',
     ],
     'rewards' => [
         'subject' => '¡Enhorabuena! Has recibido un regalo',
