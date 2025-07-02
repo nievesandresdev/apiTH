@@ -193,10 +193,10 @@ class ApiReviewServices {
         return $this->convert_keys_to_snake_case($data);
     }
 
-    public function syncReviews($hotel,$ota) {
+    public function syncReviews($hotel, $otas) {
         $body = [
             'googleMapCid' => $hotel->code,
-            'ota' => $ota
+            'validOtas' => $otas
         ];
 
         $URL_BASE_API_REVIEW = config('app.url_base_api_review');
@@ -227,7 +227,7 @@ class ApiReviewServices {
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->X_KEY_API];
         $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/leakedReviews/storeBulkByOta", $body, $headers, 60);
-        
+
         $data = null;
         if (isset($response_request['ok']) && $response_request['ok']) {
             var_dump('todo ok en leakedReviewsStoreBulkByOta '.$ota);
@@ -271,9 +271,9 @@ class ApiReviewServices {
     }
 
     public function updateReviews($hotel) {
-        $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE'];
+        $OTAS = ['BOOKING', 'EXPEDIA', 'TRIPADVISOR', 'GOOGLE', 'AIRBNB'];
         foreach ($OTAS as $ota) {
-            $this->syncReviews($hotel, $ota);
+            $this->syncReviews($hotel, [$ota]);
             $this->leakedReviewsStoreBulkByOta($hotel, $ota);
             $this->translateReviewsByOta($hotel, $ota);
         }

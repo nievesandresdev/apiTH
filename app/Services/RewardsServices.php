@@ -120,7 +120,6 @@ class RewardsServices {
             Log::info('sendEmailReferentSErvices', ['data' => $data]);
             App::setLocale($rewardStay->guest->lang_web);
             $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), $rewardStay->guest->email);
-            $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $data), 'francisco20990@gmail.com');
         }else{
             Log::info('sendEmailReferentSErvices no se envia', ['data' => $data]);
         }

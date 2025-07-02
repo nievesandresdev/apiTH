@@ -23,7 +23,7 @@ jobs:
           echo "APP_KEY=" >> .env
           echo "LOG_CHANNEL=stack" >> .env
           echo "LOG_LEVEL=debug" >> .env
-          
+
           echo "DB_CONNECTION=mysql" >> .env
           echo "BROADCAST_DRIVER=pusher" >> .env
           echo "FILESYSTEM_DRIVER=s3" >> .env
@@ -32,12 +32,12 @@ jobs:
           echo "SESSION_LIFETIME=120" >> .env
           echo "MEMCACHED_HOST=127.0.0.1" >> .env
 
-          
+
 
           echo "APP_DEBUG=true" >> .env
-          
+
           echo "MAIL_FROM_NAME=TheHoster" >> .env
-          
+
           echo "AWS_DEFAULT_REGION=eu-south-2" >> .env
           echo "AWS_BUCKET=thehosterappbucket" >> .env
           echo "API_SMS_ACTIVE=true" >> .env
@@ -62,7 +62,7 @@ jobs:
             echo "MAIL_ADMIN=no-reply@thster.com" >> .env
             echo "MAIL_FROM_NAME=TheHoster" >> .env
             echo "ASSET_URL=${{ secrets.APP_URL_MAIN }}" >> .env
-            
+
             echo "APP_URL=${{ secrets.APP_URL_MAIN }}" >> .env
             echo "APP_ENV=${{secrets.APP_ENV_MAIN}}" >> .env
 
@@ -130,6 +130,9 @@ jobs:
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_MAIN }}" >> .env
             echo "PRODUCTION=\"${{ vars.PRODUCTION_MAIN }}\"" >> .env
+
+            echo "MAILGUN_DOMAIN=\"${{ vars.MAILGUN_DOMAIN_MAIN }}\"" >> .env
+            echo "MAILGUN_KEY=\"${{ vars.MAILGUN_KEY_MAIN }}\"" >> .env
 
             echo "CACHE_ENABLED=true" >> .env
 
@@ -210,8 +213,10 @@ jobs:
             echo "DOSSIER_HOTEL_ID=\"${{ vars.DOSSIER_HOTEL_ID_TEST }}\"" >> .env
 
             echo "URL_BUCKET=${{ secrets.URL_BUCKET_TEST }}" >> .env
-            
+
             echo "PRODUCTION=\"${{ vars.PRODUCTION_TEST }}\"" >> .env
+            echo "MAILGUN_DOMAIN=\"${{ vars.MAILGUN_DOMAIN_TEST }}\"" >> .env
+            echo "MAILGUN_KEY=\"${{ vars.MAILGUN_KEY_TEST }}\"" >> .env
             echo "CACHE_ENABLED=false" >> .env
           fi
 
@@ -274,7 +279,7 @@ jobs:
               --username ${{ secrets.GHCR_ACTOR }} \
               --password ${{ secrets.GHCR_PAT }}
           fi
- 
+
       # 4. Actualizar la Container App con la imagen versionada
       - name: Update Azure Container App image
         run: |
@@ -314,7 +319,7 @@ jobs:
             zones=$(curl -s -H "Authorization: Bearer $CF_API_TOKEN" \
                           -H "Content-Type: application/json" \
                             "https://api.cloudflare.com/client/v4/zones" | jq -r '.result[].id')
-        
+
             for zone in $zones; do
                 echo "🧹 Purging cache in zone $zone"
                 curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$zone/purge_cache" \
@@ -322,7 +327,7 @@ jobs:
                     -H "Content-Type: application/json" \
                     --data '{"purge_everything":true}' | jq -r '. | {zone_result: .success}'
             done
-            
+
       - name: Install redis-cli
         run: |
           sudo apt-get update

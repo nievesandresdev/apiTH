@@ -60,8 +60,8 @@ class prepareArrival extends Mailable
             using: [
                 function (Email $message) use ($smtpSender) {
                     $message->sender($smtpSender);
-                    $message->getHeaders()->remove('List-Unsubscribe'); //para quitar mensaje de mailgun de desuscripcion
-                    $message->getHeaders()->remove('List-Unsubscribe-Post'); //para quitar mensaje de mailgun de desuscripcion
+                    $message->getHeaders()->remove('List-Unsubscribe');
+                    $message->getHeaders()->remove('List-Unsubscribe-Post');
                 },
             ],
         );
