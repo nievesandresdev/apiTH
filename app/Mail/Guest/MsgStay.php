@@ -69,6 +69,8 @@ class MsgStay extends Mailable
             using: [
                 function (Email $message) use ($smtpSender) {
                     $message->sender($smtpSender);
+                    $message->getHeaders()->remove('List-Unsubscribe');
+                    $message->getHeaders()->remove('List-Unsubscribe-Post');
                 },
             ],
         );
