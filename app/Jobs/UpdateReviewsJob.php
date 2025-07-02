@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Hotel;
-
+use App\Jobs\UpdateTranslateReviewsJob;
 
 class UpdateReviewsJob implements ShouldQueue
 {
@@ -37,19 +37,17 @@ class UpdateReviewsJob implements ShouldQueue
         // $codeHotels = ['8163422725375425318'];
         $codeHotels = $this->hotelService->getHotelsSubscriptionActive();
 
-        var_dump($codeHotels);
 
-
-        // foreach ($codeHotels as $codeHotel) {
-        //     $hotel = Hotel::where('code', $codeHotel)->first();
-        //     if ($hotel) {
-        //         \Log::info("[Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id . "]");
-        //         $this->apiReviewService->updateReviews($hotel);
-        //         \Log::info("[End UpdateReviewsJob]");
-        //     }
-        // }
-        // \Log::info("End UpdateReviewsCommand");
-        
+        foreach ($codeHotels as $codeHotel) {
+            $hotel = Hotel::where('code', $codeHotel)->first();
+            if ($hotel) {
+                \Log::info("[Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id . "]");
+                $this->apiReviewService->updateReviews($hotel);
+                \Log::info("[End UpdateReviewsJob]");
+            }
+        }
+        \Log::info("End UpdateReviewsCommand");
+        UpdateTranslateReviewsJob::dispatch($this->apiReviewService, $this->hotelService);       
 
     }
 }

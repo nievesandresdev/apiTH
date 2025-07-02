@@ -556,7 +556,7 @@ class HotelService {
             })
             ->distinct('code')->get();
         $hotels = $hotels->unique('code');
-        $hotels = $hotels->pluck('name_origin');
+        $hotels = $hotels->pluck('code');
 
         return $hotels;
     }
