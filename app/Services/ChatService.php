@@ -195,7 +195,7 @@ class ChatService {
                     $email = $user->email;
                     Log::info('queryUsersNewchatSIPIEACH '. $email);
                     //$this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'new'), francisco);
-                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'test'), 'francisco20990@gmail.com');
+                    $this->mailService->sendEmail(new ChatEmail($unansweredLastMessageData,$urlChat, 'test'), 'xxxx@gmail.com');
                 });
             } */
 
