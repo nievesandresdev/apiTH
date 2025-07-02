@@ -10,6 +10,7 @@ use App\Jobs\UpdateReviewsJob;
 use App\Jobs\UpdateTranslateReviewsJob;
 use Illuminate\Support\Facades\Bus;
 use App\Services\HotelService;
+
 class UpdateReviewsCommand extends Command
 {
     protected $signature = 'app:update-reviews-command';
