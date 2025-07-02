@@ -92,6 +92,11 @@ class Hotel extends Model
         return $this->belongsToMany(User::class);
     } */
 
+    public function subscriptionActive()
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
     public function user()
     {
         return $this->belongsToMany(User::class)->withPivot('manager');
