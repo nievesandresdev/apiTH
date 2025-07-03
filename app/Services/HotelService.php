@@ -551,6 +551,7 @@ class HotelService {
     }
 
 
+
     public function getOrderSections ($hotelId) {
         $hotel = Hotel::find($hotelId);
         if (!$hotel) {
@@ -560,4 +561,19 @@ class HotelService {
         $default = ConfigHomeSectionsEnum::defaultOrderSections();
         return $hotel->order_sections ?? $default;
     }
+
+    public function getHotelsSubscriptionActive() {
+        $hotels = Hotel::select('id', 'slug', 'zone', 'name_origin', 'scraper_run', 'subscription_active', 'code')
+            ->whereHas('subscriptionActive', function($query) {
+                $query->where('stripe_status', 'active');
+                $query->where('ends_at', '>', now());
+            })
+            ->distinct('code')->get();
+        $hotels = $hotels->unique('code');
+        $hotels = $hotels->pluck('code');
+
+        return $hotels;
+    }
+
+
 }

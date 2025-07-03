@@ -100,7 +100,7 @@ class StayService {
         // $msg = prepareMessage($data,$hotel,'&subject=invited');
         // $link = prepareLink($data,$hotel);
         // //dd($msg,$link);
-        // $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,'',true), 'francisco20990@gmail.com');
+        // $this->mailService->sendEmail(new MsgStay($msg,$hotel,$link,false,'',true), 'xxx@gmail.com');
         // dd('mail enviado');
 
     }
@@ -577,7 +577,6 @@ class StayService {
                 //App::setLocale($guest->lang_web ?? 'es');
                 Log::info('Enviando correo welcomeStayEmailServices email_off false a '.$guest->email.' (Estancia ID: '.$stay->id.', Hotel: '.$hotel->name.')');
                 $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), $guest->email);
-                $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,$after,$beforeCheckin), 'francisco20990@gmail.com');
             }else{
                 Log::info('No se envía correo welcomeStayEmailServices email_off true a '.$guest->email.' (Estancia ID: '.$stay->id.', Hotel: '.$hotel->name.')');
             }

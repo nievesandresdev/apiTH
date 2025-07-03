@@ -10,6 +10,7 @@ use App\Models\Hotel;
 use App\Jobs\UpdateReviewsJob;
 use App\Jobs\UpdateTranslateReviewsJob;
 use Illuminate\Support\Facades\Bus;
+use App\Services\HotelService;
 
 class UpdateReviewsCommand extends Command
 {
@@ -17,11 +18,11 @@ class UpdateReviewsCommand extends Command
 
     protected $description = 'Command description';
 
-    public function __construct(ApiReviewServices $apiReviewService, NotificationDiscordService $notificationDiscordService)
+    public function __construct(ApiReviewServices $apiReviewService, HotelService $hotelService)
     {
         parent::__construct();
         $this->apiReviewService = $apiReviewService;
-        $this->notificationDiscordService = $notificationDiscordService;
+        $this->hotelService = $hotelService;
     }
 
     public function handle()
@@ -30,7 +31,7 @@ class UpdateReviewsCommand extends Command
         //     new UpdateReviewsJob($this->apiReviewService),
         //     new UpdateTranslateReviewsJob($this->apiReviewService)
         // ])->dispatch();
-        UpdateReviewsJob::dispatchSync($this->apiReviewService, $this->notificationDiscordService);
-        // UpdateTranslateReviewsJob::dispatch($this->apiReviewService);
+        UpdateReviewsJob::dispatch($this->apiReviewService, $this->hotelService);
+        // UpdateTranslateReviewsJob::dispatchSync($this->apiReviewService);
     }
 }

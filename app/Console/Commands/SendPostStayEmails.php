@@ -159,7 +159,6 @@ class SendPostStayEmails extends Command
 
                     if(!$query->guest->off_email && $shouldSend){
                         $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                        $this->mailService->sendEmail(new MsgStay($type, $stay->hotel, $query->guest, $dataEmail), 'francisco20990@gmail.com');
                         Log::info('Correo enviado correctamente handleSendEmailCheckout ', ['guest_email' => $query->guest->email]);
                     }else{
                         Log::info('No se envía correo postCheckout email_off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotelName})');
@@ -440,7 +439,6 @@ class SendPostStayEmails extends Command
                 try {
                     if(!$query->guest->off_email && $shouldSend){ //validacion de trigger de email y si el huésped no tiene off_email
                             $this->mailService->sendEmail(new postCheckoutMail('checkout', $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                            $this->mailService->sendEmail(new postCheckoutMail('checkout', $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
                             Log::info('Correo enviado correctamente handleSendEmailPostCheckout', ['guest_email' => $query->guest->email]);
                     }else{
                         Log::info("No se envía correo postCheckout email_off o trigger off a {$query->guest->email} (Estancia ID: {$stay->id}, Hotel: {$stay->hotel->name})");
