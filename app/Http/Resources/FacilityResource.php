@@ -42,7 +42,7 @@ class FacilityResource extends JsonResource
             'document' => $this->document,
             'document_file' => $this->document_file,
             'text_document_button' => $this->text_document_button,
-            'link_document_url' => $this->link_document_url,
+            'document_file' => $this->document_file,
         ];
     }
 }
