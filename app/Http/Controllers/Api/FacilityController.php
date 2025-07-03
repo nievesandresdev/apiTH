@@ -138,7 +138,8 @@ class FacilityController extends Controller
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
             \DB::rollback();
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdate');
+            //return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdate');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], $e->getMessage());
         }
     }
 

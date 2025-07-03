@@ -990,6 +990,7 @@ if (! function_exists('saveDocumentOrImage')) {
         // Get file extension and mime type
         $extension = strtolower($file->getClientOriginalExtension());
         $mimeType = $file->getMimeType();
+        $storage_env = config('app.storage_env');
 
         // Define image types and document types
         $imageTypes = ['jpg', 'jpeg', 'png'];
