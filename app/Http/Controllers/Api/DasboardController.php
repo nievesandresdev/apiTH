@@ -29,7 +29,7 @@ class DasboardController extends Controller
     {
         try {
             $hotel = $request->attributes->get('hotel');
-            Log::info('Hotel ID:', ['hotel_id' => $hotel->id]);
+            //Log::info('Hotel ID:', ['hotel_id' => $hotel->id]);
 
             $stays = Stay::withCount('guests')
                 ->where('hotel_id', $hotel->id)
@@ -58,11 +58,11 @@ class DasboardController extends Controller
             $inStayGuests = $p->where('period', 'in-stay')->sum('guests_count');
             $postStayGuests = $p->where('period', 'post-stay')->sum('guests_count');
 
-            Log::info('Guests Count by Period:', [
+            /* Log::info('Guests Count by Period:', [
                 'preStayGuests' => $preStayGuests,
                 'inStayGuests' => $inStayGuests,
                 'postStayGuests' => $postStayGuests
-            ]);
+            ]); */
 
             $languages = $stays->flatMap(function ($stay) {
                 return $stay->guests->pluck('lang_web');
