@@ -15,5 +15,3 @@
 # mensual: tracking:notification --month el día 1 de cada mes a las 4AM
 0 4 1 * * /usr/local/bin/php /var/www/html/artisan reportHoster --month >> /var/log/cron.log 2>&1
 
-#30 4 * * * /usr/local/bin/php /var/www/html/artisan app:update-reviews-command >> /var/log/cron.log 2>&1 #Diariamente a las 4:30 AM actualización de reviews
-
