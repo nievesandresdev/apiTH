@@ -79,18 +79,25 @@ class Hotel extends Model
         'contact_whatsapp_number',
         'contact_email',
         'show_contact',
+        'order_sections',
     ];
 
     //bool offer_benefits
     protected $casts = [
         'offer_benefits' => 'boolean',
         'buttons_home' => 'boolean',
+        'order_sections' => 'array',
     ];
 
     /* public function user()
     {
         return $this->belongsToMany(User::class);
     } */
+
+    public function subscriptionActive()
+    {
+        return $this->hasOne(Subscription::class);
+    }
 
     public function user()
     {
@@ -238,6 +245,11 @@ class Hotel extends Model
     public function activeButtons()
     {
         return $this->hasMany(HotelButton::class)->where('is_visible', true)->orderBy('order');
+    }
+
+    public function integrationPms()
+    {
+        return $this->hasMany(IntegrationPms::class);
     }
 
     // AUXILIARIES

@@ -309,7 +309,7 @@ class UtilsController extends Controller
 
             //dd($hotel->hotelCommunications);
             //dd($dataEmail);
-            $this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false,true), 'francisco20990@gmail.com');
+            //$this->mailService->sendEmail(new MsgStay($type, $hotel, $guest, $dataEmail,false,true), 'xxxxx@gmail.com');
 
 
             return view('Mails.guest.msgStay', [
@@ -417,7 +417,7 @@ class UtilsController extends Controller
     protected function getUsersInformGeneral($notificationFilters, $specificChannels, $periodicity, $from, $to)
     {
         try {
-            
+
             $usersByChannel = $this->userServices->getUsersWithNotifications($notificationFilters, $specificChannels, $periodicity);
 
             // Primero creamos un mapa de hoteles a usuarios
@@ -573,7 +573,7 @@ class UtilsController extends Controller
             ];
 
             //dd($dataEmail);
-            $this->mailService->sendEmail(new postCheckoutMail($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+            //$this->mailService->sendEmail(new postCheckoutMail($type, $hotel, $guest, $dataEmail,true), 'xxxxx@gmail.com');
 
             return view('Mails.guest.postCheckoutEmail', [
                 'type' => $type,
@@ -688,11 +688,11 @@ class UtilsController extends Controller
             $communication = $hotel->hotelCommunications->firstWhere('type', 'email');
             $shouldSend = !$communication || $communication->pre_checkin_email;
 
-            if($shouldSend){
-                $this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'francisco20990@gmail.com');
+           /*  if($shouldSend){
+                $this->mailService->sendEmail(new prepareArrival($type, $hotel, $guest, $dataEmail,true), 'xxxxx@gmail.com');
             }else{
                 dd('no se envia');
-            }
+            } */
 
 
             return view('Mails.guest.prepareYourArrival', [
@@ -745,7 +745,7 @@ class UtilsController extends Controller
             //dd($dataEmail,$rewardStay->hotel->chatSettings->show_guest);
 
 
-            $this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $dataEmail), 'francisco20990@gmail.com');
+            //$this->mailService->sendEmail(new RewardsEmail($rewardStay->hotel, $rewardStay, $dataEmail), 'xxxxx@gmail.com');
 
 
             return view('Mails.users.rewards', [

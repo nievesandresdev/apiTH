@@ -190,7 +190,6 @@ class SendPreStayEmail extends Command
                 if(!$query->guest->off_email){
                     if($shouldSend){
                         $this->mailService->sendEmail(new prepareArrival('prepare-arrival', $stay->hotel, $query->guest, $dataEmail,true), $query->guest->email);
-                        $this->mailService->sendEmail(new prepareArrival('prepare-arrival', $stay->hotel, $query->guest, $dataEmail,true), 'francisco20990@gmail.com');
                         Log::info('Correo enviado correctamente handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);
                     }else{
                         Log::info('Correo no enviado handleSendEmailPreCheckin', ['guest_email' => $query->guest->email]);

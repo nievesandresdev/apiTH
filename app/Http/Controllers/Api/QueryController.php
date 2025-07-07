@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\QuerySettingsResource;
 use App\Models\Query;
 use App\Services\QueryServices;
 use App\Services\QuerySettingsServices;
@@ -189,14 +190,14 @@ class QueryController extends Controller
             $settings = $this->settingsService->getAll($hotel->id);
             $requestData = null;
             // if($request->period == 'in-stay' || $request->period == 'post-stay' && $query->answered){
-                $requestSettings = $this->requestSettingService->getAll($hotel->id);
-                $guestName = $request->guestName;
-                $requestData = $this->requestSettingService->getRequestData($requestSettings, $guestName, $request->period);
+                // $requestSettings = $this->requestSettingService->getAll($hotel->id);
+                // $guestName = $request->guestName;
+                // $requestData = $this->requestSettingService->getRequestData($requestSettings, $guestName, $request->period);
             // }
             
             return bodyResponseRequest(EnumResponse::ACCEPTED, [
                 'query' => $query,
-                'settings' => $settings,
+                'settings' => QuerySettingsResource::make($settings),
                 'requestData' => $requestData
             ]);
         } catch (\Exception $e) {
