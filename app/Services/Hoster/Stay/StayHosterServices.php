@@ -166,8 +166,15 @@ class StayHosterServices {
             $totalGuests = 0;
             $countsByPeriod = ['pre-stay' => 0,'in-stay' => 0,'post-stay' => 0];
             $guestsByPeriod = ['pre-stay' => 0,'in-stay' => 0,'post-stay' => 0];
-            $langsTotal = ['es' => 0,'fr' => 0,'en' => 0];
-            $percentageLangs = ['es' => 0,'fr' => 0,'en' => 0];
+            $allLangs = getAllLanguages();
+            $langsTotal = [];
+            $percentageLangs = [];
+            $arrayLangs = [];
+            foreach($allLangs as $lang){
+                $langsTotal[$lang] = 0;
+                $percentageLangs[$lang] = 0;
+                array_push($arrayLangs, $lang);
+            }
 
             foreach($dataStays['stays'] as $stay){
                 //today data
@@ -178,17 +185,31 @@ class StayHosterServices {
                 $totalGuests += count($stay->guests);
                 foreach($stay->guests as $guest){
                     $langsTotal[strtolower($guest->lang_web)] += 1;
+                    // echo "lang: ".strtolower($guest->lang_web)."\n";
                 }
                 //stays
                 $countsByPeriod[$stay->period] += 1;
             }
 
-
-            foreach(['es','en','fr'] as $lang){
+            
+            foreach($arrayLangs as $lang){
                 if($langsTotal[$lang] > 0){
                     $percentageLangs[$lang] = round(($langsTotal[$lang]/$totalGuests)*100);
                 }
             }
+
+
+            // Obtener los dos idiomas con mayor porcentaje
+            arsort($percentageLangs); // Ordena de mayor a menor, mantiene las claves
+            $topLangs = array_slice($percentageLangs, 0, 2, true); // Los dos primeros
+            $others = array_slice($percentageLangs, 2); // El resto
+
+            // Sumar los porcentajes del resto
+            $othersTotal = array_sum($others);
+
+            // Crear nuevo array con formato requerido
+            $sortedPercentageLangs = $topLangs;
+            $sortedPercentageLangs['others'] = $othersTotal;
 
             return [
                 'today' => $todayDay,
@@ -199,7 +220,7 @@ class StayHosterServices {
                 'guestsByPeriod' => $guestsByPeriod,
                 'totalGuests' => $totalGuests,
                 'langsTotal' => $langsTotal,
-                'percentageLangs' => $percentageLangs
+                'percentageLangs' => $sortedPercentageLangs
             ];
         } catch (\Exception $e) {
             return $e;
