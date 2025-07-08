@@ -1,7 +1,7 @@
 0 4 * * * /usr/local/bin/php /var/www/html/artisan freetrealcommand >> /var/log/cron.log 2>&1 #diariamente a las 4 am / migrado de admin
-#0 5 * * * /usr/local/bin/php /var/www/html/artisan arrivalhotel >> /var/log/cron.log 2>&1 #diariamente 5 am / DEPRECADO
-#5 5 * * * /usr/local/bin/php /var/www/html/artisan pre-out-hotel >> /var/log/cron.log 2>&1 #diariamente 5:05 am / DEPRECADO
-#10 5 * * * /usr/local/bin/php /var/www/html/artisan welcomecreatestay >> /var/log/cron.log 2>&1 #diariamente 5:10 am / DEPRECADO
+#
+#sendqueriescommand--> este cron se encarga de crear las queries(feedback) segun corresponda el periodo de la estancia, en caso de que no exista dicha consulta para cada huesped en su estancia.
+#
 0 5 * * * /usr/local/bin/php /var/www/html/artisan sendqueriescommand >> /var/log/cron.log 2>&1 #diariamente 5 am / migrado / de admin
 * * * * * /usr/local/bin/php /var/www/html/artisan app:periodicity-chat >> /var/log/cron.log 2>&1 #cada minuto
 0 12 * * * /usr/local/bin/php /var/www/html/artisan backup:hoster >> /var/log/cron.log 2>&1 #diariamente 12 pm backups
@@ -10,6 +10,11 @@
 
 30 4 * * * /usr/local/bin/php /var/www/html/artisan app:update-reviews-command >> /var/log/cron.log 2>&1 #Diariamente a las 4:30 AM actualización de reviews
 0 4 * * * /usr/local/bin/php /var/www/html/artisan generatecopyhotel >> /var/log/cron.log 2>&1 # Todos los días a las 4 AM
+
+
+#
+#reportHoster-->  se encarga de generar el reporte de las consultas(feedback) por hotel y enviarlo a los usuarios con notificaciones activas.
+#
 # semanal: tracking:notification --week cada domingo a las 4AM
 0 4 * * 0 /usr/local/bin/php /var/www/html/artisan reportHoster --week >> /var/log/cron.log 2>&1
 # mensual: tracking:notification --month el día 1 de cada mes a las 4AM
