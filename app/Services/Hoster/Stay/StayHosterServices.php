@@ -199,17 +199,29 @@ class StayHosterServices {
             }
 
 
-            // Obtener los dos idiomas con mayor porcentaje
-            arsort($percentageLangs); // Ordena de mayor a menor, mantiene las claves
-            $topLangs = array_slice($percentageLangs, 0, 2, true); // Los dos primeros
-            $others = array_slice($percentageLangs, 2); // El resto
+            // Asegurar que existen las claves
+            $percentageLangs['es'] = $percentageLangs['es'] ?? 0;
+            $percentageLangs['en'] = $percentageLangs['en'] ?? 0;
 
-            // Sumar los porcentajes del resto
-            $othersTotal = array_sum($others);
+            // Separar los porcentajes deseados
+            $es = $percentageLangs['es'];
+            $en = $percentageLangs['en'];
 
-            // Crear nuevo array con formato requerido
-            $sortedPercentageLangs = $topLangs;
-            $sortedPercentageLangs['others'] = $othersTotal;
+            // Calcular el resto (otros idiomas)
+            $othersTotal = 0;
+            foreach ($percentageLangs as $key => $value) {
+                if ($key !== 'es' && $key !== 'en') {
+                    $othersTotal += $value;
+                }
+            }
+
+            // Crear nuevo array ordenado
+            $sortedPercentageLangs = [
+                'es' => $es,
+                'en' => $en,
+                'others' => $othersTotal,
+            ];
+
 
             return [
                 'today' => $todayDay,
