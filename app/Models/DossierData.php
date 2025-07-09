@@ -57,9 +57,4 @@ class DossierData extends Model
         return (int) round($value);
     }
 
-    public function setAveragePriceAttribute($value)
-    {
-        $this->attributes['averagePrice'] = empty($value) ? 0 : $value;
-    }
-
 }
