@@ -19,12 +19,13 @@ class UpdateReviewsJob implements ShouldQueue
 
     public $apiReviewService;
     public $hotelService;
+    public $notificationDiscordService;
 
-
-    public function __construct($apiReviewService, $hotelService)
+    public function __construct($apiReviewService, $hotelService, $notificationDiscordService)
     {
         $this->apiReviewService = $apiReviewService;
         $this->hotelService = $hotelService;
+        $this->notificationDiscordService = $notificationDiscordService;
     }
 
     /**
@@ -49,7 +50,7 @@ class UpdateReviewsJob implements ShouldQueue
                     $this->notificationDiscordService->sendMessage("End UpdateReviewsJob", "Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id, "Reviews actualizadas correctamente");
                 }
             } catch (\Exception $e) {
-                $this->notificationDiscordService->sendMessage("Error UpdateReviewsJob", "Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id, $e->getMessage());
+                $this->notificationDiscordService->sendMessage("Error UpdateReviewsJob", $e->getMessage());
             }
         }
         \Log::info("End UpdateReviewsCommand");

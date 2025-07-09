@@ -16,7 +16,7 @@ class NotificationDiscordService {
         $httpClientService = new HttpClientService();
         $webhookUrl = config('app.discord_webhook_url');
         $message = "[API] " . $title . "\n" . $message;
-        $response = $httpClientService->makeRequest('post',$webhookUrl, [
+        $response = $httpClientService->make_request('post',$webhookUrl, [
             'content' => $message,
         ],[
             'Content-Type' => 'application/json',
