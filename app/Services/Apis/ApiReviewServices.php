@@ -6,17 +6,19 @@ use App\Models\HotelOta;
 use App\Services\HttpClientService;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
+use App\Services\NotificationDiscordService;
 
 
 class ApiReviewServices {
 
     protected $KEY_API_REVIEW;
     protected $X_KEY_API;
-
-    public function __construct()
+    protected $notificationDiscordService;
+    public function __construct(NotificationDiscordService $notificationDiscordService)
     {
         $this->KEY_API_REVIEW = config('app.key_api_review');
         $this->X_KEY_API = config('app.x_key_api');
+        $this->notificationDiscordService = $notificationDiscordService;
     }
 
 
@@ -207,9 +209,11 @@ class ApiReviewServices {
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
             // \Log::error($response_request['message']??$response_request);
+            $this->notificationDiscordService->sendMessage("Error Sync Reviews $ota", "Error Sync Reviews $ota");
             return;
         } else {
             \Log::info("Sync Reviews");
+            $this->notificationDiscordService->sendMessage("Success Sync Reviews $ota", "Success Sync Reviews $ota");
             $data = $response_request ?? null;
         }
         return $data;
@@ -225,14 +229,16 @@ class ApiReviewServices {
         $http_client_service = new HttpClientService();
         $headers = ['x-api-key' => $this->X_KEY_API];
         $response_request = $http_client_service->make_request('POST', "$URL_BASE_API_REVIEW/leakedReviews/storeBulkByOta", $body, $headers, 60);
-        
+
         $data = null;
         if (isset($response_request['ok']) && $response_request['ok']) {
             var_dump('todo ok en leakedReviewsStoreBulkByOta '.$ota);
+            $this->notificationDiscordService->sendMessage("Success Leaked Reviews Store Bulk By Ota $ota", "Success Leaked Reviews Store Bulk By Ota $ota");
             \Log::info("Success Leaked Reviews Store Bulk By Ota $ota");
             return;
         } else {
             var_dump('error en leakedReviewsStoreBulkByOta');
+            $this->notificationDiscordService->sendMessage("Error Leaked Reviews Store Bulk By Ota $ota", "Error Leaked Reviews Store Bulk By Ota $ota");
             \Log::error("Error Leaked Reviews Store Bulk By Ota $ota");
             $data = $response_request ?? null;
         }
@@ -254,10 +260,12 @@ class ApiReviewServices {
         $data = null;
         if (isset($response_request['ok']) && $response_request['ok']) {
             var_dump('todo ok en translateReviewsByOta '.$ota);
+            $this->notificationDiscordService->sendMessage("Success Translate Reviews $ota", "Success Translate Reviews $ota");
             \Log::info("Success Translate Reviews $ota");
             return;
         } else {
             var_dump('error en translateReviewsByOta '.$ota);
+            $this->notificationDiscordService->sendMessage("Error Translate Reviews $ota", "Error Translate Reviews $ota");
             \Log::error("Error Translate Reviews $ota");
             $data = $response_request ?? null;
         }

@@ -29,7 +29,8 @@ Route::middleware('auth.either:user,guest')->group(function () {
             Route::get('/getProfileWhatsapp', [HotelHosterController::class, 'getProfileWhatsapp']);
             Route::post('/toggleShowContact', [HotelHosterController::class, 'toggleShowContact']);
             Route::get('/getShowContact', [HotelHosterController::class, 'getShowContact']);
-
+            Route::get('/getOrderSections', [HotelHosterController::class, 'getOrderSections']);
+            Route::post('/updateOrderSections', [HotelHosterController::class, 'updateOrderSections']);
 
         });
 
@@ -90,6 +91,7 @@ Route::group(['prefix' => 'hotel'], function () {
     Route::get('/getAllCrossellings', [HotelController::class, 'getAllCrossellings']);
     Route::get('getMainData', [HotelController::class, 'getMainData']);
     Route::get('getDataLegal', [HotelController::class, 'getDataLegal']);
+    Route::get('getOrderSections', [HotelController::class, 'getOrderSections']);
 });
 
 

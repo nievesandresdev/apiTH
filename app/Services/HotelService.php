@@ -21,6 +21,8 @@ use App\Models\ChatHour;
 use App\Services\Chatgpt\TranslateService;
 
 use App\Jobs\TranslateModelJob;
+use App\Utils\Enums\EnumResponse;
+use App\Utils\Enums\EnumsHotel\ConfigHomeSectionsEnum;
 
 class HotelService {
 
@@ -548,6 +550,18 @@ class HotelService {
         }
     }
 
+
+
+    public function getOrderSections ($hotelId) {
+        $hotel = Hotel::find($hotelId);
+        if (!$hotel) {
+            return null;
+        }
+
+        $default = ConfigHomeSectionsEnum::defaultOrderSections();
+        return $hotel->order_sections ?? $default;
+    }
+
     public function getHotelsSubscriptionActive() {
         $hotels = Hotel::select('id', 'slug', 'zone', 'name_origin', 'scraper_run', 'subscription_active', 'code')
             ->whereHas('subscriptionActive', function($query) {
@@ -560,5 +574,6 @@ class HotelService {
 
         return $hotels;
     }
+
 
 }

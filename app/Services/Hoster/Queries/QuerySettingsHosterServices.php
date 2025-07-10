@@ -133,23 +133,23 @@ class QuerySettingsHosterServices {
 
     public function processTranslateTexts ($request, $model, $period){
         
-        $pre_stay_comment = $request->pre_stay_comment['es'] ?? null;
+        $pre_stay_comment = $request->pre_stay_comment['es'] ?? $model->pre_stay_comment['es'];
         $arrToTranslate = ['pre_stay_comment' => $pre_stay_comment];
         if($period == 'in-stay'){
-            $in_stay_verygood_response_title = $request->in_stay_verygood_response_title['es'] ?? null;
-            $in_stay_verygood_response_msg = $request->in_stay_verygood_response_msg['es'] ?? null;
-            $in_stay_verygood_no_request_comment_msg = $request->in_stay_verygood_no_request_comment_msg['es'] ?? null;
-            $in_stay_verygood_no_request_thanks_title = $request->in_stay_verygood_no_request_thanks_title['es'] ?? null;
-            $in_stay_verygood_no_request_thanks_msg = $request->in_stay_verygood_no_request_thanks_msg['es'] ?? null;
+            $in_stay_verygood_response_title = $request->in_stay_verygood_response_title['es'] ?? $model->in_stay_verygood_response_title['es'];
+            $in_stay_verygood_response_msg = $request->in_stay_verygood_response_msg['es'] ?? $model->in_stay_verygood_response_msg['es'];
+            $in_stay_verygood_no_request_comment_msg = $request->in_stay_verygood_no_request_comment_msg['es'] ?? $model->in_stay_verygood_no_request_comment_msg['es'];
+            $in_stay_verygood_no_request_thanks_title = $request->in_stay_verygood_no_request_thanks_title['es'] ?? $model->in_stay_verygood_no_request_thanks_title['es'];
+            $in_stay_verygood_no_request_thanks_msg = $request->in_stay_verygood_no_request_thanks_msg['es'] ?? $model->in_stay_verygood_no_request_thanks_msg['es'];
             //
-            $in_stay_good_response_title = $request->in_stay_good_response_title['es'] ?? null;
-            $in_stay_good_response_msg = $request->in_stay_good_response_msg['es'] ?? null;
-            $in_stay_good_no_request_comment_msg = $request->in_stay_good_no_request_comment_msg['es'] ?? null;
-            $in_stay_good_no_request_thanks_title = $request->in_stay_good_no_request_thanks_title['es'] ?? null;
-            $in_stay_good_no_request_thanks_msg = $request->in_stay_good_no_request_thanks_msg['es'] ?? null;
+            $in_stay_good_response_title = $request->in_stay_good_response_title['es'] ?? $model->in_stay_good_response_title['es'];
+            $in_stay_good_response_msg = $request->in_stay_good_response_msg['es'] ?? $model->in_stay_good_response_msg['es'];
+            $in_stay_good_no_request_comment_msg = $request->in_stay_good_no_request_comment_msg['es'] ?? $model->in_stay_good_no_request_comment_msg['es'];
+            $in_stay_good_no_request_thanks_title = $request->in_stay_good_no_request_thanks_title['es'] ?? $model->in_stay_good_no_request_thanks_title['es'];
+            $in_stay_good_no_request_thanks_msg = $request->in_stay_good_no_request_thanks_msg['es'] ?? $model->in_stay_good_no_request_thanks_msg['es'];
             //
-            $in_stay_bad_response_title = $request->in_stay_bad_response_title['es'] ?? null;
-            $in_stay_bad_response_msg = $request->in_stay_bad_response_msg['es'] ?? null;
+            $in_stay_bad_response_title = $request->in_stay_bad_response_title['es'] ?? $model->in_stay_bad_response_title['es'];
+            $in_stay_bad_response_msg = $request->in_stay_bad_response_msg['es'] ?? $model->in_stay_bad_response_msg['es'];
             //
             $arrToTranslate = [
                 'in_stay_verygood_response_title' => $in_stay_verygood_response_title,
@@ -169,17 +169,17 @@ class QuerySettingsHosterServices {
             ];
         }
         if($period == 'post-stay'){
-            $post_stay_verygood_response_title = $request->post_stay_verygood_response_title['es'] ?? null;
-            $post_stay_verygood_response_msg = $request->post_stay_verygood_response_msg['es'] ?? null;
+            $post_stay_verygood_response_title = $request->post_stay_verygood_response_title['es'] ?? $model->post_stay_verygood_response_title['es'];
+            $post_stay_verygood_response_msg = $request->post_stay_verygood_response_msg['es'] ?? $model->post_stay_verygood_response_msg['es'];
             //
-            $post_stay_good_response_title = $request->post_stay_good_response_title['es'] ?? null;
-            $post_stay_good_response_msg = $request->post_stay_good_response_msg['es'] ?? null;
-            $post_stay_good_no_request_comment_msg = $request->post_stay_good_no_request_comment_msg['es'] ?? null;
-            $post_stay_good_no_request_thanks_title = $request->post_stay_good_no_request_thanks_title['es'] ?? null;
-            $post_stay_good_no_request_thanks_msg = $request->post_stay_good_no_request_thanks_msg['es'] ?? null;
+            $post_stay_good_response_title = $request->post_stay_good_response_title['es'] ?? $model->post_stay_good_response_title['es'];
+            $post_stay_good_response_msg = $request->post_stay_good_response_msg['es'] ?? $model->post_stay_good_response_msg['es'];
+            $post_stay_good_no_request_comment_msg = $request->post_stay_good_no_request_comment_msg['es'] ?? $model->post_stay_good_no_request_comment_msg['es'];
+            $post_stay_good_no_request_thanks_title = $request->post_stay_good_no_request_thanks_title['es'] ?? $model->post_stay_good_no_request_thanks_title['es'];
+            $post_stay_good_no_request_thanks_msg = $request->post_stay_good_no_request_thanks_msg['es'] ?? $model->post_stay_good_no_request_thanks_msg['es'];
             //
-            $post_stay_bad_response_title = $request->post_stay_bad_response_title['es'] ?? null;
-            $post_stay_bad_response_msg = $request->post_stay_bad_response_msg['es'] ?? null;
+            $post_stay_bad_response_title = $request->post_stay_bad_response_title['es'] ?? $model->post_stay_bad_response_title['es'];
+            $post_stay_bad_response_msg = $request->post_stay_bad_response_msg['es'] ?? $model->post_stay_bad_response_msg['es'];
             $arrToTranslate = [
                 'post_stay_verygood_response_title' => $post_stay_verygood_response_title,
                 'post_stay_verygood_response_msg' => $post_stay_verygood_response_msg,

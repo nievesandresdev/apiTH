@@ -544,5 +544,20 @@ class HotelController extends Controller
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getActiveHotelButtons');
         }
     }
-    
+
+    public function getOrderSections (Request $request) {
+        try {
+            $hotelModel = $request->attributes->get('hotel');
+            $data = $this->service->getOrderSections($hotelModel->id);
+            if(!$data){
+                $data = [
+                    'message' => __('response.bad_request_long')
+                ];
+                return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
+            }
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
+        } catch (\Exception $e) {
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.getOrderSections');
+        }
+    }
 }

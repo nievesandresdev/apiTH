@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FacilityResource extends JsonResource
+class FacilityHuespedResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -39,10 +39,6 @@ class FacilityResource extends JsonResource
             'always_open' => $this->always_open,
             'ad_tag' => $ad_tag,
             'order' => $this->order,
-            'document' => $this->document,
-            'document_file' => $this->document_file,
-            'text_document_button' => $this->text_document_button,
-            'document_file' => $this->document_file,
         ];
     }
 }

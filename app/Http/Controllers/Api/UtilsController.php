@@ -409,7 +409,9 @@ class UtilsController extends Controller
 
     protected function test()
     {
-        return QuerySettingsEnums::queriesTextDefault();
+        $hotel = Hotel::find(191);
+        $stats = $this->stayHosterServices->statisticsByHotel($hotel);
+        return $stats;
     }
 
 
