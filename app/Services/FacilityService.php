@@ -102,6 +102,11 @@ class FacilityService {
             $documentPath = saveDocumentOrImage($file, 'facility_documents', $hotelModel->id);
         }
 
+        // Check if document type is 'no_add_document' to set fields as null
+        $linkDocumentUrl = $request->document === 'no_add_document' ? null : $request->link_document_url;
+        $documentFile = $request->document === 'no_add_document' ? null : ($documentPath ?? null);
+        $textDocumentButton = $request->document === 'no_add_document' ? null : $request->text_document_button;
+
         if($request->id){
             $facilityHosterModel = FacilityHoster::find($request->id);
             $facilityHosterModel->update([
@@ -111,9 +116,9 @@ class FacilityService {
                 'ad_tag' => $request->ad_tag ?? null,
                 'always_open' => $request->always_open ? 1 : 0,
                 'document' => $request->document,
-                'document_file' => $documentPath ?? $facilityHosterModel->document_file,
-                'text_document_button' => $request->text_document_button,
-                'link_document_url' => $request->link_document_url,
+                'document_file' => $documentFile ?? $facilityHosterModel->document_file,
+                'text_document_button' => $textDocumentButton,
+                'link_document_url' => $linkDocumentUrl,
             ]);
         }else{
             $facilityHosterModel  = FacilityHoster::create([
@@ -128,13 +133,23 @@ class FacilityService {
                 'order' => 0,
                 'always_open' => $request->always_open ? 1 : 0,
                 'document' => $request->document,
-                'document_file' => $documentPath,
-                'text_document_button' => $request->text_document_button,
-                'link_document_url' => $request->link_document_url,
+                'document_file' => $documentFile,
+                'text_document_button' => $textDocumentButton,
+                'link_document_url' => $linkDocumentUrl,
             ]);
         }
 
         $facilityHosterModel = $facilityHosterModel->refresh();
+
+        // Debug log para verificar lo que se guardó
+        Log::info('FacilityService storeOrUpdate - Saved data:', [
+            'id' => $facilityHosterModel->id,
+            'document' => $facilityHosterModel->document,
+            'text_document_button' => $facilityHosterModel->text_document_button,
+            'link_document_url' => $facilityHosterModel->link_document_url,
+            'document_file' => $facilityHosterModel->document_file
+        ]);
+
         return $facilityHosterModel;
     }
 
