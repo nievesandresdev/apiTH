@@ -412,9 +412,9 @@ class UtilsController extends Controller
         $clientId = config('services.facebook.client_id');
         $clientSecret = config('services.facebook.client_secret');
         $redirectUri = config('services.facebook.redirect');
-        echo "clientId: {$clientId}1a1a<br>";
-        echo "clientSecret: {$clientSecret}b2b2<br>";
-        echo "redirectUri: {$redirectUri}c3c3<br>";
+        echo "clientId: {$clientId}<br>";
+        echo "clientSecret: {$clientSecret}<br>";
+        echo "redirectUri: {$redirectUri}";
     }
 
 
