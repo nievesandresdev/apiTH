@@ -31,8 +31,8 @@ class ExecuteScraperPerHoster extends Command
     {
         ini_set('max_execution_time', '72000');
 
-        $hotels = $this->api_hotel_services->getAssetsByStripe();
-
+        $hotels = $this->api_hotel_services->getHotelsSubscriptionActive();
+        
         var_dump("Cantidad de hoteles a actualizar:".count($hotels));
 
         foreach ($hotels as $key => $hotel) {

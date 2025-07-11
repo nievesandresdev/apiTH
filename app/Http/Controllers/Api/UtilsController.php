@@ -409,9 +409,12 @@ class UtilsController extends Controller
 
     protected function test()
     {
-        $hotel = Hotel::find(191);
-        $stats = $this->stayHosterServices->statisticsByHotel($hotel);
-        return $stats;
+        $clientId = config('services.facebook.client_id');
+        $clientSecret = config('services.facebook.client_secret');
+        $redirectUri = config('services.facebook.redirect');
+        echo "clientId: {$clientId}<br>";
+        echo "clientSecret: {$clientSecret}<br>";
+        echo "redirectUri: {$redirectUri}";
     }
 
 
