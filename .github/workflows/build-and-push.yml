@@ -55,7 +55,7 @@ jobs:
           echo "AZURE_FORM_RECOGNIZER_API_KEY=${{ secrets.AZURE_FORM_RECOGNIZER_API_KEY }}" >> .env
           echo "AZURE_FORM_RECOGNIZER_MODEL_ID=${{ secrets.AZURE_FORM_RECOGNIZER_MODEL_ID }}" >> .env
 
-          echo "DISCORD_WEBHOOK_URL=${{ vars.DISCORD_WEBHOOK_URL_MAIN }}" >> .env
+          echo "DISCORD_WEBHOOK_URL=${{ vars.DISCORD_WEBHOOK_URL }}" >> .env
 
           if [ "${{ github.ref_name }}" == "main" ]; then
 
