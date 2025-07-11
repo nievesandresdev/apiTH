@@ -409,12 +409,7 @@ class UtilsController extends Controller
 
     protected function test()
     {
-        $clientId = config('services.facebook.client_id');
-        $clientSecret = config('services.facebook.client_secret');
-        $redirectUri = config('services.facebook.redirect');
-        echo "clientId: {$clientId}<br>";
-        echo "clientSecret: {$clientSecret}<br>";
-        echo "redirectUri: {$redirectUri}";
+        //
     }
 
 
