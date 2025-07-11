@@ -209,11 +209,11 @@ class ApiReviewServices {
         $data = null;
         if (!isset($response_request['ok']) || !$response_request['ok']) {
             // \Log::error($response_request['message']??$response_request);
-            $this->notificationDiscordService->sendMessage("Error Sync Reviews $ota", "Error Sync Reviews $ota");
+            $this->notificationDiscordService->sendMessage("Error Sync Reviews", "Error Sync Reviews");
             return;
         } else {
             \Log::info("Sync Reviews");
-            $this->notificationDiscordService->sendMessage("Success Sync Reviews $ota", "Success Sync Reviews $ota");
+            $this->notificationDiscordService->sendMessage("Success Sync Reviews", "Success Sync Reviews");
             $data = $response_request ?? null;
         }
         return $data;
