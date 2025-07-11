@@ -570,7 +570,7 @@ class HotelService {
             })
             ->distinct('code')->get();
         $hotels = $hotels->unique('code');
-        $hotels = $hotels->pluck('code');
+        // $hotels = $hotels->pluck('code');
 
         return $hotels;
     }
