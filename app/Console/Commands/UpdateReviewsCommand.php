@@ -32,7 +32,7 @@ class UpdateReviewsCommand extends Command
         //     new UpdateReviewsJob($this->apiReviewService),
         //     new UpdateTranslateReviewsJob($this->apiReviewService)
         // ])->dispatch();
-        UpdateReviewsJob::dispatchSync($this->apiReviewService, $this->hotelService, $this->notificationDiscordService);
+        UpdateReviewsJob::dispatch($this->apiReviewService, $this->hotelService, $this->notificationDiscordService);
         // UpdateTranslateReviewsJob::dispatch($this->apiReviewService);
     }
 }
