@@ -20,3 +20,46 @@
 # mensual: tracking:notification --month el día 1 de cada mes a las 4AM
 0 4 1 * * /usr/local/bin/php /var/www/html/artisan reportHoster --month >> /var/log/cron.log 2>&1
 
+
+# ================================================================================================
+#                           DOCUMENTACIÓN DE COMANDOS email y Backup
+# ================================================================================================
+
+# 1. APP:PERIODICITY-CHAT (Cada minuto)
+#    Archivo: app/Console/Commands/PeriodicityChat.php
+#    Función: Envía notificaciones push de chats y feedback pendientes
+#    - Revisa chats pendientes de respuesta según periodicidad configurada por usuario
+#    - Envía notificaciones de feedback no atendido
+#    - Controla frecuencia de notificaciones (pendingChat10, pendingChat30, pendingFeedback30, pendingFeedback60)
+#    - Filtra estancias en periodo 'in-stay' y 'pre-stay' únicamente
+#    - Usa eventos Pusher para notificaciones en tiempo real
+
+# 2. SEND-PRE-STAY-EMAIL (Cada hora, minuto 2)
+#    Archivo: app/Console/Commands/SendPreStayEmail.php
+#    Función: Envía correos de preparación de llegada 48 horas antes del check-in
+#    - Busca estancias con check-in en las próximas 48 horas
+#    - Envía email con información del hotel, QR codes y links de check-in
+#    - Incluye datos de crosselling (instalaciones, experiencias, destinos)
+#    - Respeta los triggers de comunicación del hotel (pre_checkin_email)
+#    - Maneja múltiples idiomas según configuración del huésped
+
+# 3. SEND-POST-STAY-EMAILS (Cada hora)
+#    Archivo: app/Console/Commands/SendPostStayEmails.php
+#    Función: Envía correos automáticos post-estancia en diferentes momentos
+#    - handleSendEmailCheckout: Email el día del checkout en hora de salida
+#    - handleSendEmailPostCheckout: Emails 24-72h después del checkout
+#    - handleSendEmailPostChekin: Emails de insistencia para reviews
+#    - Incluye links de feedback, webapp, y configuraciones de crosselling
+#    - Respeta configuraciones off_email (desactivar email) de huéspedes
+
+# 4. BACKUP:HOSTER (Diariamente a las 12:00 PM)
+#    Archivo: app/Console/Commands/backupHoster.php
+#    Función: Realiza backup completo de la base de datos principal
+#    - Genera dump completo usando mysqldump con credenciales de .env
+#    - Comprime el backup en formato ZIP con timestamp único
+#    - Sube archivo a AWS S3 en carpeta 'hoster-backup-db'
+#    - Elimina automáticamente backups de más de 6 meses
+#    - Registra backup en tabla 'backups' para control
+
+# ================================================================================================
+
