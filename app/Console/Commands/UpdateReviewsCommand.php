@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 
 use App\Services\Apis\ApiReviewServices;
+use App\Services\NotificationDiscordService;
 use App\Models\Hotel;
 use App\Jobs\UpdateReviewsJob;
 use App\Jobs\UpdateTranslateReviewsJob;
@@ -17,11 +18,12 @@ class UpdateReviewsCommand extends Command
 
     protected $description = 'Command description';
 
-    public function __construct(ApiReviewServices $apiReviewService, HotelService $hotelService)
+    public function __construct(ApiReviewServices $apiReviewService, HotelService $hotelService, NotificationDiscordService $notificationDiscordService)
     {
         parent::__construct();
         $this->apiReviewService = $apiReviewService;
         $this->hotelService = $hotelService;
+        $this->notificationDiscordService = $notificationDiscordService;
     }
 
     public function handle()
@@ -30,7 +32,7 @@ class UpdateReviewsCommand extends Command
         //     new UpdateReviewsJob($this->apiReviewService),
         //     new UpdateTranslateReviewsJob($this->apiReviewService)
         // ])->dispatch();
-        UpdateReviewsJob::dispatch($this->apiReviewService, $this->hotelService);
-        // UpdateTranslateReviewsJob::dispatchSync($this->apiReviewService);
+        UpdateReviewsJob::dispatch($this->apiReviewService, $this->notificationDiscordService, $this->hotelService);
+        // UpdateTranslateReviewsJob::dispatch($this->apiReviewService);
     }
 }

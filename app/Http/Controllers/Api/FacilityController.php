@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\TypePlaces;
 use App\Models\FacilityHoster;
@@ -77,13 +78,13 @@ class FacilityController extends Controller
     public function updateOrder (UpdateFacilityOrderRequest $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
-            \DB::beginTransaction();
+            DB::beginTransaction();
             $this->service->updateOrder($request->order, $hotelModel);
-            \DB::commit();
+            DB::commit();
             $data = $hotelModel->facilities()->orderBy('order')->pluck('id');
             return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
         }
     }
@@ -98,23 +99,20 @@ class FacilityController extends Controller
                 ];
                 return bodyResponseRequest(EnumResponse::NOT_FOUND, $data);
             }
-            \DB::beginTransaction();
+            DB::beginTransaction();
             $this->service->updateVisible($request, $facilityHosterModel);
             $this->service->syncOrder($hotelModel);
-            \DB::commit();
+            DB::commit();
             $data = $facilityHosterModel->refresh();
             return bodyResponseRequest(EnumResponse::SUCCESS_OK);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.updateOrder');
         }
     }
 
     public function storeOrUpdate (Request $request) {
-       /*  return bodyResponseRequest(EnumResponse::ACCEPTED, $request->all()); */
         try {
-            // $f = FacilityHoster::find($request->id);
-            // return $f;
             $image = null;
             $hotelModel = $request->attributes->get('hotel');
             if ($hotelModel->image == null) {
@@ -122,31 +120,39 @@ class FacilityController extends Controller
             } else {
                 $image = is_array($hotelModel->image) ? $hotelModel->image : [$hotelModel->image]; //  array
             }
-            \DB::beginTransaction();
+            DB::beginTransaction();
             $facilityHosterModel = $this->service->storeOrUpdate($request, $hotelModel);
             $this->service->processTranslate($request, $facilityHosterModel, $hotelModel);
-            $images = $request->images ?? $image;
+
+            // Handle images
+            $images = $request->images;
+            if (is_string($images)) {
+                $images = json_decode($images, true);
+            }
+            $images = $images ?? $image;
+
             $this->service->updateImages($images, $facilityHosterModel, $hotelModel);
             $this->service->syncOrder($hotelModel);
-            \DB::commit();
+            DB::commit();
             $data = [];
-            return bodyResponseRequest(EnumResponse::ACCEPTED, $image);
+            return bodyResponseRequest(EnumResponse::ACCEPTED, $data);
         } catch (\Exception $e) {
-            \DB::rollback();
-            return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdate');
+            DB::rollback();
+            //return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.storeOrUpdate');
+            return bodyResponseRequest(EnumResponse::ERROR, $e, [], $e->getMessage());
         }
     }
 
     public function destroy ($id, Request $request) {
         try {
             $hotelModel = $request->attributes->get('hotel');
-            \DB::beginTransaction();
+            DB::beginTransaction();
             $this->service->delete($request->id, $hotelModel);
             $this->service->syncOrder($hotelModel);
-            \DB::commit();
+            DB::commit();
             return bodyResponseRequest(EnumResponse::SUCCESS_OK);
         } catch (\Exception $e) {
-            \DB::rollback();
+            DB::rollback();
             return bodyResponseRequest(EnumResponse::ERROR, $e, [], self::class . '.destroy');
         }
     }

@@ -19,12 +19,13 @@ class UpdateReviewsJob implements ShouldQueue
 
     public $apiReviewService;
     public $hotelService;
+    public $notificationDiscordService;
 
-
-    public function __construct($apiReviewService, $hotelService)
+    public function __construct($apiReviewService, $hotelService, $notificationDiscordService)
     {
         $this->apiReviewService = $apiReviewService;
         $this->hotelService = $hotelService;
+        $this->notificationDiscordService = $notificationDiscordService;
     }
 
     /**
@@ -39,15 +40,21 @@ class UpdateReviewsJob implements ShouldQueue
 
 
         foreach ($codeHotels as $codeHotel) {
-            $hotel = Hotel::where('code', $codeHotel)->first();
-            if ($hotel) {
-                \Log::info("[Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id . "]");
-                $this->apiReviewService->updateReviews($hotel);
-                \Log::info("[End UpdateReviewsJob]");
+            try {
+                $hotel = Hotel::where('code', $codeHotel)->first();
+                if ($hotel) {
+                    \Log::info("[Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id . "]");
+                    $this->notificationDiscordService->sendMessage("Start UpdateReviewsJob", "Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id, "Estamos actualizando las reviews del hotel");
+                    $this->apiReviewService->updateReviews($hotel);
+                    \Log::info("[End UpdateReviewsJob]");
+                    $this->notificationDiscordService->sendMessage("End UpdateReviewsJob", "Hotel: " . $hotel->name . " - Code: " . $hotel->code . " - id: " . $hotel->id, "Reviews actualizadas correctamente");
+                }
+            } catch (\Exception $e) {
+                $this->notificationDiscordService->sendMessage("Error UpdateReviewsJob", $e->getMessage());
             }
         }
         \Log::info("End UpdateReviewsCommand");
-        UpdateTranslateReviewsJob::dispatch($this->apiReviewService, $this->hotelService);       
+        UpdateTranslateReviewsJob::dispatch($this->apiReviewService, $this->hotelService);
 
     }
 }

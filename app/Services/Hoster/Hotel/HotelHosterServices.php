@@ -8,6 +8,7 @@ use App\Models\Hotel;
 use App\Models\ImagesHotels;
 use App\Services\Hoster\Chat\ChatSettingsServices;
 use App\Utils\Enums\EnumResponse;
+use App\Utils\Enums\EnumsHotel\ConfigHomeSectionsEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -199,5 +200,24 @@ class HotelHosterServices
             return bodyResponseRequest(EnumResponse::ERROR, 'Hotel not found', [], self::class . '.getShowContact');
         }
         return $hotel->show_contact;
+    }
+
+
+    //order sections
+    public function getOrderSections ($hotelId) {
+        $hotel = Hotel::find($hotelId);
+        if (!$hotel) {
+            return bodyResponseRequest(EnumResponse::ERROR, 'Hotel not found', [], self::class . '.getOrderSections');
+        }
+
+        $default = ConfigHomeSectionsEnum::defaultOrderSections();
+        return $hotel->order_sections ?? $default;
+    }
+
+    public function updateOrderSections ($hotelId, $orderSections) {
+        $hotel = Hotel::find($hotelId);
+        $hotel->order_sections = $orderSections;
+        $hotel->save();
+        return $hotel->order_sections;
     }
 }

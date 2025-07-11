@@ -69,12 +69,9 @@ class SendQueriesCommand extends Command
                 Log::info('stay para enviar las consultas: ' . $stay);
                 if(!$period || $period == "invalid-stay") continue;
                 Log::info('periodo de la estancia: ' . $period);
-                if($period !== 'post-stay'){
+                if($period == 'pre-stay'){
                     $settings = $this->settingsService->getAll($stay->hotel_id);
-                    $periodKey = str_replace("-", "_", $period).'_activate';
-                    Log::info('$periodKey: ' . $periodKey);
-                    Log::info('variable ' . $settings->$periodKey);
-                    if(!$settings->$periodKey) continue;
+                    if(!$settings->pre_stay_activate) continue;
                 }
 
                 if($period && $period !== 'pre-stay'){

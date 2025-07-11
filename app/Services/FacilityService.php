@@ -95,38 +95,74 @@ class FacilityService {
         $title = $request->title ?? 'Nueva Instalación';
         $title = $this->generateUniqueTitle($title, $hotelModel->id,$request->id);
 
+        // Handle document if provided
+        $documentPath = null;
+        if ($request->hasFile('document_file')) {
+            $file = $request->file('document_file');
+            $documentPath = saveDocumentOrImage($file, 'facility_documents', $hotelModel->id);
+        }
+
+        // Check if document type is 'no_add_document' to set fields as null
+        $linkDocumentUrl = $request->document === 'no_add_document' ? null : $request->link_document_url;
+        $documentFile = $request->document === 'no_add_document' ? null : ($documentPath ?? null);
+        $textDocumentButton = $request->document === 'no_add_document' ? null : $request->text_document_button;
+
         if($request->id){
             $facilityHosterModel = FacilityHoster::find($request->id);
             $facilityHosterModel->update([
                 'title' => $title,
                 'description' => $request->description,
-                // 'schedule' =>  $request->schedule,
-                'schedules' => $request->schedules ? json_encode($request->schedules) : null,
+                'schedules' => $request->schedules ? $request->schedules : null,
                 'ad_tag' => $request->ad_tag ?? null,
-                'always_open' => $request->always_open ?? false,
+                'always_open' => $request->always_open ? 1 : 0,
+                'document' => $request->document,
+                'document_file' => $documentFile ?? $facilityHosterModel->document_file,
+                'text_document_button' => $textDocumentButton,
+                'link_document_url' => $linkDocumentUrl,
             ]);
         }else{
             $facilityHosterModel  = FacilityHoster::create([
                 'title' => $title,
                 'description' => $request->description,
-                // 'schedule' =>  $request->schedule,
                 'status' => 1,
                 'select' => 1,
                 'user_id' =>  $hotelModel->user[0]->id,
                 'hotel_id' => $hotelModel->id,
-                'schedules' => $request->schedules ? json_encode($request->schedules) : null,
+                'schedules' => $request->schedules ? $request->schedules: null,
                 'ad_tag' => $request->ad_tag ?? null,
                 'order' => 0,
-                'always_open' => $request->always_open ?? false,
+                'always_open' => $request->always_open ? 1 : 0,
+                'document' => $request->document,
+                'document_file' => $documentFile,
+                'text_document_button' => $textDocumentButton,
+                'link_document_url' => $linkDocumentUrl,
             ]);
         }
-        ////
+
         $facilityHosterModel = $facilityHosterModel->refresh();
+
+        // Debug log para verificar lo que se guardó
+        Log::info('FacilityService storeOrUpdate - Saved data:', [
+            'id' => $facilityHosterModel->id,
+            'document' => $facilityHosterModel->document,
+            'text_document_button' => $facilityHosterModel->text_document_button,
+            'link_document_url' => $facilityHosterModel->link_document_url,
+            'document_file' => $facilityHosterModel->document_file
+        ]);
+
         return $facilityHosterModel;
     }
 
     public function updateImages ($images, $facilityHosterModel, $hotelModel) {
-        $images = collect($images ?? []);
+        // Handle null or string JSON
+        if (is_null($images)) {
+            $images = [];
+        } else if (is_string($images)) {
+            $images = json_decode($images, true) ?? [];
+        }
+
+        $images = collect($images);
+
         $imagesNew = $images->filter(function ($item) {
             return !isset($item['id']) || empty($item['id']);
         });
@@ -210,8 +246,8 @@ class FacilityService {
         $query->chunk(50, function($facilityCollection) use($lgsAll){
             foreach ($facilityCollection as $facilityHosterModel) {
                 var_dump("facility:". $facilityHosterModel->id);
-                $translations = collect($facilityHosterModel->translations);            
-    
+                $translations = collect($facilityHosterModel->translations);
+
                 $lgsWithTranslations = $translations->pluck('language')->toArray();
                 $lgsWithoutTranslations = array_values(array_diff($lgsAll, $lgsWithTranslations));
                 $dirTemplateTranslate = 'translation/webapp/hotel_input/facility';
